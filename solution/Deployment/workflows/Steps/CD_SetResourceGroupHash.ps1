@@ -33,5 +33,4 @@ SetServiceName -RootElement "AdsOpts_CD_ServicePrincipals_FunctionAppAuthenticat
 SetServiceName -RootElement "AdsOpts_CD_Services_Vnet"      #Added for enabling vNet Integration
 SetServiceName -RootElement "AdsOpts_CD_Services_Bastion"   #Added for enabling vNet Integration
 
-
-
+SetServiceName -RootElement "AdsOpts_CD_Services_Synapse"   #Added for enabling Synapse Deployment
