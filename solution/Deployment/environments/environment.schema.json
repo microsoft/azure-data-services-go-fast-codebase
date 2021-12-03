@@ -2062,6 +2062,182 @@
                     }
                   }
                 },
+                "Synapse":{
+                  "$id": "#/properties/AdsOpts/properties/CD/properties/Services/properties/Synapse",
+                  "type": "object",
+                  "title": "Synapse Settings",
+                  "description": "",
+                  "default": {},
+                  "required": [
+                    "Name",
+                    "ApplyNamePostFix",
+                    "Enable"
+                  ],
+                  "properties": {
+                    "Name": {
+                      "$id": "#/properties/AdsOpts/properties/CD/properties/Services/properties/Synapse/properties/Name",
+                      "type": "string",
+                      "title": "Synapse Workspace Name",
+                      "description": "",
+                      "default": "synapsews",
+                      "examples": [
+                        "synapsews"
+                      ]
+                    },
+                    "ApplyNamePostFix": {
+                      "$id": "#/properties/AdsOpts/properties/CD/properties/Services/properties/Synapse/properties/ApplyNamePostFix",
+                      "type": "boolean",
+                      "format": "checkbox",
+                      "title": "ApplyNamePostFix",
+                      "description": "",
+                      "default": true,
+                      "enum": [
+                        true
+                      ]
+                    },
+                    "Enable": {
+                      "$id": "#/properties/AdsOpts/properties/CD/properties/Services/properties/Synapse/properties/Enable",                      
+                      "type": "boolean",
+                      "format": "checkbox",
+                      "title": "Enable deployment of Bastion",
+                      "description": "",
+                      "default": false,
+                      "enum": [
+                        true
+                      ]
+                    },
+                    "DlsName": {
+                      "$id": "#/properties/AdsOpts/properties/CD/properties/Services/properties/Synapse/properties/DlsName",
+                      "type": "string",
+                      "title": "Synapse ADLS Gen2 Account Name",
+                      "description": "",
+                      "default": "",
+                      "examples": [
+                        "synapseworkadls"
+                      ]
+                    },
+                    "DlsFileSysName": {
+                      "$id": "#/properties/AdsOpts/properties/CD/properties/Services/properties/Synapse/properties/DlsFileSysName",
+                      "type": "string",
+                      "title": "File System/Container within Synapse ADLS Gen2 Account",
+                      "description": "",
+                      "default": "",
+                      "examples": [
+                        "data"
+                      ]
+                    },
+                    "SqlPoolName": {
+                      "$id": "#/properties/AdsOpts/properties/CD/properties/Services/properties/Synapse/properties/SqlPoolName",
+                      "type": "string",
+                      "title": "Synapse Dedicated SQL Pool Name",
+                      "description": "",
+                      "default": "",
+                      "examples": [
+                        "SqlPool01"
+                      ]
+                    },
+                    "SparkPoolName": {
+                      "$id": "#/properties/AdsOpts/properties/CD/properties/Services/properties/Synapse/properties/SparkPoolName",
+                      "type": "string",
+                      "title": "Synapse Spark Pool Name",
+                      "description": "",
+                      "default": "",
+                      "examples": [
+                        "SparkPool01"
+                      ]
+                    },
+                    "SparkPoolNodeCount": {
+                      "$id": "#/properties/AdsOpts/properties/CD/properties/Services/properties/Synapse/properties/SparkPoolNodeCount",
+                      "type": "number",
+                      "title": "Synapse Spark Pool Node Count",
+                      "description": "",
+                      "default": "",
+                      "examples": [
+                        3
+                      ]
+                    },
+                    "SparkPoolAutoScaleMinNodeCount": {
+                      "$id": "#/properties/AdsOpts/properties/CD/properties/Services/properties/Synapse/properties/SparkPoolAutoScaleMinNodeCount",
+                      "type": "number",
+                      "title": "Synapse Spark Pool Auto Scale Minimum Node Count",
+                      "description": "",
+                      "default": "",
+                      "examples": [
+                        3
+                      ]
+                    },
+                    "SparkPoolAutoScaleMaxNodeCount": {
+                      "$id": "#/properties/AdsOpts/properties/CD/properties/Services/properties/Synapse/properties/SparkPoolAutoScaleMaxNodeCount",
+                      "type": "number",
+                      "title": "Synapse Spark Pool Auto Scale Maximum Node Count",
+                      "description": "",
+                      "default": "",
+                      "examples": [
+                        3
+                      ]
+                    },
+                    "sparkDeployment": {
+                      "$id": "#/properties/AdsOpts/properties/CD/properties/Services/properties/Synapse/properties/sparkDeployment",
+                      "type": "string",                      
+                      "title": "Enable deployment of Spark Cluster",
+                      "description": "",
+                      "default": "true",
+                      "examples": [
+                        "true", "false"
+                      ]
+                    },
+                    "sparkNodeSize": {
+                      "$id": "#/properties/AdsOpts/properties/CD/properties/Services/properties/Synapse/properties/sparkNodeSize",
+                      "type": "string",
+                      "title": "Synapse Spark Cluster Node Size",
+                      "description": "",
+                      "default": "small",
+                      "examples": [
+                        "small","medium","large"
+                      ]
+                    },
+                    "dedicatedSqlPoolDeployment": {
+                      "$id": "#/properties/AdsOpts/properties/CD/properties/Services/properties/Synapse/properties/dedicatedSqlPoolDeployment",
+                      "type": "string",                      
+                      "title": "Enable deployment of Synapse Dedicated Pool",
+                      "description": "",
+                      "default": "false",
+                      "examples": [
+                        "true", "false"
+                      ]
+                    },
+                    "sqlAdministratorLogin": {
+                      "$id": "#/properties/AdsOpts/properties/CD/properties/Services/properties/Synapse/properties/sqlAdministratorLogin",
+                      "type": "string",
+                      "title": "Synapse SQL Admin Login Name",
+                      "description": "",
+                      "default": "sqlAdmin",
+                      "examples": [
+                        "sqlAdmin"
+                      ]
+                    },
+                    "sqlAdministratorLoginPassword": {
+                      "$id": "#/properties/AdsOpts/properties/CD/properties/Services/properties/Synapse/properties/sqlAdministratorLoginPassword",
+                      "type": "string",
+                      "title": "Synapse SQL Admin Password",
+                      "description": "",
+                      "default": "",
+                      "examples": [
+                        ""
+                      ]
+                    },
+                    "sku": {
+                      "$id": "#/properties/AdsOpts/properties/CD/properties/Services/properties/Synapse/properties/sku",
+                      "type": "string",
+                      "title": "Synapse SQL Dedicated Pool SKU",
+                      "description": "",
+                      "default": "DW100c",
+                      "examples": [
+                        "DW100c","DW200c","DW300c","DW400c","DW500c"
+                      ]
+                    }
+                  }
+                },
                 "additionalProperties": true
               }
             },

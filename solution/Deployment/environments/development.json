@@ -302,6 +302,24 @@
           "Name": "adsgfbastion",
           "ApplyNamePostFix": true,
           "Enable": true
+        },
+        "Synapse": {
+          "Name": "synapsews",
+          "ApplyNamePostFix": true,
+          "Enable": true,
+          "DlsName": "synadls5784" ,
+          "DlsFileSysName": "data" ,
+          "SqlPoolName": "SqlPool01" ,
+          "SparkPoolName": "SparkPool01" ,
+          "SparkPoolNodeCount": 3 ,
+          "SparkPoolAutoScaleMinNodeCount": 3 ,
+          "SparkPoolAutoScaleMaxNodeCount": 3 ,
+          "sparkDeployment": "true" ,
+          "sparkNodeSize": "Small" ,
+          "dedicatedSqlPoolDeployment": "false" ,
+          "sqlAdministratorLogin": "sqlAdmin" ,
+          "sqlAdministratorLoginPassword": "xxxxxxxx" ,
+          "sku": "DW100c"
         }
       }
     }
