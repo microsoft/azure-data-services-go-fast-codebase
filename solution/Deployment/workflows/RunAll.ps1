@@ -1,0 +1,6 @@
+Invoke-Expression -Command  ".\LocalDevOnly_EnvironmentSetUp.ps1" 
+Invoke-Expression -Command  ".\CI_1a_BuildCode.ps1"
+Invoke-Expression -Command  ".\CD_0a_CreateServicePrincipals_AAD_Elevated.ps1"
+Invoke-Expression -Command  ".\CD_1a_DeployServices.ps1"
+Invoke-Expression -Command  ".\CD_2a_CreateMSIs_AAD_Elevated.ps1"
+Invoke-Expression -Command  ".\CD_2b_ConfigureServices.ps1"

@@ -31,13 +31,13 @@
           "Enable": true,
           "Name": "AdsGFWebAuthSP",
           "ApplyNamePostFix": true,
-          "ClientId": "a6f5f6bf-25da-43c3-863e-df3588db7d56"
+          "ClientId": "b6b8468e-3221-437b-ba5a-6081a04ab6a9"
         },
         "FunctionAppAuthenticationSP": {
           "Enable": true,
           "Name": "AdsGFFuncAppAuthSP",
           "ApplyNamePostFix": true,
-          "ClientId": "584f2d03-a7e3-4fe8-9627-48f935697a68"
+          "ClientId": "a88aeff6-bc15-49b6-a6f8-3a7391afa0cb"
         }
       },
       "FolderPaths": {
@@ -114,6 +114,118 @@
           "Enable": true,
           "Name": "adsgfadf",
           "ApplyNamePostFix": true,
+          "IRList": [
+            {
+              "NameInMetaDataDB": "IRA",
+              "SelfHosted": false,
+              "NameInADF": "IRA",
+              "ADFPostFix": "IRA",
+              "Enable": true,
+              "ADFTemplate": "IRA"
+            },
+            {
+              "NameInMetaDataDB": "IRB",
+              "SelfHosted": false,
+              "NameInADF": "IRB",
+              "ADFPostFix": "IRB",
+              "Enable": true,
+              "ADFTemplate": "IRB"
+            },
+            {
+              "NameInMetaDataDB": "IRC",
+              "SelfHosted": false,
+              "NameInADF": "IRC",
+              "ADFPostFix": "IRC",
+              "Enable": false,
+              "ADFTemplate": "IRC"
+            }
+          ],
+          "ADFTemplates": [
+            {
+              "Name": "IRA",
+              "dataset": [
+                "ADLSBinary_SH_IR.json",
+                "ADLSDelimitedText_SH_IR.json",
+                "ADLSExcel_SH_IR.json",
+                "ADLSJson_SH_IR.json",
+                "ADLSParquet_SH_IR.json",
+                "AzureSqlTable_SH_IR.json",
+                "BlobBinary_SH_IR.json",
+                "BlobDelimitedText_SH_IR.json",
+                "BlobExcel_SH_IR.json",
+                "BlobJson_SH_IR.json",
+                "BlobParquet_SH_IR.json",
+                "FileBinary_SH_IR.json",
+                "FileParquet_SH_IR.json",
+                "SqlServerTable_SH_IR.json"
+              ],
+              "linkedService": [
+                "GenericAzureDataLakeStorage_{IR}.json",
+                "GenericAzureSQL_{IR}.json",
+                "GenericBlobStorage_{IR}.json",
+                "GenericFileServer_{IR}.json",
+                "GenericMsSqlServer_{IR}.json"
+              ],
+              "pipeline": [
+                "AZ_SQL_AZ_Storage_Parquet_SH_IR.json",
+                "AZ_SQL_Create_Table_{IR}.json",
+                "AZ_SQL_Full_Load_Chunk_{IR}.json",
+                "AZ_SQL_Full_Load_{IR}.json",
+                "AZ_SQL_Post_Copy_{IR}.json",
+                "AZ_SQL_StoredProcedure_{IR}.json",
+                "AZ_SQL_Watermark_Chunk_{IR}.json",
+                "AZ_SQL_Watermark_{IR}.json",
+                "AZ_Storage_Binary_AZ_Storage_Binary_{IR}.json",
+                "AZ_Storage_CSV_AZ_SQL_{IR}.json",
+                "AZ_Storage_Excel_AZ_SQL_{IR}.json",
+                "AZ_Storage_Excel_AZ_Storage_CSV_{IR}.json",
+                "AZ_Storage_JSON_AZ_SQL_{IR}.json",
+                "AZ_Storage_Parquet_AZ_SQL_{IR}.json",
+                "Create_Task_Master_AZ_SQL_{IR}.json",
+                "Create_Task_Master_AZ_SQL_{IR}.json",
+                "GEN_File_Binary_AZ_Storage_Binary_{IR}.json",
+                "GEN_File_Binary_AZ_Storage_Binary_{IR}.json",
+                "OnP_SQL_AZ_Storage_Parquet_{IR}.json",
+                "OnP_SQL_Full_Load_Chunk_{IR}.json",
+                "OnP_SQL_Full_Load_{IR}.json",
+                "OnP_SQL_GEN_File_Parquet_{IR}.json",
+                "OnP_SQL_Watermark_Chunk_{IR}.json",
+                "OnP_SQL_Watermark_{IR}.json",
+                "SH_SQL_AZ_Storage_Parquet_{IR}.json",
+                "SH_SQL_Full_Load_Chunk_{IR}.json",
+                "SH_SQL_Full_Load_{IR}.json",
+                "SH_SQL_Watermark_Chunk_{IR}.json",
+                "SH_SQL_Watermark_{IR}.json"
+              ]
+            },
+            {
+              "Name": "OnPrem_Net",
+              "dataset": [
+                "ADLSBinary_OnPrem_Net",
+                "ADLSParquet_OnPrem_Net",
+                "BlobParquet_OnPrem_Net.json",
+                "FileBinary_OnPrem_Net.json",
+                "FileParquet_OnPrem_Net.json",
+                "SqlServerTable_OnPrem_Net.json"
+              ],
+              "linkedService": [
+                "GenericMsSqlServer_OnPrem_Net.json",
+                "GenericFileServer_OnPrem_Net.json",
+                "GenericBlobStorage_OnPrem_Net.json",
+                "GenericAzureDataLakeStorage_OnPrem_Net.json"
+              ],
+              "pipeline": [
+                "Create_Task_Master_AZ_SQL_OnPrem_Net.json",
+                "GEN_File_Binary_AZ_Storage_Binary_OnPrem_Net.json",
+                "OnP_SQL_AZ_Storage_Parquet_OnPrem_Net.json",
+                "OnP_SQL_Full_Load_Chunk_{IR}.json",
+                "OnP_SQL_Full_Load_{IR}.json",
+                "OnP_SQL_GEN_File_Parquet_{IR}.json",
+                "OnP_SQL_Watermark_Chunk_{IR}.json",
+                "OnP_SQL_Watermark_{IR}.json"
+              ]
+            }
+          ],
           "AzVnetIr": {
             "Enable": true,
             "Name": "IRA",
