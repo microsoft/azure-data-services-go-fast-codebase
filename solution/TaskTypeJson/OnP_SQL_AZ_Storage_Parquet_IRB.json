@@ -6,13 +6,14 @@
             "type": "object",
             "properties": {
                 "Type": {
-                    "type": "string",
+                    "type": "string",                    
                     "enum": [
                         "Table",
                         "SQL"
                     ],
                     "options": {
-                        "infoText": "Select TABLE if you want to select all columns in a table. Select SQL if you want to define a custom SQL statement to be used to extract data."
+                        "infoText": "Select TABLE if you want to select all columns in a table. Select SQL if you want to define a custom SQL statement to be used to extract data.", 
+                        "hidden": true
                     }
                 },
                 "IncrementalType": {
@@ -28,18 +29,12 @@
                 },
                 "ExtractionSQL": {
                     "type": "string",
-                    "options": {
-                        "dependencies": {
-                            "Type": "SQL"
-                        }
+                    "options": {                        
                     }
                 },
                 "TableSchema": {
                     "type": "string",
-                    "options": {
-                        "dependencies": {
-                            "Type": "Table"
-                        },
+                    "options": {                        
                         "inputAttributes": {
                             "placeholder": "eg. dbo"
                         }
@@ -47,10 +42,7 @@
                 },
                 "TableName": {
                     "type": "string",
-                    "options": {
-                        "dependencies": {
-                            "Type": "Table"
-                        },
+                    "options": {                        
                         "inputAttributes": {
                             "placeholder": "eg. Customer"
                         }
@@ -84,12 +76,13 @@
             "type": "object",
             "properties": {
                 "Type": {
-                    "type": "string",
+                    "type": "string",                    
                     "enum": [
                         "Parquet"
                     ],
                     "options": {
-                        "infoText": "Presently only Parquet is supported"
+                        "infoText": "Presently only Parquet is supported", 
+                        "hidden": true
                     }
                 },
                 "RelativePath": {

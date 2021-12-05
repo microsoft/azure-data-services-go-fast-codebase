@@ -10,7 +10,10 @@
                     "type": "string",
                     "enum": [
                         "Parquet"
-                    ]
+                    ],
+                    "options": {
+                        "hidden": true
+                    }
                 },
                 "RelativePath": {
                     "type": "string",
@@ -32,30 +35,30 @@
                 },
                 "SchemaFileName": {
                     "type": "string"
-                }               
+                }
             },
             "required": [
                 "Type",
                 "RelativePath",
                 "DataFileName",
-                "SchemaFileName"        
+                "SchemaFileName"
             ]
         },
         "Target": {
             "type": "object",
             "properties": {
                 "Type": {
-                    "type": "string",
+                    "type": "string",                    
                     "enum": [
                         "Table"
-                    ]
+                    ], 
+                    "options": {
+                        "hidden": true
+                    }
                 },
                 "StagingTableSchema": {
                     "type": "string",
                     "options": {
-                        "dependencies": {
-                            "Type": "Table"
-                        },
                         "inputAttributes": {
                             "placeholder": "eg. dbo"
                         },
@@ -65,9 +68,6 @@
                 "StagingTableName": {
                     "type": "string",
                     "options": {
-                        "dependencies": {
-                            "Type": "Table"
-                        },
                         "inputAttributes": {
                             "placeholder": "eg. StgCustomer"
                         },
@@ -88,9 +88,6 @@
                 "TableSchema": {
                     "type": "string",
                     "options": {
-                        "dependencies": {
-                            "Type": "Table"
-                        },
                         "inputAttributes": {
                             "placeholder": "eg. dbo"
                         },
@@ -100,9 +97,6 @@
                 "TableName": {
                     "type": "string",
                     "options": {
-                        "dependencies": {
-                            "Type": "Table"
-                        },
                         "inputAttributes": {
                             "placeholder": "eg. Customer"
                         },
@@ -140,14 +134,14 @@
                 },
                 "MergeSQL": {
                     "type": "string",
-                    "format": "sql",                                      
-                    "options": {                                                
+                    "format": "sql",
+                    "options": {
                         "infoText": "A custom merge statement to exectute. Note that this will be ignored if 'AutoGenerateMerge' is true. Click in the box below to view or edit ",
-                        "ace": {                            
+                        "ace": {
                             "tabSize": 2,
                             "useSoftTabs": true,
                             "wrap": true
-                          }
+                        }
                     }
                 }
             },

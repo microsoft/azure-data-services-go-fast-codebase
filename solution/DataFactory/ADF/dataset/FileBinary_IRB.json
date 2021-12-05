@@ -1,0 +1,66 @@
+{
+	"name": "FileBinary_IRB",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "GenericFileServer_IRB",
+			"type": "LinkedServiceReference",
+			"parameters": {
+				"Host": {
+					"value": "@dataset().Host",
+					"type": "Expression"
+				},
+				"UserId": {
+					"value": "@dataset().UserId",
+					"type": "Expression"
+				},
+				"Secret": {
+					"value": "@dataset().Secret",
+					"type": "Expression"
+				},
+				"KeyVaultBaseUrl": {
+					"value": "@dataset().KeyVaultBaseUrl",
+					"type": "Expression"
+				}
+			}
+		},
+		"parameters": {
+			"Host": {
+				"type": "string"
+			},
+			"UserId": {
+				"type": "string"
+			},
+			"Secret": {
+				"type": "string"
+			},
+			"Directory": {
+				"type": "string"
+			},
+			"File": {
+				"type": "string"
+			},
+			"KeyVaultBaseUrl": {
+				"type": "string"
+			}
+		},
+		"folder": {
+			"name": "ADS Go Fast/Generic/IRB"
+		},
+		"annotations": [],
+		"type": "Binary",
+		"typeProperties": {
+			"location": {
+				"type": "FileServerLocation",
+				"fileName": {
+					"value": "@dataset().File",
+					"type": "Expression"
+				},
+				"folderPath": {
+					"value": "@dataset().Directory",
+					"type": "Expression"
+				}
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

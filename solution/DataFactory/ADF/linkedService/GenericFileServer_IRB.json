@@ -1,0 +1,51 @@
+{
+	"name": "GenericFileServer_IRA",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"type": "FileServer",
+		"parameters": {
+			"Host": {
+				"type": "String",
+				"defaultValue": ""
+			},
+			"UserId": {
+				"type": "String",
+				"defaultValue": ""
+			},
+			"Secret": {
+				"type": "String",
+				"defaultValue": ""
+			},
+			"KeyVaultBaseUrl": {
+				"type": "String",
+				"defaultValue": ""
+			}
+		},
+		"typeProperties": {
+			"host": "@{linkedService().Host}",
+			"userId": "@{linkedService().UserId}",
+			"password": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "GenericAzureKeyVault",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"KeyVaultBaseUrl": {
+							"value": "@linkedService().KeyVaultBaseUrl",
+							"type": "Expression"
+						}
+					}
+				},
+				"secretName": {
+					"value": "@linkedService().Secret",
+					"type": "Expression"
+				}
+			}
+		},
+		"annotations": [],
+		"connectVia": {
+			"referenceName": "IRB",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}

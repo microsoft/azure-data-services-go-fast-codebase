@@ -236,6 +236,38 @@
                     EnterStep4a();
                 });
 
+
+                const merge = (...arguments) => {
+
+                    // create a new object
+                    let target = {};
+
+                    // deep merge the object into the target object
+                    const merger = (obj) => {
+                        for (let prop in obj) {
+                            if (obj.hasOwnProperty(prop)) {
+                                if (Object.prototype.toString.call(obj[prop]) === '[object Object]') {
+                                    // if the property is a nested object
+                                    target[prop] = merge(target[prop], obj[prop]);
+                                } else {
+                                    // for regular property
+                                    if (obj[prop] !== undefined) {
+                                        target[prop] = obj[prop];
+                                    }
+                                }
+                            }
+                        }
+                    };
+
+                    // iterate through all objects and
+                    // deep merge them with target
+                    for (let i = 0; i < arguments.length; i++) {
+                        merger(arguments[i]);
+                    }
+
+                    return target;
+                }; 
+
                 function GetTaskTypeMappings() {
                     var DataToPost = {};
                     
@@ -508,8 +540,7 @@
                             editor = new JSONEditor(document.getElementById('editor_holder'), {
                                 theme: 'bootstrap4',
                                 iconlib: "fontawesome5",
-                                schema: JSON.parse(schema),
-                                startval: JSON.parse($('#TaskMasterJson').val())
+                                schema: JSON.parse(schema)
                             });
                             $('.je-switcher').parent().addClass("alert-warning");                            
                             $('#TaskMasterJsonShowHide').hide();
@@ -518,7 +549,14 @@
                             }, 2000);
 
                             
-                            
+                            editor.on('ready', () => {
+                                // Now the api methods will be available
+                                //On ready we merge the existing value with the defaults from the schema to ensure that optional attributes are set with their default values. If we don't do this they wont show up in the form.
+                                const CurrentVal = JSON.parse($('#TaskMasterJson').val());
+                                const DefaultVal = editor.getValue();
+                                const MergedValue = merge(DefaultVal, CurrentVal);
+                                editor.setValue(MergedValue);
+                            });
 
                         }
                         catch (err)

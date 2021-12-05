@@ -1,0 +1,21 @@
+{
+	"name": "GenericAzureKeyVault",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"type": "AzureKeyVault",
+		"parameters": {
+			"KeyVaultBaseUrl": {
+				"type": "String",
+				"defaultValue": "https://adsgofastkeyvault.vault.azure.net/"
+			}
+		},
+		"typeProperties": {
+			"baseUrl": "@{linkedService().KeyVaultBaseUrl}"
+		},
+		"connectVia": {
+			"referenceName": "IRB",
+			"type": "IntegrationRuntimeReference"
+		},
+		"annotations": []
+	}
+}

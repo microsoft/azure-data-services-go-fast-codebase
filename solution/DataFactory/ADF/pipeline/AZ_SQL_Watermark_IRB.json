@@ -1,0 +1,636 @@
+{
+	"name": "AZ_SQL_Watermark_IRB",
+	"properties": {
+		"activities": [
+			{
+				"name": "Switch Storage Type",
+				"type": "Switch",
+				"dependsOn": [
+					{
+						"activity": "Set SQLStatement",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"on": {
+						"value": "@pipeline().parameters.TaskObject.Target.Type",
+						"type": "Expression"
+					},
+					"cases": [
+						{
+							"value": "ADLS",
+							"activities": [
+								{
+									"name": "Copy Azure SQL to ADLS",
+									"type": "Copy",
+									"dependsOn": [
+										{
+											"activity": "Pipeline AF Log - Azure SQL to ADLS Start",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "AzureSqlSource",
+											"sqlReaderQuery": {
+												"value": "@variables('SQLStatement')",
+												"type": "Expression"
+											},
+											"queryTimeout": "02:00:00",
+											"partitionOption": "None"
+										},
+										"sink": {
+											"type": "ParquetSink",
+											"storeSettings": {
+												"type": "AzureBlobFSWriteSettings"
+											}
+										},
+										"enableStaging": false,
+										"parallelCopies": {
+											"value": "@pipeline().parameters.TaskObject.DegreeOfCopyParallelism",
+											"type": "Expression"
+										},
+										"translator": {
+											"value": "@pipeline().parameters.Mapping",
+											"type": "Expression"
+										}
+									},
+									"inputs": [
+										{
+											"referenceName": "AzureSqlTable_IRB",
+											"type": "DatasetReference",
+											"parameters": {
+												"Schema": {
+													"value": "@pipeline().parameters.TaskObject.Source.Extraction.TableSchema",
+													"type": "Expression"
+												},
+												"Table": {
+													"value": "@pipeline().parameters.TaskObject.Source.Extraction.TableName",
+													"type": "Expression"
+												},
+												"Server": {
+													"value": "@pipeline().parameters.TaskObject.Source.Database.SystemName",
+													"type": "Expression"
+												},
+												"Database": {
+													"value": "@pipeline().parameters.TaskObject.Source.Database.Name",
+													"type": "Expression"
+												}
+											}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "ADLSParquet_IRB",
+											"type": "DatasetReference",
+											"parameters": {
+												"RelativePath": {
+													"value": "@pipeline().parameters.TaskObject.Target.RelativePath",
+													"type": "Expression"
+												},
+												"FileName": {
+													"value": "@replace(pipeline().parameters.TaskObject.Target.DataFileName,'.parquet',concat('.chunk_', string(pipeline().parameters.Item),'.parquet'))",
+													"type": "Expression"
+												},
+												"StorageAccountEndpoint": {
+													"value": "@pipeline().parameters.TaskObject.Target.StorageAccountName",
+													"type": "Expression"
+												},
+												"StorageAccountContainerName": {
+													"value": "@pipeline().parameters.TaskObject.Target.StorageAccountContainer",
+													"type": "Expression"
+												}
+											}
+										}
+									]
+								},
+								{
+									"name": "Pipeline AF Log - Azure SQL to ADLS Failed",
+									"type": "ExecutePipeline",
+									"dependsOn": [
+										{
+											"activity": "Copy Azure SQL to ADLS",
+											"dependencyConditions": [
+												"Failed"
+											]
+										}
+									],
+									"userProperties": [],
+									"typeProperties": {
+										"pipeline": {
+											"referenceName": "AZ_Function_Generic",
+											"type": "PipelineReference"
+										},
+										"waitOnCompletion": false,
+										"parameters": {
+											"Body": {
+												"value": "@json(concat('{\"TaskInstanceId\":\"', string(pipeline().parameters.TaskObject.TaskInstanceId), '\",\"ExecutionUid\":\"', string(pipeline().parameters.TaskObject.ExecutionUid), '\",\"RunId\":\"', string(pipeline().RunId), '\",\"LogTypeId\":1,\"LogSource\":\"ADF\",\"ActivityType\":\"Copy Azure SQL to ADLS\",\"StartDateTimeOffSet\":\"', string(pipeline().TriggerTime), '\",\"EndDateTimeOffSet\":\"', string(utcnow()), '\",\"Comment\":\"', string(activity('Copy Azure SQL to ADLS').error.message), '\",\"Status\":\"Failed\"}'))",
+												"type": "Expression"
+											},
+											"FunctionName": "Log",
+											"Method": "Post"
+										}
+									}
+								},
+								{
+									"name": "AF Persist Parquet Metadata - ADLS",
+									"type": "AzureFunctionActivity",
+									"dependsOn": [
+										{
+											"activity": "Get Parquet Metadata ADLS",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"functionName": "TaskExecutionSchemaFile",
+										"method": "POST",
+										"body": {
+											"value": "@json(concat('{\"TaskInstanceId\":\"', string(pipeline().parameters.TaskObject.TaskInstanceId), '\",\"ExecutionUid\":\"', string(pipeline().parameters.TaskObject.ExecutionUid), '\",\"RunId\":\"', string(pipeline().RunId), '\",\"StorageAccountName\":\"', string(pipeline().parameters.TaskObject.Target.StorageAccountName), '\",\"StorageAccountContainer\":\"', string(pipeline().parameters.TaskObject.Target.StorageAccountContainer), '\",\"RelativePath\":\"', string(pipeline().parameters.TaskObject.Target.RelativePath), '\",\"SchemaFileName\":\"', string(pipeline().parameters.TaskObject.Target.SchemaFileName), '\",\"SourceType\":\"', string(pipeline().parameters.TaskObject.Source.Type), '\",\"TargetType\":\"', string(pipeline().parameters.TaskObject.Target.Type), '\",\"Data\":',string(activity('Get Parquet Metadata ADLS').output),',\"MetadataType\":\"Parquet\"}'))",
+											"type": "Expression"
+										}
+									},
+									"linkedServiceName": {
+										"referenceName": "AzureFunctionAdsGoFastDataLakeAccelFunApp",
+										"type": "LinkedServiceReference"
+									}
+								},
+								{
+									"name": "Get Parquet Metadata ADLS",
+									"type": "GetMetadata",
+									"dependsOn": [
+										{
+											"activity": "Copy Azure SQL to ADLS",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"dataset": {
+											"referenceName": "ADLSParquet_IRB",
+											"type": "DatasetReference",
+											"parameters": {
+												"RelativePath": {
+													"value": "@pipeline().parameters.TaskObject.Target.RelativePath",
+													"type": "Expression"
+												},
+												"FileName": {
+													"value": "@replace(pipeline().parameters.TaskObject.Target.DataFileName,'.parquet',concat('.chunk_', string(pipeline().parameters.Item),'.parquet'))",
+													"type": "Expression"
+												},
+												"StorageAccountEndpoint": {
+													"value": "@pipeline().parameters.TaskObject.Target.StorageAccountName",
+													"type": "Expression"
+												},
+												"StorageAccountContainerName": {
+													"value": "@pipeline().parameters.TaskObject.Target.StorageAccountContainer",
+													"type": "Expression"
+												}
+											}
+										},
+										"fieldList": [
+											"structure"
+										],
+										"storeSettings": {
+											"type": "AzureBlobFSReadSettings",
+											"recursive": true
+										}
+									}
+								},
+								{
+									"name": "Pipeline AF Log - Azure SQL to ADLS Start",
+									"type": "ExecutePipeline",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"pipeline": {
+											"referenceName": "AZ_Function_Generic",
+											"type": "PipelineReference"
+										},
+										"waitOnCompletion": false,
+										"parameters": {
+											"Body": {
+												"value": "@json(concat('{\"TaskInstanceId\":\"', string(pipeline().parameters.TaskObject.TaskInstanceId), '\",\"ExecutionUid\":\"', string(pipeline().parameters.TaskObject.ExecutionUid), '\",\"RunId\":\"', string(pipeline().RunId), '\",\"LogTypeId\":3,\"LogSource\":\"ADF\",\"ActivityType\":\"Copy Azure SQL to ADLS\",\"StartDateTimeOffSet\":\"', string(pipeline().TriggerTime), '\",\"Status\":\"Started\"}'))",
+												"type": "Expression"
+											},
+											"FunctionName": "Log",
+											"Method": "Post"
+										}
+									}
+								},
+								{
+									"name": "Pipeline AF Log - Azure SQL ADLS to Succeed",
+									"type": "ExecutePipeline",
+									"dependsOn": [
+										{
+											"activity": "Copy Azure SQL to ADLS",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"userProperties": [],
+									"typeProperties": {
+										"pipeline": {
+											"referenceName": "AZ_Function_Generic",
+											"type": "PipelineReference"
+										},
+										"waitOnCompletion": false,
+										"parameters": {
+											"Body": {
+												"value": "@json(concat('{\"TaskInstanceId\":\"', string(pipeline().parameters.TaskObject.TaskInstanceId), '\",\"ExecutionUid\":\"', string(pipeline().parameters.TaskObject.ExecutionUid), '\",\"RunId\":\"', string(pipeline().RunId), '\",\"LogTypeId\":1,\"LogSource\":\"ADF\",\"ActivityType\":\"Copy Azure SQL to ADLS\",\"StartDateTimeOffSet\":\"', string(pipeline().TriggerTime), '\",\"EndDateTimeOffSet\":\"', string(utcnow()), '\",\"RowsInserted\":\"', string(activity('Copy Azure SQL to ADLS').output.rowsCopied), '\",\"Comment\":\"\",\"Status\":\"Complete\"}'))",
+												"type": "Expression"
+											},
+											"FunctionName": "Log",
+											"Method": "Post"
+										}
+									}
+								}
+							]
+						},
+						{
+							"value": "Azure Blob",
+							"activities": [
+								{
+									"name": "Copy Azure SQL to Blob",
+									"type": "Copy",
+									"dependsOn": [
+										{
+											"activity": "Pipeline AF Log - Azure SQL to Blob Start",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "AzureSqlSource",
+											"sqlReaderQuery": {
+												"value": "@variables('SQLStatement')",
+												"type": "Expression"
+											},
+											"queryTimeout": "02:00:00",
+											"partitionOption": "None"
+										},
+										"sink": {
+											"type": "ParquetSink",
+											"storeSettings": {
+												"type": "AzureBlobStorageWriteSettings"
+											}
+										},
+										"enableStaging": false,
+										"parallelCopies": {
+											"value": "@pipeline().parameters.TaskObject.DegreeOfCopyParallelism",
+											"type": "Expression"
+										},
+										"translator": {
+											"value": "@pipeline().parameters.Mapping",
+											"type": "Expression"
+										}
+									},
+									"inputs": [
+										{
+											"referenceName": "AzureSqlTable_IRB",
+											"type": "DatasetReference",
+											"parameters": {
+												"Schema": {
+													"value": "@pipeline().parameters.TaskObject.Source.Extraction.TableSchema",
+													"type": "Expression"
+												},
+												"Table": {
+													"value": "@pipeline().parameters.TaskObject.Source.Extraction.TableName",
+													"type": "Expression"
+												},
+												"Server": {
+													"value": "@pipeline().parameters.TaskObject.Source.Database.SystemName",
+													"type": "Expression"
+												},
+												"Database": {
+													"value": "@pipeline().parameters.TaskObject.Source.Database.Name",
+													"type": "Expression"
+												}
+											}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "BlobParquet_IRB",
+											"type": "DatasetReference",
+											"parameters": {
+												"RelativePath": {
+													"value": "@pipeline().parameters.TaskObject.Target.RelativePath",
+													"type": "Expression"
+												},
+												"FileName": {
+													"value": "@replace(pipeline().parameters.TaskObject.Target.DataFileName,'.parquet',concat('.chunk_', string(pipeline().parameters.Item),'.parquet'))",
+													"type": "Expression"
+												},
+												"StorageAccountEndpoint": {
+													"value": "@pipeline().parameters.TaskObject.Target.StorageAccountName",
+													"type": "Expression"
+												},
+												"StorageAccountContainerName": {
+													"value": "@pipeline().parameters.TaskObject.Target.StorageAccountContainer",
+													"type": "Expression"
+												}
+											}
+										}
+									]
+								},
+								{
+									"name": "Pipeline AF Log - Azure SQL to Blob Failed",
+									"type": "ExecutePipeline",
+									"dependsOn": [
+										{
+											"activity": "Copy Azure SQL to Blob",
+											"dependencyConditions": [
+												"Failed"
+											]
+										}
+									],
+									"userProperties": [],
+									"typeProperties": {
+										"pipeline": {
+											"referenceName": "AZ_Function_Generic",
+											"type": "PipelineReference"
+										},
+										"waitOnCompletion": false,
+										"parameters": {
+											"Body": {
+												"value": "@json(concat('{\"TaskInstanceId\":\"', string(pipeline().parameters.TaskObject.TaskInstanceId), '\",\"ExecutionUid\":\"', string(pipeline().parameters.TaskObject.ExecutionUid), '\",\"RunId\":\"', string(pipeline().RunId), '\",\"LogTypeId\":1,\"LogSource\":\"ADF\",\"ActivityType\":\"Copy Azure SQL to Blob\",\"StartDateTimeOffSet\":\"', string(pipeline().TriggerTime), '\",\"EndDateTimeOffSet\":\"', string(utcnow()), '\",\"Comment\":\"', string(activity('Copy Azure SQL to Blob').error.message), '\",\"Status\":\"Failed\"}'))",
+												"type": "Expression"
+											},
+											"FunctionName": "Log",
+											"Method": "Post"
+										}
+									}
+								},
+								{
+									"name": "AF Persist Parquet Metadata - Blob",
+									"type": "AzureFunctionActivity",
+									"dependsOn": [
+										{
+											"activity": "Get Parquet Metadata Blob",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"functionName": "TaskExecutionSchemaFile",
+										"method": "POST",
+										"body": {
+											"value": "@json(concat('{\"TaskInstanceId\":\"', string(pipeline().parameters.TaskObject.TaskInstanceId), '\",\"ExecutionUid\":\"', string(pipeline().parameters.TaskObject.ExecutionUid), '\",\"RunId\":\"', string(pipeline().RunId), '\",\"StorageAccountName\":\"', string(pipeline().parameters.TaskObject.Target.StorageAccountName), '\",\"StorageAccountContainer\":\"', string(pipeline().parameters.TaskObject.Target.StorageAccountContainer), '\",\"RelativePath\":\"', string(pipeline().parameters.TaskObject.Target.RelativePath), '\",\"SchemaFileName\":\"', string(pipeline().parameters.TaskObject.Target.SchemaFileName), '\",\"SourceType\":\"', string(pipeline().parameters.TaskObject.Source.Type), '\",\"TargetType\":\"', string(pipeline().parameters.TaskObject.Target.Type), '\",\"Data\":',string(activity('Get Parquet Metadata Blob').output),',\"MetadataType\":\"Parquet\"}'))",
+											"type": "Expression"
+										}
+									},
+									"linkedServiceName": {
+										"referenceName": "AzureFunctionAdsGoFastDataLakeAccelFunApp",
+										"type": "LinkedServiceReference"
+									}
+								},
+								{
+									"name": "Get Parquet Metadata Blob",
+									"type": "GetMetadata",
+									"dependsOn": [
+										{
+											"activity": "Copy Azure SQL to Blob",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"dataset": {
+											"referenceName": "BlobParquet_IRB",
+											"type": "DatasetReference",
+											"parameters": {
+												"RelativePath": {
+													"value": "@pipeline().parameters.TaskObject.Target.RelativePath",
+													"type": "Expression"
+												},
+												"FileName": {
+													"value": "@replace(pipeline().parameters.TaskObject.Target.DataFileName,'.parquet',concat('.chunk_', string(pipeline().parameters.Item),'.parquet'))",
+													"type": "Expression"
+												},
+												"StorageAccountEndpoint": {
+													"value": "@pipeline().parameters.TaskObject.Target.StorageAccountName",
+													"type": "Expression"
+												},
+												"StorageAccountContainerName": {
+													"value": "@pipeline().parameters.TaskObject.Target.StorageAccountContainer",
+													"type": "Expression"
+												}
+											}
+										},
+										"fieldList": [
+											"structure"
+										],
+										"storeSettings": {
+											"type": "AzureBlobStorageReadSettings",
+											"recursive": true
+										}
+									}
+								},
+								{
+									"name": "Pipeline AF Log - Azure SQL to Blob Start",
+									"type": "ExecutePipeline",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"pipeline": {
+											"referenceName": "AZ_Function_Generic",
+											"type": "PipelineReference"
+										},
+										"waitOnCompletion": false,
+										"parameters": {
+											"Body": {
+												"value": "@json(concat('{\"TaskInstanceId\":\"', string(pipeline().parameters.TaskObject.TaskInstanceId), '\",\"ExecutionUid\":\"', string(pipeline().parameters.TaskObject.ExecutionUid), '\",\"RunId\":\"', string(pipeline().RunId), '\",\"LogTypeId\":3,\"LogSource\":\"ADF\",\"ActivityType\":\"Copy Azure SQL to Blob\",\"StartDateTimeOffSet\":\"', string(pipeline().TriggerTime), '\",\"Status\":\"Started\"}'))",
+												"type": "Expression"
+											},
+											"FunctionName": "Log",
+											"Method": "Post"
+										}
+									}
+								},
+								{
+									"name": "Pipeline AF Log - Azure SQL Blob to Succeed",
+									"type": "ExecutePipeline",
+									"dependsOn": [
+										{
+											"activity": "Copy Azure SQL to Blob",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"userProperties": [],
+									"typeProperties": {
+										"pipeline": {
+											"referenceName": "AZ_Function_Generic",
+											"type": "PipelineReference"
+										},
+										"waitOnCompletion": false,
+										"parameters": {
+											"Body": {
+												"value": "@json(concat('{\"TaskInstanceId\":\"', string(pipeline().parameters.TaskObject.TaskInstanceId), '\",\"ExecutionUid\":\"', string(pipeline().parameters.TaskObject.ExecutionUid), '\",\"RunId\":\"', string(pipeline().RunId), '\",\"LogTypeId\":1,\"LogSource\":\"ADF\",\"ActivityType\":\"Copy Azure SQL to Blob\",\"StartDateTimeOffSet\":\"', string(pipeline().TriggerTime), '\",\"EndDateTimeOffSet\":\"', string(utcnow()), '\",\"RowsInserted\":\"', string(activity('Copy Azure SQL to Blob').output.rowsCopied), '\",\"Comment\":\"\",\"Status\":\"Complete\"}'))",
+												"type": "Expression"
+											},
+											"FunctionName": "Log",
+											"Method": "Post"
+										}
+									}
+								}
+							]
+						}
+					]
+				}
+			},
+			{
+				"name": "Set SQLStatement",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "SQLStatement",
+					"value": {
+						"value": "@replace(replace(replace(pipeline().parameters.TaskObject.Source.Extraction.SQLStatement,'<batchcount>',string(pipeline().parameters.BatchCount)),'<item>',string(pipeline().parameters.Item)),'<newWatermark>',pipeline().parameters.NewWaterMark)",
+						"type": "Expression"
+					}
+				}
+			}
+		],
+		"parameters": {
+			"TaskObject": {
+				"type": "object",
+				"defaultValue": {
+					"TaskInstanceId": 75,
+					"TaskMasterId": 12,
+					"TaskStatus": "Untried",
+					"TaskType": "SQL Database to Azure Storage",
+					"Enabled": 1,
+					"ExecutionUid": "2c5924ee-b855-4d2b-bb7e-4f5dde4c4dd3",
+					"NumberOfRetries": 111,
+					"DegreeOfCopyParallelism": 1,
+					"KeyVaultBaseUrl": "https://adsgofastkeyvault.vault.azure.net/",
+					"ScheduleMasterId": 2,
+					"TaskGroupConcurrency": 10,
+					"TaskGroupPriority": 0,
+					"Source": {
+						"Type": "Azure SQL",
+						"Database": {
+							"SystemName": "adsgofastdatakakeaccelsqlsvr.database.windows.net",
+							"Name": "AWSample",
+							"AuthenticationType": "MSI"
+						},
+						"Extraction": {
+							"Type": "Table",
+							"FullOrIncremental": "Full",
+							"IncrementalType": null,
+							"TableSchema": "SalesLT",
+							"TableName": "SalesOrderHeader"
+						}
+					},
+					"Target": {
+						"Type": "Azure Blob",
+						"StorageAccountName": "https://adsgofastdatalakeaccelst.blob.core.windows.net",
+						"StorageAccountContainer": "datalakeraw",
+						"StorageAccountAccessMethod": "MSI",
+						"RelativePath": "/AwSample/SalesLT/SalesOrderHeader/2020/7/9/14/12/",
+						"DataFileName": "SalesLT.SalesOrderHeader.parquet",
+						"SchemaFileName": "SalesLT.SalesOrderHeader",
+						"FirstRowAsHeader": null,
+						"SheetName": null,
+						"SkipLineCount": null,
+						"MaxConcorrentConnections": null
+					},
+					"DataFactory": {
+						"Id": 1,
+						"Name": "adsgofastdatakakeacceladf",
+						"ResourceGroup": "AdsGoFastDataLakeAccel",
+						"SubscriptionId": "035a1364-f00d-48e2-b582-4fe125905ee3",
+						"ADFPipeline": "AZ_SQL_AZ_Storage_Parquet_IRB"
+					}
+				}
+			},
+			"Mapping": {
+				"type": "object"
+			},
+			"NewWaterMark": {
+				"type": "string"
+			},
+			"Item": {
+				"type": "int"
+			},
+			"BatchCount": {
+				"type": "int"
+			}
+		},
+		"variables": {
+			"SQLStatement": {
+				"type": "String"
+			}
+		},
+		"folder": {
+			"name": "ADS Go Fast/Data Movement/IRB/Components"
+		},
+		"annotations": [],
+		"lastPublishTime": "2020-07-29T02:39:55Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

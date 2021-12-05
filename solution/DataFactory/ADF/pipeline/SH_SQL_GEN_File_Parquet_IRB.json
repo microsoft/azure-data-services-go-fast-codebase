@@ -1,0 +1,364 @@
+{
+	"name": "SH_SQL_GEN_File_Parquet_IRB",
+	"properties": {
+		"activities": [
+			{
+				"name": "Copy SQL to File",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Pipeline AF Log - SQL to File Start",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "SqlServerSource",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"sink": {
+						"type": "ParquetSink",
+						"storeSettings": {
+							"type": "FileServerWriteSettings"
+						}
+					},
+					"enableStaging": false,
+					"parallelCopies": {
+						"value": "@pipeline().parameters.TaskObject.DegreeOfCopyParallelism",
+						"type": "Expression"
+					},
+					"translator": {
+						"value": "@activity('AF Persist Metadata and Get Mapping').output.value",
+						"type": "Expression"
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "SqlServerTable_IRB",
+						"type": "DatasetReference",
+						"parameters": {
+							"TableSchema": {
+								"value": "@pipeline().parameters.TaskObject.Source.Extraction.TableSchema",
+								"type": "Expression"
+							},
+							"TableName": {
+								"value": "@pipeline().parameters.TaskObject.Source.Extraction.TableName",
+								"type": "Expression"
+							},
+							"KeyVaultBaseUrl": {
+								"value": "@pipeline().parameters.TaskObject.KeyVaultBaseUrl",
+								"type": "Expression"
+							},
+							"PasswordSecret": {
+								"value": "@pipeline().parameters.TaskObject.Source.Database.PasswordKeyVaultSecretName",
+								"type": "Expression"
+							},
+							"Server": {
+								"value": "@pipeline().parameters.TaskObject.Source.Database.SystemName",
+								"type": "Expression"
+							},
+							"Database": {
+								"value": "@pipeline().parameters.TaskObject.Source.Database.Name",
+								"type": "Expression"
+							},
+							"UserName": {
+								"value": "@pipeline().parameters.TaskObject.Source.Database.Username",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "FileParquet_IRB",
+						"type": "DatasetReference",
+						"parameters": {
+							"Host": {
+								"value": "@pipeline().parameters.TaskObject.Target.Host",
+								"type": "Expression"
+							},
+							"UserId": {
+								"value": "@pipeline().parameters.TaskObject.Target.UserId",
+								"type": "Expression"
+							},
+							"Secret": {
+								"value": "@pipeline().parameters.TaskObject.Target.PasswordKeyVaultSecretName",
+								"type": "Expression"
+							},
+							"Directory": {
+								"value": "@pipeline().parameters.TaskObject.Target.Directory",
+								"type": "Expression"
+							},
+							"File": {
+								"value": "@pipeline().parameters.TaskObject.Target.File",
+								"type": "Expression"
+							},
+							"KeyVaultBaseUrl": {
+								"value": "@pipeline().parameters.TaskObject.KeyVaultBaseUrl",
+								"type": "Expression"
+							}
+						}
+					}
+				]
+			},
+			{
+				"name": "Pipeline AF Log - SQL to File Start",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "AF Persist Metadata and Get Mapping",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "AZ_Function_Generic",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": false,
+					"parameters": {
+						"Body": {
+							"value": "@json(concat('{\"TaskInstanceId\":\"', string(pipeline().parameters.TaskObject.TaskInstanceId), '\",\"ExecutionUid\":\"', string(pipeline().parameters.TaskObject.ExecutionUid), '\",\"RunId\":\"', string(pipeline().RunId), '\",\"LogTypeId\":3,\"LogSource\":\"ADF\",\"ActivityType\":\"Copy SQL Server to File\",\"StartDateTimeOffSet\":\"', string(pipeline().TriggerTime), '\",\"Status\":\"Started\"}'))",
+							"type": "Expression"
+						},
+						"FunctionName": "Log",
+						"Method": "Post"
+					}
+				}
+			},
+			{
+				"name": "Pipeline AF Log - SQL to File Succeed",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Copy SQL to File",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "AZ_Function_Generic",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": false,
+					"parameters": {
+						"Body": {
+							"value": "@json(concat('{\"TaskInstanceId\":\"', string(pipeline().parameters.TaskObject.TaskInstanceId), '\",\"ExecutionUid\":\"', string(pipeline().parameters.TaskObject.ExecutionUid), '\",\"RunId\":\"', string(pipeline().RunId), '\",\"LogTypeId\":1,\"LogSource\":\"ADF\",\"ActivityType\":\"Copy SQL to File\",\"StartDateTimeOffSet\":\"', string(pipeline().TriggerTime), '\",\"EndDateTimeOffSet\":\"', string(utcnow()), '\",\"RowsInserted\":\"', string(activity('Copy SQL to File').output.rowsCopied), '\",\"Comment\":\"\",\"Status\":\"Complete\"}'))",
+							"type": "Expression"
+						},
+						"FunctionName": "Log",
+						"Method": "Post"
+					}
+				}
+			},
+			{
+				"name": "Pipeline AF Log - SQL to File Failed",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Copy SQL to File",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "AZ_Function_Generic",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": false,
+					"parameters": {
+						"Body": {
+							"value": "@json(concat('{\"TaskInstanceId\":\"', string(pipeline().parameters.TaskObject.TaskInstanceId), '\",\"ExecutionUid\":\"', string(pipeline().parameters.TaskObject.ExecutionUid), '\",\"RunId\":\"', string(pipeline().RunId), '\",\"LogTypeId\":1,\"LogSource\":\"ADF\",\"ActivityType\":\"Copy SQL Server to File Share\",\"StartDateTimeOffSet\":\"', string(pipeline().TriggerTime), '\",\"EndDateTimeOffSet\":\"', string(utcnow()), '\",\"Comment\":\"', string(activity('Copy SQL to File').error.message), '\",\"Status\":\"Failed\"}'))",
+							"type": "Expression"
+						},
+						"FunctionName": "Log",
+						"Method": "Post"
+					}
+				}
+			},
+			{
+				"name": "AF Log - Get Metadata Failed",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Lookup Get SQL Metadata",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "AZ_Function_Generic",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": false,
+					"parameters": {
+						"Body": {
+							"value": "[\n    {\n        \"TaskInstanceId\":@{pipeline().parameters.TaskObject.TaskInstanceId},\n        \"ExecutionUid\":@{pipeline().parameters.TaskObject.ExecutionUid},\n        \"RunId\":@{pipeline().RunId},    \n        \"EndTime\":@{utcnow()},\n        \"Status\":\"Failed\",\n        \"Activity\":\"Get Metadata\",\n        \"Comments\":@{activity('Lookup Get SQL Metadata').errors}\n    }\n]",
+							"type": "Expression"
+						},
+						"FunctionName": "Log",
+						"Method": "Post"
+					}
+				}
+			},
+			{
+				"name": "AF Get Information Schema SQL",
+				"type": "AzureFunctionActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"functionName": "GetInformationSchemaSQL",
+					"method": "POST",
+					"body": {
+						"value": "@json(concat('{\"TaskInstanceId\":\"', string(pipeline().parameters.TaskObject.TaskInstanceId), '\",\"ExecutionUid\":\"', string(pipeline().parameters.TaskObject.ExecutionUid), '\",\"RunId\":\"', string(pipeline().RunId), '\",\"TableSchema\":\"', string(pipeline().parameters.TaskObject.Source.Extraction.TableSchema), '\",\"TableName\":\"', string(pipeline().parameters.TaskObject.Source.Extraction.TableName),'\"}'))",
+						"type": "Expression"
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "AzureFunctionAdsGoFastDataLakeAccelFunApp",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "AF Persist Metadata and Get Mapping",
+				"type": "AzureFunctionActivity",
+				"dependsOn": [
+					{
+						"activity": "Lookup Get SQL Metadata",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"functionName": "TaskExecutionSchemaFile",
+					"method": "POST",
+					"body": {
+						"value": "@json(concat('{\"TaskInstanceId\":\"', string(pipeline().parameters.TaskObject.TaskInstanceId), '\",\"ExecutionUid\":\"', string(pipeline().parameters.TaskObject.ExecutionUid), '\",\"RunId\":\"', string(pipeline().RunId), '\",\"StorageAccountName\":\"', string(pipeline().parameters.TaskObject.Target.StorageAccountName), '\",\"StorageAccountContainer\":\"', string(pipeline().parameters.TaskObject.Target.StorageAccountContainer), '\",\"RelativePath\":\"', string(pipeline().parameters.TaskObject.Target.RelativePath), '\",\"SchemaFileName\":\"', string(pipeline().parameters.TaskObject.Target.SchemaFileName), '\",\"SourceType\":\"', string(pipeline().parameters.TaskObject.Source.Type), '\",\"TargetType\":\"', string(pipeline().parameters.TaskObject.Target.Type), '\",\"Data\":',string(activity('Lookup Get SQL Metadata').output),',\"MetadataType\":\"SQL\"}'))",
+						"type": "Expression"
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "AzureFunctionAdsGoFastDataLakeAccelFunApp",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "Lookup Get SQL Metadata",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "AF Get Information Schema SQL",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "SqlServerSource",
+						"sqlReaderQuery": {
+							"value": "@activity('AF Get Information Schema SQL').output.InformationSchemaSQL",
+							"type": "Expression"
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "SqlServerTable_IRB",
+						"type": "DatasetReference",
+						"parameters": {
+							"TableSchema": {
+								"value": "@pipeline().parameters.TaskObject.Source.Extraction.TableSchema",
+								"type": "Expression"
+							},
+							"TableName": {
+								"value": "@pipeline().parameters.TaskObject.Source.Extraction.TableName",
+								"type": "Expression"
+							},
+							"KeyVaultBaseUrl": {
+								"value": "@pipeline().parameters.TaskObject.KeyVaultBaseUrl",
+								"type": "Expression"
+							},
+							"PasswordSecret": {
+								"value": "@pipeline().parameters.TaskObject.Source.Database.PasswordKeyVaultSecretName",
+								"type": "Expression"
+							},
+							"Server": {
+								"value": "@pipeline().parameters.TaskObject.Source.Database.SystemName",
+								"type": "Expression"
+							},
+							"Database": {
+								"value": "@pipeline().parameters.TaskObject.Source.Database.Name",
+								"type": "Expression"
+							},
+							"UserName": {
+								"value": "@pipeline().parameters.TaskObject.Source.Database.Username",
+								"type": "Expression"
+							}
+						}
+					},
+					"firstRowOnly": false
+				}
+			}
+		],
+		"parameters": {
+			"TaskObject": {
+				"type": "object",
+				"defaultValue": "[     {         \"TaskInstanceId\": 2,         \"TaskMasterId\": 1,         \"TaskStatus\": \"Untried\",         \"TaskType\": \"RelationalDataExtractToDataLake\",         \"Enabled\": true,         \"ExecutionUid\": 1,         \"KeyVaultBaseUrl\" : \"https://adsgofastkeyvault.vault.azure.net/\",         \"Source\": {             \"Type\":\"MsSqlServer\",             \"Database\": {                 \"Name\": \"AdventureWorks2017\",                 \"SystemName\": \"adsgofast-onpre\",                 \"Type\": \"MsSqlServer\",                 \"AuthenticationType\": \"SQLAuth\",                 \"Username\": \"sqladfir\",                 \"PasswordKeyVaultSecretName\": \"adsgofast-onpre-sqladfir-password\"             },             \"Extraction\": {                 \"Type\": \"Table\",                 \"FullOrIncremental\": true,                 \"IncrementalType\": null,                 \"TableSchema\": \"Sales\",                 \"TableName\": \"SalesOrderDetail\"             }         },         \"Target\": {             \"Type\" : \"File\",             \"Host\": \"D:\\\\dataingestion\\\\\",             \"UserId\": \"AzureUser\",             \"PasswordKeyVaultSecretName\": \"adsgofast-onpre_File_password\",             \"Directory\": \"AdventureWorks2017/2020/06/15/14/22/\",             \"File\": \"Sales.SalesOrderDetails.parquet\"         },         \"DataFactory\": {             \"Id\": 1,             \"Name\": \"adsgofastdatakakeacceladf\",             \"ResourceGroup\": \"AdsGoFastDataLakeAccel\",             \"SubscriptionId\": \"035a1364-f00d-48e2-b582-4fe125905ee3\",         }     } ]"
+			}
+		},
+		"folder": {
+			"name": "ADS Go Fast/Data Movement/IRB"
+		},
+		"annotations": [],
+		"lastPublishTime": "2020-07-27T03:24:22Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

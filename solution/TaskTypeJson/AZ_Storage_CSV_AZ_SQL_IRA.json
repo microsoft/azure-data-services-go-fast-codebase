@@ -7,10 +7,13 @@
             "type": "object",
             "properties": {
                 "Type": {
-                    "type": "string",
+                    "type": "string",                    
                     "enum": [
                         "Csv"
-                    ]
+                    ], 
+                    "options" : {
+                        "hidden": true
+                    }
                 },
                 "RelativePath": {
                     "type": "string",
@@ -66,14 +69,14 @@
                     "type": "string",
                     "enum": [
                         "Table"
-                    ]
+                    ], 
+                    "options" : {
+                        "hidden": true
+                    }
                 },
                 "StagingTableSchema": {
                     "type": "string",
-                    "options": {
-                        "dependencies": {
-                            "Type": "Table"
-                        },
+                    "options": {                        
                         "inputAttributes": {
                             "placeholder": "eg. dbo"
                         },
@@ -82,10 +85,7 @@
                 },
                 "StagingTableName": {
                     "type": "string",
-                    "options": {
-                        "dependencies": {
-                            "Type": "Table"
-                        },
+                    "options": {                    
                         "inputAttributes": {
                             "placeholder": "eg. StgCustomer"
                         },
@@ -105,10 +105,7 @@
                 },
                 "TableSchema": {
                     "type": "string",
-                    "options": {
-                        "dependencies": {
-                            "Type": "Table"
-                        },
+                    "options": {                        
                         "inputAttributes": {
                             "placeholder": "eg. dbo"
                         },
@@ -117,10 +114,7 @@
                 },
                 "TableName": {
                     "type": "string",
-                    "options": {
-                        "dependencies": {
-                            "Type": "Table"
-                        },
+                    "options": {                        
                         "inputAttributes": {
                             "placeholder": "eg. Customer"
                         },

@@ -1,5 +1,5 @@
 {
-	"name": "AZ_SQL_AZ_Storage_Parquet_@GF{IR}",
+	"name": "AWS_RDSORA_AZ_Storage_Parquet_@GF{IR}",
 	"properties": {
 		"activities": [
 			{
@@ -51,7 +51,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"source": {
-						"type": "AzureSqlSource",
+						"type": "AmazonRdsForOracleSource",
 						"sqlReaderQuery": {
 							"value": "@activity('AF Get Information Schema SQL').output.InformationSchemaSQL",
 							"type": "Expression"

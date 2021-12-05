@@ -1,0 +1,52 @@
+{
+	"name": "BlobBinary_IRB",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "GenericBlobStorage_IRB",
+			"type": "LinkedServiceReference",
+			"parameters": {
+				"StorageAccountEndpoint": {
+					"value": "@dataset().StorageAccountEndpoint",
+					"type": "Expression"
+				}
+			}
+		},
+		"parameters": {
+			"StorageAccountEndpoint": {
+				"type": "string"
+			},
+			"FileSystem": {
+				"type": "string"
+			},
+			"Directory": {
+				"type": "string"
+			},
+			"File": {
+				"type": "string"
+			}
+		},
+		"folder": {
+			"name": "ADS Go Fast/Generic/IRB"
+		},
+		"annotations": [],
+		"type": "Binary",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": {
+					"value": "@dataset().File",
+					"type": "Expression"
+				},
+				"folderPath": {
+					"value": "@dataset().Directory",
+					"type": "Expression"
+				},
+				"container": {
+					"value": "@dataset().FileSystem",
+					"type": "Expression"
+				}
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

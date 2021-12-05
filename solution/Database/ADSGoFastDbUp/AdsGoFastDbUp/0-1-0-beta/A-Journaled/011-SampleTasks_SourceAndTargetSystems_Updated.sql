@@ -10,7 +10,17 @@ Alter Table [dbo].[ADFActivityErrors] alter column ErrorCode varchar(50)
 
 Alter table [dbo].[SourceAndTargetSystems] add DataFactoryIR varchar(20)
 
+Update [dbo].[TaskMaster]
+Set TaskMasterJson = replace(TaskMasterJson, '"csv"','"Csv"')
+from  [dbo].[TaskMaster]
 
+Update [dbo].[TaskMaster]
+Set TaskMasterJson = replace(TaskMasterJson, '"json"','"Json"')
+from  [dbo].[TaskMaster]
+
+Update [dbo].[TaskMaster]
+Set TaskMasterJson = replace(TaskMasterJson, '/{mm}/','/')
+from  [dbo].[TaskMaster]
 
 
 

@@ -1,5 +1,5 @@
 {
-	"name": "Master",
+	"name": "Master_IRA",
 	"properties": {
 		"activities": [
 			{
@@ -303,28 +303,48 @@
 						}
 					],
 					"defaultActivities": [
-						{
-							"name": "Pipeline AF Log - Invalid Pipeline",
-							"type": "ExecutePipeline",
-							"dependsOn": [],
-							"userProperties": [],
-							"typeProperties": {
-								"pipeline": {
-									"referenceName": "AZ_Function_Generic",
-									"type": "PipelineReference"
-								},
-								"waitOnCompletion": false,
-								"parameters": {
-									"Body": {
-										"value": "@json(concat('{\"TaskInstanceId\":\"', string(pipeline().parameters.TaskObject.TaskInstanceId), '\",\"ExecutionUid\":\"', string(pipeline().parameters.TaskObject.ExecutionUid), '\",\"RunId\":\"', string(pipeline().RunId), '\",\"LogTypeId\":1,\"LogSource\":\"ADF\",\"ActivityType\":\"Data-Movement-Master\",\"StartDateTimeOffSet\":\"', string(pipeline().TriggerTime), '\",\"EndDateTimeOffSet\":\"', string(utcnow()), '\",\"Comment\":\"Invalid TaskType: ', string(pipeline().parameters.TaskObject.TaskType), '\",\"Status\":\"Failed\",\"NumberOfRetries\":\"', string(pipeline().parameters.TaskObject.NumberOfRetries),'\"}'))",
-										"type": "Expression"
-									},
-									"FunctionName": "Log",
-									"Method": "Post"
-								}
-							}
-						}
-					]
+                        {
+                            "name": "Pipeline AF Log - Invalid Pipeline",
+                            "type": "ExecutePipeline",
+                            "dependsOn": [],
+                            "userProperties": [],
+                            "typeProperties": {
+                                "pipeline": {
+                                    "referenceName": "AZ_Function_Generic",
+                                    "type": "PipelineReference"
+                                },
+                                "waitOnCompletion": false,
+                                "parameters": {
+                                    "Body": {
+                                        "value": "@json(concat('{\"TaskInstanceId\":\"', string(pipeline().parameters.TaskObject.TaskInstanceId), '\",\"ExecutionUid\":\"', string(pipeline().parameters.TaskObject.ExecutionUid), '\",\"RunId\":\"', string(pipeline().RunId), '\",\"LogTypeId\":1,\"LogSource\":\"ADF\",\"ActivityType\":\"Data-Movement-Master\",\"StartDateTimeOffSet\":\"', string(pipeline().TriggerTime), '\",\"EndDateTimeOffSet\":\"', string(utcnow()), '\",\"Comment\":\"Invalid TaskType: ', string(pipeline().parameters.TaskObject.TaskType), '\",\"Status\":\"Failed\",\"NumberOfRetries\":\"', string(pipeline().parameters.TaskObject.NumberOfRetries),'\"}'))",
+                                        "type": "Expression"
+                                    },
+                                    "FunctionName": "Log",
+                                    "Method": "Post"
+                                }
+                            }
+                        },
+                        {
+                            "name": "Fail Due to Invalid Pipeline",
+                            "type": "Fail",
+                            "dependsOn": [
+                                {
+                                    "activity": "Pipeline AF Log - Invalid Pipeline",
+                                    "dependencyConditions": [
+                                        "Succeeded"
+                                    ]
+                                }
+                            ],
+                            "userProperties": [],
+                            "typeProperties": {
+                                "message": {
+                                    "value": "@concat('Invalid Pipeline:',pipeline().parameters.TaskObject.DataFactory.ADFPipeline)",
+                                    "type": "Expression"
+                                },
+                                "errorCode": "500"
+                            }
+                        }
+                    ]
 				}
 			},
 			{

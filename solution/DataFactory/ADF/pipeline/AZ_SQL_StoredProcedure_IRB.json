@@ -1,0 +1,92 @@
+{
+	"name": "AZ_SQL_StoredProcedure_IRB",
+	"properties": {
+		"activities": [
+			{
+				"name": "Execute Stored Procedure",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": {
+							"value": "@pipeline().parameters.TaskObject.Source.Execute.StoredProcedure",
+							"type": "Expression"
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "AzureSqlTable_IRB",
+						"type": "DatasetReference",
+						"parameters": {
+							"Schema": {
+								"value": "@pipeline().parameters.TaskObject.Source.Extraction.TableSchema",
+								"type": "Expression"
+							},
+							"Table": {
+								"value": "@pipeline().parameters.TaskObject.Source.Extraction.TableName",
+								"type": "Expression"
+							},
+							"Server": {
+								"value": "@pipeline().parameters.TaskObject.Source.Database.SystemName",
+								"type": "Expression"
+							},
+							"Database": {
+								"value": "@pipeline().parameters.TaskObject.Source.Database.Name",
+								"type": "Expression"
+							}
+						}
+					}
+				}
+			},
+			{
+				"name": "Pipeline AF Log - Lookup Failed",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Execute Stored Procedure",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "AZ_Function_Generic",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": false,
+					"parameters": {
+						"Body": {
+							"value": "@json(concat('{\"TaskInstanceId\":\"', string(pipeline().parameters.TaskObject.TaskInstanceId), '\",\"ExecutionUid\":\"', string(pipeline().parameters.TaskObject.ExecutionUid), '\",\"RunId\":\"', string(pipeline().RunId), '\",\"LogTypeId\":1,\"LogSource\":\"ADF\",\"ActivityType\":\"Execute Stored Procedure\",\"StartDateTimeOffSet\":\"', string(pipeline().TriggerTime), '\",\"EndDateTimeOffSet\":\"', string(utcnow()), '\",\"Comment\":\"', string(activity('Execute Stored Procedure').error.message), '\",\"Status\":\"Failed\"}'))",
+							"type": "Expression"
+						},
+						"FunctionName": "Log",
+						"Method": "Post"
+					}
+				}
+			}
+		],
+		"parameters": {
+			"TaskObject": {
+				"type": "object"
+			}
+		},
+		"folder": {
+			"name": "ADS Go Fast/Data Movement/IRB"
+		},
+		"annotations": [],
+		"lastPublishTime": "2020-08-06T09:21:51Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

@@ -12,12 +12,12 @@
       "EnableConfigure": true,
       "ResourceGroup": {
         "Enable": true,
-        "Id": "/subscriptions/035a1364-f00d-48e2-b582-4fe125905ee3/resourceGroups/AdsTestNew",
+        "Id": "/subscriptions/035a1364-f00d-48e2-b582-4fe125905ee3/resourceGroups/AdsTestDemo",
         "Subscription": "Jorampon Internal Consumption",
         "Domain": "microsoft.com",
         "TenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
         "Location": "australiaeast",
-        "Name": "AdsTestNew",
+        "Name": "AdsTestDemo",
         "AADUser": "jorampon@microsoft.com",
         "Hash": "DummyValueToBeReplacedAtRuntime"
       },
@@ -31,13 +31,13 @@
           "Enable": true,
           "Name": "AdsGFWebAuthSP",
           "ApplyNamePostFix": true,
-          "ClientId": "b6b8468e-3221-437b-ba5a-6081a04ab6a9"
+          "ClientId": "75d0a51f-34a3-4aab-b6b4-76988a49338d"
         },
         "FunctionAppAuthenticationSP": {
           "Enable": true,
           "Name": "AdsGFFuncAppAuthSP",
           "ApplyNamePostFix": true,
-          "ClientId": "a88aeff6-bc15-49b6-a6f8-3a7391afa0cb"
+          "ClientId": "b9fc9c84-29c9-4341-9348-79706880be12"
         }
       },
       "FolderPaths": {
@@ -307,18 +307,18 @@
           "Name": "synapsews",
           "ApplyNamePostFix": true,
           "Enable": true,
-          "DlsName": "synadls5784" ,
-          "DlsFileSysName": "data" ,
-          "SqlPoolName": "SqlPool01" ,
-          "SparkPoolName": "SparkPool01" ,
-          "SparkPoolNodeCount": 3 ,
-          "SparkPoolAutoScaleMinNodeCount": 3 ,
-          "SparkPoolAutoScaleMaxNodeCount": 3 ,
-          "sparkDeployment": "true" ,
-          "sparkNodeSize": "Small" ,
-          "dedicatedSqlPoolDeployment": "false" ,
-          "sqlAdministratorLogin": "sqlAdmin" ,
-          "sqlAdministratorLoginPassword": "xxxxxxxx" ,
+          "DlsName": "synadls5784",
+          "DlsFileSysName": "data",
+          "SqlPoolName": "SqlPool01",
+          "SparkPoolName": "SparkPool01",
+          "SparkPoolNodeCount": 3,
+          "SparkPoolAutoScaleMinNodeCount": 3,
+          "SparkPoolAutoScaleMaxNodeCount": 3,
+          "sparkDeployment": "true",
+          "sparkNodeSize": "Small",
+          "dedicatedSqlPoolDeployment": "false",
+          "sqlAdministratorLogin": "sqlAdmin",
+          "sqlAdministratorLoginPassword": "xxxxxxxx",
           "sku": "DW100c"
         }
       }

@@ -1,0 +1,406 @@
+{
+	"name": "AZ_Storage_Excel_AZ_Storage_CSV_IRB",
+	"properties": {
+		"activities": [
+			{
+				"name": "Switch Storage Type",
+				"type": "Switch",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"on": {
+						"value": "@pipeline().parameters.TaskObject.Source.Type",
+						"type": "Expression"
+					},
+					"cases": [
+						{
+							"value": "ADLS",
+							"activities": [
+								{
+									"name": "Copy ADLS to ADLS",
+									"type": "Copy",
+									"dependsOn": [
+										{
+											"activity": "Pipeline AF Log - ADLS to ADLS Start",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "ExcelSource",
+											"storeSettings": {
+												"type": "AzureBlobFSReadSettings",
+												"recursive": true
+											}
+										},
+										"sink": {
+											"type": "DelimitedTextSink",
+											"storeSettings": {
+												"type": "AzureBlobFSWriteSettings"
+											},
+											"formatSettings": {
+												"type": "DelimitedTextWriteSettings",
+												"quoteAllText": true,
+												"fileExtension": ".txt"
+											}
+										},
+										"enableStaging": false,
+										"parallelCopies": {
+											"value": "@pipeline().parameters.TaskObject.DegreeOfCopyParallelism",
+											"type": "Expression"
+										}
+									},
+									"inputs": [
+										{
+											"referenceName": "ADLSExcel_IRB",
+											"type": "DatasetReference",
+											"parameters": {
+												"RelativePath": {
+													"value": "@pipeline().parameters.TaskObject.Source.RelativePath",
+													"type": "Expression"
+												},
+												"FileName": {
+													"value": "@pipeline().parameters.TaskObject.Source.DataFileName",
+													"type": "Expression"
+												},
+												"StorageAccountEndpoint": {
+													"value": "@pipeline().parameters.TaskObject.Source.StorageAccountName",
+													"type": "Expression"
+												},
+												"StorageAccountContainerName": {
+													"value": "@pipeline().parameters.TaskObject.Source.StorageAccountContainer",
+													"type": "Expression"
+												},
+												"SheetName": {
+													"value": "@pipeline().parameters.TaskObject.Source.SheetName",
+													"type": "Expression"
+												},
+												"FirstRowAsHeader": {
+													"value": "@pipeline().parameters.TaskObject.Source.FirstRowAsHeader",
+													"type": "Expression"
+												}
+											}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "ADLSDelimitedText_IRB",
+											"type": "DatasetReference",
+											"parameters": {
+												"RelativePath": {
+													"value": "@pipeline().parameters.TaskObject.Target.RelativePath",
+													"type": "Expression"
+												},
+												"FileName": {
+													"value": "@pipeline().parameters.TaskObject.Target.DataFileName",
+													"type": "Expression"
+												},
+												"StorageAccountEndpoint": {
+													"value": "@pipeline().parameters.TaskObject.Target.StorageAccountName",
+													"type": "Expression"
+												},
+												"StorageAccountContainerName": {
+													"value": "@pipeline().parameters.TaskObject.Target.StorageAccountContainer",
+													"type": "Expression"
+												},
+												"FirstRownAsHeader": {
+													"value": "@pipeline().parameters.TaskObject.Target.FirstRowAsHeader",
+													"type": "Expression"
+												}
+											}
+										}
+									]
+								},
+								{
+									"name": "Pipeline AF Log - ADLS to ADLS Failed",
+									"type": "ExecutePipeline",
+									"dependsOn": [
+										{
+											"activity": "Copy ADLS to ADLS",
+											"dependencyConditions": [
+												"Failed"
+											]
+										}
+									],
+									"userProperties": [],
+									"typeProperties": {
+										"pipeline": {
+											"referenceName": "AZ_Function_Generic",
+											"type": "PipelineReference"
+										},
+										"waitOnCompletion": false,
+										"parameters": {
+											"Body": {
+												"value": "@json(concat('{\"TaskInstanceId\":\"', string(pipeline().parameters.TaskObject.TaskInstanceId), '\",\"ExecutionUid\":\"', string(pipeline().parameters.TaskObject.ExecutionUid), '\",\"RunId\":\"', string(pipeline().RunId), '\",\"LogTypeId\":1,\"LogSource\":\"ADF\",\"ActivityType\":\"Copy ADLS to ADLS\",\"StartDateTimeOffSet\":\"', string(pipeline().TriggerTime), '\",\"EndDateTimeOffSet\":\"', string(utcnow()), '\",\"Comment\":\"', string(activity('Copy ADLS to ADLS').error.message), '\",\"Status\":\"Failed\"}'))",
+												"type": "Expression"
+											},
+											"FunctionName": "Log",
+											"Method": "Post"
+										}
+									}
+								},
+								{
+									"name": "Pipeline AF Log - ADLS to ADLS Start",
+									"type": "ExecutePipeline",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"pipeline": {
+											"referenceName": "AZ_Function_Generic",
+											"type": "PipelineReference"
+										},
+										"waitOnCompletion": false,
+										"parameters": {
+											"Body": {
+												"value": "@json(concat('{\"TaskInstanceId\":\"', string(pipeline().parameters.TaskObject.TaskInstanceId), '\",\"ExecutionUid\":\"', string(pipeline().parameters.TaskObject.ExecutionUid), '\",\"RunId\":\"', string(pipeline().RunId), '\",\"LogTypeId\":3,\"LogSource\":\"ADF\",\"ActivityType\":\"Copy ADLS to ADLS\",\"StartDateTimeOffSet\":\"', string(pipeline().TriggerTime), '\",\"Status\":\"Started\"}'))",
+												"type": "Expression"
+											},
+											"FunctionName": "Log",
+											"Method": "Post"
+										}
+									}
+								},
+								{
+									"name": "Pipeline AF Log - ADLS to ADLS Succeed",
+									"type": "ExecutePipeline",
+									"dependsOn": [
+										{
+											"activity": "Copy ADLS to ADLS",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"userProperties": [],
+									"typeProperties": {
+										"pipeline": {
+											"referenceName": "AZ_Function_Generic",
+											"type": "PipelineReference"
+										},
+										"waitOnCompletion": false,
+										"parameters": {
+											"Body": {
+												"value": "@json(concat('{\"TaskInstanceId\":\"', string(pipeline().parameters.TaskObject.TaskInstanceId), '\",\"ExecutionUid\":\"', string(pipeline().parameters.TaskObject.ExecutionUid), '\",\"RunId\":\"', string(pipeline().RunId), '\",\"LogTypeId\":1,\"LogSource\":\"ADF\",\"ActivityType\":\"Copy ADLS to ADLS\",\"StartDateTimeOffSet\":\"', string(pipeline().TriggerTime), '\",\"EndDateTimeOffSet\":\"', string(utcnow()), '\",\"RowsInserted\":\"', string(activity('Copy ADLS to ADLS').output.rowsCopied), '\",\"Comment\":\"\",\"Status\":\"Complete\"}'))",
+												"type": "Expression"
+											},
+											"FunctionName": "Log",
+											"Method": "Post"
+										}
+									}
+								}
+							]
+						},
+						{
+							"value": "Azure Blob",
+							"activities": [
+								{
+									"name": "Copy Blob to Blob",
+									"type": "Copy",
+									"dependsOn": [
+										{
+											"activity": "Pipeline AF Log - BLOB to Blob Start",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "ExcelSource",
+											"storeSettings": {
+												"type": "AzureBlobStorageReadSettings",
+												"recursive": true
+											}
+										},
+										"sink": {
+											"type": "DelimitedTextSink",
+											"storeSettings": {
+												"type": "AzureBlobStorageWriteSettings"
+											},
+											"formatSettings": {
+												"type": "DelimitedTextWriteSettings",
+												"quoteAllText": true,
+												"fileExtension": ".txt"
+											}
+										},
+										"enableStaging": false,
+										"parallelCopies": {
+											"value": "@pipeline().parameters.TaskObject.DegreeOfCopyParallelism",
+											"type": "Expression"
+										}
+									},
+									"inputs": [
+										{
+											"referenceName": "BlobExcel_IRB",
+											"type": "DatasetReference",
+											"parameters": {
+												"RelativePath": {
+													"value": "@pipeline().parameters.TaskObject.Source.RelativePath",
+													"type": "Expression"
+												},
+												"FileName": {
+													"value": "@pipeline().parameters.TaskObject.Source.DataFileName",
+													"type": "Expression"
+												},
+												"StorageAccountEndpoint": {
+													"value": "@pipeline().parameters.TaskObject.Source.StorageAccountName",
+													"type": "Expression"
+												},
+												"StorageAccountContainerName": {
+													"value": "@pipeline().parameters.TaskObject.Source.StorageAccountContainer",
+													"type": "Expression"
+												},
+												"SheetName": {
+													"value": "@pipeline().parameters.TaskObject.Source.SheetName",
+													"type": "Expression"
+												},
+												"FirstRowAsHeader": {
+													"value": "@pipeline().parameters.TaskObject.Source.FirstRowAsHeader",
+													"type": "Expression"
+												}
+											}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "BlobDelimitedText_IRB",
+											"type": "DatasetReference",
+											"parameters": {
+												"RelativePath": {
+													"value": "@pipeline().parameters.TaskObject.Target.RelativePath",
+													"type": "Expression"
+												},
+												"FileName": {
+													"value": "@pipeline().parameters.TaskObject.Target.DataFileName",
+													"type": "Expression"
+												},
+												"StorageAccountEndpoint": {
+													"value": "@pipeline().parameters.TaskObject.Target.StorageAccountName",
+													"type": "Expression"
+												},
+												"StorageAccountContainerName": {
+													"value": "@pipeline().parameters.TaskObject.Target.StorageAccountContainer",
+													"type": "Expression"
+												},
+												"FirstRowAsHeader": {
+													"value": "@pipeline().parameters.TaskObject.Target.FirstRowAsHeader",
+													"type": "Expression"
+												}
+											}
+										}
+									]
+								},
+								{
+									"name": "Pipeline AF Log - BLOB to Azure SQL Failed",
+									"type": "ExecutePipeline",
+									"dependsOn": [
+										{
+											"activity": "Copy Blob to Blob",
+											"dependencyConditions": [
+												"Failed"
+											]
+										}
+									],
+									"userProperties": [],
+									"typeProperties": {
+										"pipeline": {
+											"referenceName": "AZ_Function_Generic",
+											"type": "PipelineReference"
+										},
+										"waitOnCompletion": false,
+										"parameters": {
+											"Body": {
+												"value": "@json(concat('{\"TaskInstanceId\":\"', string(pipeline().parameters.TaskObject.TaskInstanceId), '\",\"ExecutionUid\":\"', string(pipeline().parameters.TaskObject.ExecutionUid), '\",\"RunId\":\"', string(pipeline().RunId), '\",\"LogTypeId\":1,\"LogSource\":\"ADF\",\"ActivityType\":\"Copy Blob to Blob\",\"StartDateTimeOffSet\":\"', string(pipeline().TriggerTime), '\",\"EndDateTimeOffSet\":\"', string(utcnow()), '\",\"Comment\":\"', string(activity('Copy Blob to Blob').error.message), '\",\"Status\":\"Failed\"}'))",
+												"type": "Expression"
+											},
+											"FunctionName": "Log",
+											"Method": "Post"
+										}
+									}
+								},
+								{
+									"name": "Pipeline AF Log - BLOB to Blob Start",
+									"type": "ExecutePipeline",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"pipeline": {
+											"referenceName": "AZ_Function_Generic",
+											"type": "PipelineReference"
+										},
+										"waitOnCompletion": false,
+										"parameters": {
+											"Body": {
+												"value": "@json(concat('{\"TaskInstanceId\":\"', string(pipeline().parameters.TaskObject.TaskInstanceId), '\",\"ExecutionUid\":\"', string(pipeline().parameters.TaskObject.ExecutionUid), '\",\"RunId\":\"', string(pipeline().RunId), '\",\"LogTypeId\":3,\"LogSource\":\"ADF\",\"ActivityType\":\"Copy Blob to Blob\",\"StartDateTimeOffSet\":\"', string(pipeline().TriggerTime), '\",\"Status\":\"Started\"}'))",
+												"type": "Expression"
+											},
+											"FunctionName": "Log",
+											"Method": "Post"
+										}
+									}
+								},
+								{
+									"name": "Pipeline AF Log - Blob to Azure SQL Succeed",
+									"type": "ExecutePipeline",
+									"dependsOn": [
+										{
+											"activity": "Copy Blob to Blob",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"userProperties": [],
+									"typeProperties": {
+										"pipeline": {
+											"referenceName": "AZ_Function_Generic",
+											"type": "PipelineReference"
+										},
+										"waitOnCompletion": false,
+										"parameters": {
+											"Body": {
+												"value": "@json(concat('{\"TaskInstanceId\":\"', string(pipeline().parameters.TaskObject.TaskInstanceId), '\",\"ExecutionUid\":\"', string(pipeline().parameters.TaskObject.ExecutionUid), '\",\"RunId\":\"', string(pipeline().RunId), '\",\"LogTypeId\":1,\"LogSource\":\"ADF\",\"ActivityType\":\"Copy Blob to Blob\",\"StartDateTimeOffSet\":\"', string(pipeline().TriggerTime), '\",\"EndDateTimeOffSet\":\"', string(utcnow()), '\",\"RowsInserted\":\"', string(activity('Copy Blob to Blob').output.rowsCopied), '\",\"Comment\":\"\",\"Status\":\"Complete\"}'))",
+												"type": "Expression"
+											},
+											"FunctionName": "Log",
+											"Method": "Post"
+										}
+									}
+								}
+							]
+						}
+					]
+				}
+			}
+		],
+		"parameters": {
+			"TaskObject": {
+				"type": "object"
+			}
+		},
+		"folder": {
+			"name": "ADS Go Fast/Data Movement/IRB"
+		},
+		"annotations": [],
+		"lastPublishTime": "2020-08-05T08:58:04Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

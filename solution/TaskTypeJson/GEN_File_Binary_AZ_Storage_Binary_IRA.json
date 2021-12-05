@@ -12,7 +12,8 @@
                     ],
                     "default": "Binary",
                     "options": {
-                        "infoText": "Only Binary is supported this time. "
+                        "infoText": "Only Binary is supported this time. ",
+                        "hidden":true
                     }
                 },
                 "RelativePath": {
@@ -74,7 +75,8 @@
                     ],
                     "default": "Binary",
                     "options": {
-                        "infoText": "Only Binary is supported this time. "
+                        "infoText": "Only Binary is supported this time. ", 
+                        "hidden": true
                     }
                 },
                 "RelativePath": {

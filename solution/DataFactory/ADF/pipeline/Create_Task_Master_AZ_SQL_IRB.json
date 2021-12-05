@@ -1,0 +1,245 @@
+{
+	"name": "Create-Task_MASTER_AZ_SQL_IRB",
+	"properties": {
+		"activities": [
+			{
+				"name": "AF Log - Get Metadata Failed",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Lookup Get Metadata",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "AZ_Function_Generic",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": false,
+					"parameters": {
+						"Body": {
+							"value": "@json(concat('{\"TaskInstanceId\":\"', string(pipeline().parameters.TaskObject.TaskInstanceId), '\",\"ExecutionUid\":\"', string(pipeline().parameters.TaskObject.ExecutionUid), '\",\"RunId\":\"', string(pipeline().RunId), '\",\"LogTypeId\":1,\"LogSource\":\"ADF\",\"ActivityType\":\"Get Metadata\",\"StartDateTimeOffSet\":\"', string(pipeline().TriggerTime), '\",\"EndDateTimeOffSet\":\"', string(utcnow()), '\",\"Comment\":\"', string(activity('Lookup Get Metadata').error.message), '\",\"Status\":\"Failed\"}'))",
+							"type": "Expression"
+						},
+						"FunctionName": "Log",
+						"Method": "Post"
+					}
+				}
+			},
+			{
+				"name": "AF Log - Get Metadata Start",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "AZ_Function_Generic",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": false,
+					"parameters": {
+						"Body": {
+							"value": "@json(concat('{\"TaskInstanceId\":\"', string(pipeline().parameters.TaskObject.TaskInstanceId), '\",\"ExecutionUid\":\"', string(pipeline().parameters.TaskObject.ExecutionUid), '\",\"RunId\":\"', string(pipeline().RunId), '\",\"LogTypeId\":3,\"LogSource\":\"ADF\",\"ActivityType\":\"Get Metadata\",\"StartDateTimeOffSet\":\"', string(pipeline().TriggerTime), '\",\"Status\":\"Started\"}'))",
+							"type": "Expression"
+						},
+						"FunctionName": "Log",
+						"Method": "Post"
+					}
+				}
+			},
+			{
+				"name": "AF Log - Get Metadata Succeed",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "AF Generate Task Masters",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "AZ_Function_Generic",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": false,
+					"parameters": {
+						"Body": {
+							"value": "@json(concat('{\"TaskInstanceId\":\"', string(pipeline().parameters.TaskObject.TaskInstanceId), '\",\"ExecutionUid\":\"', string(pipeline().parameters.TaskObject.ExecutionUid), '\",\"RunId\":\"', string(pipeline().RunId), '\",\"LogTypeId\":1,\"LogSource\":\"ADF\",\"ActivityType\":\"Get Metadata\",\"StartDateTimeOffSet\":\"', string(pipeline().TriggerTime), '\",\"EndDateTimeOffSet\":\"', string(utcnow()), '\",\"Comment\":\"\",\"Status\":\"Complete\"}'))",
+							"type": "Expression"
+						},
+						"FunctionName": "Log",
+						"Method": "Post"
+					}
+				}
+			},
+			{
+				"name": "Lookup Get Metadata",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "AF Get All Tables From Database SQL",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": {
+							"value": "@activity('AF Get All Tables From Database SQL').output.InformationSchemaSQL",
+							"type": "Expression"
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "AzureSqlTable_IRB",
+						"type": "DatasetReference",
+						"parameters": {
+							"Schema": {
+								"value": "@pipeline().parameters.TaskObject.Source.Extraction.TableSchema",
+								"type": "Expression"
+							},
+							"Table": {
+								"value": "@pipeline().parameters.TaskObject.Source.Extraction.TableName",
+								"type": "Expression"
+							},
+							"Server": {
+								"value": "@pipeline().parameters.TaskObject.Source.Database.SystemName",
+								"type": "Expression"
+							},
+							"Database": {
+								"value": "@pipeline().parameters.TaskObject.Source.Database.Name",
+								"type": "Expression"
+							}
+						}
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "AF Get All Tables From Database SQL",
+				"type": "AzureFunctionActivity",
+				"dependsOn": [
+					{
+						"activity": "AF Log - Get Metadata Start",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"functionName": "MsSqlGetAllTablesFromDatabaseSQL",
+					"method": "GET",
+					"body": {
+						"value": "@json(concat('{\"TableSchema\":\"', string(pipeline().parameters.TaskObject.Source.Extraction.TableSchema), '\",\"TableName\":\"', string(pipeline().parameters.TaskObject.Source.Extraction.TableName),'\"}'))",
+						"type": "Expression"
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "AzureFunctionAdsGoFastDataLakeAccelFunApp",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "AF Generate Task Masters",
+				"type": "AzureFunctionActivity",
+				"dependsOn": [
+					{
+						"activity": "Lookup Get Metadata",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"functionName": "GenerateTaskMasters",
+					"method": "POST",
+					"body": {
+						"value": "@json(concat('{\"TaskInstanceId\":\"', string(pipeline().parameters.TaskObject.TaskInstanceId), '\",\"ExecutionUid\":\"', string(pipeline().parameters.TaskObject.ExecutionUid), '\",\"RunId\":\"', string(pipeline().RunId), '\",\"TableList\":', string(activity('Lookup Get Metadata').output.value), ',\"JsonTemplate\":', string(pipeline().parameters.TaskObject.TaskMasterTemplate),'}'))",
+						"type": "Expression"
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "AzureFunctionAdsGoFastDataLakeAccelFunApp",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "AF Disable Task Master",
+				"type": "AzureFunctionActivity",
+				"dependsOn": [
+					{
+						"activity": "AF Generate Task Masters",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"functionName": "DisableTaskMaster",
+					"method": "POST",
+					"body": {
+						"value": "@json(concat('{\"TaskInstanceId\":\"', string(pipeline().parameters.TaskObject.TaskInstanceId), '\",\"ExecutionUid\":\"', string(pipeline().parameters.TaskObject.ExecutionUid), '\",\"RunId\":\"', string(pipeline().RunId), '\",\"TaskMasterId\":\"', string(pipeline().parameters.TaskObject.TaskMasterId),'\"}'))",
+						"type": "Expression"
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "AzureFunctionAdsGoFastDataLakeAccelFunApp",
+					"type": "LinkedServiceReference"
+				}
+			}
+		],
+		"parameters": {
+			"TaskObject": {
+				"type": "object"
+			}
+		},
+		"folder": {
+			"name": "ADS Go Fast/Create Task Master/IRB"
+		},
+		"annotations": [],
+		"lastPublishTime": "2020-08-04T13:09:29Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

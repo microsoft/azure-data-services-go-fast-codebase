@@ -1,0 +1,48 @@
+{
+    "name": "GenericAmazonRdsForOracle_IRA",
+    "type": "Microsoft.DataFactory/factories/linkedservices",
+    "properties": {
+        "parameters": {
+            "KeyVaultBaseUrl": {
+                "type": "string"
+            },
+            "PasswordSecret": {
+                "type": "string"
+            },
+            "Host": {
+                "type": "string"
+            },
+            "UserName": {
+                "type": "string"
+            },
+            "SID": {
+                "type": "string"
+            },
+            "Port": {
+                "type": "string"
+            }
+        },
+        "annotations": [],
+        "type": "AmazonRdsForOracle",
+        "typeProperties": {
+            "connectionString": "host=@{linkedService().Host};port=@{linkedService().Port};sid=@{linkedService().SID};user id=@{linkedService().UserName}",
+            "password": {
+                "type": "AzureKeyVaultSecret",
+                "store": {
+                    "referenceName": "GenericAzureKeyVault",
+                    "type": "LinkedServiceReference",
+                    "parameters": {
+                        "KeyVaultBaseUrl": {
+                            "value": "@linkedService().KeyVaultBaseUrl",
+                            "type": "Expression"
+                        }
+                    }
+                },
+                "secretName": {
+                    "value": "@linkedService().PasswordSecret",
+                    "type": "Expression"
+                }
+            }
+        }
+    }
+}
