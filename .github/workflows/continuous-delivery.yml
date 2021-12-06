@@ -1,0 +1,37 @@
+name: Continuous Delivery
+
+on: 
+  push:
+    branches:
+      - task/workflow-v2
+
+jobs:
+  build-function-app:
+    name: Build Function App
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ./.github/templates/publish-component@v1
+        with:
+          name: Function App
+          path: ./solution/FunctionApp/
+          package-name: FunctionApp.zip
+
+  build-web-app:
+    name: Build Web Application
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ./.github/templates/publish-component@v1
+        with:
+          name: Web Application
+          path: ./solution/WebApplication/
+          package-name: WebApp.zip
+
+  build-dbup-app:
+    name: Build Function App
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ./.github/templates/publish-component@v1
+        with:
+          name: DbUp Console App
+          path: ./solution/Database/ADSGoFastDbUp/AdsGoFastDbUp/
+          package-name: DbUp.zip

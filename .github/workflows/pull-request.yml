@@ -1,0 +1,36 @@
+name: Pull Request (Build & Test)
+
+on:
+  pull_request:
+    branches: [ main ]
+  push:
+    branches:
+      - task/workflow-v2
+
+jobs:
+  build-function-app:
+    name: Build Function App
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ./.github/templates/build-component@v1
+        with:
+          name: Function App
+          path: ./solution/FunctionApp/
+
+  build-web-app:
+    name: Build Web Application
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ./.github/templates/build-component@v1
+        with:
+          name: Web Application
+          path: ./solution/WebApplication/
+
+  build-dbup-app:
+    name: Build Function App
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ./.github/templates/build-component@v1
+        with:
+          name: DbUp Console App
+          path: ./solution/Database/ADSGoFastDbUp/AdsGoFastDbUp/
