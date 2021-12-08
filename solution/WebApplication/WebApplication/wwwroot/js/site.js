@@ -5,9 +5,9 @@
 
 function DataTablesGridPrep(PrepOptions) {
     params = {}; location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (s, k, v) { params[k] = v });
-    var PostData = { QueryParams: null};
+    var PostData = { QueryParams: null };
     if (Object.keys(params).length > 0) {
-        PostData = { QueryParams: params};
+        PostData = { QueryParams: params };
     }
 
     if (typeof PrepOptions !== 'undefined') {
@@ -60,11 +60,11 @@ function DataTablesGridStart(GridOptions, PrepOptions) {
     gridheader.empty();
 
     $.each(GridOptions.GridColumns, function (index, value) {
-    gridheader[0].append($("<th>" + value["name"] + "</th>")[0]);
+        gridheader[0].append($("<th>" + value["name"] + "</th>")[0]);
     });
 
     //QueryParams
-    params = { }; location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (s, k, v) {params[k] = v})
+    params = {}; location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (s, k, v) { params[k] = v })
 
     //PrepOptions 
     if (typeof PrepOptions === 'undefined') {
@@ -75,7 +75,7 @@ function DataTablesGridStart(GridOptions, PrepOptions) {
         PrepOptions.AjaxDataFunction = function (d) {
             d.QueryParams = params;
         }
-    }    
+    }
 
     //Navigation Buttons
     NavButtons = [
@@ -93,27 +93,27 @@ function DataTablesGridStart(GridOptions, PrepOptions) {
             CrudController = GridOptions["CrudController"];
         }
 
-        if (value === "Create" || value === "CreatePlus") {            
+        if (value === "Create" || value === "CreatePlus") {
             imageclass = "fas fa-plus";
             btnclass = "btn-primary";
             imgtitle = "Add Item";
         }
 
-        if (value === "Edit" || value === "EditPlus") {            
+        if (value === "Edit" || value === "EditPlus") {
             extend = "selectedSingle",
-            imageclass = "fas fa-edit";
+                imageclass = "fas fa-edit";
             btnclass = "btn-warning";
             imgtitle = "Edit Item";
         }
 
-        if (value === "Details" || value === "DetailsPlus") {            
+        if (value === "Details" || value === "DetailsPlus") {
             extend = "selectedSingle",
-            imageclass = "fas fa-info-circle";
+                imageclass = "fas fa-info-circle";
             btnclass = "btn-info";
             imgtitle = "View Details";
         }
 
-        if (value === "Delete" || value === "DeletePlus") {            
+        if (value === "Delete" || value === "DeletePlus") {
             extend = "selectedSingle",
                 imageclass = "fas fa-trash";
             btnclass = "btn-danger";
@@ -124,7 +124,7 @@ function DataTablesGridStart(GridOptions, PrepOptions) {
             var CrudButton =
             {
                 text: '<i data-toggle="tooltip" title="' + imgtitle + '" class="' + imageclass + '" style=\'width:16px\'></i>',
-                className: btnclass + ' ads-btn-crud'                             
+                className: btnclass + ' ads-btn-crud'
             };
 
             if (value === "Create" || value === "CreatePlus") {
@@ -151,7 +151,7 @@ function DataTablesGridStart(GridOptions, PrepOptions) {
                         window.location = "/" + CrudController + "/" + value + "/" + dt.data()[dt.rows({ selected: true }).indexes()[0]][GridOptions.PrimaryKeyColumns[0]];
                     }
                 }
-                }
+            }
 
 
             if (typeof extend !== 'undefined') { CrudButton.extend = extend; }
@@ -173,14 +173,12 @@ function DataTablesGridStart(GridOptions, PrepOptions) {
             }
         };
 
-        if(value.Icon !== undefined)
-        {
-            NewButton.text = '<i data-toggle="tooltip" class="fas fa-' + value.Icon + ' style="width: 16px" title="'+ value.Description+'"></i>';
-        } 
-        else 
-        {
+        if (value.Icon !== undefined) {
+            NewButton.text = '<i data-toggle="tooltip" class="fas fa-' + value.Icon + ' style="width: 16px" title="' + value.Description + '"></i>';
+        }
+        else {
             NewButton.text = value.Description;
-        }        
+        }
 
         NavButtons.push(NewButton);
     });
@@ -192,6 +190,7 @@ function DataTablesGridStart(GridOptions, PrepOptions) {
         "serverSide": true, // for process server side
         "filter": true, // this is for disable filter (search box)
         "orderMulti": false, // for disable multiple column at once
+        "stateSave": true,
         "scrollX": true,
         "scrollY": "60vh",
         "scrollCollapse": true,
@@ -215,7 +214,17 @@ function DataTablesGridStart(GridOptions, PrepOptions) {
                 render: $.fn.dataTable.render.number(',', '.', 2, '$')
             }],
 
-        "columns": GridOptions.GridColumns
+        "columns": GridOptions.GridColumns,
+        "initComplete": function () {
+            var api = this.api();
+
+            if (localStorage.getItem('DataTables_selected') != undefined) {
+                var selected = localStorage.getItem('DataTables_selected').split(',');
+                selected.forEach(function (s) {
+                    api.row(s).select();
+                });
+            }
+        }
     };
 
     if (GridOptions.InitialOrder !== undefined) {
@@ -248,17 +257,17 @@ function DataTablesGridStart(GridOptions, PrepOptions) {
             if (value.ads_format.toLowerCase() === "taskstatus") {
                 GridOptions.GridColumns[index].render = function (data, type, row, meta) {
                     var item = '<i data-toggle="tooltip" title="Off" class="fas fa-times-circle" style="width:16px; color:red"></i>';
-                    if (data==="Complete") {
-                        item = '<a><i data-toggle="tooltip" title="Complete" class="fas fa-check-circle" style="width:16px; color:green"></i> '+ data +'</a>';
+                    if (data === "Complete") {
+                        item = '<a><i data-toggle="tooltip" title="Complete" class="fas fa-check-circle" style="width:16px; color:green"></i> ' + data + '</a>';
                     }
                     if (data === "InProgress") {
-                        item = '<a><i data-toggle="tooltip" title="InProgress" class="fas fa-running" style="width:16px; color:Orange"></i> '+ data +'</a>';
+                        item = '<a><i data-toggle="tooltip" title="InProgress" class="fas fa-running" style="width:16px; color:Orange"></i> ' + data + '</a>';
                     }
                     if (data === "FailedNoRetry" || data === "FailedRetry") {
                         item = '<a><i data-toggle="tooltip" title="FailedNoRetry" class="fas fa-times-circle" style="width:16px; color:red"></i> ' + data + '</a>';
                     }
                     if (data === "Untried") {
-                        item = '<a><i data-toggle="tooltip" title="Untried" class="fas fa-pause-circle" style="width:16px"></i> '+data+'</a>';
+                        item = '<a><i data-toggle="tooltip" title="Untried" class="fas fa-pause-circle" style="width:16px"></i> ' + data + '</a>';
                     }
                     return item;
                 };
@@ -272,61 +281,63 @@ function DataTablesGridStart(GridOptions, PrepOptions) {
                     }
                     if (data === "Running") {
                         item = '<a><i data-toggle="tooltip" title="InProgress" class="fas fa-running" style="width:16px"></i> ' + data + '</a>';
-                    }                   
+                    }
                     return item;
                 };
             }
         }
     });
 
-   
+
     var dt = $("#adsgofast_tablelist").DataTable(DataTableInitialisationObject);
     dt.on('init.dt', function () {
         console.log('Table initialisation complete: ' + new Date().getTime());
         RestyleDataTableButtons();
     })
 
-      
-    
+
+    dt.on('select.dt deselect.dt', function () {
+        localStorage.setItem('DataTables_selected', dt.rows({ selected: true }).toArray());
+    });
 
 
     dt.on('draw', function () {
-        adsgofast_tablelist_wrapper               
+        adsgofast_tablelist_wrapper
 
         $('[data-toggle="tooltip"]').tooltip()
         $('[data-toggle="popover"]').popover();
 
-       
+
     });
 
     dt.on('column-sizing.dt', function (e, settings) {
-        $('#adsgofast_tablelist_wrapper').width($($('.dataTables_scrollHeadInner')[0]).width()+25);
-        
+        $('#adsgofast_tablelist_wrapper').width($($('.dataTables_scrollHeadInner')[0]).width() + 25);
+
     });
 };
 
 //Sidebar Stuff
 $(document).ready(function () {
 
-        $("#sidebar").mCustomScrollbar({
-            theme: "minimal"
-        });
+    $("#sidebar").mCustomScrollbar({
+        theme: "minimal"
+    });
 
-        $('#dismiss, .overlay').on('click', function () {
-            // hide sidebar
-            $('#sidebar').removeClass('active');
-            // hide overlay
-            $('.overlay').removeClass('active');
-        });
+    $('#dismiss, .overlay').on('click', function () {
+        // hide sidebar
+        $('#sidebar').removeClass('active');
+        // hide overlay
+        $('.overlay').removeClass('active');
+    });
 
-        $('#sidebarCollapse').on('click', function () {
-            // open sidebar
-            $('#sidebar').addClass('active');
-            // fade in the overlay
-            $('.overlay').addClass('active');
-            $('.collapse.in').toggleClass('in');
-            $('a[aria-expanded=true]').attr('aria-expanded', 'false');
-        });
+    $('#sidebarCollapse').on('click', function () {
+        // open sidebar
+        $('#sidebar').addClass('active');
+        // fade in the overlay
+        $('.overlay').addClass('active');
+        $('.collapse.in').toggleClass('in');
+        $('a[aria-expanded=true]').attr('aria-expanded', 'false');
+    });
 
 
 });
