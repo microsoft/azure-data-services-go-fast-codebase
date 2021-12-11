@@ -57,17 +57,15 @@
 		"type": "SqlServerTable",
 		"schema": [],
 		"typeProperties": {
-			"typeProperties": {
-                "schema": {
-                  "value": "@dataset().TableSchema",
-                  "type": "Expression"
-                },
-                "table": {
-                  "value": "@dataset().TableName",
-                  "type": "Expression"
-                }
-              }
-		}
+            "schema": {
+                "value": "@dataset().TableSchema",
+                "type": "Expression"
+            },
+            "table": {
+                "value": "@dataset().TableName",
+                "type": "Expression"
+            }
+        }
 	},
 	"type": "Microsoft.DataFactory/factories/datasets"
 }

@@ -79,10 +79,10 @@ namespace AdsGoFast.GetTaskInstanceJSON
                 ["Name"] = this.DataFactoryName,
                 ["ResourceGroup"] = this.DataFactoryResourceGroup,
                 ["SubscriptionId"] = this.DataFactorySubscriptionId,
-                ["ADFPipeline"] = this.ADFPipeline
+                ["ADFPipeline"] = this.ADFPipeline,
+                ["TaskDatafactoryIR"] = this.TaskDatafactoryIR
             };
-            _JsonObjectForADF["DataFactory"] = DataFactory;
-            
+            _JsonObjectForADF["DataFactory"] = DataFactory;           
 
         }
 

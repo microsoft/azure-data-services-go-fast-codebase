@@ -363,16 +363,6 @@ namespace AdsGoFast.TaskMetaData
 
                     Root["Target"] = Target;
 
-                    JObject DataFactory = new JObject
-                    {
-                        ["Id"] = T.DataFactoryId,
-                        ["Name"] = T.DataFactoryName,
-                        ["ResourceGroup"] = T.DataFactoryResourceGroup,
-                        ["SubscriptionId"] = T.DataFactorySubscriptionId,
-                        ["ADFPipeline"] = T.ADFPipeline
-                    };
-                    Root["DataFactory"] = DataFactory;
-
                     if (T.TaskType == "Generate Task Masters")
                     {
                         Root["TaskMasterTemplate"] = JObject.Parse(T.TaskMasterJson);

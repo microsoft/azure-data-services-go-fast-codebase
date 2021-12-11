@@ -33,9 +33,6 @@
                         "infoText": "Name of the file to be imported."
                     }
                 },
-                "SchemaFileName": {
-                    "type": "string"
-                },
                 "SkipLineCount": {
                     "type": "integer",                    
                     "default": 0,
@@ -43,23 +40,32 @@
                         "infoText": "Number of lines to skip."
                     }
                 },
-                "EscapeCharacter": {
+                "FirstRowAsHeader": {
                     "type": "string",
-                    "options": {
-                        "inputAttributes": {
-                            "placeholder": "eg. '"
-                        },
-                        "infoText": "Escape character"
+                    "enum": [
+                        "true",
+                        "false"
+                    ],
+                    "default": "true",
+                    "options": {                        
+                        "infoText": "Set to true if you want the first row of data to be used as column names."
                     }
-                }
+                }, 
+                "MaxConcorrentConnections": {
+                    "type": "integer",
+                    "default": 100,
+                    "options": {                        
+                        "infoText": "The upper limit of concurrent connections established to the data store during the activity run. Specify a value only when you want to limit concurrent connections"
+                    }
+                }                
             },
             "required": [
                 "Type",
                 "RelativePath",
                 "DataFileName",
-                "SchemaFileName",
                 "SkipLineCount",
-                "EscapeCharacter"
+                "FirstRowAsHeader",
+                "MaxConcorrentConnections"
             ]
         },
         "Target": {
@@ -161,6 +167,13 @@
                             "wrap": true
                           }
                     }
+                }, 
+                "DynamicMapping": {
+                    "type": "object",                                                          
+                    "options": {                                                
+                        "infoText": "",
+                        "hidden": true
+                    }
                 }
             },
             "required": [
@@ -172,7 +185,8 @@
                 "TableName",
                 "PreCopySQL",
                 "PostCopySQL",
-                "AutoGenerateMerge"
+                "AutoGenerateMerge", 
+                "DynamicMapping"
             ]
         }
     },

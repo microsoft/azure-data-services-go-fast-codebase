@@ -1,5 +1,5 @@
 {
-  "name": "GPL_AzureBlobStorage_Parquet_AzureSQLTable_NA_IRA",
+  "name": "GPL_AzureBlobStorage_Excel_AzureSQLTable_NA_IRA",
   "properties": {
     "activities": [
       {
@@ -44,58 +44,61 @@
         "userProperties": [],
         "typeProperties": {
           "source": {
-            "type": "ParquetSource",
+            "type": "ExcelSource",
             "storeSettings": {
-              "type": "AzureBlobStorageReadSettings",
-              "recursive": false,
-              "wildcardFolderPath": {
-                "value": "@pipeline().parameters.TaskObject.Source.RelativePath",
-                "type": "Expression"
-              },
-              "wildcardFileName": "*.parquet",
-              "enablePartitionDiscovery": false
+              "type": "AzureBlobFSReadSettings",
+              "recursive": true
             }
           },
           "sink": {
-            "type": "AzureSqlSink",
-            "preCopyScript": {
-              "value": "@{pipeline().parameters.TaskObject.Target.PreCopySQL}",
-              "type": "Expression"
+            "type": "DelimitedTextSink",
+            "storeSettings": {
+              "type": "AzureBlobStorageWriteSettings"
             },
-            "disableMetricsCollection": false
+            "formatSettings": {
+              "type": "DelimitedTextWriteSettings",
+              "quoteAllText": true,
+              "fileExtension": ".txt"
+            }
           },
           "enableStaging": false,
           "parallelCopies": {
             "value": "@pipeline().parameters.TaskObject.DegreeOfCopyParallelism",
             "type": "Expression"
-          },
-          "translator": {
-            "value": "@activity('AF Get Mapping').output.value",
-            "type": "Expression"
           }
         },
-        "inputs": {
-          "referenceName": "GDS_AzureBlobStorage_Parquet_IRA",
-          "type": "DatasetReference",
-          "parameters": {
-            "RelativePath": {
-              "value": "@pipeline().parameters.TaskObject.Source.RelativePath",
-              "type": "Expression"
-            },
-            "FileName": {
-              "value": "@pipeline().parameters.TaskObject.Source.DataFileName",
-              "type": "Expression"
-            },
-            "StorageAccountEndpoint": {
-              "value": "@pipeline().parameters.TaskObject.Source.StorageAccountName",
-              "type": "Expression"
-            },
-            "StorageAccountContainerName": {
-              "value": "@pipeline().parameters.TaskObject.Source.StorageAccountContainer",
-              "type": "Expression"
+        "inputs": [
+          {
+            "referenceName": "GDS_AzureBlobStorage_Excel_IRA",
+            "type": "DatasetReference",
+            "parameters": {
+              "RelativePath": {
+                "value": "@pipeline().parameters.TaskObject.Source.RelativePath",
+                "type": "Expression"
+              },
+              "FileName": {
+                "value": "@pipeline().parameters.TaskObject.Source.DataFileName",
+                "type": "Expression"
+              },
+              "StorageAccountEndpoint": {
+                "value": "@pipeline().parameters.TaskObject.Source.StorageAccountName",
+                "type": "Expression"
+              },
+              "StorageAccountContainerName": {
+                "value": "@pipeline().parameters.TaskObject.Source.StorageAccountContainer",
+                "type": "Expression"
+              },
+              "SheetName": {
+                "value": "@pipeline().parameters.TaskObject.Source.SheetName",
+                "type": "Expression"
+              },
+              "FirstRowAsHeader": {
+                "value": "@pipeline().parameters.TaskObject.Source.FirstRowAsHeader",
+                "type": "Expression"
+              }
             }
           }
-        },
+        ],
         "outputs": [
           {
             "referenceName": "AzureSqlTable_IRA",

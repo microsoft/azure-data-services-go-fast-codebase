@@ -1,51 +1,57 @@
 {
-    "$schema": "http://json-schema.org/draft-04/schema#",
-    "type": "object",
-    "properties": {
-      "Source": {
-        "type": "object",
-        "properties": {
-          "Type": {
-            "type": "string", 
-            "enum": [
-              "StoredProcedure"
-          ]
-          },
-          "TableSchema": {
-            "type": "string"
-          },
-          "TableName": {
-            "type": "string"
-          },
-          "StoredProcedure": {
-            "type": "string"
-          },
-          "Parameters": {
-            "type": "string"
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "Source": {
+      "type": "object",
+      "properties": {
+        "Type": {
+          "type": "string",
+          "enum": [
+            "StoredProcedure"
+          ],
+          "options": {
+            "hidden": true
           }
         },
-        "required": [
-          "Type",
-          "TableSchema",
-          "TableName",
-          "StoredProcedure",
-          "Parameters"
-        ]
+        "TableSchema": {
+          "type": "string"
+        },
+        "TableName": {
+          "type": "string"
+        },
+        "StoredProcedure": {
+          "type": "string"
+        },
+        "Parameters": {
+          "type": "string"
+        }
       },
-      "Target": {
-        "type": "object",
-        "properties": {
-          "Type": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "Type"
-        ]
-      }
+      "required": [
+        "Type",
+        "TableSchema",
+        "TableName",
+        "StoredProcedure",
+        "Parameters"
+      ]
     },
-    "required": [
-      "Source",
-      "Target"
-    ]
-  }
+    "Target": {
+      "type": "object",
+      "properties": {
+        "Type": {
+          "type": "string",
+          "options": {
+            "hidden": true
+          }
+        }
+      },
+      "required": [
+        "Type"
+      ]
+    }
+  },
+  "required": [
+    "Source",
+    "Target"
+  ]
+}

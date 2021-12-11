@@ -1,5 +1,5 @@
 {
-  "name": "GPL_AzureBlobStorage_Parquet_AzureSQLTable_NA_IRA",
+  "name": "GPL_AzureBlobFS_Parquet_AzureSQLTable_NA_IRA",
   "properties": {
     "activities": [
       {
@@ -46,7 +46,7 @@
           "source": {
             "type": "ParquetSource",
             "storeSettings": {
-              "type": "AzureBlobStorageReadSettings",
+              "type": "AzureBlobFSReadSettings",
               "recursive": false,
               "wildcardFolderPath": {
                 "value": "@pipeline().parameters.TaskObject.Source.RelativePath",
@@ -75,7 +75,7 @@
           }
         },
         "inputs": {
-          "referenceName": "GDS_AzureBlobStorage_Parquet_IRA",
+          "referenceName": "GDS_AzureBlobFS_Parquet_IRA",
           "type": "DatasetReference",
           "parameters": {
             "RelativePath": {

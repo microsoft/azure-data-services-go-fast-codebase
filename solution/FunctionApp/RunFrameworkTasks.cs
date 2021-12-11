@@ -202,7 +202,7 @@ namespace AdsGoFast
                             {
 
 
-                                _pipelinename = "Master";
+                                _pipelinename = "Master_" + _Task["DataFactory"]["TaskDatafactoryIR"].ToString();
                                 _pipelineparams.Add("TaskObject", _Task);
 
                                 if (_pipelinename != "")

@@ -1,6 +1,6 @@
 
 $pathbase = "./../../SampleFiles/"   
-$files = @("yellow_tripdata_2017-03.xlsx","yellow_tripdata_2017-03.csv") 
+$files = @("yellow_tripdata_2017-03.xlsx","yellow_tripdata_2017-03.csv", "yellow_tripdata_2017-03.json") 
 
 $files | ForEach-Object -Parallel {
     

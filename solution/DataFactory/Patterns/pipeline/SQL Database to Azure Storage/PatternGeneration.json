@@ -1,0 +1,194 @@
+[
+  {
+    "Active": true,
+    "SourceType": "AzureSqlTable",
+    "SourceFormat": "NA",
+    "TargetType": "AzureBlobFS",
+    "TargetFormat": "Parquet",
+    "Pipelines": [
+      {
+        "Names": [
+          "GPL_@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_@GF{IR}",
+          "GPL0_@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_Full_Load_@GF{IR}",
+          "GPL0_@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_Watermark_@GF{IR}"
+        ],
+        "Replacements": [
+          {
+            "OldValue": "{/*@GFP{typeProperties}*/}",
+            "NewValue": ".\\partials\\@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_CopyActivity_TypeProperties.json",
+            "Type": "File"
+          },
+          {
+            "OldValue": "{/*@GFP{inputs}*/}",
+            "NewValue": ".\\partials\\@GFP{SourceType}_@GFP{SourceFormat}_CopyActivity_IO.json",
+            "Type": "File"
+          },
+          {
+            "OldValue": "{/*@GFP{outputs}*/}",
+            "NewValue": ".\\partials\\@GFP{TargetType}_@GFP{TargetFormat}_CopyActivity_IO.json",
+            "Type": "File"
+          },
+          {
+            "OldValue": "{/*@GFP{schemasource}*/}",
+            "NewValue": ".\\partials\\@GFP{TargetType}_@GFP{TargetFormat}_GetSchema.json",
+            "Type": "File"
+          },
+          {
+            "OldValue": "{/*@GFP{infoschemasource}*/}",
+            "NewValue": ".\\partials\\@GFP{SourceType}_@GFP{SourceFormat}_GetInformationSchema.json",
+            "Type": "File"
+          },
+          {
+            "OldValue": "{/*@GFP{watermarksource}*/}",
+            "NewValue": ".\\partials\\@GFP{SourceType}_@GFP{SourceFormat}_ExecuteIncrementalSql.json",
+            "Type": "File"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "Active": true,
+    "SourceType": "AzureSqlTable",
+    "SourceFormat": "NA",
+    "TargetType": "AzureBlobStorage",
+    "TargetFormat": "Parquet",
+    "Pipelines": [
+      {
+        "Names": [
+          "GPL_@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_@GF{IR}",
+          "GPL_@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_Full_Load_@GF{IR}",
+          "GPL_@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_Watermark_@GF{IR}"
+        ],
+        "Replacements": [
+          {
+            "OldValue": "{/*@GFP{typeProperties}*/}",
+            "NewValue": ".\\partials\\@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_CopyActivity_TypeProperties.json",
+            "Type": "File"
+          },
+          {
+            "OldValue": "{/*@GFP{inputs}*/}",
+            "NewValue": ".\\partials\\@GFP{SourceType}_@GFP{SourceFormat}_CopyActivity_IO.json",
+            "Type": "File"
+          },
+          {
+            "OldValue": "{/*@GFP{outputs}*/}",
+            "NewValue": ".\\partials\\@GFP{TargetType}_@GFP{TargetFormat}_CopyActivity_IO.json",
+            "Type": "File"
+          },
+          {
+            "OldValue": "{/*@GFP{schemasource}*/}",
+            "NewValue": ".\\partials\\@GFP{TargetType}_@GFP{TargetFormat}_GetSchema.json",
+            "Type": "File"
+          },
+          {
+            "OldValue": "{/*@GFP{infoschemasource}*/}",
+            "NewValue": ".\\partials\\@GFP{SourceType}_@GFP{SourceFormat}_GetInformationSchema.json",
+            "Type": "File"
+          },
+          {
+            "OldValue": "{/*@GFP{watermarksource}*/}",
+            "NewValue": ".\\partials\\@GFP{SourceType}_@GFP{SourceFormat}_ExecuteIncrementalSql.json",
+            "Type": "File"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "Active": true,
+    "SourceType": "SqlServerTable",
+    "SourceFormat": "NA",
+    "TargetType": "AzureBlobFS",
+    "TargetFormat": "Parquet",
+    "Pipelines": [
+      {
+        "Names": [
+          "GPL_@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_@GF{IR}",
+          "GPL_@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_Full_Load_@GF{IR}",
+          "GPL_@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_Watermark_@GF{IR}"
+        ],
+        "Replacements": [
+          {
+            "OldValue": "{/*@GFP{typeProperties}*/}",
+            "NewValue": ".\\partials\\@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_CopyActivity_TypeProperties.json",
+            "Type": "File"
+          },
+          {
+            "OldValue": "{/*@GFP{inputs}*/}",
+            "NewValue": ".\\partials\\@GFP{SourceType}_@GFP{SourceFormat}_CopyActivity_IO.json",
+            "Type": "File"
+          },
+          {
+            "OldValue": "{/*@GFP{outputs}*/}",
+            "NewValue": ".\\partials\\@GFP{TargetType}_@GFP{TargetFormat}_CopyActivity_IO.json",
+            "Type": "File"
+          },
+          {
+            "OldValue": "{/*@GFP{schemasource}*/}",
+            "NewValue": ".\\partials\\@GFP{TargetType}_@GFP{TargetFormat}_GetSchema.json",
+            "Type": "File"
+          },
+          {
+            "OldValue": "{/*@GFP{infoschemasource}*/}",
+            "NewValue": ".\\partials\\@GFP{SourceType}_@GFP{SourceFormat}_GetInformationSchema.json",
+            "Type": "File"
+          },
+          {
+            "OldValue": "{/*@GFP{watermarksource}*/}",
+            "NewValue": ".\\partials\\@GFP{SourceType}_@GFP{SourceFormat}_ExecuteIncrementalSql.json",
+            "Type": "File"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "Active": true,
+    "SourceType": "SqlServerTable",
+    "SourceFormat": "NA",
+    "TargetType": "AzureBlobStorage",
+    "TargetFormat": "Parquet",
+    "Pipelines": [
+      {
+        "Names": [
+          "GPL_@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_@GF{IR}",
+          "GPL_@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_Full_Load_@GF{IR}",
+          "GPL_@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_Watermark_@GF{IR}"
+        ],
+        "Replacements": [
+          {
+            "OldValue": "{/*@GFP{typeProperties}*/}",
+            "NewValue": ".\\partials\\@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_CopyActivity_TypeProperties.json",
+            "Type": "File"
+          },
+          {
+            "OldValue": "{/*@GFP{inputs}*/}",
+            "NewValue": ".\\partials\\@GFP{SourceType}_@GFP{SourceFormat}_CopyActivity_IO.json",
+            "Type": "File"
+          },
+          {
+            "OldValue": "{/*@GFP{outputs}*/}",
+            "NewValue": ".\\partials\\@GFP{TargetType}_@GFP{TargetFormat}_CopyActivity_IO.json",
+            "Type": "File"
+          },
+          {
+            "OldValue": "{/*@GFP{schemasource}*/}",
+            "NewValue": ".\\partials\\@GFP{TargetType}_@GFP{TargetFormat}_GetSchema.json",
+            "Type": "File"
+          },
+          {
+            "OldValue": "{/*@GFP{infoschemasource}*/}",
+            "NewValue": ".\\partials\\@GFP{SourceType}_@GFP{SourceFormat}_GetInformationSchema.json",
+            "Type": "File"
+          },
+          {
+            "OldValue": "{/*@GFP{watermarksource}*/}",
+            "NewValue": ".\\partials\\@GFP{SourceType}_@GFP{SourceFormat}_ExecuteIncrementalSql.json",
+            "Type": "File"
+          }
+        ]
+      }
+    ]
+  }
+]

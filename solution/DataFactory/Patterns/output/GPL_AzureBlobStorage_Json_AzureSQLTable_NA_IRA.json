@@ -1,5 +1,5 @@
 {
-  "name": "GPL_AzureBlobStorage_Parquet_AzureSQLTable_NA_IRA",
+  "name": "GPL_AzureBlobStorage_Json_AzureSQLTable_NA_IRA",
   "properties": {
     "activities": [
       {
@@ -44,16 +44,13 @@
         "userProperties": [],
         "typeProperties": {
           "source": {
-            "type": "ParquetSource",
+            "type": "JsonSource",
             "storeSettings": {
               "type": "AzureBlobStorageReadSettings",
-              "recursive": false,
-              "wildcardFolderPath": {
-                "value": "@pipeline().parameters.TaskObject.Source.RelativePath",
-                "type": "Expression"
-              },
-              "wildcardFileName": "*.parquet",
-              "enablePartitionDiscovery": false
+              "recursive": true
+            },
+            "formatSettings": {
+              "type": "JsonReadSettings"
             }
           },
           "sink": {
@@ -68,34 +65,32 @@
           "parallelCopies": {
             "value": "@pipeline().parameters.TaskObject.DegreeOfCopyParallelism",
             "type": "Expression"
-          },
-          "translator": {
-            "value": "@activity('AF Get Mapping').output.value",
-            "type": "Expression"
           }
         },
-        "inputs": {
-          "referenceName": "GDS_AzureBlobStorage_Parquet_IRA",
-          "type": "DatasetReference",
-          "parameters": {
-            "RelativePath": {
-              "value": "@pipeline().parameters.TaskObject.Source.RelativePath",
-              "type": "Expression"
-            },
-            "FileName": {
-              "value": "@pipeline().parameters.TaskObject.Source.DataFileName",
-              "type": "Expression"
-            },
-            "StorageAccountEndpoint": {
-              "value": "@pipeline().parameters.TaskObject.Source.StorageAccountName",
-              "type": "Expression"
-            },
-            "StorageAccountContainerName": {
-              "value": "@pipeline().parameters.TaskObject.Source.StorageAccountContainer",
-              "type": "Expression"
+        "inputs": [
+          {
+            "referenceName": "GDS_AzureBlobStorage_Json_IRA",
+            "type": "DatasetReference",
+            "parameters": {
+              "RelativePath": {
+                "value": "@pipeline().parameters.TaskObject.Source.RelativePath",
+                "type": "Expression"
+              },
+              "FileName": {
+                "value": "@pipeline().parameters.TaskObject.Source.DataFileName",
+                "type": "Expression"
+              },
+              "StorageAccountEndpoint": {
+                "value": "@pipeline().parameters.TaskObject.Source.StorageAccountName",
+                "type": "Expression"
+              },
+              "StorageAccountContainerName": {
+                "value": "@pipeline().parameters.TaskObject.Source.StorageAccountContainer",
+                "type": "Expression"
+              }
             }
           }
-        },
+        ],
         "outputs": [
           {
             "referenceName": "AzureSqlTable_IRA",

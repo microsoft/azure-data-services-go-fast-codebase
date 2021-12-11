@@ -1,0 +1,466 @@
+[
+  {
+    "Active": true,
+    "SourceType": "AzureBlobFS",
+    "SourceFormat": "Parquet",
+    "TargetType": "AzureSQLTable",
+    "TargetFormat": "NA",
+    "Pipelines": [
+      {
+        "Names": [
+          "GPL_@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_@GF{IR}",
+          "GPL0_@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_Create_Table_@GF{IR}",
+          "GPL0_@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_Post_Copy_@GF{IR}"
+        ],
+        "Replacements": [
+          {
+            "OldValue": "{/*@GFP{typeProperties}*/}",
+            "NewValue": ".\\partials\\@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_CopyActivity_TypeProperties.json",
+            "Type": "File"
+          },
+          {
+            "OldValue": "{/*@GFP{inputs}*/}",
+            "NewValue": ".\\partials\\@GFP{SourceType}_@GFP{SourceFormat}_CopyActivity_Inputs.json",
+            "Type": "File"
+          },
+          {
+            "OldValue": "{/*@GFP{outputs}*/}",
+            "NewValue": ".\\partials\\@GFP{TargetType}_@GFP{TargetFormat}_CopyActivity_Outputs.json",
+            "Type": "File"
+          },
+          {
+            "OldValue": "{/*@GFP{PostCopySQLtypeProperties}*/}",
+            "NewValue": ".\\partials\\@GFP{TargetType}_@GFP{TargetFormat}_PostCopySQL_TypeProperties.json",
+            "Type": "File"
+          },
+          {
+            "OldValue": "{/*@GFP{MergeSQLtypeProperties}*/}",
+            "NewValue": ".\\partials\\@GFP{TargetType}_@GFP{TargetFormat}_MergeSQL_TypeProperties.json",
+            "Type": "File"
+          },
+          {
+            "OldValue": "{/*@GFP{AutoMergeSQLtypeProperties}*/}",
+            "NewValue": ".\\partials\\@GFP{TargetType}_@GFP{TargetFormat}_AutoMergeSQL_TypeProperties.json",
+            "Type": "File"
+          }, 
+          {
+            "OldValue": "{/*@GFP{InfoSchemaStaging}*/}",
+            "NewValue": ".\\partials\\@GFP{TargetType}_@GFP{TargetFormat}_InfoSchemaStaging_TypeProperties.json",
+            "Type": "File"
+          }, 
+          {
+            "OldValue": "{/*@GFP{InfoSchemaTarget}*/}",
+            "NewValue": ".\\partials\\@GFP{TargetType}_@GFP{TargetFormat}_InfoSchemaTarget_TypeProperties.json",
+            "Type": "File"
+          }
+        ]
+      }
+    ]
+  }, 
+  {
+    "Active": true,
+    "SourceType": "AzureBlobStorage",
+    "SourceFormat": "Parquet",
+    "TargetType": "AzureSQLTable",
+    "TargetFormat": "NA",
+    "Pipelines": [
+      {
+        "Names": [
+          "GPL_@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_@GF{IR}",
+          "GPL0_@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_Create_Table_@GF{IR}",
+          "GPL0_@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_Post_Copy_@GF{IR}"
+        ],
+        "Replacements": [
+          {
+            "OldValue": "{/*@GFP{typeProperties}*/}",
+            "NewValue": ".\\partials\\@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_CopyActivity_TypeProperties.json",
+            "Type": "File"
+          },
+          {
+            "OldValue": "{/*@GFP{inputs}*/}",
+            "NewValue": ".\\partials\\@GFP{SourceType}_@GFP{SourceFormat}_CopyActivity_Inputs.json",
+            "Type": "File"
+          },
+          {
+            "OldValue": "{/*@GFP{outputs}*/}",
+            "NewValue": ".\\partials\\@GFP{TargetType}_@GFP{TargetFormat}_CopyActivity_Outputs.json",
+            "Type": "File"
+          },
+          {
+            "OldValue": "{/*@GFP{PostCopySQLtypeProperties}*/}",
+            "NewValue": ".\\partials\\@GFP{TargetType}_@GFP{TargetFormat}_PostCopySQL_TypeProperties.json",
+            "Type": "File"
+          },
+          {
+            "OldValue": "{/*@GFP{MergeSQLtypeProperties}*/}",
+            "NewValue": ".\\partials\\@GFP{TargetType}_@GFP{TargetFormat}_MergeSQL_TypeProperties.json",
+            "Type": "File"
+          },
+          {
+            "OldValue": "{/*@GFP{AutoMergeSQLtypeProperties}*/}",
+            "NewValue": ".\\partials\\@GFP{TargetType}_@GFP{TargetFormat}_AutoMergeSQL_TypeProperties.json",
+            "Type": "File"
+          }, 
+          {
+            "OldValue": "{/*@GFP{InfoSchemaStaging}*/}",
+            "NewValue": ".\\partials\\@GFP{TargetType}_@GFP{TargetFormat}_InfoSchemaStaging_TypeProperties.json",
+            "Type": "File"
+          }, 
+          {
+            "OldValue": "{/*@GFP{InfoSchemaTarget}*/}",
+            "NewValue": ".\\partials\\@GFP{TargetType}_@GFP{TargetFormat}_InfoSchemaTarget_TypeProperties.json",
+            "Type": "File"
+          }
+        ]
+      }
+    ]
+  }, 
+  {
+    "Active": true,
+    "SourceType": "AzureBlobFS",
+    "SourceFormat": "Excel",
+    "TargetType": "AzureSQLTable",
+    "TargetFormat": "NA",
+    "Pipelines": [
+      {
+        "Names": [
+          "GPL_@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_@GF{IR}",
+          "GPL0_@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_Create_Table_@GF{IR}",
+          "GPL0_@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_Post_Copy_@GF{IR}"
+        ],
+        "Replacements": [
+          {
+            "OldValue": "{/*@GFP{typeProperties}*/}",
+            "NewValue": ".\\partials\\@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_CopyActivity_TypeProperties.json",
+            "Type": "File"
+          },
+          {
+            "OldValue": "{/*@GFP{inputs}*/}",
+            "NewValue": ".\\partials\\@GFP{SourceType}_@GFP{SourceFormat}_CopyActivity_Inputs.json",
+            "Type": "File"
+          },
+          {
+            "OldValue": "{/*@GFP{outputs}*/}",
+            "NewValue": ".\\partials\\@GFP{TargetType}_@GFP{TargetFormat}_CopyActivity_Outputs.json",
+            "Type": "File"
+          },
+          {
+            "OldValue": "{/*@GFP{PostCopySQLtypeProperties}*/}",
+            "NewValue": ".\\partials\\@GFP{TargetType}_@GFP{TargetFormat}_PostCopySQL_TypeProperties.json",
+            "Type": "File"
+          },
+          {
+            "OldValue": "{/*@GFP{MergeSQLtypeProperties}*/}",
+            "NewValue": ".\\partials\\@GFP{TargetType}_@GFP{TargetFormat}_MergeSQL_TypeProperties.json",
+            "Type": "File"
+          },
+          {
+            "OldValue": "{/*@GFP{AutoMergeSQLtypeProperties}*/}",
+            "NewValue": ".\\partials\\@GFP{TargetType}_@GFP{TargetFormat}_AutoMergeSQL_TypeProperties.json",
+            "Type": "File"
+          }, 
+          {
+            "OldValue": "{/*@GFP{InfoSchemaStaging}*/}",
+            "NewValue": ".\\partials\\@GFP{TargetType}_@GFP{TargetFormat}_InfoSchemaStaging_TypeProperties.json",
+            "Type": "File"
+          }, 
+          {
+            "OldValue": "{/*@GFP{InfoSchemaTarget}*/}",
+            "NewValue": ".\\partials\\@GFP{TargetType}_@GFP{TargetFormat}_InfoSchemaTarget_TypeProperties.json",
+            "Type": "File"
+          }
+        ]
+      }
+    ]
+  }, 
+  {
+    "Active": true,
+    "SourceType": "AzureBlobStorage",
+    "SourceFormat": "Excel",
+    "TargetType": "AzureSQLTable",
+    "TargetFormat": "NA",
+    "Pipelines": [
+      {
+        "Names": [
+          "GPL_@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_@GF{IR}",
+          "GPL0_@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_Create_Table_@GF{IR}",
+          "GPL0_@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_Post_Copy_@GF{IR}"
+        ],
+        "Replacements": [
+          {
+            "OldValue": "{/*@GFP{typeProperties}*/}",
+            "NewValue": ".\\partials\\@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_CopyActivity_TypeProperties.json",
+            "Type": "File"
+          },
+          {
+            "OldValue": "{/*@GFP{inputs}*/}",
+            "NewValue": ".\\partials\\@GFP{SourceType}_@GFP{SourceFormat}_CopyActivity_Inputs.json",
+            "Type": "File"
+          },
+          {
+            "OldValue": "{/*@GFP{outputs}*/}",
+            "NewValue": ".\\partials\\@GFP{TargetType}_@GFP{TargetFormat}_CopyActivity_Outputs.json",
+            "Type": "File"
+          },
+          {
+            "OldValue": "{/*@GFP{PostCopySQLtypeProperties}*/}",
+            "NewValue": ".\\partials\\@GFP{TargetType}_@GFP{TargetFormat}_PostCopySQL_TypeProperties.json",
+            "Type": "File"
+          },
+          {
+            "OldValue": "{/*@GFP{MergeSQLtypeProperties}*/}",
+            "NewValue": ".\\partials\\@GFP{TargetType}_@GFP{TargetFormat}_MergeSQL_TypeProperties.json",
+            "Type": "File"
+          },
+          {
+            "OldValue": "{/*@GFP{AutoMergeSQLtypeProperties}*/}",
+            "NewValue": ".\\partials\\@GFP{TargetType}_@GFP{TargetFormat}_AutoMergeSQL_TypeProperties.json",
+            "Type": "File"
+          }, 
+          {
+            "OldValue": "{/*@GFP{InfoSchemaStaging}*/}",
+            "NewValue": ".\\partials\\@GFP{TargetType}_@GFP{TargetFormat}_InfoSchemaStaging_TypeProperties.json",
+            "Type": "File"
+          }, 
+          {
+            "OldValue": "{/*@GFP{InfoSchemaTarget}*/}",
+            "NewValue": ".\\partials\\@GFP{TargetType}_@GFP{TargetFormat}_InfoSchemaTarget_TypeProperties.json",
+            "Type": "File"
+          }
+        ]
+      }
+    ]
+  }, 
+  {
+    "Active": true,
+    "SourceType": "AzureBlobFS",
+    "SourceFormat": "Json",
+    "TargetType": "AzureSQLTable",
+    "TargetFormat": "NA",
+    "Pipelines": [
+      {
+        "Names": [
+          "GPL_@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_@GF{IR}",
+          "GPL0_@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_Create_Table_@GF{IR}",
+          "GPL0_@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_Post_Copy_@GF{IR}"
+        ],
+        "Replacements": [
+          {
+            "OldValue": "{/*@GFP{typeProperties}*/}",
+            "NewValue": ".\\partials\\@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_CopyActivity_TypeProperties.json",
+            "Type": "File"
+          },
+          {
+            "OldValue": "{/*@GFP{inputs}*/}",
+            "NewValue": ".\\partials\\@GFP{SourceType}_@GFP{SourceFormat}_CopyActivity_Inputs.json",
+            "Type": "File"
+          },
+          {
+            "OldValue": "{/*@GFP{outputs}*/}",
+            "NewValue": ".\\partials\\@GFP{TargetType}_@GFP{TargetFormat}_CopyActivity_Outputs.json",
+            "Type": "File"
+          },
+          {
+            "OldValue": "{/*@GFP{PostCopySQLtypeProperties}*/}",
+            "NewValue": ".\\partials\\@GFP{TargetType}_@GFP{TargetFormat}_PostCopySQL_TypeProperties.json",
+            "Type": "File"
+          },
+          {
+            "OldValue": "{/*@GFP{MergeSQLtypeProperties}*/}",
+            "NewValue": ".\\partials\\@GFP{TargetType}_@GFP{TargetFormat}_MergeSQL_TypeProperties.json",
+            "Type": "File"
+          },
+          {
+            "OldValue": "{/*@GFP{AutoMergeSQLtypeProperties}*/}",
+            "NewValue": ".\\partials\\@GFP{TargetType}_@GFP{TargetFormat}_AutoMergeSQL_TypeProperties.json",
+            "Type": "File"
+          }, 
+          {
+            "OldValue": "{/*@GFP{InfoSchemaStaging}*/}",
+            "NewValue": ".\\partials\\@GFP{TargetType}_@GFP{TargetFormat}_InfoSchemaStaging_TypeProperties.json",
+            "Type": "File"
+          }, 
+          {
+            "OldValue": "{/*@GFP{InfoSchemaTarget}*/}",
+            "NewValue": ".\\partials\\@GFP{TargetType}_@GFP{TargetFormat}_InfoSchemaTarget_TypeProperties.json",
+            "Type": "File"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "Active": true,
+    "SourceType": "AzureBlobStorage",
+    "SourceFormat": "Json",
+    "TargetType": "AzureSQLTable",
+    "TargetFormat": "NA",
+    "Pipelines": [
+      {
+        "Names": [
+          "GPL_@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_@GF{IR}",
+          "GPL0_@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_Create_Table_@GF{IR}",
+          "GPL0_@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_Post_Copy_@GF{IR}"
+        ],
+        "Replacements": [
+          {
+            "OldValue": "{/*@GFP{typeProperties}*/}",
+            "NewValue": ".\\partials\\@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_CopyActivity_TypeProperties.json",
+            "Type": "File"
+          },
+          {
+            "OldValue": "{/*@GFP{inputs}*/}",
+            "NewValue": ".\\partials\\@GFP{SourceType}_@GFP{SourceFormat}_CopyActivity_Inputs.json",
+            "Type": "File"
+          },
+          {
+            "OldValue": "{/*@GFP{outputs}*/}",
+            "NewValue": ".\\partials\\@GFP{TargetType}_@GFP{TargetFormat}_CopyActivity_Outputs.json",
+            "Type": "File"
+          },
+          {
+            "OldValue": "{/*@GFP{PostCopySQLtypeProperties}*/}",
+            "NewValue": ".\\partials\\@GFP{TargetType}_@GFP{TargetFormat}_PostCopySQL_TypeProperties.json",
+            "Type": "File"
+          },
+          {
+            "OldValue": "{/*@GFP{MergeSQLtypeProperties}*/}",
+            "NewValue": ".\\partials\\@GFP{TargetType}_@GFP{TargetFormat}_MergeSQL_TypeProperties.json",
+            "Type": "File"
+          },
+          {
+            "OldValue": "{/*@GFP{AutoMergeSQLtypeProperties}*/}",
+            "NewValue": ".\\partials\\@GFP{TargetType}_@GFP{TargetFormat}_AutoMergeSQL_TypeProperties.json",
+            "Type": "File"
+          }, 
+          {
+            "OldValue": "{/*@GFP{InfoSchemaStaging}*/}",
+            "NewValue": ".\\partials\\@GFP{TargetType}_@GFP{TargetFormat}_InfoSchemaStaging_TypeProperties.json",
+            "Type": "File"
+          }, 
+          {
+            "OldValue": "{/*@GFP{InfoSchemaTarget}*/}",
+            "NewValue": ".\\partials\\@GFP{TargetType}_@GFP{TargetFormat}_InfoSchemaTarget_TypeProperties.json",
+            "Type": "File"
+          }
+        ]
+      }
+    ]
+  }, 
+  {
+    "Active": true,
+    "SourceType": "AzureBlobFS",
+    "SourceFormat": "DelimitedText",
+    "TargetType": "AzureSQLTable",
+    "TargetFormat": "NA",
+    "Pipelines": [
+      {
+        "Names": [
+          "GPL_@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_@GF{IR}",
+          "GPL0_@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_Create_Table_@GF{IR}",
+          "GPL0_@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_Post_Copy_@GF{IR}"
+        ],
+        "Replacements": [
+          {
+            "OldValue": "{/*@GFP{typeProperties}*/}",
+            "NewValue": ".\\partials\\@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_CopyActivity_TypeProperties.json",
+            "Type": "File"
+          },
+          {
+            "OldValue": "{/*@GFP{inputs}*/}",
+            "NewValue": ".\\partials\\@GFP{SourceType}_@GFP{SourceFormat}_CopyActivity_Inputs.json",
+            "Type": "File"
+          },
+          {
+            "OldValue": "{/*@GFP{outputs}*/}",
+            "NewValue": ".\\partials\\@GFP{TargetType}_@GFP{TargetFormat}_CopyActivity_Outputs.json",
+            "Type": "File"
+          },
+          {
+            "OldValue": "{/*@GFP{PostCopySQLtypeProperties}*/}",
+            "NewValue": ".\\partials\\@GFP{TargetType}_@GFP{TargetFormat}_PostCopySQL_TypeProperties.json",
+            "Type": "File"
+          },
+          {
+            "OldValue": "{/*@GFP{MergeSQLtypeProperties}*/}",
+            "NewValue": ".\\partials\\@GFP{TargetType}_@GFP{TargetFormat}_MergeSQL_TypeProperties.json",
+            "Type": "File"
+          },
+          {
+            "OldValue": "{/*@GFP{AutoMergeSQLtypeProperties}*/}",
+            "NewValue": ".\\partials\\@GFP{TargetType}_@GFP{TargetFormat}_AutoMergeSQL_TypeProperties.json",
+            "Type": "File"
+          }, 
+          {
+            "OldValue": "{/*@GFP{InfoSchemaStaging}*/}",
+            "NewValue": ".\\partials\\@GFP{TargetType}_@GFP{TargetFormat}_InfoSchemaStaging_TypeProperties.json",
+            "Type": "File"
+          }, 
+          {
+            "OldValue": "{/*@GFP{InfoSchemaTarget}*/}",
+            "NewValue": ".\\partials\\@GFP{TargetType}_@GFP{TargetFormat}_InfoSchemaTarget_TypeProperties.json",
+            "Type": "File"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "Active": true,
+    "SourceType": "AzureBlobStorage",
+    "SourceFormat": "DelimitedText",
+    "TargetType": "AzureSQLTable",
+    "TargetFormat": "NA",
+    "Pipelines": [
+      {
+        "Names": [
+          "GPL_@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_@GF{IR}",
+          "GPL0_@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_Create_Table_@GF{IR}",
+          "GPL0_@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_Post_Copy_@GF{IR}"
+        ],
+        "Replacements": [
+          {
+            "OldValue": "{/*@GFP{typeProperties}*/}",
+            "NewValue": ".\\partials\\@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_CopyActivity_TypeProperties.json",
+            "Type": "File"
+          },
+          {
+            "OldValue": "{/*@GFP{inputs}*/}",
+            "NewValue": ".\\partials\\@GFP{SourceType}_@GFP{SourceFormat}_CopyActivity_Inputs.json",
+            "Type": "File"
+          },
+          {
+            "OldValue": "{/*@GFP{outputs}*/}",
+            "NewValue": ".\\partials\\@GFP{TargetType}_@GFP{TargetFormat}_CopyActivity_Outputs.json",
+            "Type": "File"
+          },
+          {
+            "OldValue": "{/*@GFP{PostCopySQLtypeProperties}*/}",
+            "NewValue": ".\\partials\\@GFP{TargetType}_@GFP{TargetFormat}_PostCopySQL_TypeProperties.json",
+            "Type": "File"
+          },
+          {
+            "OldValue": "{/*@GFP{MergeSQLtypeProperties}*/}",
+            "NewValue": ".\\partials\\@GFP{TargetType}_@GFP{TargetFormat}_MergeSQL_TypeProperties.json",
+            "Type": "File"
+          },
+          {
+            "OldValue": "{/*@GFP{AutoMergeSQLtypeProperties}*/}",
+            "NewValue": ".\\partials\\@GFP{TargetType}_@GFP{TargetFormat}_AutoMergeSQL_TypeProperties.json",
+            "Type": "File"
+          }, 
+          {
+            "OldValue": "{/*@GFP{InfoSchemaStaging}*/}",
+            "NewValue": ".\\partials\\@GFP{TargetType}_@GFP{TargetFormat}_InfoSchemaStaging_TypeProperties.json",
+            "Type": "File"
+          }, 
+          {
+            "OldValue": "{/*@GFP{InfoSchemaTarget}*/}",
+            "NewValue": ".\\partials\\@GFP{TargetType}_@GFP{TargetFormat}_InfoSchemaTarget_TypeProperties.json",
+            "Type": "File"
+          }
+        ]
+      }
+    ]
+  }
+]

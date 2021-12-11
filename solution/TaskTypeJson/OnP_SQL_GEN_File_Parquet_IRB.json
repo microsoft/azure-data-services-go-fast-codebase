@@ -61,7 +61,7 @@
                     "type": "integer",
                     "options": {
                         "inputAttributes": {
-                            "placeholder": "Hello"
+                            "placeholder": ""
                         },
                         "infoText": "Number of rows to use for each 'chunk' of data"
                     }

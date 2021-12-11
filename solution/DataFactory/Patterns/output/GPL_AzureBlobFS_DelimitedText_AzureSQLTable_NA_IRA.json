@@ -1,5 +1,5 @@
 {
-  "name": "GPL_AzureBlobStorage_Parquet_AzureSQLTable_NA_IRA",
+  "name": "GPL_AzureBlobFS_DelimitedText_AzureSQLTable_NA_IRA",
   "properties": {
     "activities": [
       {
@@ -44,16 +44,30 @@
         "userProperties": [],
         "typeProperties": {
           "source": {
-            "type": "ParquetSource",
+            "type": "DelimitedTextSource",
             "storeSettings": {
               "type": "AzureBlobStorageReadSettings",
-              "recursive": false,
+              "maxConcurrentConnections": {
+                "value": "@pipeline().parameters.TaskObject.Source.MaxConcorrentConnections",
+                "type": "Expression"
+              },
+              "recursive": true,
               "wildcardFolderPath": {
                 "value": "@pipeline().parameters.TaskObject.Source.RelativePath",
                 "type": "Expression"
               },
-              "wildcardFileName": "*.parquet",
+              "wildcardFileName": {
+                "value": "@pipeline().parameters.TaskObject.Source.DataFileName",
+                "type": "Expression"
+              },
               "enablePartitionDiscovery": false
+            },
+            "formatSettings": {
+              "type": "DelimitedTextReadSettings",
+              "skipLineCount": {
+                "value": "@pipeline().parameters.TaskObject.Source.SkipLineCount",
+                "type": "Expression"
+              }
             }
           },
           "sink": {
@@ -62,6 +76,7 @@
               "value": "@{pipeline().parameters.TaskObject.Target.PreCopySQL}",
               "type": "Expression"
             },
+            "tableOption": "autoCreate",
             "disableMetricsCollection": false
           },
           "enableStaging": false,
@@ -70,32 +85,38 @@
             "type": "Expression"
           },
           "translator": {
-            "value": "@activity('AF Get Mapping').output.value",
+            "value": "@pipeline().parameters.TaskObject.Target.DynamicMapping",
             "type": "Expression"
           }
         },
-        "inputs": {
-          "referenceName": "GDS_AzureBlobStorage_Parquet_IRA",
-          "type": "DatasetReference",
-          "parameters": {
-            "RelativePath": {
-              "value": "@pipeline().parameters.TaskObject.Source.RelativePath",
-              "type": "Expression"
-            },
-            "FileName": {
-              "value": "@pipeline().parameters.TaskObject.Source.DataFileName",
-              "type": "Expression"
-            },
-            "StorageAccountEndpoint": {
-              "value": "@pipeline().parameters.TaskObject.Source.StorageAccountName",
-              "type": "Expression"
-            },
-            "StorageAccountContainerName": {
-              "value": "@pipeline().parameters.TaskObject.Source.StorageAccountContainer",
-              "type": "Expression"
+        "inputs": [
+          {
+            "referenceName": "GDS_AzureBlobFS_DelimitedText_IRA",
+            "type": "DatasetReference",
+            "parameters": {
+              "RelativePath": {
+                "value": "@pipeline().parameters.TaskObject.Source.RelativePath",
+                "type": "Expression"
+              },
+              "FileName": {
+                "value": "@pipeline().parameters.TaskObject.Source.DataFileName",
+                "type": "Expression"
+              },
+              "StorageAccountEndpoint": {
+                "value": "@pipeline().parameters.TaskObject.Source.StorageAccountName",
+                "type": "Expression"
+              },
+              "StorageAccountContainerName": {
+                "value": "@pipeline().parameters.TaskObject.Source.StorageAccountContainer",
+                "type": "Expression"
+              },
+              "FirstRownAsHeader": {
+                "value": "@pipeline().parameters.TaskObject.Source.FirstRowAsHeader",
+                "type": "Expression"
+              }
             }
           }
-        },
+        ],
         "outputs": [
           {
             "referenceName": "AzureSqlTable_IRA",
