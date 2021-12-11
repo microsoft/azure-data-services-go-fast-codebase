@@ -9,7 +9,7 @@
         "partitionOption": "None"
     },
     "dataset": {
-        "referenceName": "AzureSqlTable_@GF{IR}",
+        "referenceName": "GDS_AzureSqlTable_NA_@GF{IR}",
         "type": "DatasetReference",
         "parameters": {
             "Schema": {

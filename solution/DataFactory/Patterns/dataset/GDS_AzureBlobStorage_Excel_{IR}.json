@@ -51,7 +51,7 @@
 					"value": "@dataset().RelativePath",
 					"type": "Expression"
 				},
-				"fileSystem": {
+				"container": {
 					"value": "@dataset().StorageAccountContainerName",
 					"type": "Expression"
 				}

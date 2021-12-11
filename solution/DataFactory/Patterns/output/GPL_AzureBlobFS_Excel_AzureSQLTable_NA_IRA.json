@@ -1,5 +1,5 @@
 {
-  "name": "GPL_AzureBlobFS_Excel_AzureSQLTable_NA_IRA",
+  "name": "GPL_AzureBlobFS_Excel_AzureSqlTable_NA_IRA",
   "properties": {
     "activities": [
       {
@@ -194,7 +194,7 @@
         "userProperties": [],
         "typeProperties": {
           "pipeline": {
-            "referenceName": "GPL_AzureSQLTable_NA_Post_Copy_IRA",
+            "referenceName": "GPL_AzureSqlTable_NA_Post_Copy_IRA",
             "type": "PipelineReference"
           },
           "waitOnCompletion": true,

@@ -1,6 +1,6 @@
 [
   {
-    "referenceName": "AzureSqlTable_IRA",
+    "referenceName": "AzureSqlTable_@GF{IR}",
     "type": "DatasetReference",
     "parameters": {
       "Schema": {

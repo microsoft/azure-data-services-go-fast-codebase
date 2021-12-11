@@ -51,7 +51,7 @@
 					"value": "@dataset().RelativePath",
 					"type": "Expression"
 				},
-				"fileSystem": {
+				"container": {
 					"value": "@dataset().StorageAccountContainerName",
 					"type": "Expression"
 				}
@@ -65,3 +65,4 @@
 	},
 	"type": "Microsoft.DataFactory/factories/datasets"
 }
+

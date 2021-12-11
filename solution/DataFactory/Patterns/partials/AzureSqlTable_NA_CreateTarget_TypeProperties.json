@@ -2,7 +2,7 @@
     "source": {
         "type": "AzureSqlSource",
         "sqlReaderQuery": {
-            "value": "@activity('AF Get Information Schema SQL Target').output.InformationSchemaSQL",
+            "value": "@activity('AF Get SQL Create Statement Target').output.CreateStatement",
             "type": "Expression"
         },
         "queryTimeout": "02:00:00",
@@ -13,11 +13,11 @@
         "type": "DatasetReference",
         "parameters": {
             "Schema": {
-                "value": "@pipeline().parameters.TaskObject.Target.StagingTableSchema",
+                "value": "@pipeline().parameters.TaskObject.Target.TableSchema",
                 "type": "Expression"
             },
             "Table": {
-                "value": "@pipeline().parameters.TaskObject.Target.StagingTableName",
+                "value": "@pipeline().parameters.TaskObject.Target.TableName",
                 "type": "Expression"
             },
             "Server": {
@@ -29,5 +29,6 @@
                 "type": "Expression"
             }
         }
-    }
+    },
+    "firstRowOnly": false
 }

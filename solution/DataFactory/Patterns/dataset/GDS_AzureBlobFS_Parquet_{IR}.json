@@ -32,7 +32,7 @@
 		"type": "Parquet",
 		"typeProperties": {
 			"location": {
-				"type": "AzureBlobStorageLocation",
+				"type": "AzureBlobFSLocation",
 				"fileName": {
 					"value": "@dataset().FileName",
 					"type": "Expression"
@@ -41,7 +41,7 @@
 					"value": "@dataset().RelativePath",
 					"type": "Expression"
 				},
-				"container": {
+				"fileSystem": {
 					"value": "@dataset().StorageAccountContainerName",
 					"type": "Expression"
 				}

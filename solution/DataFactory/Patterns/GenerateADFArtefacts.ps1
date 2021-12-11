@@ -18,9 +18,11 @@ function Generate($IR, $Pattern, $ReplaceIR, $FileIncludes, $Folder)
     foreach ($file in $files)  {
         $targetfile = ($file.BaseName)
         $targetfile = (CoreReplacements -string $targetfile -ReplaceIR $ReplaceIR) + ".json"
+        Write-Host "------------------------------"       
         Write-Host "Processing: $targetfile"       
+        Write-Host "------------------------------"       
         $fileName = $file.FullName
-        $contents = ($file | Get-Content)
+        $contents = ($file | Get-Content -Raw)
         $jsonobject = (CoreReplacements -string $contents -ReplaceIR $ReplaceIR)
   
         #Last do the major template chunks                 
@@ -28,15 +30,31 @@ function Generate($IR, $Pattern, $ReplaceIR, $FileIncludes, $Folder)
          foreach ($name in $pipeline.Names) {           
             if(($jsonobject | ConvertFrom-Json).name -eq (CoreReplacements -string $name -ReplaceIR $ReplaceIR))
             {
-                Write-Host "Doing Pattern Replacements"                
+                Write-Host "Doing Pattern Replacements for: " (CoreReplacements -string $name -ReplaceIR $ReplaceIR)                
                 foreach ($item in $pipeline.Replacements) {         
                     switch ($item.Type)
                     {
                         "InnerArray" { $jsonobject = $jsonobject.Replace($item.OldValue,($item.NewValue | ConvertTo-Json -AsArray -Depth 100))     }
                         "File"  {          
-                                    $NewValFile = (CoreReplacements -string $item.NewValue -ReplaceIR $ReplaceIR)
-                                    Write-Host  $NewValFile                      
-                                    $jsonobject = $jsonobject.Replace($item.OldValue,(Get-Content -Path $NewValFile))     
+                                    if($name.contains("Create"))
+                                    {
+                                        Write-Host ""
+                                    }
+                                    Write-Host  "Searching for partial: " $item.NewValue            
+                                    Write-Host  "TemplatePlaceHolder: " $item.OldValue                                      
+                                    if ($jsonobject.contains($item.OldValue))
+                                    {                                       
+                                        $NewValFile = (CoreReplacements -string $item.NewValue -ReplaceIR $ReplaceIR)
+                                        if ($null -eq (Get-Content -Path $NewValFile) || (Get-Content -Path $NewValFile) -eq "")
+                                        {
+                                            Write-Warning "Partial not found"
+                                        } 
+                                        $jsonobject = $jsonobject.Replace($item.OldValue,(Get-Content -Path $NewValFile))   
+                                    }     
+                                    else {
+                                        Write-Warning "Template placehoder not in original"
+                                    }                
+                                     
                                 }
                         default { $jsonobject = $jsonobject.Replace($item.OldValue,($item.NewValue | ConvertTo-Json -Depth 100))     }                    
                     }

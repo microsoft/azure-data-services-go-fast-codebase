@@ -88,7 +88,7 @@
 								"secureInput": false
 							},
 							"userProperties": [],
-							"typeProperties": {/*MergeSQLtypeProperties*/}
+							"typeProperties": {/*@GFP{MergeSQLtypeProperties}*/}
 						},
 						{
 							"name": "AF Log - Run MergeSQL Failed",
@@ -158,7 +158,7 @@
 								"secureInput": false
 							},
 							"userProperties": [],
-							"typeProperties": {/*AutoMergeSQLtypeProperties*/}
+							"typeProperties": {/*@GFP{AutoMergeSQLtypeProperties}*/}
 						},
 						{
 							"name": "AF Get Information Schema SQL Stage",
@@ -242,7 +242,7 @@
 								"secureInput": false
 							},
 							"userProperties": [],
-							"typeProperties": {/*InfoSchemaStaging*/}
+							"typeProperties":{/*@GFP{InfoSchemaStaging}*/}
 						},
 						{
 							"name": "Lookup Get Metadata Target",
@@ -263,7 +263,7 @@
 								"secureInput": false
 							},
 							"userProperties": [],
-							"typeProperties": {/*InfoSchemaTarget*/}
+							"typeProperties": {/*@GFP{InfoSchemaTarget}*/}
 						},
 						{
 							"name": "AF Get Information Schema SQL Target",

@@ -9,8 +9,8 @@
       {
         "Names": [
           "GPL_@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_@GF{IR}",
-          "GPL0_@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_Full_Load_@GF{IR}",
-          "GPL0_@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_Watermark_@GF{IR}"
+          "GPL_@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_Full_Load_@GF{IR}",
+          "GPL_@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_Watermark_@GF{IR}"
         ],
         "Replacements": [
           {

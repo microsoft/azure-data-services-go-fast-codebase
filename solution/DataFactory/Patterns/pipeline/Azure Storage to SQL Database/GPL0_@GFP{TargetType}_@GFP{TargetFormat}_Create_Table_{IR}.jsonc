@@ -1,5 +1,5 @@
 {
-	"name": "GPL0_@GFP{TargetType}_@GFP{TargetFormat}_Create_Table_@GF{IR}",
+	"name": "GPL_@GFP{TargetType}_@GFP{TargetFormat}_Create_Table_@GF{IR}",
 	"properties": {
 		"activities": [
 			{
@@ -57,7 +57,7 @@
 								"secureInput": false
 							},
 							"userProperties": [],
-							"typeProperties": {/*CreateStagingtypeProperties*/}
+							"typeProperties": {/*@GFP{CreateStaging}*/}
 						},
 						{
 							"name": "AF Log - Create Staging Table Failed",
@@ -145,7 +145,7 @@
 								"secureInput": false
 							},
 							"userProperties": [],
-							"typeProperties": {/*CreateTargettypeProperties*/}
+							"typeProperties": {/*@GFP{CreateTarget}*/}
 						},
 						{
 							"name": "AF Log - Create Target Table Failed",

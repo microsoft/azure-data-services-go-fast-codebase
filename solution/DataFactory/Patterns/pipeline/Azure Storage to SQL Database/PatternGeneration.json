@@ -3,14 +3,14 @@
     "Active": true,
     "SourceType": "AzureBlobFS",
     "SourceFormat": "Parquet",
-    "TargetType": "AzureSQLTable",
+    "TargetType": "AzureSqlTable",
     "TargetFormat": "NA",
     "Pipelines": [
       {
         "Names": [
-          "GPL_@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_@GF{IR}",
-          "GPL0_@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_Create_Table_@GF{IR}",
-          "GPL0_@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_Post_Copy_@GF{IR}"
+          "GPL_@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_{IR}",
+          "GPL_@GFP{TargetType}_@GFP{TargetFormat}_Create_Table_{IR}",
+          "GPL_@GFP{TargetType}_@GFP{TargetFormat}_Post_Copy_{IR}"
         ],
         "Replacements": [
           {
@@ -61,14 +61,14 @@
     "Active": true,
     "SourceType": "AzureBlobStorage",
     "SourceFormat": "Parquet",
-    "TargetType": "AzureSQLTable",
+    "TargetType": "AzureSqlTable",
     "TargetFormat": "NA",
     "Pipelines": [
       {
         "Names": [
-          "GPL_@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_@GF{IR}",
-          "GPL0_@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_Create_Table_@GF{IR}",
-          "GPL0_@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_Post_Copy_@GF{IR}"
+          "GPL_@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_{IR}",
+          "GPL_@GFP{TargetType}_@GFP{TargetFormat}_Create_Table_{IR}",
+          "GPL_@GFP{TargetType}_@GFP{TargetFormat}_Post_Copy_{IR}"
         ],
         "Replacements": [
           {
@@ -109,6 +109,16 @@
           {
             "OldValue": "{/*@GFP{InfoSchemaTarget}*/}",
             "NewValue": ".\\partials\\@GFP{TargetType}_@GFP{TargetFormat}_InfoSchemaTarget_TypeProperties.json",
+            "Type": "File"
+          },
+          {
+            "OldValue": "{/*@GFP{CreateStaging}*/}",
+            "NewValue": ".\\partials\\@GFP{TargetType}_@GFP{TargetFormat}_CreateStaging_TypeProperties.json",
+            "Type": "File"
+          },
+          {
+            "OldValue": "{/*@GFP{CreateTarget}*/}",
+            "NewValue": ".\\partials\\@GFP{TargetType}_@GFP{TargetFormat}_CreateTarget_TypeProperties.json",
             "Type": "File"
           }
         ]
@@ -119,14 +129,14 @@
     "Active": true,
     "SourceType": "AzureBlobFS",
     "SourceFormat": "Excel",
-    "TargetType": "AzureSQLTable",
+    "TargetType": "AzureSqlTable",
     "TargetFormat": "NA",
     "Pipelines": [
       {
         "Names": [
-          "GPL_@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_@GF{IR}",
-          "GPL0_@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_Create_Table_@GF{IR}",
-          "GPL0_@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_Post_Copy_@GF{IR}"
+          "GPL_@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_{IR}",
+          "GPL_@GFP{TargetType}_@GFP{TargetFormat}_Create_Table_{IR}",
+          "GPL_@GFP{TargetType}_@GFP{TargetFormat}_Post_Copy_{IR}"
         ],
         "Replacements": [
           {
@@ -167,6 +177,16 @@
           {
             "OldValue": "{/*@GFP{InfoSchemaTarget}*/}",
             "NewValue": ".\\partials\\@GFP{TargetType}_@GFP{TargetFormat}_InfoSchemaTarget_TypeProperties.json",
+            "Type": "File"
+          },
+          {
+            "OldValue": "{/*@GFP{CreateStaging}*/}",
+            "NewValue": ".\\partials\\@GFP{TargetType}_@GFP{TargetFormat}_CreateStaging_TypeProperties.json",
+            "Type": "File"
+          },
+          {
+            "OldValue": "{/*@GFP{CreateTarget}*/}",
+            "NewValue": ".\\partials\\@GFP{TargetType}_@GFP{TargetFormat}_CreateTarget_TypeProperties.json",
             "Type": "File"
           }
         ]
@@ -177,14 +197,14 @@
     "Active": true,
     "SourceType": "AzureBlobStorage",
     "SourceFormat": "Excel",
-    "TargetType": "AzureSQLTable",
+    "TargetType": "AzureSqlTable",
     "TargetFormat": "NA",
     "Pipelines": [
       {
         "Names": [
-          "GPL_@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_@GF{IR}",
-          "GPL0_@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_Create_Table_@GF{IR}",
-          "GPL0_@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_Post_Copy_@GF{IR}"
+          "GPL_@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_{IR}",
+          "GPL_@GFP{TargetType}_@GFP{TargetFormat}_Create_Table_{IR}",
+          "GPL_@GFP{TargetType}_@GFP{TargetFormat}_Post_Copy_{IR}"
         ],
         "Replacements": [
           {
@@ -225,6 +245,16 @@
           {
             "OldValue": "{/*@GFP{InfoSchemaTarget}*/}",
             "NewValue": ".\\partials\\@GFP{TargetType}_@GFP{TargetFormat}_InfoSchemaTarget_TypeProperties.json",
+            "Type": "File"
+          },
+          {
+            "OldValue": "{/*@GFP{CreateStaging}*/}",
+            "NewValue": ".\\partials\\@GFP{TargetType}_@GFP{TargetFormat}_CreateStaging_TypeProperties.json",
+            "Type": "File"
+          },
+          {
+            "OldValue": "{/*@GFP{CreateTarget}*/}",
+            "NewValue": ".\\partials\\@GFP{TargetType}_@GFP{TargetFormat}_CreateTarget_TypeProperties.json",
             "Type": "File"
           }
         ]
@@ -235,14 +265,14 @@
     "Active": true,
     "SourceType": "AzureBlobFS",
     "SourceFormat": "Json",
-    "TargetType": "AzureSQLTable",
+    "TargetType": "AzureSqlTable",
     "TargetFormat": "NA",
     "Pipelines": [
       {
         "Names": [
-          "GPL_@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_@GF{IR}",
-          "GPL0_@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_Create_Table_@GF{IR}",
-          "GPL0_@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_Post_Copy_@GF{IR}"
+          "GPL_@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_{IR}",
+          "GPL_@GFP{TargetType}_@GFP{TargetFormat}_Create_Table_{IR}",
+          "GPL_@GFP{TargetType}_@GFP{TargetFormat}_Post_Copy_{IR}"
         ],
         "Replacements": [
           {
@@ -283,6 +313,16 @@
           {
             "OldValue": "{/*@GFP{InfoSchemaTarget}*/}",
             "NewValue": ".\\partials\\@GFP{TargetType}_@GFP{TargetFormat}_InfoSchemaTarget_TypeProperties.json",
+            "Type": "File"
+          },
+          {
+            "OldValue": "{/*@GFP{CreateStaging}*/}",
+            "NewValue": ".\\partials\\@GFP{TargetType}_@GFP{TargetFormat}_CreateStaging_TypeProperties.json",
+            "Type": "File"
+          },
+          {
+            "OldValue": "{/*@GFP{CreateTarget}*/}",
+            "NewValue": ".\\partials\\@GFP{TargetType}_@GFP{TargetFormat}_CreateTarget_TypeProperties.json",
             "Type": "File"
           }
         ]
@@ -293,14 +333,14 @@
     "Active": true,
     "SourceType": "AzureBlobStorage",
     "SourceFormat": "Json",
-    "TargetType": "AzureSQLTable",
+    "TargetType": "AzureSqlTable",
     "TargetFormat": "NA",
     "Pipelines": [
       {
         "Names": [
-          "GPL_@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_@GF{IR}",
-          "GPL0_@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_Create_Table_@GF{IR}",
-          "GPL0_@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_Post_Copy_@GF{IR}"
+          "GPL_@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_{IR}",
+          "GPL_@GFP{TargetType}_@GFP{TargetFormat}_Create_Table_{IR}",
+          "GPL_@GFP{TargetType}_@GFP{TargetFormat}_Post_Copy_{IR}"
         ],
         "Replacements": [
           {
@@ -341,6 +381,16 @@
           {
             "OldValue": "{/*@GFP{InfoSchemaTarget}*/}",
             "NewValue": ".\\partials\\@GFP{TargetType}_@GFP{TargetFormat}_InfoSchemaTarget_TypeProperties.json",
+            "Type": "File"
+          },
+          {
+            "OldValue": "{/*@GFP{CreateStaging}*/}",
+            "NewValue": ".\\partials\\@GFP{TargetType}_@GFP{TargetFormat}_CreateStaging_TypeProperties.json",
+            "Type": "File"
+          },
+          {
+            "OldValue": "{/*@GFP{CreateTarget}*/}",
+            "NewValue": ".\\partials\\@GFP{TargetType}_@GFP{TargetFormat}_CreateTarget_TypeProperties.json",
             "Type": "File"
           }
         ]
@@ -351,14 +401,14 @@
     "Active": true,
     "SourceType": "AzureBlobFS",
     "SourceFormat": "DelimitedText",
-    "TargetType": "AzureSQLTable",
+    "TargetType": "AzureSqlTable",
     "TargetFormat": "NA",
     "Pipelines": [
       {
         "Names": [
-          "GPL_@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_@GF{IR}",
-          "GPL0_@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_Create_Table_@GF{IR}",
-          "GPL0_@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_Post_Copy_@GF{IR}"
+          "GPL_@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_{IR}",
+          "GPL_@GFP{TargetType}_@GFP{TargetFormat}_Create_Table_{IR}",
+          "GPL_@GFP{TargetType}_@GFP{TargetFormat}_Post_Copy_{IR}"
         ],
         "Replacements": [
           {
@@ -399,6 +449,16 @@
           {
             "OldValue": "{/*@GFP{InfoSchemaTarget}*/}",
             "NewValue": ".\\partials\\@GFP{TargetType}_@GFP{TargetFormat}_InfoSchemaTarget_TypeProperties.json",
+            "Type": "File"
+          },
+          {
+            "OldValue": "{/*@GFP{CreateStaging}*/}",
+            "NewValue": ".\\partials\\@GFP{TargetType}_@GFP{TargetFormat}_CreateStaging_TypeProperties.json",
+            "Type": "File"
+          },
+          {
+            "OldValue": "{/*@GFP{CreateTarget}*/}",
+            "NewValue": ".\\partials\\@GFP{TargetType}_@GFP{TargetFormat}_CreateTarget_TypeProperties.json",
             "Type": "File"
           }
         ]
@@ -409,14 +469,14 @@
     "Active": true,
     "SourceType": "AzureBlobStorage",
     "SourceFormat": "DelimitedText",
-    "TargetType": "AzureSQLTable",
+    "TargetType": "AzureSqlTable",
     "TargetFormat": "NA",
     "Pipelines": [
       {
         "Names": [
-          "GPL_@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_@GF{IR}",
-          "GPL0_@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_Create_Table_@GF{IR}",
-          "GPL0_@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_Post_Copy_@GF{IR}"
+          "GPL_@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_{IR}",
+          "GPL_@GFP{TargetType}_@GFP{TargetFormat}_Create_Table_{IR}",
+          "GPL_@GFP{TargetType}_@GFP{TargetFormat}_Post_Copy_{IR}"
         ],
         "Replacements": [
           {
@@ -457,6 +517,16 @@
           {
             "OldValue": "{/*@GFP{InfoSchemaTarget}*/}",
             "NewValue": ".\\partials\\@GFP{TargetType}_@GFP{TargetFormat}_InfoSchemaTarget_TypeProperties.json",
+            "Type": "File"
+          },
+          {
+            "OldValue": "{/*@GFP{CreateStaging}*/}",
+            "NewValue": ".\\partials\\@GFP{TargetType}_@GFP{TargetFormat}_CreateStaging_TypeProperties.json",
+            "Type": "File"
+          },
+          {
+            "OldValue": "{/*@GFP{CreateTarget}*/}",
+            "NewValue": ".\\partials\\@GFP{TargetType}_@GFP{TargetFormat}_CreateTarget_TypeProperties.json",
             "Type": "File"
           }
         ]
