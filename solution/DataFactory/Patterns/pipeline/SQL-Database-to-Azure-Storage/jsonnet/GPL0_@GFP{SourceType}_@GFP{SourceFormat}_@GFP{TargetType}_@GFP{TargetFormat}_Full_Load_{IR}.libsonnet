@@ -1,4 +1,6 @@
+function(GFPIR="{IRA}",SourceType="AzureSqlTable",SourceFormat="NA",TargetType="AzureBlobFS",TargetFormat="Parquet")
 {
+	local CopyActivity_TypeProperties = import './partials/CopyActivity_TypeProperties.libsonnet',
 	"name": "GPL_@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_Full_Load_@GF{IR}",
 	"properties": {
 		"activities": [
@@ -34,10 +36,8 @@
 					"secureInput": false
 				},
 				"userProperties": [],
-				"typeProperties":   {/*@GFP{typeProperties}*/},
-				"inputs":   {/*@GFP{inputs}*/},
-				"outputs":   {/*@GFP{outputs}*/}
-			},
+			} 
+				+CopyActivity_TypeProperties(GFPIR, SourceType, SourceFormat, TargetType, TargetFormat),
 			{
 				"name": "Pipeline AF Log - Copy Failed",
 				"type": "ExecutePipeline",

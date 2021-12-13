@@ -1,5 +1,5 @@
 
-function(GFPIR="{IRA}",SourceType="AzureSQL",SourceFormat="NA",TargetType="AzureBlobFS",TargetFormat="Parquet")
+function(GFPIR="{IRA}",SourceType="AzureSqlTable",SourceFormat="NA",TargetType="AzureBlobFS",TargetFormat="Parquet")
 {
 	local infoschemasource = import './partials/GetInformationSchema.libsonnet',
 	local Watermarksource = import './partials/ExecuteIncrementalSql.libsonnet',
@@ -264,7 +264,7 @@ function(GFPIR="{IRA}",SourceType="AzureSQL",SourceFormat="NA",TargetType="Azure
 										"secureInput": false
 									},
 									"userProperties": [],
-									"typeProperties": {/*@GFP{watermarksource}*/}
+									"typeProperties": Watermarksource(GFPIR,  SourceType, SourceFormat)
 								}
 							]
 						},
@@ -321,7 +321,7 @@ function(GFPIR="{IRA}",SourceType="AzureSQL",SourceFormat="NA",TargetType="Azure
 										"secureInput": false
 									},
 									"userProperties": [],
-									"typeProperties": {/*@GFP{watermarksource}*/}
+									"typeProperties": Watermarksource(GFPIR,  SourceType, SourceFormat)
 								}
 							]
 						}
@@ -378,7 +378,7 @@ function(GFPIR="{IRA}",SourceType="AzureSQL",SourceFormat="NA",TargetType="Azure
 						"Name": "adsgofastdatakakeacceladf",
 						"ResourceGroup": "AdsGoFastDataLakeAccel",
 						"SubscriptionId": "035a1364-f00d-48e2-b582-4fe125905ee3",
-						"ADFPipeline": "AZ_SQL_AZ_Storage_Parquet_@GF{IR}"
+						"ADFPipeline": "AZ_SQL_AZ_Storage_Parquet_" +GFPIR
 					}
 				}
 			}

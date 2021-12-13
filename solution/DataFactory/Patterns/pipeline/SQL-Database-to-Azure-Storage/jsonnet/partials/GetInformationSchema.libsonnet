@@ -1,5 +1,5 @@
 function(GFPIR="IRA", SourceType="AzureSqlTable", SourceFormat="NA")
-if (SourceType=="AzureSqlTable" && SourceFormat == "NA") then
+if (SourceType=="AzureSqlTable"&&SourceFormat=="NA") then
 {
             "source": {
               "type": "AzureSqlSource",
@@ -34,8 +34,7 @@ if (SourceType=="AzureSqlTable" && SourceFormat == "NA") then
             },
             "firstRowOnly": false
 }
-+
-if (SourceType=="SqlServerTable" && SourceFormat == "NA") then
+else if (SourceType=="SqlServerTable" && SourceFormat == "NA") then
 {
   "source": {
     "type": "SqlServerSource",
@@ -83,6 +82,4 @@ if (SourceType=="SqlServerTable" && SourceFormat == "NA") then
   "firstRowOnly": false
 }
 else
-{
-
-}
+  error 'GetInformationSchema.libsonnet failed. No mapping for:' +GFPIR+","+SourceType+","+SourceFormat

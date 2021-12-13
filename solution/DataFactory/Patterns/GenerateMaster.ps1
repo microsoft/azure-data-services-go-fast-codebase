@@ -1,5 +1,5 @@
 
-$PrimaryPipelines = (Get-ChildItem -Path ".\output\" -Include "GPL_*"  -recurse )
+$PrimaryPipelines = (Get-ChildItem -Path ".\output\" -Include "_*"  -recurse )
 $SwitchTemplate =  (Get-Content -path ".\partials\Master_SwitchItem.json")
 
 $SwitchItems = @()
