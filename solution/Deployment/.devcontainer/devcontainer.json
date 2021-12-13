@@ -13,19 +13,20 @@
 	// Instead of mounting the local workspace folder (Deployment) by default, 
 	// this should mount its parent folder (per "..") into the default /workspace folder 
 	// of the container.  This assumes that the Deployment folder was opened in vscode
-	"workspaceMount": "source=${localWorkspaceFolder}/..,target=/workspace,type=bind",
-	"workspaceFolder": "/workspace",
+	//"workspaceMount": "source=${localWorkspaceFolder}/..,target=/workspace,type=bind",
+	//"workspaceFolder": "/workspace",
 
 	// Add the IDs of extensions you want installed when the container is created.
 	"extensions": [
-		"ms-vscode.azurecli"
+		"ms-vscode.azurecli"//,
+		//"ms-vscode.powershell"      
 	],
 	
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	// "forwardPorts": [],
 
 	// Use 'postCreateCommand' to run commands after the container is created.
-	"postCreateCommand": "sudo apt-get update && sudo apt-get install -y wget apt-transport-https software-properties-common && wget -q https://packages.microsoft.com/config/ubuntu/16.04/packages-microsoft-prod.deb && sudo dpkg -i packages-microsoft-prod.deb && sudo apt-get update && sudo apt-get install -y powershell && rm ./packages-microsoft-prod.deb && sudo apt install -y dotnet-sdk-3.1 && curl -fsSL https://deb.nodesource.com/setup_17.x | sudo -E bash - && apt-get install -y nodejs",
+	"postCreateCommand": "sudo apt-get update && sudo apt-get install -y wget apt-transport-https software-properties-common && wget -q https://packages.microsoft.com/config/ubuntu/16.04/packages-microsoft-prod.deb && sudo dpkg -i packages-microsoft-prod.deb && sudo apt-get update && sudo apt-get install -y powershell && rm ./packages-microsoft-prod.deb && sudo apt install -y dotnet-sdk-3.1 && curl -fsSL https://deb.nodesource.com/setup_17.x | sudo -E bash - && apt-get install -y nodejs && wget https://github.com/google/go-jsonnet/releases/download/v0.17.0/jsonnet-go_0.17.0_linux_amd64.deb && sudo dpkg -i jsonnet-go_0.17.0_linux_amd64.deb",
 
 	// Uncomment when using a ptrace-based debugger like C++, Go, and Rust
 	// "runArgs": [ "--cap-add=SYS_PTRACE", "--security-opt", "seccomp=unconfined" ],
