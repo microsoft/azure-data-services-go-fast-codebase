@@ -1,8 +1,8 @@
 
 function(GFPIR="{IRA}",SourceType="AzureSqlTable",SourceFormat="NA",TargetType="AzureBlobFS",TargetFormat="Parquet")
 {
-	local infoschemasource = import './partials/GetInformationSchema.libsonnet',
-	local Watermarksource = import './partials/ExecuteIncrementalSql.libsonnet',
+	local infoschemasource = import './partials/Main_Lookup_GetInformationSchema_TypeProperties.libsonnet',
+	local Watermarksource = import './partials/Main_Lookup_GetNextWaterMarkOrChunk.libsonnet',
 	"name": "GPL_"+SourceType+"_"+SourceFormat+"_"+TargetType+"_"+TargetFormat+"_"+GFPIR,
 	"properties": {
 		"activities": [

@@ -278,3 +278,7 @@ __pycache__/
 #Old Deploy Folder 
 Deploy/
 deploy/
+
+
+#tests
+tests/

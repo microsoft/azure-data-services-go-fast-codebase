@@ -1,5 +1,6 @@
+function(GFPIR="IRA",SourceType="AzureSqlTable",SourceFormat="NA",TargetType="AzureBlobFS",TargetFormat="Parquet")
 {
-	"name": "GPL_@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_Watermark_Chunk_@GF{IR}",
+	"name": "GPL_"+SourceType+"_"+SourceFormat+"_"+TargetType+"_"+TargetFormat+"_Watermark_Chunk_" + GFPIR,
 	"properties": {
 		"activities": [
 			{
@@ -49,7 +50,7 @@
 							"userProperties": [],
 							"typeProperties": {
 								"pipeline": {
-									"referenceName": "GPL_@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_Watermark_@GF{IR}",
+									"referenceName": "GPL_"+SourceType+"_"+SourceFormat+"_"+TargetType+"_"+TargetFormat+"_Watermark_" + GFPIR,
 									"type": "PipelineReference"
 								},
 								"waitOnCompletion": true,
@@ -130,7 +131,7 @@
 						"Name": "adsgofastdatakakeacceladf",
 						"ResourceGroup": "AdsGoFastDataLakeAccel",
 						"SubscriptionId": "035a1364-f00d-48e2-b582-4fe125905ee3",
-						"ADFPipeline": "AZ_SQL_AZ_Storage_Parquet_@GF{IR}"
+						"ADFPipeline": "AZ_SQL_AZ_Storage_Parquet_" + GFPIR
 					}
 				}
 			},
@@ -145,7 +146,7 @@
 			}
 		},
 		"folder": {
-			"name": "ADS Go Fast/Data Movement/@GF{IR}/Components"
+			"name": "ADS Go Fast/Data Movement/"+GFPIR+"/Components"
 		},
 		"annotations": []
 	},

@@ -1,4 +1,5 @@
-function(GFPIR="IRA") {
+function(GFPIR="IRA") 
+{
     "source": {
       "type": "SqlServerSource",
       "sqlReaderQuery": {
@@ -22,5 +23,5 @@ function(GFPIR="IRA") {
       "value": "@pipeline().parameters.Mapping",
       "type": "Expression"
     }
-  }
+}
 

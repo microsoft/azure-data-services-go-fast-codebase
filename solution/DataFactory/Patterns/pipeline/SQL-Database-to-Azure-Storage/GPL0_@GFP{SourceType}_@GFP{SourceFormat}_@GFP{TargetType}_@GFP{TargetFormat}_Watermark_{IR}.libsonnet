@@ -1,7 +1,10 @@
 function(GFPIR="{IRA}",SourceType="AzureSqlTable",SourceFormat="NA",TargetType="AzureBlobFS",TargetFormat="Parquet")
 {
-	local CopyActivity_TypeProperties = import './partials/CopyActivity_TypeProperties.libsonnet',
-	"name": "GPL_@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_Full_Load_@GF{IR}",
+	local CopyActivity_TypeProperties = import './partials/Full_Load_CopyActivity_TypeProperties.libsonnet',
+	local Full_Load_GetTargetMetadata = import './partials/Full_Load_GetTargetMetadata.libsonnet',
+
+	
+	"name": "GPL_"+SourceType+"_"+SourceFormat+"_"+TargetType+"_"+TargetFormat+"_Watermark_" + GFPIR,
 	"properties": {
 		"activities": [
 			{
@@ -12,7 +15,7 @@ function(GFPIR="{IRA}",SourceType="AzureSqlTable",SourceFormat="NA",TargetType="
 				"typeProperties": {
 					"variableName": "SQLStatement",
 					"value": {
-						"value": "@replace(replace(pipeline().parameters.TaskObject.Source.Extraction.SQLStatement,'<batchcount>',string(pipeline().parameters.BatchCount)),'<item>',string(pipeline().parameters.Item))",
+						"value": "@replace(replace(replace(pipeline().parameters.TaskObject.Source.Extraction.SQLStatement,'<batchcount>',string(pipeline().parameters.BatchCount)),'<item>',string(pipeline().parameters.Item)),'<newWatermark>',pipeline().parameters.NewWaterMark)",
 						"type": "Expression"
 					}
 				}
@@ -35,20 +38,20 @@ function(GFPIR="{IRA}",SourceType="AzureSqlTable",SourceFormat="NA",TargetType="
 					"secureOutput": false,
 					"secureInput": false
 				},
-				"userProperties": [],
-			} 
-				+CopyActivity_TypeProperties(GFPIR, SourceType, SourceFormat, TargetType, TargetFormat),
+				"userProperties": []
+			}
+				+CopyActivity_TypeProperties(GFPIR,SourceType, SourceFormat, TargetType, TargetFormat),											
 			{
 				"name": "Pipeline AF Log - Copy Failed",
 				"type": "ExecutePipeline",
 				"dependsOn": [
-                    {
-                        "activity": "Copy SQL to Storage",
+					{
+						"activity": "Copy SQL to Storage",
 						"dependencyConditions": [
 							"Failed"
 						]
-                    }
-                ],
+					}
+				],
 				"userProperties": [],
 				"typeProperties": {
 					"pipeline": {
@@ -117,7 +120,7 @@ function(GFPIR="{IRA}",SourceType="AzureSqlTable",SourceFormat="NA",TargetType="
 					"secureInput": false
 				},
 				"userProperties": [],
-				"typeProperties": {/*@GFP{schemasource}*/}
+				"typeProperties": Full_Load_GetTargetMetadata(GFPIR,TargetType, TargetFormat)
 			},
 			{
 				"name": "Pipeline AF Log - Copy Start",
@@ -218,17 +221,20 @@ function(GFPIR="{IRA}",SourceType="AzureSqlTable",SourceFormat="NA",TargetType="
 						"Name": "adsgofastdatakakeacceladf",
 						"ResourceGroup": "AdsGoFastDataLakeAccel",
 						"SubscriptionId": "035a1364-f00d-48e2-b582-4fe125905ee3",
-						"ADFPipeline": "AZ_SQL_AZ_Storage_Parquet_@GF{IR}"
+						"ADFPipeline": "AZ_SQL_AZ_Storage_Parquet_" + GFPIR
 					}
 				}
 			},
 			"Mapping": {
 				"type": "object"
 			},
-			"BatchCount": {
-				"type": "int"
+			"NewWaterMark": {
+				"type": "string"
 			},
 			"Item": {
+				"type": "int"
+			},
+			"BatchCount": {
 				"type": "int"
 			}
 		},
@@ -238,7 +244,7 @@ function(GFPIR="{IRA}",SourceType="AzureSqlTable",SourceFormat="NA",TargetType="
 			}
 		},
 		"folder": {
-			"name": "ADS Go Fast/Data Movement/@GF{IR}/Components"
+			"name": "ADS Go Fast/Data Movement/"+GFPIR+"/Components"
 		},
 		"annotations": []
 	},

@@ -1,35 +1,8 @@
+function(GFPIR="IRA",SourceType="AzureSqlTable",SourceFormat="NA",TargetType="AzureBlobFS",TargetFormat="Parquet")
 {
-	"name": "GPL_@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_Watermark_Chunk_@GF{IR}",
+	"name": "GPL_"+SourceType+"_"+SourceFormat+"_"+TargetType+"_"+TargetFormat+"_Full_Load_Chunk" + GFPIR,
 	"properties": {
 		"activities": [
-			{
-				"name": "AF Set New Watermark",
-				"type": "ExecutePipeline",
-				"dependsOn": [
-					{
-						"activity": "ForEach Chunk",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
-				"userProperties": [],
-				"typeProperties": {
-					"pipeline": {
-						"referenceName": "AZ_Function_Generic",
-						"type": "PipelineReference"
-					},
-					"waitOnCompletion": false,
-					"parameters": {
-						"Body": {
-							"value": "@json(concat('{\"TaskInstanceId\":\"', string(pipeline().parameters.TaskObject.TaskInstanceId), '\",\"ExecutionUid\":\"', string(pipeline().parameters.TaskObject.ExecutionUid), '\",\"RunId\":\"', string(pipeline().RunId), '\",\"TaskMasterId\":\"', string(pipeline().parameters.TaskObject.TaskMasterId),'\",\"TaskMasterWaterMarkColumnType\":\"', string(pipeline().parameters.TaskObject.Source.Extraction.IncrementalColumnType),'\",\"WaterMarkValue\":\"', string(pipeline().parameters.NewWatermark), '\"}'))",
-							"type": "Expression"
-						},
-						"FunctionName": "WaterMark",
-						"Method": "Post"
-					}
-				}
-			},
 			{
 				"name": "ForEach Chunk",
 				"type": "ForEach",
@@ -43,13 +16,13 @@
 					"isSequential": true,
 					"activities": [
 						{
-							"name": "Execute Watermark",
+							"name": "Execute Full Load",
 							"type": "ExecutePipeline",
 							"dependsOn": [],
 							"userProperties": [],
 							"typeProperties": {
 								"pipeline": {
-									"referenceName": "GPL_@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_Watermark_@GF{IR}",
+									"referenceName": "GPL_"+SourceType+"_"+SourceFormat+"_"+TargetType+"_"+TargetFormat+"_Full_Load_" +GFPIR,
 									"type": "PipelineReference"
 								},
 								"waitOnCompletion": true,
@@ -62,16 +35,12 @@
 										"value": "@pipeline().parameters.Mapping",
 										"type": "Expression"
 									},
-									"NewWaterMark": {
-										"value": "@pipeline().parameters.NewWatermark",
+									"BatchCount": {
+										"value": "@pipeline().parameters.BatchCount",
 										"type": "Expression"
 									},
 									"Item": {
 										"value": "@item()",
-										"type": "Expression"
-									},
-									"BatchCount": {
-										"value": "@pipeline().parameters.BatchCount",
 										"type": "Expression"
 									}
 								}
@@ -130,22 +99,19 @@
 						"Name": "adsgofastdatakakeacceladf",
 						"ResourceGroup": "AdsGoFastDataLakeAccel",
 						"SubscriptionId": "035a1364-f00d-48e2-b582-4fe125905ee3",
-						"ADFPipeline": "AZ_SQL_AZ_Storage_Parquet_@GF{IR}"
+						"ADFPipeline": "SH-AZ_Storage_Parquet_" +GFPIR
 					}
 				}
 			},
 			"Mapping": {
 				"type": "object"
 			},
-			"NewWatermark": {
-				"type": "string"
-			},
 			"BatchCount": {
 				"type": "int"
 			}
 		},
 		"folder": {
-			"name": "ADS Go Fast/Data Movement/@GF{IR}/Components"
+			"name": "ADS Go Fast/Data Movement/"+GFPIR+"/Components"
 		},
 		"annotations": []
 	},

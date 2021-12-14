@@ -1,4 +1,5 @@
-function(GFPIR="IRA") {
+function(GFPIR="IRA") 
+{
   "dataset": {
     "referenceName": "GDS_AzureBlobStorage_Parquet_" + GFPIR,
     "type": "DatasetReference",
