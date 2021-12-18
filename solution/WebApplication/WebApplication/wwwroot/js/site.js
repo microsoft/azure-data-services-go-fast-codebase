@@ -218,8 +218,8 @@ function DataTablesGridStart(GridOptions, PrepOptions) {
         "initComplete": function () {
             var api = this.api();
 
-            if (localStorage.getItem('DataTables_selected') != undefined) {
-                var selected = localStorage.getItem('DataTables_selected').split(',');
+            if (localStorage.getItem(`DataTables_${ModelName}_selected`) != undefined) {
+                var selected = localStorage.getItem(`DataTables_${ModelName}_selected`).split(',');
                 selected.forEach(function (s) {
                     api.row(s).select();
                 });
@@ -297,7 +297,7 @@ function DataTablesGridStart(GridOptions, PrepOptions) {
 
 
     dt.on('select.dt deselect.dt', function () {
-        localStorage.setItem('DataTables_selected', dt.rows({ selected: true }).toArray());
+        localStorage.setItem(`DataTables_${ModelName}_selected`, dt.rows({ selected: true }).toArray());
     });
 
 

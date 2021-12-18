@@ -46,13 +46,20 @@ namespace WebApplication
             services.AddDbContext<AdsGoFastContext>((provider, options) =>
             {
                 var appOptions = provider.GetService<IOptions<ApplicationOptions>>();
-                SqlConnectionStringBuilder scsb = new SqlConnectionStringBuilder
+                if (!string.IsNullOrEmpty(appOptions.Value.ConnectionString))
                 {
-                    DataSource = appOptions.Value.AdsGoFastTaskMetaDataDatabaseServer,
-                    InitialCatalog = appOptions.Value.AdsGoFastTaskMetaDataDatabaseName
-                };
-                options.UseSqlServer(scsb.ConnectionString);
-                options.AddInterceptors(provider.GetRequiredService<AadAuthenticationDbConnectionInterceptor>());
+                    options.UseSqlServer(appOptions.Value.ConnectionString);
+                }
+                else
+                {
+                    SqlConnectionStringBuilder scsb = new SqlConnectionStringBuilder
+                    {
+                        DataSource = appOptions.Value.AdsGoFastTaskMetaDataDatabaseServer,
+                        InitialCatalog = appOptions.Value.AdsGoFastTaskMetaDataDatabaseName
+                    };
+                    options.UseSqlServer(scsb.ConnectionString);
+                    options.AddInterceptors(provider.GetRequiredService<AadAuthenticationDbConnectionInterceptor>());
+                }
             });
 
             //Configure HttpClients for a centralised management using HttpClientFactory
