@@ -1,0 +1,119 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "purviewAccountName": {
+            "type": "String"
+        },
+        "location": {
+            "type": "String"
+        },
+        "queuePrivateLinkName": {
+            "type": "String"
+        },
+        "storagePrivateLinkName": {
+            "type": "String"
+        },
+        "eventHubPrivateLinkName": {
+            "type": "String"
+        },
+        "managedResourceGroupName": {
+            "type": "String"
+        },
+        "subnetId": {
+            "type": "String"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Purview/accounts",
+            "apiVersion": "2021-07-01",
+            "name": "[parameters('purviewAccountName')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [],
+            "tags": {},
+            "sku": {
+                "name": "Standard",
+                "capacity": 1
+            },
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "properties": {
+                "publicNetworkAccess": "Disabled",
+                "managedResourceGroupName": "[parameters('managedResourceGroupName')]"
+            }
+        },
+        {
+            "apiVersion": "2020-03-01",
+            "name": "[parameters('eventHubPrivateLinkName')]",
+            "type": "Microsoft.Network/privateEndpoints",
+            "location": "[parameters('location')]",
+            "properties": {
+                "privateLinkServiceConnections": [
+                    {
+                        "name": "[parameters('eventHubPrivateLinkName')]",
+                        "properties": {
+                            "privateLinkServiceId": "[reference(parameters('purviewAccountName')).managedResources.eventHubNamespace]",
+                            "groupIds": [
+                                "namespace"
+                            ]
+                        }
+                    }
+                ],
+                "subnet": {
+                    "id": "[parameters('subnetId')]"
+                }
+            },
+            "tags": {}
+        },
+        {
+            "apiVersion": "2020-03-01",
+            "name": "[parameters('queuePrivateLinkName')]",
+            "type": "Microsoft.Network/privateEndpoints",
+            "location": "australiaeast",
+            "properties": {
+                "privateLinkServiceConnections": [
+                    {
+                        "name": "[parameters('queuePrivateLinkName')]",
+                        "properties": {
+                            "privateLinkServiceId": "[reference(parameters('purviewAccountName')).managedResources.storageAccount]",
+                            "groupIds": [
+                                "queue"
+                            ]
+                        }
+                    }
+                ],
+                "subnet": {
+                    "id": "[parameters('subnetId')]"
+                }
+            },
+            "tags": {}
+        },
+        {
+            "apiVersion": "2020-03-01",
+            "name": "[parameters('storagePrivateLinkName')]",
+            "type": "Microsoft.Network/privateEndpoints",
+            "location": "australiaeast",
+            "properties": {
+                "privateLinkServiceConnections": [
+                    {
+                        "name": "[parameters('storagePrivateLinkName')]",
+                        "properties": {
+                            "privateLinkServiceId": "[reference(parameters('purviewAccountName')).managedResources.storageAccount]",
+                            "groupIds": [
+                                "blob"
+                            ]
+                        }
+                    }
+                ],
+                "subnet": {
+                    "id": "[parameters('subnetId')]"
+                }
+            },
+            "tags": {}
+        }
+    ],
+    "outputs": {}
+}

@@ -1,37 +1,173 @@
 name: Continuous Delivery
 
-on: 
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [ $default-branch ]
   push:
     branches:
       - task/workflow-v2
 
 jobs:
-  build-function-app:
-    name: Build Function App
-    runs-on: ubuntu-latest
-    steps:
-      - uses: ./.github/templates/publish-component@v1
-        with:
-          name: Function App
-          path: ./solution/FunctionApp/
-          package-name: FunctionApp.zip
+  publish-function-app:
+    name: Publish Function App
+    uses: arkahna/azure-data-services-go-fast-codebase/.github/workflows/publish-component.yml@task/workflow-v2
+    with:
+      name: Function App
+      path: ./solution/FunctionApp/
+      project-name: FunctionApp
 
-  build-web-app:
-    name: Build Web Application
-    runs-on: ubuntu-latest
-    steps:
-      - uses: ./.github/templates/publish-component@v1
-        with:
-          name: Web Application
-          path: ./solution/WebApplication/
-          package-name: WebApp.zip
+  publish-web-app:
+    name: Publish Web App
+    uses: arkahna/azure-data-services-go-fast-codebase/.github/workflows/publish-component.yml@task/workflow-v2
+    with:
+      name: Web Application
+      path: ./solution/WebApplication/WebApplication/
+      project-name: WebApplication
 
-  build-dbup-app:
-    name: Build Function App
+  publish-dbup-app:
+    name: Publish DbUp Console App
+    uses: arkahna/azure-data-services-go-fast-codebase/.github/workflows/publish-component.yml@task/workflow-v2
+    with:
+      name: DbUp Console App
+      path: ./solution/Database/ADSGoFastDbUp/AdsGoFastDbUp/
+      project-name: AdsGoFastDbUp
+        
+  publish-terraform:
+    name: Publish Terraform
     runs-on: ubuntu-latest
     steps:
-      - uses: ./.github/templates/publish-component@v1
-        with:
-          name: DbUp Console App
-          path: ./solution/Database/ADSGoFastDbUp/AdsGoFastDbUp/
-          package-name: DbUp.zip
+    - uses: actions/checkout@v2
+    - name: Release Build/Publish
+      run: |
+          cd ./solution/Deployment/terraform/
+          zip -r ../../../Terraform.zip ./
+    - uses: actions/upload-artifact@v2
+      with:
+        name: Terraform 
+        path: Terraform.zip
+
+  deploy-to-staging:
+    name: Deploy to Staging Environment
+    env:
+      environmentName: staging
+      keyVaultName: ark-stg-adf-ads-o1rv
+      # Required for Terraform
+      ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+      ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+      ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}      
+      # Customizing Terraform vars
+      TF_VAR_subscription_id : ${{ secrets.ARM_SUBSCRIPTION_ID }}
+      TF_VAR_tenant_id : ${{ secrets.ARM_TENANT_ID }}     
+      TF_VAR_resource_group_name  : ${{ secrets.ARM_RESOURCE_GROUP_NAME }}     
+      TF_VAR_state_storage_account_name  : ${{ secrets.ARM_STORAGE_NAME }}     
+    environment: 
+      name: staging
+    needs: [publish-function-app, publish-web-app, publish-dbup-app, publish-terraform]
+    runs-on: ubuntu-latest
+    steps:
+    - name: Download Artifacts
+      uses: actions/download-artifact@v2
+      with:
+        path: ./artifacts/     
+
+    - name: Get public IP
+      id: ip
+      uses: haythem/public-ip@v1.2
+
+    - name: Login via Az module
+      uses: azure/login@v1
+      with:
+        creds: '{"clientId":"${{ secrets.ARM_CLIENT_ID }}","clientSecret":"${{ secrets.ARM_CLIENT_SECRET }}","subscriptionId":"${{ secrets.ARM_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.ARM_TENANT_ID }}"}'
+        enable-AzPSSession: true 
+    
+    - name: Terragrunt Install
+      id: terragrunt_install
+      working-directory: ./artifacts/Terraform/
+      run: |
+        brew install terragrunt    
+        unzip -o Terraform.zip
+        az keyvault network-rule add -g ${{ env.TF_VAR_resource_group_name }} --name ${{ env.keyVaultName }} --ip-address ${{ steps.ip.outputs.ipv4 }}/32
+    
+    - name: Terraform Init
+      id: terragrunt_init
+      working-directory: ./artifacts/Terraform/
+      run: terragrunt init --terragrunt-config ./vars/${{env.environmentName}}/terragrunt.hcl -no-color
+
+    - name: Terraform Apply
+      id: terragrunt_apply
+      working-directory: ./artifacts/Terraform/
+      env:
+        TF_VAR_ip_address : ${{steps.ip.outputs.ipv4}}
+      run: terragrunt apply -auto-approve --terragrunt-config ./vars/${{env.environmentName}}/terragrunt.hcl -no-color
+
+    - name: Terraform Outputs
+      id: terragrunt_outputs
+      working-directory: ./artifacts/Terraform/
+      env:
+        TF_VAR_ip_address : ${{steps.ip.outputs.ipv4}}
+      run: |
+        echo webapp_name=$(terragrunt output --raw --terragrunt-config ./vars/${{env.environmentName}}/terragrunt.hcl webapp_name) >> $GITHUB_ENV
+        echo functionapp_name=$(terragrunt output --raw --terragrunt-config ./vars/${{env.environmentName}}/terragrunt.hcl functionapp_name) >> $GITHUB_ENV
+        echo sqlserver_name=$(terragrunt output --raw --terragrunt-config ./vars/${{env.environmentName}}/terragrunt.hcl sqlserver_name) >> $GITHUB_ENV
+        echo blobstorage_name=$(terragrunt output --raw --terragrunt-config ./vars/${{env.environmentName}}/terragrunt.hcl blobstorage_name) >> $GITHUB_ENV
+        echo adlsstorage_name=$(terragrunt output --raw --terragrunt-config ./vars/${{env.environmentName}}/terragrunt.hcl adlsstorage_name) >> $GITHUB_ENV
+        echo datafactory_name=$(terragrunt output --raw --terragrunt-config ./vars/${{env.environmentName}}/terragrunt.hcl datafactory_name) >> $GITHUB_ENV
+        echo keyvault_name=$(terragrunt output --raw --terragrunt-config ./vars/${{env.environmentName}}/terragrunt.hcl keyvault_name) >> $GITHUB_ENV
+        echo stagingdb_name=$(terragrunt output --raw --terragrunt-config ./vars/${{env.environmentName}}/terragrunt.hcl stagingdb_name) >> $GITHUB_ENV
+        echo sampledb_name=$(terragrunt output --raw --terragrunt-config ./vars/${{env.environmentName}}/terragrunt.hcl sampledb_name) >> $GITHUB_ENV
+        echo metadatadb_name=$(terragrunt output --raw --terragrunt-config ./vars/${{env.environmentName}}/terragrunt.hcl metadatadb_name) >> $GITHUB_ENV
+        echo loganalyticsworkspace_id=$(terragrunt output --raw --terragrunt-config ./vars/${{env.environmentName}}/terragrunt.hcl loganalyticsworkspace_id) >> $GITHUB_ENV
+
+    - name: 'Deploy Web App Package'
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: ${{env.webapp_name}}
+        package: ./artifacts/WebApplication/WebApplication.zip   
+
+    - name: 'Deploy Function App Package'
+      uses: Azure/functions-action@v1
+      with:
+        app-name: ${{env.functionapp_name}}
+        package: ./artifacts/FunctionApp/FunctionApp.zip           
+
+    - name: Update Metadata Database
+      run: |
+          cd ./artifacts/AdsGoFastDbUp/
+          unzip -o AdsGoFastDbUp.zip
+          az sql server update --enable-public-network true --resource-group ${{env.TF_VAR_resource_group_name}} --name ${{env.sqlserver_name}}
+          az sql server firewall-rule create --name github --resource-group ${{env.TF_VAR_resource_group_name}} --server ${{env.sqlserver_name}} --start-ip-address ${{ steps.ip.outputs.ipv4 }} --end-ip-address ${{ steps.ip.outputs.ipv4 }}
+          dotnet AdsGoFastDbUp.dll -a True -c "Data Source=tcp:${{env.sqlserver_name}}.database.windows.net;Initial Catalog=${{env.metadatadb_name}};" -v True --DataFactoryName ${{env.datafactory_name}} --ResourceGroupName ${{env.TF_VAR_resource_group_name}} --KeyVaultName ${{env.keyvault_name}} --LogAnalyticsWorkspaceId ${{env.loganalyticsworkspace_id}} --SubscriptionId ${{secrets.ARM_SUBSCRIPTION_ID}} --SampleDatabaseName ${{env.sampledb_name}} --StagingDatabaseName ${{env.stagingdb_name}} --MetadataDatabaseName ${{env.metadatadb_name}} --BlobStorageName ${{env.blobstorage_name}} --AdlsStorageName ${{env.adlsstorage_name}} --WebAppName ${{env.webapp_name}} --FunctionAppName ${{env.functionapp_name}} --SqlServerName ${{env.sqlserver_name}}
+          az sql server firewall-rule delete--name github --resource-group ${{env.TF_VAR_resource_group_name}} --server ${{env.sqlserver_name}}
+          az sql server update --enable-public-network false --resource-group ${{env.TF_VAR_resource_group_name}} --name ${{env.sqlserver_name}}
+          
+          
+  deploy-to-production:
+    name: Deploy to Production Environment
+    env:
+      functionAppName: ark-prd-app-ads-portal
+      webAppName: ark-prd-app-ads-portal
+    environment: 
+      name: production
+      url: https://${{env.webAppName}}.azurewebsites.net
+    needs: [deploy-to-staging]
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Download Artifacts
+      uses: actions/download-artifact@v2
+      with:
+        path: ./artifacts/     
+         
+    - name: Login via Az module
+      uses: azure/login@v1
+      with:
+        creds: ${{secrets.AZURE_CREDENTIALS}}
+        enable-AzPSSession: true 
+
+
+
+
+      
+      

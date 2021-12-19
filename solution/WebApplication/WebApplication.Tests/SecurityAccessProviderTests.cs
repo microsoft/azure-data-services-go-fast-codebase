@@ -18,7 +18,7 @@ namespace WebApplication.Tests
         public void LoadingSettingsIncludesGlobalListsAndRoles()
         {
             var configBuilder = new ConfigurationBuilder();
-            configBuilder.AddJsonFile("appSettings.json");
+            configBuilder.AddJsonFile("appsettings.json");
             var config = configBuilder.Build();
             var optionsModel = ConfigurationBinder.Get<SecurityModelOptions>(config.GetSection("SecurityModelOptions"));
             var options = Options.Create(optionsModel);

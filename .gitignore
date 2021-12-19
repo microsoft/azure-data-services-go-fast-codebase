@@ -278,3 +278,4 @@ __pycache__/
 #Old Deploy Folder 
 Deploy/
 deploy/
+/solution/Deployment/terraform/.terraform.lock.hcl

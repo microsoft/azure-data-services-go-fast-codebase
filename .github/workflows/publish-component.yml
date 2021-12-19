@@ -1,0 +1,47 @@
+name: Build & Publish Component
+
+on: 
+  workflow_call:
+    inputs:
+      name:
+        required: true
+        type: string
+      path:
+        required: true
+        type: string        
+      project-name:
+        required: true
+        type: string       
+
+env:
+  DOTNET_VERSION: '3.1.x'
+jobs:
+  build-component:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: ${{inputs.path}}
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+
+    - name: Restore Packages
+      run: dotnet restore ${{inputs.project-name}}.csproj 
+
+    - name: Release Build/Publish
+      run: |
+          dotnet publish ${{inputs.project-name}}.csproj --no-restore -c Release -o ./output
+          cd ./output
+          zip -r ../${{inputs.project-name}}.zip ./
+
+    - name: Publish Artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: ${{inputs.project-name}}    
+        path: ${{inputs.path}}${{inputs.project-name}}.zip
+
+

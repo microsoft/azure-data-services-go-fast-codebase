@@ -1,0 +1,98 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "name": {
+            "type": "String",
+            "metadata": "name of the resource"
+        },
+        "dataFactoryName": {
+            "type": "String",
+            "metadata": "Data Factory name",
+            "defaultValue": "arkstgdfads"
+        },
+        "linkedServiceName": {
+            "type": "String",
+            "metadata": "The name of the linked service that this dataset uses"
+        },
+        "integrationRuntimeName": {
+            "type": "String",
+            "metadata": "The name of the integration runtime this dataset uses"
+        }
+
+    },
+    "resources": [
+        {
+            "apiVersion": "2018-06-01",
+            "name": "[concat(parameters('dataFactoryName'), '/', parameters('name'))]",
+            "properties": {
+                "linkedServiceName": {
+                    "referenceName": "[parameters('linkedServiceName')]",
+                    "type": "LinkedServiceReference",
+                    "parameters": {
+                        "KeyVaultBaseUrl": {
+                            "value": "@dataset().KeyVaultBaseUrl",
+                            "type": "Expression"
+                        },
+                        "PasswordSecret": {
+                            "value": "@dataset().PasswordSecret",
+                            "type": "Expression"
+                        },
+                        "Server": {
+                            "value": "@dataset().Server",
+                            "type": "Expression"
+                        },
+                        "Database": {
+                            "value": "@dataset().Database",
+                            "type": "Expression"
+                        },
+                        "UserName": {
+                            "value": "@dataset().UserName",
+                            "type": "Expression"
+                        }
+                    }
+                },
+                "parameters": {
+                    "TableSchema": {
+                        "type": "String"
+                    },
+                    "TableName": {
+                        "type": "String"
+                    },
+                    "KeyVaultBaseUrl": {
+                        "type": "String"
+                    },
+                    "PasswordSecret": {
+                        "type": "String"
+                    },
+                    "Server": {
+                        "type": "String"
+                    },
+                    "Database": {
+                        "type": "String"
+                    },
+                    "UserName": {
+                        "type": "String"
+                    }
+                },
+                "folder": {
+                    "name": "[concat('ADS Go Fast/Generic/', parameters('integrationRuntimeName'))]"
+                },
+                "annotations": [],
+                "type": "SqlServerTable",
+                "schema": [],
+                "typeProperties": {
+                    "schema": {
+                        "value": "@dataset().TableSchema",
+                        "type": "Expression"
+                    },
+                    "table": {
+                        "value": "@dataset().TableName",
+                        "type": "Expression"
+                    }
+                }
+            },
+            "type": "Microsoft.DataFactory/factories/datasets"
+        }
+    ]
+}

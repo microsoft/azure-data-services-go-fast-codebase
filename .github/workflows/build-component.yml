@@ -1,0 +1,41 @@
+name: Build & Test Component
+
+on: 
+  workflow_call:
+    inputs:
+      name:
+        required: true
+        type: string
+      path:
+        required: true
+        type: string        
+
+
+env:
+  DOTNET_VERSION: '3.1.x'
+jobs:
+  build-component:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: ${{inputs.path}}
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+
+    - name: Install dependencies (dotnet restore)
+      run: dotnet restore      
+
+    - name: Release Build
+      run: dotnet build --configuration Release --no-restore
+
+    - name: Run Tests
+      run: dotnet test --no-restore --verbosity normal      
+
+
+
+

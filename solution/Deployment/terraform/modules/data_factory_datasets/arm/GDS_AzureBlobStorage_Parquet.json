@@ -1,0 +1,81 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "name": {
+            "type": "String",
+            "metadata": "name of the resource"
+        },
+        "dataFactoryName": {
+            "type": "String",
+            "metadata": "Data Factory name",
+            "defaultValue": "arkstgdfads"
+        },
+        "linkedServiceName": {
+            "type": "String",
+            "metadata": "The name of the linked service that this dataset uses"
+        },
+        "integrationRuntimeName": {
+            "type": "String",
+            "metadata": "The name of the integration runtime this dataset uses"
+        }
+
+    },
+    "resources": [
+        {
+            "apiVersion": "2018-06-01",
+            "name": "[concat(parameters('dataFactoryName'), '/', parameters('name'))]",
+            "properties": {
+                "linkedServiceName": {
+                    "referenceName": "[parameters('linkedServiceName')]",
+                    "type": "LinkedServiceReference",
+                    "parameters": {
+                        "StorageAccountEndpoint": {
+                            "value": "@dataset().StorageAccountEndpoint",
+                            "type": "Expression"
+                        }
+                    }
+                },
+                "parameters": {
+                    "RelativePath": {
+                        "type": "String"
+                    },
+                    "FileName": {
+                        "type": "String"
+                    },
+                    "StorageAccountEndpoint": {
+                        "type": "String"
+                    },
+                    "StorageAccountContainerName": {
+                        "type": "String"
+                    }
+                },
+                "folder": {
+                    "name": "[concat('ADS Go Fast/Generic/', parameters('integrationRuntimeName'))]"
+                },
+                "annotations": [],
+                "type": "Parquet",
+                "typeProperties": {
+                    "location": {
+                        "type": "AzureBlobStorageLocation",
+                        "fileName": {
+                            "value": "@dataset().FileName",
+                            "type": "Expression"
+                        },
+                        "folderPath": {
+                            "value": "@dataset().RelativePath",
+                            "type": "Expression"
+                        },
+                        "container": {
+                            "value": "@dataset().StorageAccountContainerName",
+                            "type": "Expression"
+                        }
+                    },
+                    "compressionCodec": "gzip"
+                },
+                "schema": []
+            },
+            "type": "Microsoft.DataFactory/factories/datasets"
+        }
+    ]
+}

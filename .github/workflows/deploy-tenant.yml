@@ -1,0 +1,43 @@
+# The purpose of this workflow template is to deploy the tenant level resources
+# that are required for the ADS Go Fast solution.
+
+# The planned release update cadence is proposed for the ADS Go Fast is:
+# - Deploy Tenant Level Components (Once / very infrequent)
+# - Deploy Environment Level Components (As platform infrastructure & apps are changed and updated)
+
+name: Deploy Azure Tenant Components
+
+on: 
+  workflow_call:
+    inputs:
+      tenant-id:
+        required: true
+        type: string    
+
+jobs:
+  deploy-environment:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: pwsh
+        working-directory: ${{inputs.path}}
+    steps:
+    - name: Download Artifacts
+      uses: actions/download-artifact@v2
+      with:
+        path: ./artifacts/     
+         
+    - name: Login via Az module
+      uses: azure/login@v1
+      with:
+        creds: ${{secrets.AZURE_CREDENTIALS}}
+        enable-AzPSSession: true 
+
+#TODO: Add the steps to do the actual deployments here        
+    
+
+
+
+
+
+

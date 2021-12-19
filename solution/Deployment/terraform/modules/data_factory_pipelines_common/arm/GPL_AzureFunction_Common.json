@@ -1,0 +1,121 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"dataFactoryName": {
+			"type": "String",
+			"metadata": "The name of the data factory"
+		},
+		"functionLinkedServiceName": {
+			"type": "String",
+			"metadata": "The name of the azure function linked service that this dataset uses"
+		}	
+	},	
+	"resources": [
+		{
+			"apiVersion": "2018-06-01",
+			"name": "[concat(parameters('dataFactoryName'), '/GPL_AzureFunction_Common')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"properties": {
+				"activities": [
+					{
+						"name": "Switch Method",
+						"type": "Switch",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"on": {
+								"value": "@pipeline().parameters.Method",
+								"type": "Expression"
+							},
+							"cases": [
+								{
+									"value": "Put",
+									"activities": [
+										{
+											"name": "Azure Function Generic Put",
+											"type": "AzureFunctionActivity",
+											"dependsOn": [],
+											"policy": {
+												"timeout": "7.00:00:00",
+												"retry": 0,
+												"retryIntervalInSeconds": 30,
+												"secureOutput": false,
+												"secureInput": false
+											},
+											"userProperties": [],
+											"typeProperties": {
+												"functionName": {
+													"value": "@pipeline().parameters.FunctionName",
+													"type": "Expression"
+												},
+												"method": "PUT",
+												"body": {
+													"value": "@pipeline().parameters.Body",
+													"type": "Expression"
+												}
+											},
+											"linkedServiceName": {
+												"referenceName": "[parameters('functionLinkedServiceName')]",
+												"type": "LinkedServiceReference"
+											}
+										}
+									]
+								},
+								{
+									"value": "Post",
+									"activities": [
+										{
+											"name": "Azure Function Generic Post",
+											"type": "AzureFunctionActivity",
+											"dependsOn": [],
+											"policy": {
+												"timeout": "7.00:00:00",
+												"retry": 0,
+												"retryIntervalInSeconds": 30,
+												"secureOutput": false,
+												"secureInput": false
+											},
+											"userProperties": [],
+											"typeProperties": {
+												"functionName": {
+													"value": "@pipeline().parameters.FunctionName",
+													"type": "Expression"
+												},
+												"method": "POST",
+												"body": {
+													"value": "@pipeline().parameters.Body",
+													"type": "Expression"
+												}
+											},
+											"linkedServiceName": {
+												"referenceName": "[parameters('functionLinkedServiceName')]",
+												"type": "LinkedServiceReference"
+											}
+										}
+									]
+								}
+							]
+						}
+					}
+				],
+				"parameters": {
+					"Body": {
+						"type": "String"
+					},
+					"FunctionName": {
+						"type": "String"
+					},
+					"Method": {
+						"type": "String"
+					}
+				},
+				"folder": {
+					"name": "ADS Go Fast/Common"
+				},
+				"annotations": [],
+				"lastPublishTime": "2020-07-14T10:58:30Z"
+			}
+		}
+	]
+}
