@@ -21,7 +21,7 @@
 # You can run this script multiple times if needed.
 #----------------------------------------------------------------------------------------------------------------
 
-$environmentName = "staging" # currently supports (local, staging)
+$environmentName = "local" # currently supports (local, staging)
 $myIp = (Invoke-WebRequest ifconfig.me/ip).Content
 $skipTerraformDeployment = $false
 $skipWebApps = $false
