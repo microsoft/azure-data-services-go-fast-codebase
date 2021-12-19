@@ -1,5 +1,6 @@
 function(GFPIR="IRA") 
-[{
+ {
+   "inputs": [{
     "referenceName": "GDS_SqlServerTable_NA_" + GFPIR,
     "type": "DatasetReference",
     "parameters": {
@@ -33,3 +34,4 @@ function(GFPIR="IRA")
       }
     }
   }]
+ }

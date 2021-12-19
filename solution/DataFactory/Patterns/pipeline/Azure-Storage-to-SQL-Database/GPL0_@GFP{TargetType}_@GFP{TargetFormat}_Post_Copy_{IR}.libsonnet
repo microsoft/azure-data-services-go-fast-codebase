@@ -1,10 +1,11 @@
-function(GFPIR="{IRA}",TargetType="AzureBlobFS",TargetFormat="Parquet")
+function(GFPIR="{IRA}", SourceType="AzureBlobFS", SourceFormat="Excel",TargetType="AzureSqlTable",TargetFormat="NA")
 {	
 	local Post_Copy_Lookup_PostCopySQL_TypeProperties = import './partials/Post_Copy_Lookup_PostCopySQL_TypeProperties.libsonnet',
 	local Post_Copy_Lookup_MergeSQL_TypeProperties = import './partials/Post_Copy_Lookup_MergeSQL_TypeProperties.libsonnet',
 	local Post_Copy_Lookup_AutoMergeSQL_TypeProperties = import './partials/Post_Copy_Lookup_AutoMergeSQL_TypeProperties.libsonnet',
 	local Post_Copy_Lookup_CreateStage_TypeProperties = import './partials/Post_Copy_Lookup_CreateStage_TypeProperties.libsonnet',
 	local Post_Copy_Lookup_CreateTarget_TypeProperties = import './partials/Post_Copy_Lookup_CreateTarget_TypeProperties.libsonnet',
+
 	"name": "GPL_"+TargetType+"_"+TargetFormat+"_Post_Copy_" + GFPIR,
 	"properties": {
 		"activities": [
@@ -269,7 +270,7 @@ function(GFPIR="{IRA}",TargetType="AzureBlobFS",TargetFormat="Parquet")
 								"secureInput": false
 							},
 							"userProperties": [],
-							"typeProperties":Post_Copy_Lookup_Target_TypeProperties(GFPIR, TargetType, TargetFormat)
+							"typeProperties":Post_Copy_Lookup_CreateTarget_TypeProperties(GFPIR, TargetType, TargetFormat)
 						},
 						{
 							"name": "AF Get Information Schema SQL Target",

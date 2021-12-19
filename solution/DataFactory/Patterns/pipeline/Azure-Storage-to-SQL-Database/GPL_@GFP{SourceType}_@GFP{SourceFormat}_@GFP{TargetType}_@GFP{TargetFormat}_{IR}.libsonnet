@@ -44,8 +44,8 @@ function(GFPIR="IRA", SourceType="AzureBlobFS", SourceFormat="Excel", TargetType
 					"secureInput": false
 				},
 				"userProperties": [],
-				"typeProperties": Main_CopyActivity_TypeProperties(GFPIR, SourceType, SourceFormat, TargetType, TargetFormat)		
-			},
+			}
+				+Main_CopyActivity_TypeProperties(GFPIR, SourceType, SourceFormat, TargetType, TargetFormat),					
 			{
 				"name": "Pipeline AF Log - ADLS to Azure SQL Failed",
 				"type": "ExecutePipeline",

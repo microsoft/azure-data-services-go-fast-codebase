@@ -1,4 +1,4 @@
-function(GFPIR="IRA", SourceType="AzureSqlTable", SourceFormat="NA")
+function(GFPIR="IRA", SourceType="SqlServerTable", SourceFormat="NA")
 if (SourceType=="AzureSqlTable" && SourceFormat == "NA") then
 {
   "source": {
@@ -82,3 +82,5 @@ if (SourceType=="AzureSqlTable" && SourceFormat == "NA") then
   },
   "firstRowOnly": true
 }
+else 
+   error 'Main_Lookup_GetNextWaterMarkOrChunk.libsonnet failed. No mapping for:' +GFPIR+","+SourceType+","+SourceFormat

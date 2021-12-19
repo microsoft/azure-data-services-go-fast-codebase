@@ -23,7 +23,10 @@ foreach ($pattern in $patterns)
         $TargetFormat = $pattern.TargetFormat
 
         $newname = (CoreReplacements -string $t.PSChildName -GFPIR $GFPIR -SourceType $SourceType -SourceFormat $SourceFormat -TargetType $TargetType -TargetFormat $TargetFormat).Replace(".libsonnet",".json")
-    (jsonnet --tla-str GFPIR="IRA" --tla-str SourceType="$SourceType" --tla-str SourceFormat="$SourceFormat" --tla-str TargetType="$TargetType" --tla-str TargetFormat="$TargetFormat" $p.FullName) | Set-Content('./output/' + $newname)
+        Write-Host "_____________________________"
+        Write-Host $newname
+        Write-Host "_____________________________"
+        (jsonnet --tla-str GFPIR="IRA" --tla-str SourceType="$SourceType" --tla-str SourceFormat="$SourceFormat" --tla-str TargetType="$TargetType" --tla-str TargetFormat="$TargetFormat" $t.FullName) | Set-Content('./output/' + $newname)
 
     }
 }

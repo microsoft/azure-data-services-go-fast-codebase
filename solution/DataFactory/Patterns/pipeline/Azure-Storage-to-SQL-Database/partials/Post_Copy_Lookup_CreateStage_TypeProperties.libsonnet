@@ -4,7 +4,7 @@ if (TargetType=="AzureSqlTable"&&TargetFormat=="NA") then
     "source": {
       "type": "AzureSqlSource",
       "sqlReaderQuery": {
-          "value": "@activity('AF Get SQL Create Statement Staging').output.CreateStatement",
+          "value": "@activity('AF Get Information Schema SQL Stage').output.CreateStatement",
           "type": "Expression"
       },
       "queryTimeout": "02:00:00",

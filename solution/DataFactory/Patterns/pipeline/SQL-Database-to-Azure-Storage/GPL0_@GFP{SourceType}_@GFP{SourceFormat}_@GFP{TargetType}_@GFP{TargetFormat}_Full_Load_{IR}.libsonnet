@@ -1,4 +1,4 @@
-function(GFPIR="{IRA}",SourceType="AzureSqlTable",SourceFormat="NA",TargetType="AzureBlobFS",TargetFormat="Parquet")
+function(GFPIR="{IRA}",SourceType="SqlServerTable",SourceFormat="NA",TargetType="AzureBlobFS",TargetFormat="Parquet")
 {
 	local CopyActivity_TypeProperties = import './partials/Full_Load_CopyActivity_TypeProperties.libsonnet',
 	local Full_Load_GetTargetMetadata = import './partials/Full_Load_GetTargetMetadata.libsonnet',
@@ -10,7 +10,13 @@ function(GFPIR="{IRA}",SourceType="AzureSqlTable",SourceFormat="NA",TargetType="
 			{
 				"name": "Set SQLStatement",
 				"type": "SetVariable",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "Pipeline AF Log - Copy Start",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}],
 				"userProperties": [],
 				"typeProperties": {
 					"variableName": "SQLStatement",
@@ -25,7 +31,7 @@ function(GFPIR="{IRA}",SourceType="AzureSqlTable",SourceFormat="NA",TargetType="
 				"type": "Copy",
 				"dependsOn": [
 					{
-						"activity": "Pipeline AF Log - Copy Start",
+						"activity": "Set SQLStatement",
 						"dependencyConditions": [
 							"Succeeded"
 						]

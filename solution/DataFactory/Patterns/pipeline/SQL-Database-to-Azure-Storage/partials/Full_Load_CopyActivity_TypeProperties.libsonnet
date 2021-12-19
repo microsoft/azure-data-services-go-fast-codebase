@@ -1,4 +1,4 @@
-function(GFPIR="IRA", SourceType="AzureSqlTable", SourceFormat="NA", TargetType="AzureBlobFS",TargetFormat="Parquet") 
+function(GFPIR="IRA", SourceType="SqlServerTable", SourceFormat="NA", TargetType="AzureBlobFS",TargetFormat="Parquet") 
 local AzureBlobFS_Parquet_CopyActivity_Output = import './Full_Load_CopyActivity_AzureBlobFS_Parquet_Outputs.libsonnet';
 local AzureBlobStorage_Parquet_CopyActivity_Output = import './Full_Load_CopyActivity_AzureBlobStorage_Parquet_Outputs.libsonnet';
 local AzureSqlTable_NA_CopyActivity_Inputs = import './/Full_Load_CopyActivity_AzureSqlTable_NA_Inputs.libsonnet';
@@ -63,8 +63,9 @@ else if(SourceType=="AzureSqlTable"&&SourceFormat=="NA"&&TargetType=="AzureBlobS
   },
 } + AzureBlobStorage_Parquet_CopyActivity_Output(GFPIR)
   + AzureSqlTable_NA_CopyActivity_Inputs(GFPIR)
-  else if (SourceType=="AzureSqlTable" && SourceFormat == "NA" && TargetType=="AzureBlobFS"&&TargetFormat=="Parquet") then
+  else if (SourceType=="SqlServerTable" && SourceFormat == "NA" && TargetType=="AzureBlobFS"&&TargetFormat=="Parquet") then
 {
+  "typeProperties": {
     "source": {
       "type": "SqlServerSource",
       "sqlReaderQuery": {
@@ -88,10 +89,12 @@ else if(SourceType=="AzureSqlTable"&&SourceFormat=="NA"&&TargetType=="AzureBlobS
       "value": "@pipeline().parameters.Mapping",
       "type": "Expression"
     }
+  },
 } + AzureBlobFS_Parquet_CopyActivity_Output(GFPIR)
   + SqlServerTable_NA_CopyActivity_Inputs(GFPIR)
-else if (SourceType=="AzureSqlTable" && SourceFormat == "NA" && TargetType=="AzureBlobStorage"&&TargetFormat=="Parquet") then
+else if (SourceType=="SqlServerTable" && SourceFormat == "NA" && TargetType=="AzureBlobStorage"&&TargetFormat=="Parquet") then
 {
+   "typeProperties": {
     "source": {
       "type": "SqlServerSource",
       "sqlReaderQuery": {
@@ -115,6 +118,7 @@ else if (SourceType=="AzureSqlTable" && SourceFormat == "NA" && TargetType=="Azu
       "value": "@pipeline().parameters.Mapping",
       "type": "Expression"
     }
+  }
 } + AzureBlobStorage_Parquet_CopyActivity_Output(GFPIR)
   + SqlServerTable_NA_CopyActivity_Inputs(GFPIR)
 else 

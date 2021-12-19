@@ -1,5 +1,5 @@
 
-function(GFPIR="{IRA}",SourceType="AzureSqlTable",SourceFormat="NA",TargetType="AzureBlobFS",TargetFormat="Parquet")
+function(GFPIR="{IRA}",SourceType="SqlServerTable",SourceFormat="NA",TargetType="AzureBlobFS",TargetFormat="Parquet")
 {
 	local infoschemasource = import './partials/Main_Lookup_GetInformationSchema_TypeProperties.libsonnet',
 	local Watermarksource = import './partials/Main_Lookup_GetNextWaterMarkOrChunk.libsonnet',
@@ -232,7 +232,7 @@ function(GFPIR="{IRA}",SourceType="AzureSqlTable",SourceFormat="NA",TargetType="
 									"userProperties": [],
 									"typeProperties": {
 										"pipeline": {											
-											"referenceName": "GPL_"+SourceType+"_"+SourceFormat+"_"+TargetType+"_"+TargetFormat+"_Full_Load_Chunk" + GFPIR,
+											"referenceName": "GPL_"+SourceType+"_"+SourceFormat+"_"+TargetType+"_"+TargetFormat+"_Full_Load_Chunk_" + GFPIR,
 											"type": "PipelineReference"
 										},
 										"waitOnCompletion": true,
