@@ -9,13 +9,6 @@
 	  "terminal.integrated.defaultProfile.linux": "pwsh"
 	  //"terminal.integrated.cwd": "/home/vscode"
 	},
-	
-	// Instead of mounting the local workspace folder (Deployment) by default, 
-	// this should mount its parent folder (per "..") into the default /workspace folder 
-	// of the container.  This assumes that the Deployment folder was opened in vscode
-	//"workspaceMount": "source=${localWorkspaceFolder}/..,target=/workspace,type=bind",
-	//"workspaceFolder": "/workspace",
-
 	// Add the IDs of extensions you want installed when the container is created.
 	"extensions": [
 		"ms-vscode.azurecli",

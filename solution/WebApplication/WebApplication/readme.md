@@ -14,6 +14,7 @@ AppSettings Required
     "UseMSI": false,
     "AdsGoFastTaskMetaDataDatabaseName": "",
     "AdsGoFastTaskMetaDataDatabaseServer": "",
+    "ConnectionString": "",
     "AppInsightsWorkspaceId": ""
   },
   "AllowedHosts": "*",
