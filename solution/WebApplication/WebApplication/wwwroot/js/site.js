@@ -215,15 +215,22 @@ function DataTablesGridStart(GridOptions, PrepOptions) {
             }],
 
         "columns": GridOptions.GridColumns,
+        "bStateSave": true,
+        "fnStateSave": function (oSettings, oData) {
+            localStorage.setItem('DataTables_' + window.location.pathname, JSON.stringify(oData));
+        },
+        "fnStateLoad": function (oSettings) {
+            return JSON.parse(localStorage.getItem('DataTables_' + window.location.pathname));
+        },
         "initComplete": function () {
             var api = this.api();
 
-            if (localStorage.getItem(`DataTables_${ModelName}_selected`) != undefined) {
-                var selected = localStorage.getItem(`DataTables_${ModelName}_selected`).split(',');
-                selected.forEach(function (s) {
-                    api.row(s).select();
-                });
-            }
+            //if (localStorage.getItem(`DataTables_${ModelName}_selected`) != undefined) {
+            //    var selected = localStorage.getItem(`DataTables_${ModelName}_selected`).split(',');
+            //    selected.forEach(function (s) {
+            //        api.row(s).select();
+            //    });
+            //}
         }
     };
 
@@ -297,7 +304,7 @@ function DataTablesGridStart(GridOptions, PrepOptions) {
 
 
     dt.on('select.dt deselect.dt', function () {
-        localStorage.setItem(`DataTables_${ModelName}_selected`, dt.rows({ selected: true }).toArray());
+        //localStorage.setItem(`DataTables_${ModelName}_selected`, dt.rows({ selected: true }).toArray());
     });
 
 

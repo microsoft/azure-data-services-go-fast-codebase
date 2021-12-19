@@ -1,5 +1,11 @@
-{
-	"name": "GPL_@GFP{TargetType}_@GFP{TargetFormat}_Post_Copy_@GF{IR}",
+function(GFPIR="{IRA}",TargetType="AzureBlobFS",TargetFormat="Parquet")
+{	
+	local Post_Copy_Lookup_PostCopySQL_TypeProperties = import './partials/Post_Copy_Lookup_PostCopySQL_TypeProperties.libsonnet',
+	local Post_Copy_Lookup_MergeSQL_TypeProperties = import './partials/Post_Copy_Lookup_MergeSQL_TypeProperties.libsonnet',
+	local Post_Copy_Lookup_AutoMergeSQL_TypeProperties = import './partials/Post_Copy_Lookup_AutoMergeSQL_TypeProperties.libsonnet',
+	local Post_Copy_Lookup_CreateStage_TypeProperties = import './partials/Post_Copy_Lookup_CreateStage_TypeProperties.libsonnet',
+	local Post_Copy_Lookup_CreateTarget_TypeProperties = import './partials/Post_Copy_Lookup_CreateTarget_TypeProperties.libsonnet',
+	"name": "GPL_"+TargetType+"_"+TargetFormat+"_Post_Copy_" + GFPIR,
 	"properties": {
 		"activities": [
 			{
@@ -25,7 +31,7 @@
 								"secureInput": false
 							},
 							"userProperties": [],
-							"typeProperties": {/*@GFP{PostCopySQLtypeProperties}*/}
+							"typeProperties": Post_Copy_Lookup_PostCopySQL_TypeProperties(GFPIR, TargetType, TargetFormat)
 						},
 						{
 							"name": "AF Log - Run PostCopySQL Failed",
@@ -88,7 +94,7 @@
 								"secureInput": false
 							},
 							"userProperties": [],
-							"typeProperties": {/*@GFP{MergeSQLtypeProperties}*/}
+							"typeProperties": Post_Copy_Lookup_MergeSQL_TypeProperties(GFPIR, TargetType, TargetFormat)
 						},
 						{
 							"name": "AF Log - Run MergeSQL Failed",
@@ -158,7 +164,7 @@
 								"secureInput": false
 							},
 							"userProperties": [],
-							"typeProperties": {/*@GFP{AutoMergeSQLtypeProperties}*/}
+							"typeProperties": Post_Copy_Lookup_AutoMergeSQL_TypeProperties(GFPIR, TargetType, TargetFormat)
 						},
 						{
 							"name": "AF Get Information Schema SQL Stage",
@@ -242,7 +248,7 @@
 								"secureInput": false
 							},
 							"userProperties": [],
-							"typeProperties":{/*@GFP{InfoSchemaStaging}*/}
+							"typeProperties":Post_Copy_Lookup_CreateStage_TypeProperties(GFPIR, TargetType, TargetFormat)
 						},
 						{
 							"name": "Lookup Get Metadata Target",
@@ -263,7 +269,7 @@
 								"secureInput": false
 							},
 							"userProperties": [],
-							"typeProperties": {/*@GFP{InfoSchemaTarget}*/}
+							"typeProperties":Post_Copy_Lookup_Target_TypeProperties(GFPIR, TargetType, TargetFormat)
 						},
 						{
 							"name": "AF Get Information Schema SQL Target",
@@ -384,7 +390,7 @@
 			}
 		},
 		"folder": {
-			"name": "ADS Go Fast/Data Movement/IRA/Common"
+			"name": "ADS Go Fast/Data Movement/"+GFPIR+"/Common"
 		},
 		"annotations": [],
 		"lastPublishTime": "2020-08-04T13:09:30Z"

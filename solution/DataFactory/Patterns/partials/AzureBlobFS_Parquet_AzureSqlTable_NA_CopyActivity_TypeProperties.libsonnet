@@ -1,4 +1,5 @@
-function(GFPIR="IRA") {
+function(GFPIR="IRA") 
+{
   "source": {
     "type": "ParquetSource",
     "storeSettings": {

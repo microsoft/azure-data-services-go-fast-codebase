@@ -1,0 +1,82 @@
+[
+    {
+        "Folder": "SQL-Database-to-Azure-Storage",        
+        "GFPIR": "IRA",
+        "SourceType": "AzureSqlTable",
+        "SourceFormat": "NA",
+        "TargetType": "AzureBlobFS",
+        "TargetFormat": "Parquet"
+    },
+    {
+        "Folder": "SQL-Database-to-Azure-Storage",        
+        "GFPIR": "IRA",
+        "SourceType": "AzureSqlTable",
+        "SourceFormat": "NA",
+        "TargetType": "AzureBlobStorage",
+        "TargetFormat": "Parquet"
+    },
+    {
+        "Folder": "SQL-Database-to-Azure-Storage",        
+        "GFPIR": "IRA",
+        "SourceType": "SqlServerTable",
+        "SourceFormat": "NA",
+        "TargetType": "AzureBlobFS",
+        "TargetFormat": "Parquet"
+    },
+    {
+        "Folder": "SQL-Database-to-Azure-Storage",        
+        "GFPIR": "IRA",
+        "SourceType": "SqlServerTable",
+        "SourceFormat": "NA",
+        "TargetType": "AzureBlobStorage",
+        "TargetFormat": "Parquet"
+    },
+    {
+        "Folder": "Azure-Storage-to-SQL-Database",        
+        "GFPIR": "IRA",
+        "SourceType": "AzureBlobFS",
+        "SourceFormat": "Excel",
+        "TargetType": "AzureSqlTable",
+        "TargetFormat": "NA"
+    },
+    {
+        "Folder": "Azure-Storage-to-SQL-Database",        
+        "GFPIR": "IRA",
+        "SourceType": "AzureBlobStorage",
+        "SourceFormat": "Excel",
+        "TargetType": "AzureSqlTable",
+        "TargetFormat": "NA"
+    },
+    {
+        "Folder": "Azure-Storage-to-SQL-Database",        
+        "GFPIR": "IRA",
+        "SourceType": "AzureBlobFS",
+        "SourceFormat": "Json",
+        "TargetType": "AzureSqlTable",
+        "TargetFormat": "NA"
+    },
+    {
+        "Folder": "Azure-Storage-to-SQL-Database",                
+        "GFPIR": "IRA",
+        "SourceType": "AzureBlobStorage",
+        "SourceFormat": "Json",
+        "TargetType": "AzureSqlTable",
+        "TargetFormat": "NA"
+    },
+    {
+        "Folder": "Azure-Storage-to-SQL-Database",        
+        "GFPIR": "IRA",
+        "SourceType": "AzureBlobFS",
+        "SourceFormat": "DelimitedText",
+        "TargetType": "AzureSqlTable",
+        "TargetFormat": "NA"
+    },
+    {
+        "Folder": "Azure-Storage-to-SQL-Database",                
+        "GFPIR": "IRA",
+        "SourceType": "AzureBlobStorage",
+        "SourceFormat": "DelimitedText",
+        "TargetType": "AzureSqlTable",
+        "TargetFormat": "NA"
+    }
+]

@@ -50,6 +50,7 @@
                     <div class="mx-auto">
 
                         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <input type="hidden" name="returnUrl" value="@ViewBag.returnUrl" />
                         <input type="hidden" asp-for="TaskMasterId" />
                         <div class="form-group">
                             <label asp-for="TaskMasterName" class="control-label"></label>

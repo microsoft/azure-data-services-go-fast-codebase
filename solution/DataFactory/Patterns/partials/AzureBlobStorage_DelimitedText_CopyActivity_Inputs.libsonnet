@@ -1,4 +1,5 @@
-function(GFPIR="IRA") [
+function(GFPIR="IRA") 
+[
   {
     "referenceName": "GDS_AzureBlobStorage_DelimitedText_" + GFPIR,
     "type": "DatasetReference",

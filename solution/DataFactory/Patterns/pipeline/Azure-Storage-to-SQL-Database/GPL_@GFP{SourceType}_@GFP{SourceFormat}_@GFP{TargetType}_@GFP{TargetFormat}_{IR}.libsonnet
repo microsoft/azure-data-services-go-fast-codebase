@@ -1,5 +1,7 @@
+function(GFPIR="IRA", SourceType="AzureBlobFS", SourceFormat="Excel", TargetType="AzureSqlTable",TargetFormat="NA")
 {
-	"name": "GPL_@GFP{SourceType}_@GFP{SourceFormat}_@GFP{TargetType}_@GFP{TargetFormat}_@GF{IR}",
+	local Main_CopyActivity_TypeProperties = import './partials/Main_CopyActivity_TypeProperties.libsonnet',
+	"name":"GPL_"+SourceType+"_"+SourceFormat+"_"+TargetType+"_"+TargetFormat+"_"+GFPIR,
 	"properties": {
 		"activities": [
 			{
@@ -41,10 +43,8 @@
 					"secureOutput": false,
 					"secureInput": false
 				},
-				"userProperties": [],									
-				"typeProperties": {/*@GFP{typeProperties}*/},
-				"inputs": {/*@GFP{inputs}*/},									
-				"outputs": {/*@GFP{outputs}*/}
+				"userProperties": [],
+				"typeProperties": Main_CopyActivity_TypeProperties(GFPIR, SourceType, SourceFormat, TargetType, TargetFormat)		
 			},
 			{
 				"name": "Pipeline AF Log - ADLS to Azure SQL Failed",
@@ -116,7 +116,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"pipeline": {
-						"referenceName": "GPL_@GFP{TargetType}_@GFP{TargetFormat}_Post_Copy_@GF{IR}",
+						"referenceName": "GPL_"+TargetType+"_"+TargetFormat + "_Post_Copy_"+ GFPIR,
 						"type": "PipelineReference"
 					},
 					"waitOnCompletion": true,
@@ -135,7 +135,7 @@
 			}
 		},
 		"folder": {
-			"name": "ADS Go Fast/Data Movement/@GF{IR}"
+			"name": "ADS Go Fast/Data Movement/" + GFPIR
 		},
 		"annotations": [],
 		"lastPublishTime": "2020-07-29T09:43:40Z"

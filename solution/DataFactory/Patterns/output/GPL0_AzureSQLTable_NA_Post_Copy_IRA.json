@@ -1,554 +1,153 @@
 {
-  "name": "GPL_AzureSqlTable_NA_Post_Copy_IRA",
-  "properties": {
-    "activities": [
-      {
-        "name": "If Exist PostCopySQL",
-        "type": "IfCondition",
-        "dependsOn": [],
-        "userProperties": [],
-        "typeProperties": {
-          "expression": {
-            "value": "@not(empty(pipeline().parameters.TaskObject.Target.PostCopySQL))",
-            "type": "Expression"
-          },
-          "ifTrueActivities": [
-            {
-              "name": "Run PostCopySQL",
-              "type": "Lookup",
-              "dependsOn": [],
-              "policy": {
-                "timeout": "7.00:00:00",
-                "retry": 0,
-                "retryIntervalInSeconds": 30,
-                "secureOutput": false,
-                "secureInput": false
-              },
-              "userProperties": [],
-              "typeProperties": {
-                "source": {
-                  "type": "AzureSqlSource",
-                  "sqlReaderQuery": {
-                    "value": "@pipeline().parameters.TaskObject.Target.PostCopySQL",
-                    "type": "Expression"
-                  },
-                  "queryTimeout": "02:00:00",
-                  "partitionOption": "None"
-                },
-                "dataset": {
-                  "referenceName": "GDS_AzureSqlTable_NA_IRA",
-                  "type": "DatasetReference",
-                  "parameters": {
-                    "Schema": {
-                      "value": "@pipeline().parameters.TaskObject.Target.StagingTableSchema",
-                      "type": "Expression"
-                    },
-                    "Table": {
-                      "value": "@pipeline().parameters.TaskObject.Target.StagingTableName",
-                      "type": "Expression"
-                    },
-                    "Server": {
-                      "value": "@pipeline().parameters.TaskObject.Target.Database.SystemName",
-                      "type": "Expression"
-                    },
-                    "Database": {
-                      "value": "@pipeline().parameters.TaskObject.Target.Database.Name",
-                      "type": "Expression"
-                    }
-                  }
-                }
-              }
-            },
-            {
-              "name": "AF Log - Run PostCopySQL Failed",
-              "type": "ExecutePipeline",
-              "dependsOn": [
-                {
-                  "activity": "Run PostCopySQL",
+   "name": "GPL_AzureBlobStorage_DelimitedText_AzureSqlTable_NA_Watermark_Chunk_IRA",
+   "properties": {
+      "activities": [
+         {
+            "dependsOn": [
+               {
+                  "activity": "ForEach Chunk",
                   "dependencyConditions": [
-                    "Failed"
+                     "Succeeded"
                   ]
-                }
-              ],
-              "userProperties": [],
-              "typeProperties": {
-                "pipeline": {
+               }
+            ],
+            "name": "AF Set New Watermark",
+            "type": "ExecutePipeline",
+            "typeProperties": {
+               "parameters": {
+                  "Body": {
+                     "type": "Expression",
+                     "value": "@json(concat('{\"TaskInstanceId\":\"', string(pipeline().parameters.TaskObject.TaskInstanceId), '\",\"ExecutionUid\":\"', string(pipeline().parameters.TaskObject.ExecutionUid), '\",\"RunId\":\"', string(pipeline().RunId), '\",\"TaskMasterId\":\"', string(pipeline().parameters.TaskObject.TaskMasterId),'\",\"TaskMasterWaterMarkColumnType\":\"', string(pipeline().parameters.TaskObject.Source.Extraction.IncrementalColumnType),'\",\"WaterMarkValue\":\"', string(pipeline().parameters.NewWatermark), '\"}'))"
+                  },
+                  "FunctionName": "WaterMark",
+                  "Method": "Post"
+               },
+               "pipeline": {
                   "referenceName": "AZ_Function_Generic",
                   "type": "PipelineReference"
-                },
-                "waitOnCompletion": false,
-                "parameters": {
-                  "Body": {
-                    "value": "@json(concat('{\"TaskInstanceId\":\"', string(pipeline().parameters.TaskObject.TaskInstanceId), '\",\"ExecutionUid\":\"', string(pipeline().parameters.TaskObject.ExecutionUid), '\",\"RunId\":\"', string(pipeline().RunId), '\",\"LogTypeId\":1,\"LogSource\":\"ADF\",\"ActivityType\":\"Run PostCopySQL\",\"StartDateTimeOffSet\":\"', string(pipeline().TriggerTime), '\",\"EndDateTimeOffSet\":\"', string(utcnow()), '\",\"Comment\":\"', string(activity('Run PostCopySQL').error.message), '\",\"Status\":\"Failed\"}'))",
-                    "type": "Expression"
-                  },
-                  "FunctionName": "Log",
-                  "Method": "Post"
-                }
-              }
-            }
-          ]
-        }
+               },
+               "waitOnCompletion": false
+            },
+            "userProperties": [ ]
+         },
+         {
+            "dependsOn": [ ],
+            "name": "ForEach Chunk",
+            "type": "ForEach",
+            "typeProperties": {
+               "activities": [
+                  {
+                     "dependsOn": [ ],
+                     "name": "Execute Watermark",
+                     "type": "ExecutePipeline",
+                     "typeProperties": {
+                        "parameters": {
+                           "BatchCount": {
+                              "type": "Expression",
+                              "value": "@pipeline().parameters.BatchCount"
+                           },
+                           "Item": {
+                              "type": "Expression",
+                              "value": "@item()"
+                           },
+                           "Mapping": {
+                              "type": "Expression",
+                              "value": "@pipeline().parameters.Mapping"
+                           },
+                           "NewWaterMark": {
+                              "type": "Expression",
+                              "value": "@pipeline().parameters.NewWatermark"
+                           },
+                           "TaskObject": {
+                              "type": "Expression",
+                              "value": "@pipeline().parameters.TaskObject"
+                           }
+                        },
+                        "pipeline": {
+                           "referenceName": "GPL_AzureBlobStorage_DelimitedText_AzureSqlTable_NA_Watermark_IRA",
+                           "type": "PipelineReference"
+                        },
+                        "waitOnCompletion": true
+                     },
+                     "userProperties": [ ]
+                  }
+               ],
+               "isSequential": true,
+               "items": {
+                  "type": "Expression",
+                  "value": "@range(1, pipeline().parameters.BatchCount)"
+               }
+            },
+            "userProperties": [ ]
+         }
+      ],
+      "annotations": [ ],
+      "folder": {
+         "name": "ADS Go Fast/Data Movement/IRA/Components"
       },
-      {
-        "name": "If Exist MergeSQL",
-        "type": "IfCondition",
-        "dependsOn": [
-          {
-            "activity": "If Exist PostCopySQL",
-            "dependencyConditions": [
-              "Succeeded"
-            ]
-          }
-        ],
-        "userProperties": [],
-        "typeProperties": {
-          "expression": {
-            "value": "@not(empty(pipeline().parameters.TaskObject.Target.MergeSQL))",
-            "type": "Expression"
-          },
-          "ifTrueActivities": [
-            {
-              "name": "Run MergeSQL",
-              "type": "Lookup",
-              "dependsOn": [],
-              "policy": {
-                "timeout": "7.00:00:00",
-                "retry": 0,
-                "retryIntervalInSeconds": 30,
-                "secureOutput": false,
-                "secureInput": false
-              },
-              "userProperties": [],
-              "typeProperties": {
-                "source": {
-                  "type": "AzureSqlSource",
-                  "sqlReaderQuery": {
-                    "value": "@pipeline().parameters.TaskObject.Target.MergeSQL",
-                    "type": "Expression"
+      "parameters": {
+         "BatchCount": {
+            "type": "int"
+         },
+         "Mapping": {
+            "type": "object"
+         },
+         "NewWatermark": {
+            "type": "string"
+         },
+         "TaskObject": {
+            "defaultValue": {
+               "DataFactory": {
+                  "ADFPipeline": "AZ_SQL_AZ_Storage_Parquet_IRA",
+                  "Id": 1,
+                  "Name": "adsgofastdatakakeacceladf",
+                  "ResourceGroup": "AdsGoFastDataLakeAccel",
+                  "SubscriptionId": "035a1364-f00d-48e2-b582-4fe125905ee3"
+               },
+               "DegreeOfCopyParallelism": 1,
+               "Enabled": 1,
+               "ExecutionUid": "2c5924ee-b855-4d2b-bb7e-4f5dde4c4dd3",
+               "KeyVaultBaseUrl": "https://adsgofastkeyvault.vault.azure.net/",
+               "NumberOfRetries": 111,
+               "ScheduleMasterId": 2,
+               "Source": {
+                  "Database": {
+                     "AuthenticationType": "MSI",
+                     "Name": "AWSample",
+                     "SystemName": "adsgofastdatakakeaccelsqlsvr.database.windows.net"
                   },
-                  "queryTimeout": "02:00:00",
-                  "partitionOption": "None"
-                },
-                "dataset": {
-                  "referenceName": "GDS_AzureSqlTable_NA_IRA",
-                  "type": "DatasetReference",
-                  "parameters": {
-                    "Schema": {
-                      "value": "@pipeline().parameters.TaskObject.Target.StagingTableSchema",
-                      "type": "Expression"
-                    },
-                    "Table": {
-                      "value": "@pipeline().parameters.TaskObject.Target.StagingTableName",
-                      "type": "Expression"
-                    },
-                    "Server": {
-                      "value": "@pipeline().parameters.TaskObject.Target.Database.SystemName",
-                      "type": "Expression"
-                    },
-                    "Database": {
-                      "value": "@pipeline().parameters.TaskObject.Target.Database.Name",
-                      "type": "Expression"
-                    }
-                  }
-                }
-              }
-            },
-            {
-              "name": "AF Log - Run MergeSQL Failed",
-              "type": "ExecutePipeline",
-              "dependsOn": [
-                {
-                  "activity": "Run MergeSQL",
-                  "dependencyConditions": [
-                    "Failed"
-                  ]
-                }
-              ],
-              "userProperties": [],
-              "typeProperties": {
-                "pipeline": {
-                  "referenceName": "AZ_Function_Generic",
-                  "type": "PipelineReference"
-                },
-                "waitOnCompletion": false,
-                "parameters": {
-                  "Body": {
-                    "value": "@json(concat('{\"TaskInstanceId\":\"', string(pipeline().parameters.TaskObject.TaskInstanceId), '\",\"ExecutionUid\":\"', string(pipeline().parameters.TaskObject.ExecutionUid), '\",\"RunId\":\"', string(pipeline().RunId), '\",\"LogTypeId\":1,\"LogSource\":\"ADF\",\"ActivityType\":\"Run MergeSQL\",\"StartDateTimeOffSet\":\"', string(pipeline().TriggerTime), '\",\"EndDateTimeOffSet\":\"', string(utcnow()), '\",\"Comment\":\"', string(activity('Run MergeSQL').error.message), '\",\"Status\":\"Failed\"}'))",
-                    "type": "Expression"
+                  "Extraction": {
+                     "FullOrIncremental": "Full",
+                     "IncrementalType": null,
+                     "TableName": "SalesOrderHeader",
+                     "TableSchema": "SalesLT",
+                     "Type": "Table"
                   },
-                  "FunctionName": "Log",
-                  "Method": "Post"
-                }
-              }
-            }
-          ]
-        }
-      },
-      {
-        "name": "If AutoGenerateMerge",
-        "type": "IfCondition",
-        "dependsOn": [
-          {
-            "activity": "If Exist PostCopySQL",
-            "dependencyConditions": [
-              "Succeeded"
-            ]
-          }
-        ],
-        "userProperties": [],
-        "typeProperties": {
-          "expression": {
-            "value": "@bool(pipeline().parameters.TaskObject.Target.AutoGenerateMerge)",
-            "type": "Expression"
-          },
-          "ifTrueActivities": [
-            {
-              "name": "Run MergeStatement",
-              "type": "Lookup",
-              "dependsOn": [
-                {
-                  "activity": "AF Get Merge Statement",
-                  "dependencyConditions": [
-                    "Succeeded"
-                  ]
-                }
-              ],
-              "policy": {
-                "timeout": "7.00:00:00",
-                "retry": 0,
-                "retryIntervalInSeconds": 30,
-                "secureOutput": false,
-                "secureInput": false
-              },
-              "userProperties": [],
-              "typeProperties": {
-                "source": {
-                  "type": "AzureSqlSource",
-                  "sqlReaderQuery": {
-                    "value": "@activity('AF Get Merge Statement').output.MergeStatement",
-                    "type": "Expression"
-                  },
-                  "queryTimeout": "02:00:00",
-                  "partitionOption": "None"
-                },
-                "dataset": {
-                  "referenceName": "AzureSqlTable_IRA",
-                  "type": "DatasetReference",
-                  "parameters": {
-                    "Schema": {
-                      "value": "@pipeline().parameters.TaskObject.Target.StagingTableSchema",
-                      "type": "Expression"
-                    },
-                    "Table": {
-                      "value": "@pipeline().parameters.TaskObject.Target.StagingTableName",
-                      "type": "Expression"
-                    },
-                    "Server": {
-                      "value": "@pipeline().parameters.TaskObject.Target.Database.SystemName",
-                      "type": "Expression"
-                    },
-                    "Database": {
-                      "value": "@pipeline().parameters.TaskObject.Target.Database.Name",
-                      "type": "Expression"
-                    }
-                  }
-                },
-                "firstRowOnly": false
-              }
+                  "Type": "Azure SQL"
+               },
+               "Target": {
+                  "DataFileName": "SalesLT.SalesOrderHeader.parquet",
+                  "FirstRowAsHeader": null,
+                  "MaxConcorrentConnections": null,
+                  "RelativePath": "/AwSample/SalesLT/SalesOrderHeader/2020/7/9/14/12/",
+                  "SchemaFileName": "SalesLT.SalesOrderHeader",
+                  "SheetName": null,
+                  "SkipLineCount": null,
+                  "StorageAccountAccessMethod": "MSI",
+                  "StorageAccountContainer": "datalakeraw",
+                  "StorageAccountName": "https://adsgofastdatalakeaccelst.blob.core.windows.net",
+                  "Type": "Azure Blob"
+               },
+               "TaskGroupConcurrency": 10,
+               "TaskGroupPriority": 0,
+               "TaskInstanceId": 75,
+               "TaskMasterId": 12,
+               "TaskStatus": "Untried",
+               "TaskType": "SQL Database to Azure Storage"
             },
-            {
-              "name": "AF Get Information Schema SQL Stage",
-              "type": "AzureFunctionActivity",
-              "dependsOn": [],
-              "policy": {
-                "timeout": "7.00:00:00",
-                "retry": 0,
-                "retryIntervalInSeconds": 30,
-                "secureOutput": false,
-                "secureInput": false
-              },
-              "userProperties": [],
-              "typeProperties": {
-                "functionName": "GetInformationSchemaSQL",
-                "method": "POST",
-                "body": {
-                  "value": "@json(concat('{\"TaskInstanceId\":\"', string(pipeline().parameters.TaskObject.TaskInstanceId), '\",\"ExecutionUid\":\"', string(pipeline().parameters.TaskObject.ExecutionUid), '\",\"RunId\":\"', string(pipeline().RunId), '\",\"TableSchema\":\"', string(pipeline().parameters.TaskObject.Target.StagingTableSchema), '\",\"TableName\":\"', string(pipeline().parameters.TaskObject.Target.StagingTableName),'\"}'))",
-                  "type": "Expression"
-                }
-              },
-              "linkedServiceName": {
-                "referenceName": "AzureFunctionAdsGoFastDataLakeAccelFunApp",
-                "type": "LinkedServiceReference"
-              }
-            },
-            {
-              "name": "AF Get Merge Statement",
-              "type": "AzureFunctionActivity",
-              "dependsOn": [
-                {
-                  "activity": "Lookup Get Metadata Stage",
-                  "dependencyConditions": [
-                    "Succeeded"
-                  ]
-                },
-                {
-                  "activity": "Lookup Get Metadata Target",
-                  "dependencyConditions": [
-                    "Succeeded"
-                  ]
-                }
-              ],
-              "policy": {
-                "timeout": "7.00:00:00",
-                "retry": 0,
-                "retryIntervalInSeconds": 30,
-                "secureOutput": false,
-                "secureInput": false
-              },
-              "userProperties": [],
-              "typeProperties": {
-                "functionName": "GetSQLMergeStatement",
-                "method": "POST",
-                "body": {
-                  "value": "@json(concat('{\"TaskInstanceId\":\"', string(pipeline().parameters.TaskObject.TaskInstanceId), '\",\"ExecutionUid\":\"', string(pipeline().parameters.TaskObject.ExecutionUid), '\",\"RunId\":\"', string(pipeline().RunId),'\",\"TargetTableSchema\":\"',string(pipeline().parameters.TaskObject.Target.TableSchema),'\",\"TargetTableName\":\"',string(pipeline().parameters.TaskObject.Target.TableName),'\",\"StagingTableSchema\":\"',string(pipeline().parameters.TaskObject.Target.StagingTableSchema),'\",\"StagingTableName\":\"',string(pipeline().parameters.TaskObject.Target.StagingTableName),'\",\"Stage\":', string(activity('Lookup Get Metadata Stage').output.value), ',\"Target\":', string(activity('Lookup Get Metadata Target').output.value),'}'))",
-                  "type": "Expression"
-                }
-              },
-              "linkedServiceName": {
-                "referenceName": "AzureFunctionAdsGoFastDataLakeAccelFunApp",
-                "type": "LinkedServiceReference"
-              }
-            },
-            {
-              "name": "Lookup Get Metadata Stage",
-              "type": "Lookup",
-              "dependsOn": [
-                {
-                  "activity": "AF Get Information Schema SQL Stage",
-                  "dependencyConditions": [
-                    "Succeeded"
-                  ]
-                }
-              ],
-              "policy": {
-                "timeout": "7.00:00:00",
-                "retry": 0,
-                "retryIntervalInSeconds": 30,
-                "secureOutput": false,
-                "secureInput": false
-              },
-              "userProperties": [],
-              "typeProperties": {
-                "source": {
-                  "type": "AzureSqlSource",
-                  "sqlReaderQuery": {
-                    "value": "@activity('AF Get Information Schema SQL Stage').output.InformationSchemaSQL",
-                    "type": "Expression"
-                  },
-                  "queryTimeout": "02:00:00",
-                  "partitionOption": "None"
-                },
-                "dataset": {
-                  "referenceName": "GDS_AzureSqlTable_NA_IRA",
-                  "type": "DatasetReference",
-                  "parameters": {
-                    "Schema": {
-                      "value": "@pipeline().parameters.TaskObject.Target.StagingTableSchema",
-                      "type": "Expression"
-                    },
-                    "Table": {
-                      "value": "@pipeline().parameters.TaskObject.Target.StagingTableName",
-                      "type": "Expression"
-                    },
-                    "Server": {
-                      "value": "@pipeline().parameters.TaskObject.Target.Database.SystemName",
-                      "type": "Expression"
-                    },
-                    "Database": {
-                      "value": "@pipeline().parameters.TaskObject.Target.Database.Name",
-                      "type": "Expression"
-                    }
-                  }
-                }
-              }
-            },
-            {
-              "name": "Lookup Get Metadata Target",
-              "type": "Lookup",
-              "dependsOn": [
-                {
-                  "activity": "AF Get Information Schema SQL Target",
-                  "dependencyConditions": [
-                    "Succeeded"
-                  ]
-                }
-              ],
-              "policy": {
-                "timeout": "7.00:00:00",
-                "retry": 0,
-                "retryIntervalInSeconds": 30,
-                "secureOutput": false,
-                "secureInput": false
-              },
-              "userProperties": [],
-              "typeProperties": {
-                "source": {
-                  "type": "AzureSqlSource",
-                  "sqlReaderQuery": {
-                    "value": "@activity('AF Get Information Schema SQL Target').output.InformationSchemaSQL",
-                    "type": "Expression"
-                  },
-                  "queryTimeout": "02:00:00",
-                  "partitionOption": "None"
-                },
-                "dataset": {
-                  "referenceName": "GDS_AzureSqlTable_NA_IRA",
-                  "type": "DatasetReference",
-                  "parameters": {
-                    "Schema": {
-                      "value": "@pipeline().parameters.TaskObject.Target.StagingTableSchema",
-                      "type": "Expression"
-                    },
-                    "Table": {
-                      "value": "@pipeline().parameters.TaskObject.Target.StagingTableName",
-                      "type": "Expression"
-                    },
-                    "Server": {
-                      "value": "@pipeline().parameters.TaskObject.Target.Database.SystemName",
-                      "type": "Expression"
-                    },
-                    "Database": {
-                      "value": "@pipeline().parameters.TaskObject.Target.Database.Name",
-                      "type": "Expression"
-                    }
-                  }
-                }
-              }
-            },
-            {
-              "name": "AF Get Information Schema SQL Target",
-              "type": "AzureFunctionActivity",
-              "dependsOn": [],
-              "policy": {
-                "timeout": "7.00:00:00",
-                "retry": 0,
-                "retryIntervalInSeconds": 30,
-                "secureOutput": false,
-                "secureInput": false
-              },
-              "userProperties": [],
-              "typeProperties": {
-                "functionName": "GetInformationSchemaSQL",
-                "method": "POST",
-                "body": {
-                  "value": "@json(concat('{\"TaskInstanceId\":\"', string(pipeline().parameters.TaskObject.TaskInstanceId), '\",\"ExecutionUid\":\"', string(pipeline().parameters.TaskObject.ExecutionUid), '\",\"RunId\":\"', string(pipeline().RunId), '\",\"TableSchema\":\"', string(pipeline().parameters.TaskObject.Target.TableSchema), '\",\"TableName\":\"', string(pipeline().parameters.TaskObject.Target.TableName),'\"}'))",
-                  "type": "Expression"
-                }
-              },
-              "linkedServiceName": {
-                "referenceName": "AzureFunctionAdsGoFastDataLakeAccelFunApp",
-                "type": "LinkedServiceReference"
-              }
-            },
-            {
-              "name": "AF Log - Run AutoMerge Failed",
-              "type": "ExecutePipeline",
-              "dependsOn": [
-                {
-                  "activity": "Run MergeStatement",
-                  "dependencyConditions": [
-                    "Failed"
-                  ]
-                }
-              ],
-              "userProperties": [],
-              "typeProperties": {
-                "pipeline": {
-                  "referenceName": "AZ_Function_Generic",
-                  "type": "PipelineReference"
-                },
-                "waitOnCompletion": false,
-                "parameters": {
-                  "Body": {
-                    "value": "@json(concat('{\"TaskInstanceId\":\"', string(pipeline().parameters.TaskObject.TaskInstanceId), '\",\"ExecutionUid\":\"', string(pipeline().parameters.TaskObject.ExecutionUid), '\",\"RunId\":\"', string(pipeline().RunId), '\",\"LogTypeId\":1,\"LogSource\":\"ADF\",\"ActivityType\":\"Run AutoMerge\",\"StartDateTimeOffSet\":\"', string(pipeline().TriggerTime), '\",\"EndDateTimeOffSet\":\"', string(utcnow()), '\",\"Comment\":\"', string(activity('Run MergeStatement').error.message), '\",\"Status\":\"Failed\"}'))",
-                    "type": "Expression"
-                  },
-                  "FunctionName": "Log",
-                  "Method": "Post"
-                }
-              }
-            },
-            {
-              "name": "AF Log - Run Lookup Get Metadata Target Failed",
-              "type": "ExecutePipeline",
-              "dependsOn": [
-                {
-                  "activity": "Lookup Get Metadata Target",
-                  "dependencyConditions": [
-                    "Failed"
-                  ]
-                }
-              ],
-              "userProperties": [],
-              "typeProperties": {
-                "pipeline": {
-                  "referenceName": "AZ_Function_Generic",
-                  "type": "PipelineReference"
-                },
-                "waitOnCompletion": false,
-                "parameters": {
-                  "Body": {
-                    "value": "@json(concat('{\"TaskInstanceId\":\"', string(pipeline().parameters.TaskObject.TaskInstanceId), '\",\"ExecutionUid\":\"', string(pipeline().parameters.TaskObject.ExecutionUid), '\",\"RunId\":\"', string(pipeline().RunId), '\",\"LogTypeId\":1,\"LogSource\":\"ADF\",\"ActivityType\":\"Lookup Get Metadata Target\",\"StartDateTimeOffSet\":\"', string(pipeline().TriggerTime), '\",\"EndDateTimeOffSet\":\"', string(utcnow()), '\",\"Comment\":\"', string(activity('Lookup Get Metadata Target').error.message), '\",\"Status\":\"Failed\"}'))",
-                    "type": "Expression"
-                  },
-                  "FunctionName": "Log",
-                  "Method": "Post"
-                }
-              }
-            },
-            {
-              "name": "AF Log - Lookup Get Metadata Stage Failed",
-              "type": "ExecutePipeline",
-              "dependsOn": [
-                {
-                  "activity": "Lookup Get Metadata Stage",
-                  "dependencyConditions": [
-                    "Failed"
-                  ]
-                }
-              ],
-              "userProperties": [],
-              "typeProperties": {
-                "pipeline": {
-                  "referenceName": "AZ_Function_Generic",
-                  "type": "PipelineReference"
-                },
-                "waitOnCompletion": false,
-                "parameters": {
-                  "Body": {
-                    "value": "@json(concat('{\"TaskInstanceId\":\"', string(pipeline().parameters.TaskObject.TaskInstanceId), '\",\"ExecutionUid\":\"', string(pipeline().parameters.TaskObject.ExecutionUid), '\",\"RunId\":\"', string(pipeline().RunId), '\",\"LogTypeId\":1,\"LogSource\":\"ADF\",\"ActivityType\":\"Lookup Get Metadata Stage\",\"StartDateTimeOffSet\":\"', string(pipeline().TriggerTime), '\",\"EndDateTimeOffSet\":\"', string(utcnow()), '\",\"Comment\":\"', string(activity('Lookup Get Metadata Stage').error.message), '\",\"Status\":\"Failed\"}'))",
-                    "type": "Expression"
-                  },
-                  "FunctionName": "Log",
-                  "Method": "Post"
-                }
-              }
-            }
-          ]
-        }
+            "type": "object"
+         }
       }
-    ],
-    "parameters": {
-      "TaskObject": {
-        "type": "object"
-      }
-    },
-    "folder": {
-      "name": "ADS Go Fast/Data Movement/IRA/Common"
-    },
-    "annotations": [],
-    "lastPublishTime": "2020-08-04T13:09:30Z"
-  },
-  "type": "Microsoft.DataFactory/factories/pipelines"
+   },
+   "type": "Microsoft.DataFactory/factories/pipelines"
 }

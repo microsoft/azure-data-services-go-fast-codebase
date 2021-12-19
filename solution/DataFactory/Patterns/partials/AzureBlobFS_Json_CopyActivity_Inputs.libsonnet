@@ -1,4 +1,5 @@
-function(GFPIR="IRA") [
+function(GFPIR="IRA") 
+[
     {
         "referenceName": "GDS_AzureBlobFS_Json_" + GFPIR,
         "type": "DatasetReference",

@@ -1,4 +1,5 @@
-function(GFPIR="IRA") [
+function(GFPIR="IRA") 
+[
   {
       "referenceName": "GDS_AzureBlobStorage_Excel_" + GFPIR,
       "type": "DatasetReference",
