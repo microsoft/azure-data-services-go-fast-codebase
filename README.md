@@ -66,7 +66,7 @@ cd environments/Node/
 npm install 
 node server.js 
 ```
->- [ ] Next Open an Internet Browser and navigate to http://localhost:8080/EditSettings.html. You  should see a screen that looks like the picture belo. For a vanilla deployment you only need to fill out the section titled "Primary Resource Group Settings". Fill this out now with your Azure Environment Specifics and, once done, click on the red button at the top of the form labelled "Click here to update the environment file with form changes". 
+>- [ ] Next Open an Internet Browser and navigate to http://localhost:8080/EditSettings.html. You  should see a screen that looks like the picture below. For a vanilla deployment you only need to fill out the section titled "Primary Resource Group Settings". Fill this out now with your Azure Environment Specifics and, once done, click on the red button at the top of the form labelled "Click here to update the environment file with form changes". 
 
 ![Form](./documentation/images/DeploymentForm.png)
 
@@ -103,7 +103,7 @@ The deployment uses a concept of **Developing inside a Container** to containeri
 
 ## Cost Estimator
 
-Comming Soon.
+Coming Soon.
 
 ---
 

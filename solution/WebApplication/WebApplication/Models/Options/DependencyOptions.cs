@@ -7,6 +7,7 @@
         public string AdsGoFastTaskMetaDataDatabaseServer { get; set; }
         public string AppInsightsWorkspaceId { get; set; }
         public string LogAnalyticsWorkspaceId { get; set; }
+        public string ConnectionString { get; set; }
     }
 
     public class AuthOptions
