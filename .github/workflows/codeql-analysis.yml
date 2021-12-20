@@ -21,6 +21,8 @@ on:
     - cron: '37 11 * * 6'
   workflow_dispatch:
 
+env:
+  DOTNET_VERSION: '3.1.x'
 jobs:
   analyze:
     name: Analyze
@@ -38,16 +40,18 @@ jobs:
         # Learn more about CodeQL language support at https://git.io/codeql-language-support
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
-
+    - uses: actions/checkout@v2
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+        
     # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v1
       with:
         languages: ${{ matrix.language }}
 
-    # We do the 
     - name: Build Function App
       if: (${{ matrix.language }} == 'csharp')
       uses: arkahna/azure-data-services-go-fast-codebase/.github/workflows/build-component.yml@task/advanced-security
@@ -55,17 +59,23 @@ jobs:
         name: Function App
         path: ./solution/FunctionApp/
 
+    - name: Build Function App
+      if: (${{ matrix.language }} == 'csharp')
+      shell: bash
+      working-directory: './solution/FunctionApp/'
+      run: dotnet build --configuration Release 
+      
     - name: Build Web App
-      uses: arkahna/azure-data-services-go-fast-codebase/.github/workflows/build-component.yml@task/advanced-security
-      with:
-        name: Function App
-        path: ./solution/WebApplication/
+      shell: bash
+      working-directory: './solution/WebApplication/'
+      run: dotnet build --configuration Release 
 
+      # We run the web build for both JS and C# matrix builds
     - name: Build DbUp Console App
       if: (${{ matrix.language }} == 'csharp')
-      uses: arkahna/azure-data-services-go-fast-codebase/.github/workflows/build-component.yml@task/advanced-security
-      with:
-        name: DbUp Console App
-        path: ./solution/Database/ADSGoFastDbUp/AdsGoFastDbUp/  
+      shell: bash
+      working-directory: '/solution/Database/ADSGoFastDbUp/AdsGoFastDbUp/'
+      run: dotnet build --configuration Release 
+
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v1
