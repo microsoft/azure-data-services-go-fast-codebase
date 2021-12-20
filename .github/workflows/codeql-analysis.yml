@@ -53,7 +53,7 @@ jobs:
         languages: ${{ matrix.language }}
 
     - name: Build Function App
-      if: (${{ matrix.language }} == 'csharp')
+      if: ${{ matrix.language == 'csharp' }}
       shell: bash
       working-directory: './solution/FunctionApp/'
       run: dotnet build --configuration Release 
@@ -65,9 +65,9 @@ jobs:
 
       # We run the web build for both JS and C# matrix builds
     - name: Build DbUp Console App
-      if: (${{ matrix.language }} == 'csharp')
+      if: ${{ matrix.language == 'csharp' }}
       shell: bash
-      working-directory: '/solution/Database/ADSGoFastDbUp/AdsGoFastDbUp/'
+      working-directory: './solution/Database/ADSGoFastDbUp/AdsGoFastDbUp/'
       run: dotnet build --configuration Release 
 
     - name: Perform CodeQL Analysis
