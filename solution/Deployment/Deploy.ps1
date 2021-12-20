@@ -240,8 +240,8 @@ $result = az storage container create --name "datalakeraw" --account-name $blobs
 
 $files = Get-ChildItem -Name
 foreach ($file in $files) {
-    $result = az storage blob upload --file $file --container-name "datalakeraw" --name samples/$file --account-name $adlsstorage_name --auth-mode  login
-    $result = az storage blob upload --file $file --container-name "datalakeraw" --name samples/$_ --account-name $blobstorage_name --auth-mode login
+    $result = az storage blob upload --file $file --container-name "datalakeraw" --name samples/$file --account-name $adlsstorage_name --auth-mode login
+    $result = az storage blob upload --file $file --container-name "datalakeraw" --name samples/$file --account-name $blobstorage_name --auth-mode login
 }
 
 $result = az storage account update --resource-group $resource_group_name --name $adlsstorage_name --default-action Deny

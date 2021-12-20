@@ -9,33 +9,26 @@
   "DegreeOfCopyParallelism": 1,
   "Source":
     {
-      "StorageAccountName": "https://adsgofastdatalakeadls.dfs.core.windows.net",
-      "Type": "ADLS",
-      "StorageAccountContainer": "datalakelanding",
+      "StorageAccountName": "https://arkstgdlsadslluvblob.dfs.core.windows.net",
+      "Type": "Blob",
+      "StorageAccountContainer": "datalakeraw",
       "StorageAccountAccessMethod": "MSI",
       "StorageAccountSASUriKeyVaultSecretName": null,
-      "RelativePath": "/Unprocessed/adsgofastdatakakeaccelsqlsvr/AWSample/SalesLT/2020/06/08/17/",
-      "DataFileName": "Customer_Data.parquet",
-      "SchemaFileName": "Customer_Schema.json",
+      "RelativePath": "/samples/",
+      "DataFileName": "yellow_tripdata_2017-03.csv",
+      "SchemaFileName": null,
       "Recursively":false,
       "DeleteAfterCompletion":false
     },
   "Target":
     {
-      "StorageAccountName": "https://adsgofastdatalakeadls.dfs.core.windows.net",
-      "Type": "ADLS",
-      "StorageAccountContainer": "datalakelanding",
+      "StorageAccountName": "https://arkstgdlsadslluvadsl.dfs.core.windows.net",
+      "Type": "Blob",
+      "StorageAccountContainer": "datalakeraw",
       "StorageAccountAccessMethod": "MSI",
       "StorageAccountSASUriKeyVaultSecretName": null,
-      "RelativePath": "/Processed/adsgofastdatakakeaccelsqlsvr/AWSample/SalesLT/2020/06/08/17/",
-      "DataFileName": "Customer_Data.parquet",
-      "SchemaFileName": "Customer_Schema.json"
-    },
-  "DataFactory":
-    {
-      "Id": 1,
-      "Name": "adsgofastdatakakeacceladf",
-      "ResourceGroup": "AdsGoFastDataLakeAccel",
-      "SubscriptionId": "035a1364-f00d-48e2-b582-4fe125905ee3"
+      "RelativePath": "/samples/",
+      "DataFileName": "copied_yellow_tripdata_2017.csv",
+      "SchemaFileName": null
     }
 }
