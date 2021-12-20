@@ -1,0 +1,83 @@
+{
+    "definitions": {},
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://example.com/object1604368781.json",
+    "title": "TaskMasterJson",
+    "type": "object",
+    "required": [
+        "Source",
+        "Target"
+    ],
+    "properties": {
+        "Source": {
+            "$id": "#root/Source",
+            "title": "Source",
+            "type": "object",
+            "required": [
+                "Type"
+            ],
+            "properties": {
+                "Type": {
+                    "$id": "#root/Source/Type",
+                    "title": "Type",
+                    "type": "string",
+                    "enum": [
+                        "*"
+                    ],
+                    "default": "*",
+                    "examples": [
+                        "*"
+                    ],
+                    "pattern": "^.*$",
+                    "options": {                        
+                        "infoText": "This value can only be '*'."
+                    }
+                }
+            }
+        },
+        "Target": {
+            "$id": "#root/Target",
+            "title": "Target",
+            "type": "object",
+            "required": [
+                "Type",
+                "Action"
+            ],
+            "properties": {
+                "Type": {
+                    "$id": "#root/Target/Type",
+                    "title": "Type",
+                    "type": "string",
+                    "enum": [
+                        "*"
+                    ],
+                    "default": "*",
+                    "examples": [
+                        "*"
+                    ],
+                    "pattern": "^.*$",
+                    "options": {                        
+                        "infoText": "This value can only be '*'."
+                    }
+                },
+                "Action": {
+                    "$id": "#root/Target/Action",
+                    "title": "Action",
+                    "type": "string",
+                    "enum": [
+                        "Start",
+                        "Stop"
+                    ],
+                    "default": "Start",
+                    "examples": [
+                        "Start"
+                    ],
+                    "pattern": "^.*$",
+                    "options": {                        
+                        "infoText": "The action to perform."
+                    }
+                }
+            }
+        }
+    }
+}

@@ -35,7 +35,7 @@ if (SourceType=="AzureSqlTable" && SourceFormat == "NA") then
   "firstRowOnly": true
 }
 else
-if (SourceType=="AzureSqlTable" && SourceFormat == "NA") then
+if (SourceType=="SqlServerTable" && SourceFormat == "NA") then
 {
   "source": {
     "type": "SqlServerSource",

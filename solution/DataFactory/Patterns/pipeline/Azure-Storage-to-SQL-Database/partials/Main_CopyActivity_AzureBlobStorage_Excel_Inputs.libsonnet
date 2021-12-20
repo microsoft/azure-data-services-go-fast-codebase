@@ -2,7 +2,7 @@ function(GFPIR="IRA")
 {"inputs":
 [
   {
-      "referenceName": "GDS_AzureBlobFS_Excel_" + GFPIR,
+      "referenceName": "GDS_AzureBlobStorage_Excel_" + GFPIR,
       "type": "DatasetReference",
       "parameters": {
           "RelativePath": {

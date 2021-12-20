@@ -1,20 +1,26 @@
-$pattern = "SQL-Database-to-Azure-Storage"
-$folder = "./pipeline/$pattern"
-$tests = (Get-ChildItem -Path $folder -Include "tests.json"  -Verbose -recurse) | Get-Content | ConvertFrom-Json
+$patterns = ((Get-Content "Patterns.json") | ConvertFrom-Json).Folder | Get-Unique
 
-$adsopts = (gci env:* | sort-object name | Where-Object {$_.Name -like "AdsOpts*"})
+foreach ($pattern in $patterns) {    
+    Write-Host "_____________________________"
+    Write-Host  $pattern
+    Write-Host "_____________________________"
+    $folder = "./pipeline/" + $pattern
 
-$i = 0
-foreach ($test in $tests)
-{
-    $testasjson = ($test | ConvertTo-Json -Depth 100)
-    foreach ($opts in $adsopts)
-    {
+    $tests = (Get-Content ($folder+"/tests.json")) | ConvertFrom-Json
+
+    $adsopts = (gci env:* | sort-object name | Where-Object { $_.Name -like "AdsOpts*" })
+
+    $i = 0
+    foreach ($test in $tests) {
+        Write-Host "Test: $i"
+        $testasjson = ($test | ConvertTo-Json -Depth 100)
+        foreach ($opts in $adsopts) {
         
-        $testasjson = $testasjson.Replace($opts.Name, $opts.Value).Replace("{TestNumber}",$i).Replace("{Pattern}",$pattern)    
+            $testasjson = $testasjson.Replace($opts.Name, $opts.Value).Replace("{TestNumber}", $i).Replace("{Pattern}", $pattern)    
+        }
+        $targetfile = $folder + "/tests/$i.json"    
+        $testasjson | set-content ($targetfile)
+        $i = $i + 1
     }
-    $targetfile = $folder + "/tests/$i.json"    
-    $testasjson | set-content ($targetfile)
-    $i=$i+1
-}
 
+}
