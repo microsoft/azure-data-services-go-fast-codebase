@@ -54,13 +54,6 @@ jobs:
 
     - name: Build Function App
       if: (${{ matrix.language }} == 'csharp')
-      uses: arkahna/azure-data-services-go-fast-codebase/.github/workflows/build-component.yml@task/advanced-security
-      with:
-        name: Function App
-        path: ./solution/FunctionApp/
-
-    - name: Build Function App
-      if: (${{ matrix.language }} == 'csharp')
       shell: bash
       working-directory: './solution/FunctionApp/'
       run: dotnet build --configuration Release 
