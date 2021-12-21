@@ -1,0 +1,240 @@
+{
+   "name": "GPL_AzureBlobStorage_DelimitedText_AzureSqlTable_NA_IRA",
+   "properties": {
+      "activities": [
+         {
+            "dependsOn": [ ],
+            "name": "Pipeline AF Log - ADLS to Azure SQL Start",
+            "type": "ExecutePipeline",
+            "typeProperties": {
+               "parameters": {
+                  "Body": {
+                     "type": "Expression",
+                     "value": "@json(concat('{\"TaskInstanceId\":\"', string(pipeline().parameters.TaskObject.TaskInstanceId), '\",\"ExecutionUid\":\"', string(pipeline().parameters.TaskObject.ExecutionUid), '\",\"RunId\":\"', string(pipeline().RunId), '\",\"LogTypeId\":3,\"LogSource\":\"ADF\",\"ActivityType\":\"Copy to SQL\",\"StartDateTimeOffSet\":\"', string(pipeline().TriggerTime), '\",\"Status\":\"Started\"}'))"
+                  },
+                  "FunctionName": "Log",
+                  "Method": "Post"
+               },
+               "pipeline": {
+                  "referenceName": "AZ_Function_Generic",
+                  "type": "PipelineReference"
+               },
+               "waitOnCompletion": false
+            },
+            "userProperties": [ ]
+         },
+         {
+            "dependsOn": [
+               {
+                  "activity": "Pipeline AF Log - ADLS to Azure SQL Start",
+                  "dependencyConditions": [
+                     "Succeeded"
+                  ]
+               }
+            ],
+            "inputs": [
+               {
+                  "parameters": {
+                     "FileName": {
+                        "type": "Expression",
+                        "value": "@pipeline().parameters.TaskObject.Source.DataFileName"
+                     },
+                     "FirstRowAsHeader": {
+                        "type": "Expression",
+                        "value": "@pipeline().parameters.TaskObject.Source.FirstRowAsHeader"
+                     },
+                     "RelativePath": {
+                        "type": "Expression",
+                        "value": "@pipeline().parameters.TaskObject.Source.RelativePath"
+                     },
+                     "StorageAccountContainerName": {
+                        "type": "Expression",
+                        "value": "@pipeline().parameters.TaskObject.Source.StorageAccountContainer"
+                     },
+                     "StorageAccountEndpoint": {
+                        "type": "Expression",
+                        "value": "@pipeline().parameters.TaskObject.Source.StorageAccountName"
+                     }
+                  },
+                  "referenceName": "GDS_AzureBlobStorage_DelimitedText_IRA",
+                  "type": "DatasetReference"
+               }
+            ],
+            "name": "Copy to SQL",
+            "outputs": [
+               {
+                  "parameters": {
+                     "Database": {
+                        "type": "Expression",
+                        "value": "@pipeline().parameters.TaskObject.Target.Database.Name"
+                     },
+                     "Schema": {
+                        "type": "Expression",
+                        "value": "@pipeline().parameters.TaskObject.Target.StagingTableSchema"
+                     },
+                     "Server": {
+                        "type": "Expression",
+                        "value": "@pipeline().parameters.TaskObject.Target.Database.SystemName"
+                     },
+                     "Table": {
+                        "type": "Expression",
+                        "value": "@pipeline().parameters.TaskObject.Target.StagingTableName"
+                     }
+                  },
+                  "referenceName": "AzureSqlTable_IRA",
+                  "type": "DatasetReference"
+               }
+            ],
+            "policy": {
+               "retry": 0,
+               "retryIntervalInSeconds": 30,
+               "secureInput": false,
+               "secureOutput": false,
+               "timeout": "7.00:00:00"
+            },
+            "type": "Copy",
+            "typeProperties": {
+               "enableStaging": false,
+               "parallelCopies": {
+                  "type": "Expression",
+                  "value": "@pipeline().parameters.TaskObject.DegreeOfCopyParallelism"
+               },
+               "sink": {
+                  "disableMetricsCollection": false,
+                  "preCopyScript": {
+                     "type": "Expression",
+                     "value": "@{pipeline().parameters.TaskObject.Target.PreCopySQL}"
+                  },
+                  "tableOption": "autoCreate",
+                  "type": "AzureSqlSink"
+               },
+               "source": {
+                  "formatSettings": {
+                     "skipLineCount": {
+                        "type": "Expression",
+                        "value": "@pipeline().parameters.TaskObject.Source.SkipLineCount"
+                     },
+                     "type": "DelimitedTextReadSettings"
+                  },
+                  "storeSettings": {
+                     "enablePartitionDiscovery": false,
+                     "maxConcurrentConnections": {
+                        "type": "Expression",
+                        "value": "@pipeline().parameters.TaskObject.Source.MaxConcorrentConnections"
+                     },
+                     "recursive": true,
+                     "type": "AzureBlobStorageReadSettings",
+                     "wildcardFileName": {
+                        "type": "Expression",
+                        "value": "@pipeline().parameters.TaskObject.Source.DataFileName"
+                     },
+                     "wildcardFolderPath": {
+                        "type": "Expression",
+                        "value": "@pipeline().parameters.TaskObject.Source.RelativePath"
+                     }
+                  },
+                  "type": "DelimitedTextSource"
+               },
+               "translator": {
+                  "type": "Expression",
+                  "value": "@pipeline().parameters.TaskObject.Target.DynamicMapping"
+               }
+            },
+            "userProperties": [ ]
+         },
+         {
+            "dependsOn": [
+               {
+                  "activity": "Copy to SQL",
+                  "dependencyConditions": [
+                     "Failed"
+                  ]
+               }
+            ],
+            "name": "Pipeline AF Log - ADLS to Azure SQL Failed",
+            "type": "ExecutePipeline",
+            "typeProperties": {
+               "parameters": {
+                  "Body": {
+                     "type": "Expression",
+                     "value": "@json(concat('{\"TaskInstanceId\":\"', string(pipeline().parameters.TaskObject.TaskInstanceId), '\",\"ExecutionUid\":\"', string(pipeline().parameters.TaskObject.ExecutionUid), '\",\"RunId\":\"', string(pipeline().RunId), '\",\"LogTypeId\":1,\"LogSource\":\"ADF\",\"ActivityType\":\"Copy to SQL\",\"StartDateTimeOffSet\":\"', string(pipeline().TriggerTime), '\",\"EndDateTimeOffSet\":\"', string(utcnow()), '\",\"Comment\":\"', string(activity('Copy to SQL').error.message), '\",\"Status\":\"Failed\"}'))"
+                  },
+                  "FunctionName": "Log",
+                  "Method": "Post"
+               },
+               "pipeline": {
+                  "referenceName": "AZ_Function_Generic",
+                  "type": "PipelineReference"
+               },
+               "waitOnCompletion": false
+            },
+            "userProperties": [ ]
+         },
+         {
+            "dependsOn": [
+               {
+                  "activity": "Copy to SQL",
+                  "dependencyConditions": [
+                     "Succeeded"
+                  ]
+               }
+            ],
+            "name": "Pipeline AF Log - ADLS to Azure SQL Succeed",
+            "type": "ExecutePipeline",
+            "typeProperties": {
+               "parameters": {
+                  "Body": {
+                     "type": "Expression",
+                     "value": "@json(concat('{\"TaskInstanceId\":\"', string(pipeline().parameters.TaskObject.TaskInstanceId), '\",\"ExecutionUid\":\"', string(pipeline().parameters.TaskObject.ExecutionUid), '\",\"RunId\":\"', string(pipeline().RunId), '\",\"LogTypeId\":1,\"LogSource\":\"ADF\",\"ActivityType\":\"Copy to SQL\",\"StartDateTimeOffSet\":\"', string(pipeline().TriggerTime), '\",\"EndDateTimeOffSet\":\"', string(utcnow()), '\",\"RowsInserted\":\"', string(activity('Copy to SQL').output.rowsCopied), '\",\"Comment\":\"\",\"Status\":\"Complete\"}'))"
+                  },
+                  "FunctionName": "Log",
+                  "Method": "Post"
+               },
+               "pipeline": {
+                  "referenceName": "AZ_Function_Generic",
+                  "type": "PipelineReference"
+               },
+               "waitOnCompletion": false
+            },
+            "userProperties": [ ]
+         },
+         {
+            "dependsOn": [
+               {
+                  "activity": "Pipeline AF Log - ADLS to Azure SQL Succeed",
+                  "dependencyConditions": [
+                     "Succeeded"
+                  ]
+               }
+            ],
+            "name": "Execute AZ_SQL_Post-Copy",
+            "type": "ExecutePipeline",
+            "typeProperties": {
+               "parameters": {
+                  "TaskObject": {
+                     "type": "Expression",
+                     "value": "@pipeline().parameters.TaskObject"
+                  }
+               },
+               "pipeline": {
+                  "referenceName": "GPL_AzureSqlTable_NA_Post_Copy_IRA",
+                  "type": "PipelineReference"
+               },
+               "waitOnCompletion": true
+            },
+            "userProperties": [ ]
+         }
+      ],
+      "annotations": [ ],
+      "folder": {
+         "name": "ADS Go Fast/Data Movement/IRA"
+      },
+      "lastPublishTime": "2020-07-29T09:43:40Z",
+      "parameters": {
+         "TaskObject": {
+            "type": "object"
+         }
+      }
+   },
+   "type": "Microsoft.DataFactory/factories/pipelines"
+}

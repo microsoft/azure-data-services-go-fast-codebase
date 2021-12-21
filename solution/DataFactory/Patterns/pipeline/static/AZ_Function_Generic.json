@@ -1,0 +1,104 @@
+{
+	"name": "AZ_Function_Generic",
+	"properties": {
+		"activities": [
+			{
+				"name": "Switch Method",
+				"type": "Switch",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"on": {
+						"value": "@pipeline().parameters.Method",
+						"type": "Expression"
+					},
+					"cases": [
+						{
+							"value": "Put",
+							"activities": [
+								{
+									"name": "Azure Function Generic Put",
+									"type": "AzureFunctionActivity",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"functionName": {
+											"value": "@pipeline().parameters.FunctionName",
+											"type": "Expression"
+										},
+										"method": "PUT",
+										"body": {
+											"value": "@pipeline().parameters.Body",
+											"type": "Expression"
+										}
+									},
+									"linkedServiceName": {
+										"referenceName": "AzureFunctionAdsGoFastDataLakeAccelFunApp",
+										"type": "LinkedServiceReference"
+									}
+								}
+							]
+						},
+						{
+							"value": "Post",
+							"activities": [
+								{
+									"name": "Azure Function Generic Post",
+									"type": "AzureFunctionActivity",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"functionName": {
+											"value": "@pipeline().parameters.FunctionName",
+											"type": "Expression"
+										},
+										"method": "POST",
+										"body": {
+											"value": "@pipeline().parameters.Body",
+											"type": "Expression"
+										}
+									},
+									"linkedServiceName": {
+										"referenceName": "AzureFunctionAdsGoFastDataLakeAccelFunApp",
+										"type": "LinkedServiceReference"
+									}
+								}
+							]
+						}
+					]
+				}
+			}
+		],
+		"parameters": {
+			"Body": {
+				"type": "string"
+			},
+			"FunctionName": {
+				"type": "string"
+			},
+			"Method": {
+				"type": "string"
+			}
+		},
+		"folder": {
+			"name": "ADS Go Fast/Common"
+		},
+		"annotations": [],
+		"lastPublishTime": "2020-07-14T10:58:30Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

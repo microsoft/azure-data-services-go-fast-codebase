@@ -1,0 +1,79 @@
+[
+    {
+        "Folder": "Azure-Storage-to-Azure-Storage",        
+        "SourceType": "AzureSqlTable",
+        "SourceFormat": "NA",
+        "TargetType": "AzureBlobFS",
+        "TargetFormat": "Parquet"
+    },    
+    {
+        "Folder": "SQL-Database-to-Azure-Storage",        
+        "SourceType": "AzureSqlTable",
+        "SourceFormat": "NA",
+        "TargetType": "AzureBlobFS",
+        "TargetFormat": "Parquet"
+    },
+    {
+        "Folder": "SQL-Database-to-Azure-Storage",        
+        "SourceType": "AzureSqlTable",
+        "SourceFormat": "NA",
+        "TargetType": "AzureBlobStorage",
+        "TargetFormat": "Parquet"
+    },
+    {
+        "Folder": "SQL-Database-to-Azure-Storage",        
+        "SourceType": "SqlServerTable",
+        "SourceFormat": "NA",
+        "TargetType": "AzureBlobFS",
+        "TargetFormat": "Parquet"
+    },
+    {
+        "Folder": "SQL-Database-to-Azure-Storage",        
+        "SourceType": "SqlServerTable",
+        "SourceFormat": "NA",
+        "TargetType": "AzureBlobStorage",
+        "TargetFormat": "Parquet"
+    },
+    {
+        "Folder": "Azure-Storage-to-SQL-Database",        
+        "SourceType": "AzureBlobFS",
+        "SourceFormat": "Excel",
+        "TargetType": "AzureSqlTable",
+        "TargetFormat": "NA"
+    },
+    {
+        "Folder": "Azure-Storage-to-SQL-Database",        
+        "SourceType": "AzureBlobStorage",
+        "SourceFormat": "Excel",
+        "TargetType": "AzureSqlTable",
+        "TargetFormat": "NA"
+    },
+    {
+        "Folder": "Azure-Storage-to-SQL-Database",        
+        "SourceType": "AzureBlobFS",
+        "SourceFormat": "Json",
+        "TargetType": "AzureSqlTable",
+        "TargetFormat": "NA"
+    },
+    {
+        "Folder": "Azure-Storage-to-SQL-Database",                
+        "SourceType": "AzureBlobStorage",
+        "SourceFormat": "Json",
+        "TargetType": "AzureSqlTable",
+        "TargetFormat": "NA"
+    },
+    {
+        "Folder": "Azure-Storage-to-SQL-Database",        
+        "SourceType": "AzureBlobFS",
+        "SourceFormat": "DelimitedText",
+        "TargetType": "AzureSqlTable",
+        "TargetFormat": "NA"
+    },
+    {
+        "Folder": "Azure-Storage-to-SQL-Database",                
+        "SourceType": "AzureBlobStorage",
+        "SourceFormat": "DelimitedText",
+        "TargetType": "AzureSqlTable",
+        "TargetFormat": "NA"
+    }
+]

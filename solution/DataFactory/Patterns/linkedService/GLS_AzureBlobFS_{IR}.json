@@ -1,0 +1,21 @@
+{
+	"name": "GLS_AzureBlobFS_@GF{IR}",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"type": "AzureBlobFS",
+		"parameters": {
+			"StorageAccountEndpoint": {
+				"type": "String",
+				"defaultValue": ""
+			}
+		},
+		"typeProperties": {
+			"url": "@{linkedService().StorageAccountEndpoint}"
+		},
+		"annotations": [],
+		"connectVia": {
+			"referenceName": "@GF{IR}",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}
