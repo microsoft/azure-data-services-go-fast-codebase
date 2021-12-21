@@ -1,0 +1,342 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]",
+            "metadata": {
+                "description": "Location for all resources."
+            }
+        },
+        "adf-ir-vm-size": {
+            "type": "string",
+            "defaultValue": "Standard_D4s_v3",
+            "metadata": {
+                "description": "The size of the VM"
+            }
+        },
+        "adf-ir-vm-admin-username": {
+            "type": "string",
+            "defaultValue": "adsgofastadmin",
+            "metadata": {
+                "description": "Username for the Virtual Machine."
+            }
+        },
+        "adf-ir-vm-admin-password": {
+            "type": "secureString",
+            "metadata": {
+                "description": "Password for the Virtual Machine. The password must be at least 12 characters long and have lower case, upper characters, digit and a special character (Regex match)"
+            }
+        },
+        "os-disk-type-adfir-vm": {
+            "type": "string",
+            "defaultValue": "Standard_LRS",
+            "allowedValues": [
+                "Standard_LRS",
+                "Standard_ZRS",
+                "Standard_GRS",
+                "Standard_RAGRS"
+            ],
+            "metadata": {
+                "description": "Defines the type of storage account to use for the data lake store"
+            }
+        },
+        "adf-ir-onp-vm-name": {
+            "type": "String"
+        },
+        "imageOffer": {
+            "type": "String",
+            "defaultValue": "sql2019-ws2019",
+            "allowedValues": [
+                "sql2019-ws2019",
+                "sql2017-ws2019",
+                "SQL2017-WS2016",
+                "SQL2016SP1-WS2016",
+                "SQL2016SP2-WS2016",
+                "SQL2014SP3-WS2012R2",
+                "SQL2014SP2-WS2012R2"
+            ],
+            "metadata": {
+                "description": "Windows Server and SQL Offer"
+            }
+        },
+        "sqlSku": {
+            "type": "String",
+            "defaultValue": "Standard",
+            "allowedValues": [
+                "Standard",
+                "Enterprise",
+                "SQLDEV",
+                "Web",
+                "Express"
+            ],
+            "metadata": {
+                "description": "SQL Server Sku"
+            }
+        },
+        "sqlDataDisksCount": {
+            "type": "int",
+            "defaultValue": 1,
+            "minValue": 1,
+            "maxValue": 8,
+            "metadata": {
+                "description": "Amount of data disks (1TB each) for SQL Data files"
+            }
+        },
+        "sqlLogDisksCount": {
+            "type": "int",
+            "defaultValue": 1,
+            "minValue": 1,
+            "maxValue": 8,
+            "metadata": {
+                "description": "Amount of data disks (1TB each) for SQL Log files"
+            }
+        },
+        "storageWorkloadType": {
+            "type": "String",
+            "defaultValue": "General",
+            "allowedValues": [
+                "General",
+                "OLTP",
+                "DW"
+            ],
+            "metadata": {
+                "description": "SQL Server Workload Type"
+            }
+        },
+        "dataPath": {
+            "type": "String",
+            "defaultValue": "F:\\SQLData",
+            "metadata": {
+                "description": "Path for SQL Data files. Please choose drive letter from F to Z, and other drives from A to E are reserved for system"
+            }
+        },
+        "logPath": {
+            "type": "String",
+            "defaultValue": "G:\\SQLLog",
+            "metadata": {
+                "description": "Path for SQL Log files. Please choose drive letter from F to Z and different than the one used for SQL data. Drive letter from A to E are reserved for system"
+            }
+        },
+        "vnet-name": {
+            "type": "string",
+            "defaultValue": "adsgofast-vnet",
+            "metadata": {
+                "description": "Name of Azure Bastion resource"
+            }
+        }
+    },
+    "variables": {
+        "adf-ir-vm-name": "[take(concat('IR-Az-', uniqueString(resourceGroup().id),'-VM'),15)]",
+        "adf-ir-az-network-interface-name": "[concat(variables('adf-ir-vm-name'),'NetInt')]",
+        "adf-ir-onp-network-interface-name": "[concat(parameters('adf-ir-onp-vm-name'),'NetInt')]",
+        "dataDisks": {
+            "createOption": "empty",
+            "caching": "ReadOnly",
+            "writeAcceleratorEnabled": false,
+            "storageAccountType": "Premium_LRS",
+            "diskSizeGB": 1023
+        },
+        "diskConfigurationType": "NEW",
+        "dataDisksLuns": "[array(range(0 ,parameters('sqlDataDisksCount')))]",
+        "logDisksLuns": "[array(range(parameters('sqlDataDisksCount'), parameters('sqlLogDisksCount')))]",
+        "tempDbPath": "D:\\SQLTemp",
+        "data-subnet-name": "Data"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Network/networkInterfaces",
+            "apiVersion": "2019-09-01",
+            "name": "[variables('adf-ir-az-network-interface-name')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                
+            ],
+            "tags": {
+                "displayName": "[variables('adf-ir-az-network-interface-name')]"
+            },
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipConfig1",
+                        "properties": {
+                            "privateIPAllocationMethod": "Dynamic",
+                            "subnet": {
+                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnet-name'), variables('data-subnet-name'))]"
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.Network/networkInterfaces",
+            "apiVersion": "2019-09-01",
+            "name": "[variables('adf-ir-onp-network-interface-name')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                
+            ],
+            "tags": {
+                "displayName": "[variables('adf-ir-onp-network-interface-name')]"
+            },
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipConfig1",
+                        "properties": {
+                            "privateIPAllocationMethod": "Dynamic",
+                            "subnet": {
+                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnet-name'), variables('data-subnet-name'))]"
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines",
+            "apiVersion": "2019-07-01",
+            "name": "[variables('adf-ir-vm-name')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/networkInterfaces', variables('adf-ir-az-network-interface-name'))]"
+            ],
+            "tags": {
+                "displayName": "[variables('adf-ir-vm-name')]"
+            },
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "[parameters('adf-ir-vm-size')]"
+                },
+                "osProfile": {
+                    "computerName": "[variables('adf-ir-vm-name')]",
+                    "adminUsername": "[parameters('adf-ir-vm-admin-username')]",
+                    "adminPassword": "[parameters('adf-ir-vm-admin-password')]"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "MicrosoftWindowsServer",
+                        "offer": "WindowsServer",
+                        "sku": "2019-Datacenter",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "name": "[concat(variables('adf-ir-vm-name'),'OsDisk')]",
+                        "caching": "ReadWrite",
+                        "createOption": "FromImage",
+                        "managedDisk": {
+                            "storageAccountType": "[parameters('os-disk-type-adfir-vm')]"
+                        },
+                        "diskSizeGB": 128
+                    }
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('adf-ir-az-network-interface-name'))]"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines",
+            "apiVersion": "2019-07-01",
+            "name": "[parameters('adf-ir-onp-vm-name')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/networkInterfaces', variables('adf-ir-onp-network-interface-name'))]"
+            ],
+            "tags": {
+                "displayName": "[parameters('adf-ir-onp-vm-name')]"
+            },
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "[parameters('adf-ir-vm-size')]"
+                },
+                "osProfile": {
+                    "computerName": "[parameters('adf-ir-onp-vm-name')]",
+                    "adminUsername": "[parameters('adf-ir-vm-admin-username')]",
+                    "adminPassword": "[parameters('adf-ir-vm-admin-password')]",
+                    "windowsConfiguration": {
+                        "enableAutomaticUpdates": true,
+                        "provisionVmAgent": true
+                    }
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "MicrosoftSQLServer",
+                        "offer": "[parameters('imageOffer')]",
+                        "sku": "[parameters('sqlSku')]",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "name": "[concat(parameters('adf-ir-onp-vm-name'),'OsDisk')]",
+                        "caching": "ReadWrite",
+                        "createOption": "FromImage",
+                        "managedDisk": {
+                            "storageAccountType": "[parameters('os-disk-type-adfir-vm')]"
+                        },
+                        "diskSizeGB": 128
+                    },
+                    "copy": [
+                        {
+                            "name": "dataDisks",
+                            "count": "[add(parameters('sqlDataDisksCount'), parameters('sqlLogDisksCount'))]",
+                            "input": {
+                                "lun": "[copyIndex('dataDisks')]",
+                                "createOption": "[variables('dataDisks').createOption]",
+                                "caching": "[if(greaterOrEquals(copyIndex('dataDisks'), parameters('sqlDataDisksCount')) ,'None', variables('dataDisks').caching )]",
+                                "writeAcceleratorEnabled": "[variables('dataDisks').writeAcceleratorEnabled]",
+                                "diskSizeGB": "[variables('dataDisks').diskSizeGB]",
+                                "managedDisk": {
+                                    "storageAccountType": "[variables('dataDisks').storageAccountType]"
+                                }
+                            }
+                        }
+                    ]
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('adf-ir-onp-network-interface-name'))]"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "type": "Microsoft.SqlVirtualMachine/SqlVirtualMachines",
+            "apiVersion": "2017-03-01-preview",
+            "name": "[parameters('adf-ir-onp-vm-name')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Compute/virtualMachines', parameters('adf-ir-onp-vm-name'))]"
+            ],
+            "properties": {
+                "virtualMachineResourceId": "[resourceId('Microsoft.Compute/virtualMachines', parameters('adf-ir-onp-vm-name'))]",
+                "sqlManagement": "Full",
+                "SqlServerLicenseType": "PAYG",
+                "StorageConfigurationSettings": {
+                    "DiskConfigurationType": "[variables('diskConfigurationType')]",
+                    "StorageWorkloadType": "[parameters('storageWorkloadType')]",
+                    "SQLDataSettings": {
+                        "LUNs": "[variables('dataDisksLUNs')]",
+                        "DefaultFilePath": "[parameters('dataPath')]"
+                    },
+                    "SQLLogSettings": {
+                        "Luns": "[variables('logDisksLUNs')]",
+                        "DefaultFilePath": "[parameters('logPath')]"
+                    },
+                    "SQLTempDbSettings": {
+                        "DefaultFilePath": "[variables('tempDbPath')]"
+                    }
+                }
+            }
+        }     
+    ],
+    "outputs": {
+    }
+}

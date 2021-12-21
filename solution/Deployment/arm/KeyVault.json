@@ -1,0 +1,50 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Location for all resources."
+            }
+        },
+        "keyvault-name": {
+            "type": "string",
+            "defaultValue": "kv",
+            "metadata": {
+                "description": "kv"
+            }
+        },
+        "tenant-id": {
+            "type": "string",
+            "defaultValue": "kv",
+            "metadata": {
+                "description": "kv"
+            }
+        }
+    },
+    "resources": [{
+        "type": "Microsoft.KeyVault/vaults",
+        "name": "[parameters('keyvault-name')]",
+        "apiVersion": "2018-02-14",
+        "location": "[parameters('location')]",
+        "properties": {
+            "enabledForDeployment": true,
+            "enabledForDiskEncryption":true,
+            "enabledForTemplateDeployment": true,
+            "tenantId": "[parameters('tenant-id')]",
+            "accessPolicies": [
+            ],
+            "sku": {
+                "name": "standard",
+                "family": "A"
+            },
+            "networkAcls": {
+                "defaultAction": "Allow",
+                "bypass": "AzureServices"
+            }
+        }
+    }],
+    "outputs":{}
+}

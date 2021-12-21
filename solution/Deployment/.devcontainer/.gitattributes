@@ -1,0 +1,2 @@
+# Force line endings on bas scripts
+*.sh text eol=lf

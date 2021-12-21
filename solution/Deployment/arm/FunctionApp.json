@@ -1,0 +1,84 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]",
+            "metadata": {
+                "description": "Location for all resources."
+            }
+        },
+        "azure-function-site-name": {
+            "type": "string",
+            "defaultValue": "[concat('FuncApp-', uniqueString(resourceGroup().id))]",
+            "metadata": {
+                "description": "The name of you Web Site."
+            }
+        }, 
+        "app-insights-name": {
+            "type": "string",
+            "defaultValue": "appinsights-adsgofast",
+            "metadata": {
+                "description": "The name of Azure Application Insights."
+            }
+        },
+        "storage-log-account-name": {
+            "type": "string",
+            "defaultValue": "adsgofastlog",
+            "metadata": {
+                "description": "The name of storage account used for logging"
+            }
+        },
+        "storage-log-account-key": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "A key to the storage account"
+            }
+        },
+        "appservice-name": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": ""
+            }
+        } 
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Web/sites",
+            "apiVersion": "2020-06-01",
+            "name": "[parameters('azure-function-site-name')]",
+            "kind": "functionapp",
+            "location": "[parameters('location')]",
+            "properties": {
+                "name": "[parameters('azure-function-site-name')]",
+                "siteConfig": {
+                    "appSettings": [
+                        {
+                            "name": "FUNCTIONS_WORKER_RUNTIME",
+                            "value": "dotnet"
+                        },
+                        {
+                            "name": "FUNCTIONS_EXTENSION_VERSION",
+                            "value": "~3"
+                        },
+                        {
+                            "name": "AzureWebJobsStorage",
+                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('storage-log-account-name'), ';AccountKey=', parameters('storage-log-account-key'))]"
+                        },
+                        {
+                            "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+                            "value": "[reference(resourceId('microsoft.insights/components/', parameters('app-insights-name')), '2015-05-01').InstrumentationKey]"
+                        }
+                    ]
+                },
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('appservice-name'))]",
+                "clientAffinityEnabled": false
+            }
+        }
+    ],
+    "outputs": {
+    }
+}

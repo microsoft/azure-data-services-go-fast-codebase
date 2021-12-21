@@ -1,0 +1,89 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Location for all resources."
+            }
+        },
+        "storage-account-name": {
+            "type": "String",
+            "defaultValue": "adsgfadls",
+            "metadata": {
+                "description": ""
+            }
+        },
+        "storage-landing-container-name": {
+            "type": "String",
+            "defaultValue": "datalakelanding",
+            "metadata": {
+                "description": ""
+            }
+        },
+        "storage-raw-container-name": {
+            "type": "String",
+            "defaultValue": "datalakeraw",
+            "metadata": {
+                "description": ""
+            }
+        },
+        "storage-account-sku": {
+            "type": "String",
+            "defaultValue": "Standard_GRS",
+            "metadata": {
+                "description": ""
+            }
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2019-04-01",
+            "location": "[parameters('location')]",
+            "name": "[parameters('storage-account-name')]",
+            "kind": "StorageV2",
+            "sku": {
+                "name": "[parameters('storage-account-sku')]"
+            },
+            "properties": {
+                "encryption": {
+                    "keySource": "Microsoft.Storage",
+                    "services": {
+                        "blob": {
+                            "enabled": true
+                        },
+                        "file": {
+                            "enabled": true
+                        }
+                    }
+                },
+                "isHnsEnabled": false,
+                "supportsHttpsTrafficOnly": true,
+                "accessTier": "Hot"
+            },
+            "resources": [
+                {
+                    "type": "blobServices/containers",
+                    "apiVersion": "2019-06-01",
+                    "name": "[concat('default/', parameters('storage-landing-container-name'))]",
+                    "dependsOn": [
+                        "[parameters('storage-account-name')]"
+                    ]
+                },
+                {
+                    "type": "blobServices/containers",
+                    "apiVersion": "2019-06-01",
+                    "name": "[concat('default/', parameters('storage-raw-container-name'))]",
+                    "dependsOn": [
+                        "[parameters('storage-account-name')]"
+                    ]
+                }
+            ]
+        }
+    ],
+    "outputs": {
+    }
+}

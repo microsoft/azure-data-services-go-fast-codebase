@@ -1,0 +1,31 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]",
+            "metadata": {
+                "description": "Location for all resources."
+            }
+        },
+        "adf-name": {
+            "type": "string",
+            "defaultValue": "test",
+            "metadata": {
+                "description": ""
+            }
+        }   
+    },
+    "resources": [{
+            "apiVersion": "2018-06-01",
+            "name": "[parameters('adf-name')]",
+            "location": "[parameters('location')]",
+            "type": "Microsoft.DataFactory/factories",
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "properties": {}
+        }],
+    "outputs":{}
+}

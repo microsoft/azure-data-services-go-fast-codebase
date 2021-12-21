@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Page Title</title>
+<script src="https://cdn.jsdelivr.net/npm/@json-editor/json-editor@latest/dist/jsoneditor.min.js"></script>
+<link rel="stylesheet" id="theme-link" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" id="iconlib-link" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css">
+</head>
+<script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+<body>
+
+<h1>Azure Data Services Go Fast Settings Editor</h1>
+<button type="button" onclick="WriteValue()" class="btn btn-danger">Click here to update the environment file with the form changes</button>
+<div id="json-editor-form" data-theme="bootstrap4"></div>
+
+<script>
+    const element = document.getElementById('json-editor-form');
+    var editor;
+    $.ajax({
+      url: 'environment.schema.json',
+      complete: function(schema) {
+        $.ajax({
+          url: 'development.json',
+          complete: function(data) {
+            LoadEditor(schema, data);
+          }
+        });
+      }
+    });
+
+    function LoadEditor(schema,data)
+    {
+      JSONEditor.defaults.options.theme = 'bootstrap4';
+        
+        // Set an option during instantiation
+        editor = new JSONEditor(element, {
+              schema: schema.responseJSON,
+              theme: 'bootstrap4',
+              iconlib: "fontawesome5" ,
+              disable_properties: true,
+              disable_edit_json: true 
+        });
+
+        editor.on('ready',() => {
+          // Now the api methods will be available
+          editor.setValue(data.responseJSON);
+        });
+        
+    }
+
+    function WriteValue()
+    {
+      data = editor.getValue();
+      $.ajax({
+          url: 'development.json',
+          method: "PUT",
+          data: JSON.stringify(data),
+          complete: function(data) {
+           
+          }
+        });
+    }
+    
+    
+    </script>
+</body>
+</html>
