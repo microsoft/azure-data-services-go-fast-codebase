@@ -1,0 +1,12 @@
+{
+  "name": "SLS_AzureKeyVault",
+  "properties": {
+    "annotations": [],
+    "description": "Default Key Vault (Non-Dynamic)",
+    "type": "AzureKeyVault",
+    "typeProperties": {
+      "baseUrl": "https://adsgfkvjkcgkaibkungm.vault.azure.net/"
+    }
+  },
+  "type": "Microsoft.DataFactory/factories/linkedservices"
+}

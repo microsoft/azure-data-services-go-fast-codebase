@@ -1,7 +1,10 @@
-function(GFPIR="IRA") 
+function(GenerateArm="false",GFPIR="IRA") 
 {"inputs":
 [{
-  "referenceName": "GDS_AzureSqlTable_NA_" + GFPIR,
+  local referenceName = "GDS_AzureSqlTable_NA_",
+  "referenceName":if(GenerateArm=="false") 
+                    then referenceName + GFPIR
+                    else "[concat('"+referenceName+"', parameters('integrationRuntimeShortName'))]",     
   "type": "DatasetReference",
   "parameters": {
     "Schema": {

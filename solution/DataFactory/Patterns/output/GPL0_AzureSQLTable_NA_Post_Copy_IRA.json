@@ -1,5 +1,5 @@
 {
-   "name": "GPL_AzureSqlTable_NA_Post_Copy_IRA",
+   "name": "GPL_AzureBlobFS_Parquet_AzureSqlTable_NA_Post_Copy_IRA",
    "properties": {
       "activities": [
          {
@@ -258,7 +258,7 @@
                   {
                      "dependsOn": [ ],
                      "linkedServiceName": {
-                        "referenceName": "AzureFunctionAdsGoFastDataLakeAccelFunApp",
+                        "referenceName": "SLS_AzureFunctionApp",
                         "type": "LinkedServiceReference"
                      },
                      "name": "AF Get Information Schema SQL Stage",
@@ -296,7 +296,7 @@
                         }
                      ],
                      "linkedServiceName": {
-                        "referenceName": "AzureFunctionAdsGoFastDataLakeAccelFunApp",
+                        "referenceName": "SLS_AzureFunctionApp",
                         "type": "LinkedServiceReference"
                      },
                      "name": "AF Get Merge Statement",
@@ -364,7 +364,7 @@
                            "queryTimeout": "02:00:00",
                            "sqlReaderQuery": {
                               "type": "Expression",
-                              "value": "@activity('AF Get Information Schema SQL Stage').output.CreateStatement"
+                              "value": "@activity('AF Get SQL Create Statement Staging').output.InformationSchemaSQL"
                            },
                            "type": "AzureSqlSource"
                         }
@@ -417,7 +417,7 @@
                            "queryTimeout": "02:00:00",
                            "sqlReaderQuery": {
                               "type": "Expression",
-                              "value": "@activity('AF Get Information Schema SQL Target').output.CreateStatement"
+                              "value": "@activity('AF Get Information Schema SQL Target').output.InformationSchemaSQL"
                            },
                            "type": "AzureSqlSource"
                         }
@@ -427,7 +427,7 @@
                   {
                      "dependsOn": [ ],
                      "linkedServiceName": {
-                        "referenceName": "AzureFunctionAdsGoFastDataLakeAccelFunApp",
+                        "referenceName": "SLS_AzureFunctionApp",
                         "type": "LinkedServiceReference"
                      },
                      "name": "AF Get Information Schema SQL Target",

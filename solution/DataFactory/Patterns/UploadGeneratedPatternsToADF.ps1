@@ -14,7 +14,7 @@ function UploadADFItem ($items) {
                 }
 
                 #Swap out Function App Url
-                if ($lsName -eq "AzureFunctionAdsGoFastDataLakeAccelFunApp") {
+                if ($lsName -eq "SLS_AzureFunctionApp") {
                     $jsonobject.properties.typeProperties.functionAppUrl = "https://$env:AdsOpts_CD_Services_CoreFunctionApp_Name.azurewebsites.net"
                 }
             
@@ -48,15 +48,17 @@ function UploadADFItem ($items) {
 
 
 $UploadGDS = $false
-$UploadGLS = $false
+$UploadGLS = $true
 
-if($UploadGDS -eq $true)
+if($UploadGLS -eq $true)
 {
     $items = (Get-ChildItem -Path "./output/" -Include "GLS*.json" -Verbose -recurse)
     UploadADFItem -items $items 
+    $items = (Get-ChildItem -Path "./output/" -Include "SLS*.json" -Verbose -recurse)
+    UploadADFItem -items $items 
 }
 
-if($UploadGLS -eq $true)
+if($UploadGDS -eq $true)
 {
     $items = (Get-ChildItem -Path "./output/" -Include "GDS*.json" -Verbose -recurse)
     UploadADFItem -items $items

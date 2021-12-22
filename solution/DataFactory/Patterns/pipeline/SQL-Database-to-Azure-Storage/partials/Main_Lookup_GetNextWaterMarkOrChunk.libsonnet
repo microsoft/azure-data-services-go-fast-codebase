@@ -1,6 +1,7 @@
-function(GFPIR="IRA", SourceType="SqlServerTable", SourceFormat="NA")
+function(GenerateArm="false",GFPIR="IRA", SourceType="SqlServerTable", SourceFormat="NA")
 if (SourceType=="AzureSqlTable" && SourceFormat == "NA") then
 {
+  local referenceName = "GDS_AzureSqlTable_NA_",
   "source": {
     "type": "AzureSqlSource",
     "sqlReaderQuery": {
@@ -10,8 +11,10 @@ if (SourceType=="AzureSqlTable" && SourceFormat == "NA") then
     "queryTimeout": "02:00:00",
     "partitionOption": "None"
   },
-  "dataset": {
-    "referenceName": "GDS_AzureSqlTable_NA_" + GFPIR,
+  "dataset": {    
+    "referenceName":if(GenerateArm=="false") 
+                    then referenceName + GFPIR
+                    else "[concat('"+referenceName+"', parameters('integrationRuntimeShortName'))]",   
     "type": "DatasetReference",
     "parameters": {
       "Schema": {
@@ -37,6 +40,7 @@ if (SourceType=="AzureSqlTable" && SourceFormat == "NA") then
 else
 if (SourceType=="SqlServerTable" && SourceFormat == "NA") then
 {
+  local referenceName = "GDS_SqlServerTable_NA_",
   "source": {
     "type": "SqlServerSource",
     "sqlReaderQuery": {
@@ -46,8 +50,10 @@ if (SourceType=="SqlServerTable" && SourceFormat == "NA") then
     "queryTimeout": "02:00:00",
     "partitionOption": "None"
   },
-  "dataset": {
-    "referenceName": "GDS_SqlServerTable_NA_" + GFPIR,
+  "dataset": {    
+    "referenceName":if(GenerateArm=="false") 
+                    then referenceName + GFPIR
+                    else "[concat('"+referenceName+"', parameters('integrationRuntimeShortName'))]",   
     "type": "DatasetReference",
     "parameters": {
       "TableSchema": {

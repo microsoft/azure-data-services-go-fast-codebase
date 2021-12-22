@@ -1,21 +1,21 @@
 {
-	"name": "GLS_AzureBlobFS_IRA",
-	"type": "Microsoft.DataFactory/factories/linkedservices",
-	"properties": {
-		"type": "AzureBlobFS",
-		"parameters": {
-			"StorageAccountEndpoint": {
-				"type": "String",
-				"defaultValue": ""
-			}
-		},
-		"typeProperties": {
-			"url": "@{linkedService().StorageAccountEndpoint}"
-		},
-		"annotations": [],
-		"connectVia": {
-			"referenceName": "IRA",
-			"type": "IntegrationRuntimeReference"
-		}
-	}
+  "name": "GLS_AzureBlobFS_IRA",
+  "type": "Microsoft.DataFactory/factories/linkedservices",
+  "properties": {
+    "type": "AzureBlobFS",
+    "parameters": {
+      "StorageAccountEndpoint": {
+        "type": "String",
+        "defaultValue": ""
+      }
+    },
+    "typeProperties": {
+      "url": "@{linkedService().StorageAccountEndpoint}"
+    },
+    "annotations": [],
+    "connectVia": {
+      "referenceName": "IRA",
+      "type": "IntegrationRuntimeReference"
+    }
+  }
 }

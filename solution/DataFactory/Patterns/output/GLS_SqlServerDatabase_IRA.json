@@ -1,49 +1,49 @@
 {
-    "name": "GLS_SqlServerDatabase_IRA",
-    "type": "Microsoft.DataFactory/factories/linkedservices",
-    "properties": {
-        "parameters": {
+  "name": "GLS_SqlServerDatabase_IRA",
+  "type": "Microsoft.DataFactory/factories/linkedservices",
+  "properties": {
+    "parameters": {
+      "KeyVaultBaseUrl": {
+        "type": "string"
+      },
+      "PasswordSecret": {
+        "type": "string"
+      },
+      "Server": {
+        "type": "string"
+      },
+      "Database": {
+        "type": "string"
+      },
+      "UserName": {
+        "type": "string"
+      }
+    },
+    "annotations": [],
+    "type": "SqlServer",
+    "typeProperties": {
+      "connectionString": "Integrated Security=False;Data Source=@{linkedService().Server};Initial Catalog=@{linkedService().Database};User ID=@{linkedService().UserName}",
+      "password": {
+        "type": "AzureKeyVaultSecret",
+        "store": {
+          "referenceName": "GenericAzureKeyVault",
+          "type": "LinkedServiceReference",
+          "parameters": {
             "KeyVaultBaseUrl": {
-                "type": "string"
-            },
-            "PasswordSecret": {
-                "type": "string"
-            },
-            "Server": {
-                "type": "string"
-            },
-            "Database": {
-                "type": "string"
-            },
-            "UserName": {
-                "type": "string"
+              "value": "@linkedService().KeyVaultBaseUrl",
+              "type": "Expression"
             }
+          }
         },
-        "annotations": [],
-        "type": "SqlServer",
-        "typeProperties": {
-            "connectionString": "Integrated Security=False;Data Source=@{linkedService().Server};Initial Catalog=@{linkedService().Database};User ID=@{linkedService().UserName}",
-            "password": {
-                "type": "AzureKeyVaultSecret",
-                "store": {
-                    "referenceName": "GenericAzureKeyVault",
-                    "type": "LinkedServiceReference",
-                    "parameters": {
-                        "KeyVaultBaseUrl": {
-                            "value": "@linkedService().KeyVaultBaseUrl",
-                            "type": "Expression"
-                        }
-                    }
-                },
-                "secretName": {
-                    "value": "@linkedService().PasswordSecret",
-                    "type": "Expression"
-                }
-            }
-        },
-        "connectVia": {
-            "referenceName": "IRA",
-            "type": "IntegrationRuntimeReference"
+        "secretName": {
+          "value": "@linkedService().PasswordSecret",
+          "type": "Expression"
         }
+      }
+    },
+    "connectVia": {
+      "referenceName": "IRA",
+      "type": "IntegrationRuntimeReference"
     }
+  }
 }

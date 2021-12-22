@@ -1,17 +1,20 @@
-function(GFPIR="IRA", TargetType="AzureSqlTable", TargetFormat="NA")
+function(GenerateArm=false,GFPIR="IRA", TargetType="AzureSqlTable", TargetFormat="NA")
 if (TargetType=="AzureSqlTable"&&TargetFormat=="NA") then
 {
+    local referenceName = "GDS_AzureSqlTable_NA_",
     "source": {
       "type": "AzureSqlSource",
       "sqlReaderQuery": {
-          "value": "@activity('AF Get Information Schema SQL Stage').output.CreateStatement",
+          "value": "@activity('AF Get SQL Create Statement Staging').output.InformationSchemaSQL",
           "type": "Expression"
       },
       "queryTimeout": "02:00:00",
       "partitionOption": "None"
     },
     "dataset": {
-        "referenceName": "GDS_AzureSqlTable_NA_" + GFPIR,
+         "referenceName":    if(GenerateArm=="false") 
+                            then referenceName + GFPIR
+                            else "[concat('"+referenceName+"', parameters('integrationRuntimeShortName'))]",
         "type": "DatasetReference",
         "parameters": {
             "Schema": {

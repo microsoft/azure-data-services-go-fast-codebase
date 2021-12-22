@@ -1,10 +1,12 @@
-function(GFPIR="{IRA}",SourceType="SqlServerTable",SourceFormat="NA",TargetType="AzureBlobFS",TargetFormat="Parquet")
+function(GenerateArm="false",GFPIR="IRA",SourceType="SqlServerTable",SourceFormat="NA",TargetType="AzureBlobFS",TargetFormat="Parquet")
 {
 	local CopyActivity_TypeProperties = import './partials/Full_Load_CopyActivity_TypeProperties.libsonnet',
 	local Full_Load_GetTargetMetadata = import './partials/Full_Load_GetTargetMetadata.libsonnet',
 
 	
-	"name":  "GPL_"+SourceType+"_"+SourceFormat+"_"+TargetType+"_"+TargetFormat+"_Full_Load_" + GFPIR,
+	"name":	if(GenerateArm=="false") 
+			then "GPL_"+SourceType+"_"+SourceFormat+"_"+TargetType+"_"+TargetFormat+"_Full_Load_"+GFPIR 
+			else "[concat(parameters('dataFactoryName'), '/','GPL_"+SourceType+"_"+SourceFormat+"_"+TargetType+"_"+TargetFormat+"_Full_Load_" + "', parameters('integrationRuntimeShortName'))]",
 	"properties": {
 		"activities": [
 			{
@@ -46,7 +48,7 @@ function(GFPIR="{IRA}",SourceType="SqlServerTable",SourceFormat="NA",TargetType=
 				},
 				"userProperties": [],
 			} 
-				+CopyActivity_TypeProperties(GFPIR,SourceType, SourceFormat, TargetType, TargetFormat),
+				+CopyActivity_TypeProperties(GenerateArm,GFPIR,SourceType, SourceFormat, TargetType, TargetFormat),
 			{
 				"name": "Pipeline AF Log - Copy Failed",
 				"type": "ExecutePipeline",
@@ -103,7 +105,7 @@ function(GFPIR="{IRA}",SourceType="SqlServerTable",SourceFormat="NA",TargetType=
 					}
 				},
 				"linkedServiceName": {
-					"referenceName": "AzureFunctionAdsGoFastDataLakeAccelFunApp",
+					"referenceName": "SLS_AzureFunctionApp",
 					"type": "LinkedServiceReference"
 				}
 			},
@@ -126,7 +128,7 @@ function(GFPIR="{IRA}",SourceType="SqlServerTable",SourceFormat="NA",TargetType=
 					"secureInput": false
 				},
 				"userProperties": [],
-				"typeProperties": Full_Load_GetTargetMetadata(GFPIR,TargetType, TargetFormat)
+				"typeProperties": Full_Load_GetTargetMetadata(GenerateArm,GFPIR,TargetType, TargetFormat)
 			},
 			{
 				"name": "Pipeline AF Log - Copy Start",
@@ -247,7 +249,9 @@ function(GFPIR="{IRA}",SourceType="SqlServerTable",SourceFormat="NA",TargetType=
 			}
 		},
 		"folder": {
-			"name": "ADS Go Fast/Data Movement/"+GFPIR+"/Components"
+			"name": if(GenerateArm=="false") 
+					then "ADS Go Fast/Data Movement/" + GFPIR + "/Components"
+					else "[concat('ADS Go Fast/Data Movement/', parameters('integrationRuntimeShortName'), '/Components')]",
 		},
 		"annotations": []
 	},

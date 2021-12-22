@@ -1,8 +1,11 @@
-function(GFPIR="IRA") 
+function(GenerateArm="false",GFPIR="IRA") 
 {
   "outputs": [
     {
-      "referenceName": "GDS_AzureBlobStorage_Parquet_" + GFPIR,
+      local referenceName = "GDS_AzureBlobStorage_Parquet_",
+      "referenceName":if(GenerateArm=="false") 
+                    then referenceName + GFPIR
+                    else "[concat('"+referenceName+"', parameters('integrationRuntimeShortName'))]",      
       "type": "DatasetReference",
       "parameters": {
         "RelativePath": {

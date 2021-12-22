@@ -32,6 +32,79 @@
                   ]
                }
             ],
+            "description": "Auto Creates Table Using a Schema File",
+            "name": "If Auto Create Table",
+            "type": "IfCondition",
+            "typeProperties": {
+               "expression": {
+                  "type": "Expression",
+                  "value": "@and(not(equals(coalesce(pipeline().parameters.TaskObject.Source.SchemaFileName,''),'')),bool(pipeline().parameters.TaskObject.Target.AutoCreateTable))"
+               },
+               "ifTrueActivities": [
+                  {
+                     "dependsOn": [ ],
+                     "name": "Execute Create Table",
+                     "type": "ExecutePipeline",
+                     "typeProperties": {
+                        "parameters": {
+                           "TaskObject": {
+                              "type": "Expression",
+                              "value": "@pipeline().parameters.TaskObject"
+                           }
+                        },
+                        "pipeline": {
+                           "referenceName": "GPL_AzureSqlTable_NA_Create_Table_IRA",
+                           "type": "PipelineReference"
+                        },
+                        "waitOnCompletion": true
+                     },
+                     "userProperties": [ ]
+                  },
+                  {
+                     "dependsOn": [
+                        {
+                           "activity": "Execute Create Table",
+                           "dependencyConditions": [
+                              "Succeeded"
+                           ]
+                        }
+                     ],
+                     "linkedServiceName": {
+                        "referenceName": "SLS_AzureFunctionApp",
+                        "type": "LinkedServiceReference"
+                     },
+                     "name": "AF Get Mapping",
+                     "policy": {
+                        "retry": 0,
+                        "retryIntervalInSeconds": 30,
+                        "secureInput": false,
+                        "secureOutput": false,
+                        "timeout": "7.00:00:00"
+                     },
+                     "type": "AzureFunctionActivity",
+                     "typeProperties": {
+                        "body": {
+                           "type": "Expression",
+                           "value": "@json(concat('{\"TaskInstanceId\":\"', string(pipeline().parameters.TaskObject.TaskInstanceId), '\",\"ExecutionUid\":\"', string(pipeline().parameters.TaskObject.ExecutionUid), '\",\"RunId\":\"', string(pipeline().RunId), '\",\"StorageAccountName\":\"', string(pipeline().parameters.TaskObject.Source.StorageAccountName), '\",\"StorageAccountContainer\":\"', string(pipeline().parameters.TaskObject.Source.StorageAccountContainer), '\",\"RelativePath\":\"', string(pipeline().parameters.TaskObject.Source.RelativePath), '\",\"SchemaFileName\":\"', string(pipeline().parameters.TaskObject.Source.SchemaFileName), '\",\"SourceType\":\"', string(pipeline().parameters.TaskObject.Source.Type), '\",\"TargetType\":\"', string(pipeline().parameters.TaskObject.Target.Type), '\",\"MetadataType\":\"Parquet\"}'))"
+                        },
+                        "functionName": "GetSourceTargetMapping",
+                        "method": "POST"
+                     },
+                     "userProperties": [ ]
+                  }
+               ]
+            },
+            "userProperties": [ ]
+         },
+         {
+            "dependsOn": [
+               {
+                  "activity": "If Auto Create Table",
+                  "dependencyConditions": [
+                     "Succeeded"
+                  ]
+               }
+            ],
             "inputs": [
                {
                   "parameters": {
@@ -77,7 +150,7 @@
                         "value": "@pipeline().parameters.TaskObject.Target.StagingTableName"
                      }
                   },
-                  "referenceName": "AzureSqlTable_IRA",
+                  "referenceName": "GDS_AzureSqlTable_NA_IRA",
                   "type": "DatasetReference"
                }
             ],
@@ -101,6 +174,7 @@
                      "type": "Expression",
                      "value": "@{pipeline().parameters.TaskObject.Target.PreCopySQL}"
                   },
+                  "tableOption": "autoCreate",
                   "type": "AzureSqlSink"
                },
                "source": {
@@ -112,6 +186,10 @@
                      "type": "AzureBlobStorageReadSettings"
                   },
                   "type": "JsonSource"
+               },
+               "translator": {
+                  "type": "Expression",
+                  "value": "@if(and(not(equals(coalesce(pipeline().parameters.TaskObject.Source.SchemaFileName,''),'')),bool(pipeline().parameters.TaskObject.Target.AutoCreateTable)),activity('AF Get Mapping').output.value, null)"
                }
             },
             "userProperties": [ ]

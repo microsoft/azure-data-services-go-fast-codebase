@@ -1,8 +1,12 @@
-function(GFPIR="IRA") 
-{"inputs":
+function(GenerateArm=false,GFPIR="IRA")
+{
+local referenceName = "GDS_AzureBlobFS_DelimitedText_",
+"inputs":
 [
   {
-    "referenceName": "GDS_AzureBlobFS_DelimitedText_" + GFPIR,
+    "referenceName":  if(GenerateArm=="false") 
+                      then referenceName + GFPIR
+                      else "[concat('"+referenceName+"', parameters('integrationRuntimeShortName'))]",
     "type": "DatasetReference",
     "parameters": {
       "RelativePath": {

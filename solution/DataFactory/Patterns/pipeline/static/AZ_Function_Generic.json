@@ -40,7 +40,7 @@
 										}
 									},
 									"linkedServiceName": {
-										"referenceName": "AzureFunctionAdsGoFastDataLakeAccelFunApp",
+										"referenceName": "SLS_AzureFunctionApp",
 										"type": "LinkedServiceReference"
 									}
 								}
@@ -73,7 +73,7 @@
 										}
 									},
 									"linkedServiceName": {
-										"referenceName": "AzureFunctionAdsGoFastDataLakeAccelFunApp",
+										"referenceName": "SLS_AzureFunctionApp",
 										"type": "LinkedServiceReference"
 									}
 								}

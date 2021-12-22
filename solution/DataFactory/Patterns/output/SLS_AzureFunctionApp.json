@@ -1,0 +1,19 @@
+{
+  "name": "SLS_AzureFunctionApp",
+  "properties": {
+    "annotations": [],
+    "type": "AzureFunction",
+    "typeProperties": {
+      "functionAppUrl": "https://adsgofastfuncjkcgkaibkungm.azurewebsites.net",
+      "functionKey": {
+        "type": "AzureKeyVaultSecret",
+        "store": {
+          "referenceName": "AdsGoFastKeyVault",
+          "type": "LinkedServiceReference"
+        },
+        "secretName": "AdsGfCoreFunctionAppKey"
+      }
+    }
+  },
+  "type": "Microsoft.DataFactory/factories/linkedservices"
+}

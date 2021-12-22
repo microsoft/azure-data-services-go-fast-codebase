@@ -78,5 +78,21 @@
         "SourceFormat": "DelimitedText",
         "TargetType": "AzureSqlTable",
         "TargetFormat": "NA"
+    },
+    {
+        "Folder": "Azure-Storage-to-SQL-Database",                
+        "GFPIR": "IRA",
+        "SourceType": "AzureBlobStorage",
+        "SourceFormat": "Parquet",
+        "TargetType": "AzureSqlTable",
+        "TargetFormat": "NA"
+    },
+    {
+        "Folder": "Azure-Storage-to-SQL-Database",                
+        "GFPIR": "IRA",
+        "SourceType": "AzureBlobFS",
+        "SourceFormat": "Parquet",
+        "TargetType": "AzureSqlTable",
+        "TargetFormat": "NA"
     }
 ]

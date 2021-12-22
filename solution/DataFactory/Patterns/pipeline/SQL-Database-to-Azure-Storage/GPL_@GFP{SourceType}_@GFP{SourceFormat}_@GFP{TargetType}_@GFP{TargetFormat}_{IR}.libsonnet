@@ -1,9 +1,11 @@
 
-function(GFPIR="{IRA}",SourceType="SqlServerTable",SourceFormat="NA",TargetType="AzureBlobFS",TargetFormat="Parquet")
+function(GenerateArm="false",GFPIR="IRA",SourceType="SqlServerTable",SourceFormat="NA",TargetType="AzureBlobFS",TargetFormat="Parquet")
 {
 	local infoschemasource = import './partials/Main_Lookup_GetInformationSchema_TypeProperties.libsonnet',
 	local Watermarksource = import './partials/Main_Lookup_GetNextWaterMarkOrChunk.libsonnet',
-	"name": "GPL_"+SourceType+"_"+SourceFormat+"_"+TargetType+"_"+TargetFormat+"_"+GFPIR,
+	"name":	if(GenerateArm=="false") 
+			then "GPL_"+SourceType+"_"+SourceFormat+"_"+TargetType+"_"+TargetFormat+"_"+GFPIR 
+			else "[concat(parameters('dataFactoryName'), '/','GPL_"+SourceType+"_"+SourceFormat+"_"+TargetType+"_"+TargetFormat+"_" + "', parameters('integrationRuntimeShortName'))]",
 	"properties": {
 		"activities": [
 			{
@@ -27,7 +29,7 @@ function(GFPIR="{IRA}",SourceType="SqlServerTable",SourceFormat="NA",TargetType=
 					}
 				},
 				"linkedServiceName": {
-					"referenceName": "AzureFunctionAdsGoFastDataLakeAccelFunApp",
+					"referenceName": "SLS_AzureFunctionApp",
 					"type": "LinkedServiceReference"
 				}
 			},
@@ -50,7 +52,7 @@ function(GFPIR="{IRA}",SourceType="SqlServerTable",SourceFormat="NA",TargetType=
 					"secureInput": false
 				},
 				"userProperties": [],
-				"typeProperties": infoschemasource(GFPIR, SourceType, SourceFormat)
+				"typeProperties": infoschemasource(GenerateArm,GFPIR, SourceType, SourceFormat)
 			},			
 			{
 				"name": "AF Log - Get Metadata Failed",
@@ -108,7 +110,7 @@ function(GFPIR="{IRA}",SourceType="SqlServerTable",SourceFormat="NA",TargetType=
 					}
 				},
 				"linkedServiceName": {
-					"referenceName": "AzureFunctionAdsGoFastDataLakeAccelFunApp",
+					"referenceName": "SLS_AzureFunctionApp",
 					"type": "LinkedServiceReference"
 				}
 			},
@@ -140,7 +142,9 @@ function(GFPIR="{IRA}",SourceType="SqlServerTable",SourceFormat="NA",TargetType=
 									"userProperties": [],
 									"typeProperties": {
 										"pipeline": {
-											"referenceName": "GPL_"+SourceType+"_"+SourceFormat+"_"+TargetType+"_"+TargetFormat+"_Full_Load_" + GFPIR,
+											"referenceName": 	if(GenerateArm=="false") 
+																then "GPL_"+SourceType+"_"+SourceFormat+"_"+TargetType+"_"+TargetFormat+"_Full_Load_"+GFPIR 
+																else "[concat('GPL_"+SourceType+"_"+SourceFormat+"_"+TargetType+"_"+TargetFormat+"_Full_Load_" + "', parameters('integrationRuntimeShortName'))]",
 											"type": "PipelineReference"
 										},
 										"waitOnCompletion": true,
@@ -177,7 +181,9 @@ function(GFPIR="{IRA}",SourceType="SqlServerTable",SourceFormat="NA",TargetType=
 									"userProperties": [],
 									"typeProperties": {
 										"pipeline": {										
-											"referenceName": "GPL_"+SourceType+"_"+SourceFormat+"_"+TargetType+"_"+TargetFormat+"_Watermark_" + GFPIR,
+											"referenceName": if(GenerateArm=="false") 
+																then "GPL_"+SourceType+"_"+SourceFormat+"_"+TargetType+"_"+TargetFormat+"_Watermark_"+GFPIR 
+																else "[concat('GPL_"+SourceType+"_"+SourceFormat+"_"+TargetType+"_"+TargetFormat+"_Watermark_" + "', parameters('integrationRuntimeShortName'))]",
 											"type": "PipelineReference"
 										},
 										"waitOnCompletion": true,
@@ -211,7 +217,7 @@ function(GFPIR="{IRA}",SourceType="SqlServerTable",SourceFormat="NA",TargetType=
 										"secureInput": false
 									},
 									"userProperties": [],
-									"typeProperties": Watermarksource(GFPIR,  SourceType, SourceFormat)
+									"typeProperties": Watermarksource(GenerateArm,GFPIR,  SourceType, SourceFormat)
 								}
 							]
 						},
@@ -232,7 +238,9 @@ function(GFPIR="{IRA}",SourceType="SqlServerTable",SourceFormat="NA",TargetType=
 									"userProperties": [],
 									"typeProperties": {
 										"pipeline": {											
-											"referenceName": "GPL_"+SourceType+"_"+SourceFormat+"_"+TargetType+"_"+TargetFormat+"_Full_Load_Chunk_" + GFPIR,
+											"referenceName": if(GenerateArm=="false") 
+																then "GPL_"+SourceType+"_"+SourceFormat+"_"+TargetType+"_"+TargetFormat+"_Full_Load_Chunk_"+GFPIR 
+																else "[concat('GPL_"+SourceType+"_"+SourceFormat+"_"+TargetType+"_"+TargetFormat+"_Full_Load_Chunk_" + "', parameters('integrationRuntimeShortName'))]",
 											"type": "PipelineReference"
 										},
 										"waitOnCompletion": true,
@@ -264,7 +272,7 @@ function(GFPIR="{IRA}",SourceType="SqlServerTable",SourceFormat="NA",TargetType=
 										"secureInput": false
 									},
 									"userProperties": [],
-									"typeProperties": Watermarksource(GFPIR,  SourceType, SourceFormat)
+									"typeProperties": Watermarksource(GenerateArm,GFPIR,  SourceType, SourceFormat)
 								}
 							]
 						},
@@ -285,7 +293,9 @@ function(GFPIR="{IRA}",SourceType="SqlServerTable",SourceFormat="NA",TargetType=
 									"userProperties": [],
 									"typeProperties": {
 										"pipeline": {											
-											"referenceName": "GPL_"+SourceType+"_"+SourceFormat+"_"+TargetType+"_"+TargetFormat+"_Watermark_Chunk_" + GFPIR,
+											"referenceName": if(GenerateArm=="false") 
+																then "GPL_"+SourceType+"_"+SourceFormat+"_"+TargetType+"_"+TargetFormat+"_Watermark_Chunk_"+GFPIR 
+																else "[concat('GPL_"+SourceType+"_"+SourceFormat+"_"+TargetType+"_"+TargetFormat+"_Watermark_Chunk_" + "', parameters('integrationRuntimeShortName'))]",
 											"type": "PipelineReference"
 										},
 										"waitOnCompletion": true,
@@ -321,7 +331,7 @@ function(GFPIR="{IRA}",SourceType="SqlServerTable",SourceFormat="NA",TargetType=
 										"secureInput": false
 									},
 									"userProperties": [],
-									"typeProperties": Watermarksource(GFPIR,  SourceType, SourceFormat)
+									"typeProperties": Watermarksource(GenerateArm,GFPIR,  SourceType, SourceFormat)
 								}
 							]
 						}
@@ -389,7 +399,9 @@ function(GFPIR="{IRA}",SourceType="SqlServerTable",SourceFormat="NA",TargetType=
 			}
 		},
 		"folder": {
-			"name": "ADS Go Fast/Data Movement/" + GFPIR
+			"name": if(GenerateArm=="false") 
+					then "ADS Go Fast/Data Movement/" + GFPIR
+					else "[concat('ADS Go Fast/Data Movement/', parameters('integrationRuntimeShortName'))]",
 		},
 		"annotations": [],
 		"lastPublishTime": "2020-08-04T12:40:45Z"

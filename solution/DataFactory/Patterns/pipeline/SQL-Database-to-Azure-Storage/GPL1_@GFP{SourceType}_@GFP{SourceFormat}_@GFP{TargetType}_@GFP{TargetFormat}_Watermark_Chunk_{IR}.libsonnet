@@ -1,6 +1,8 @@
-function(GFPIR="IRA",SourceType="AzureSqlTable",SourceFormat="NA",TargetType="AzureBlobFS",TargetFormat="Parquet")
+function(GenerateArm="false",GFPIR="IRA",SourceType="AzureSqlTable",SourceFormat="NA",TargetType="AzureBlobFS",TargetFormat="Parquet")
 {
-	"name": "GPL_"+SourceType+"_"+SourceFormat+"_"+TargetType+"_"+TargetFormat+"_Watermark_Chunk_" + GFPIR,
+	"name":	if(GenerateArm=="false") 
+		then "GPL_"+SourceType+"_"+SourceFormat+"_"+TargetType+"_"+TargetFormat+"_Watermark_Chunk_"+GFPIR 
+		else "[concat(parameters('dataFactoryName'), '/','GPL_"+SourceType+"_"+SourceFormat+"_"+TargetType+"_"+TargetFormat+"_Watermark_Chunk_" + "', parameters('integrationRuntimeShortName'))]",		
 	"properties": {
 		"activities": [
 			{
@@ -50,7 +52,9 @@ function(GFPIR="IRA",SourceType="AzureSqlTable",SourceFormat="NA",TargetType="Az
 							"userProperties": [],
 							"typeProperties": {
 								"pipeline": {
-									"referenceName": "GPL_"+SourceType+"_"+SourceFormat+"_"+TargetType+"_"+TargetFormat+"_Watermark_" + GFPIR,
+									"referenceName": if(GenerateArm=="false") 
+																then "GPL_"+SourceType+"_"+SourceFormat+"_"+TargetType+"_"+TargetFormat+"_Watermark_"+GFPIR 
+																else "[concat('GPL_"+SourceType+"_"+SourceFormat+"_"+TargetType+"_"+TargetFormat+"_Watermark_" + "', parameters('integrationRuntimeShortName'))]",
 									"type": "PipelineReference"
 								},
 								"waitOnCompletion": true,
@@ -146,7 +150,9 @@ function(GFPIR="IRA",SourceType="AzureSqlTable",SourceFormat="NA",TargetType="Az
 			}
 		},
 		"folder": {
-			"name": "ADS Go Fast/Data Movement/"+GFPIR+"/Components"
+			"name": if(GenerateArm=="false") 
+					then "ADS Go Fast/Data Movement/" + GFPIR + "/Components"
+					else "[concat('ADS Go Fast/Data Movement/', parameters('integrationRuntimeShortName'), '/Components')]",
 		},
 		"annotations": []
 	},

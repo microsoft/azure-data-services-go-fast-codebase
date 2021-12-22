@@ -1,4 +1,4 @@
-function(GFPIR="IRA", SourceType="AzureBlobFS", SourceFormat="DelimitedText", TargetType="AzureSqlTable",TargetFormat="NA") 
+function(GenerateArm=false,GFPIR="IRA", SourceType="AzureBlobFS", SourceFormat="Parquet", TargetType="AzureSqlTable",TargetFormat="NA") 
 local Main_CopyActivity_AzureBlobFS_DelimitedText_Inputs = import './Main_CopyActivity_AzureBlobFS_DelimitedText_Inputs.libsonnet';
 local Main_CopyActivity_AzureBlobFS_Excel_Inputs = import './Main_CopyActivity_AzureBlobFS_Excel_Inputs.libsonnet';
 local Main_CopyActivity_AzureBlobFS_Json_Inputs = import './Main_CopyActivity_AzureBlobFS_Json_Inputs.libsonnet';
@@ -6,6 +6,8 @@ local Main_CopyActivity_AzureBlobStorage_DelimitedText_Inputs = import './Main_C
 local Main_CopyActivity_AzureBlobStorage_Excel_Inputs = import './Main_CopyActivity_AzureBlobStorage_Excel_Inputs.libsonnet';
 local Main_CopyActivity_AzureBlobStorage_Json_Inputs = import './Main_CopyActivity_AzureBlobStorage_Json_Inputs.libsonnet';
 local Main_CopyActivity_AzureSqlTable_NA_Outputs = import './Main_CopyActivity_AzureSqlTable_NA_Outputs.libsonnet';
+local Main_CopyActivity_AzureBlobFS_Parquet_Inputs = import './Main_CopyActivity_AzureBlobFS_Parquet_Inputs.libsonnet';
+local Main_CopyActivity_AzureBlobStorage_Parquet_Inputs = import './Main_CopyActivity_AzureBlobStorage_Parquet_Inputs.libsonnet';
 
 if(SourceType=="AzureBlobFS"&&SourceFormat=="Excel"&&TargetType=="AzureSqlTable"&&TargetFormat=="NA") then
 {
@@ -30,11 +32,15 @@ if(SourceType=="AzureBlobFS"&&SourceFormat=="Excel"&&TargetType=="AzureSqlTable"
     "parallelCopies": {
         "value": "@pipeline().parameters.TaskObject.DegreeOfCopyParallelism",
         "type": "Expression"
+    },
+    "translator": {
+        "value": "@if(and(not(equals(coalesce(pipeline().parameters.TaskObject.Source.SchemaFileName,''),'')),bool(pipeline().parameters.TaskObject.Target.AutoCreateTable)),activity('AF Get Mapping').output.value, null)",
+        "type": "Expression"
     }
   },
 }
-  + Main_CopyActivity_AzureBlobFS_Excel_Inputs(GFPIR)
-  + Main_CopyActivity_AzureSqlTable_NA_Outputs(GFPIR)
+  + Main_CopyActivity_AzureBlobFS_Excel_Inputs(GenerateArm,GFPIR)
+  + Main_CopyActivity_AzureSqlTable_NA_Outputs(GenerateArm,GFPIR)
 else if(SourceType=="AzureBlobFS"&&SourceFormat=="DelimitedText"&&TargetType=="AzureSqlTable"&&TargetFormat=="NA") then
 {
   "typeProperties": {    
@@ -85,8 +91,8 @@ else if(SourceType=="AzureBlobFS"&&SourceFormat=="DelimitedText"&&TargetType=="A
     }
   },
 }
-  + Main_CopyActivity_AzureBlobFS_DelimitedText_Inputs(GFPIR)
-  + Main_CopyActivity_AzureSqlTable_NA_Outputs(GFPIR)
+  + Main_CopyActivity_AzureBlobFS_DelimitedText_Inputs(GenerateArm,GFPIR)
+  + Main_CopyActivity_AzureSqlTable_NA_Outputs(GenerateArm,GFPIR)
 else if (SourceType=="AzureBlobFS" && SourceFormat == "Json" && TargetType=="AzureSqlTable"&&TargetFormat=="NA") then
 {
   "typeProperties": {    
@@ -112,11 +118,50 @@ else if (SourceType=="AzureBlobFS" && SourceFormat == "Json" && TargetType=="Azu
     "parallelCopies": {
         "value": "@pipeline().parameters.TaskObject.DegreeOfCopyParallelism",
         "type": "Expression"
+    },
+    "translator": {
+        "value": "@if(and(not(equals(coalesce(pipeline().parameters.TaskObject.Source.SchemaFileName,''),'')),bool(pipeline().parameters.TaskObject.Target.AutoCreateTable)),activity('AF Get Mapping').output.value, null)",
+        "type": "Expression"
     }
   },
 }
-  + Main_CopyActivity_AzureBlobFS_Json_Inputs(GFPIR)
-  + Main_CopyActivity_AzureSqlTable_NA_Outputs(GFPIR)
+  + Main_CopyActivity_AzureBlobFS_Json_Inputs(GenerateArm,GFPIR)
+  + Main_CopyActivity_AzureSqlTable_NA_Outputs(GenerateArm,GFPIR)
+else if (SourceType=="AzureBlobFS" && SourceFormat == "Parquet" && TargetType=="AzureSqlTable"&&TargetFormat=="NA") then
+{
+  "typeProperties": {    
+      "source": {
+        "type": "ParquetSource",
+        "storeSettings": {
+            "type": "AzureBlobFSReadSettings",
+            "recursive": true
+        },
+        "formatSettings": {
+            "type": "AzureBlobFSReadSettings"
+        }
+    },
+    "sink": {
+        "type": "AzureSqlSink",
+        "preCopyScript": {
+            "value": "@{pipeline().parameters.TaskObject.Target.PreCopySQL}",
+            "type": "Expression"
+        },
+        "tableOption": "autoCreate",
+        "disableMetricsCollection": false
+    },
+    "enableStaging": false,
+    "parallelCopies": {
+        "value": "@pipeline().parameters.TaskObject.DegreeOfCopyParallelism",
+        "type": "Expression"
+    },
+    "translator": {
+        "value": "@if(and(not(equals(coalesce(pipeline().parameters.TaskObject.Source.SchemaFileName,''),'')),bool(pipeline().parameters.TaskObject.Target.AutoCreateTable)),activity('AF Get Mapping').output.value, null)",
+        "type": "Expression"
+    }
+  },
+}
+  + Main_CopyActivity_AzureBlobFS_Parquet_Inputs(GenerateArm,GFPIR)
+  + Main_CopyActivity_AzureSqlTable_NA_Outputs(GenerateArm,GFPIR)
 else if(SourceType=="AzureBlobStorage"&&SourceFormat=="Excel"&&TargetType=="AzureSqlTable"&&TargetFormat=="NA") then
 {
   "typeProperties": {    
@@ -140,11 +185,15 @@ else if(SourceType=="AzureBlobStorage"&&SourceFormat=="Excel"&&TargetType=="Azur
     "parallelCopies": {
         "value": "@pipeline().parameters.TaskObject.DegreeOfCopyParallelism",
         "type": "Expression"
+    },
+    "translator": {
+        "value": "@if(and(not(equals(coalesce(pipeline().parameters.TaskObject.Source.SchemaFileName,''),'')),bool(pipeline().parameters.TaskObject.Target.AutoCreateTable)),activity('AF Get Mapping').output.value, null)",
+        "type": "Expression"
     }
   },
 }
-  + Main_CopyActivity_AzureBlobStorage_Excel_Inputs(GFPIR)
-  + Main_CopyActivity_AzureSqlTable_NA_Outputs(GFPIR)
+  + Main_CopyActivity_AzureBlobStorage_Excel_Inputs(GenerateArm,GFPIR)
+  + Main_CopyActivity_AzureSqlTable_NA_Outputs(GenerateArm,GFPIR)
 else if(SourceType=="AzureBlobStorage"&&SourceFormat=="DelimitedText"&&TargetType=="AzureSqlTable"&&TargetFormat=="NA") then
 {
   "typeProperties": {    
@@ -195,8 +244,8 @@ else if(SourceType=="AzureBlobStorage"&&SourceFormat=="DelimitedText"&&TargetTyp
     }
   },
 }
-  + Main_CopyActivity_AzureBlobStorage_DelimitedText_Inputs(GFPIR)
-  + Main_CopyActivity_AzureSqlTable_NA_Outputs(GFPIR)
+  + Main_CopyActivity_AzureBlobStorage_DelimitedText_Inputs(GenerateArm,GFPIR)
+  + Main_CopyActivity_AzureSqlTable_NA_Outputs(GenerateArm,GFPIR)
 else if (SourceType=="AzureBlobStorage" && SourceFormat == "Json" && TargetType=="AzureSqlTable"&&TargetFormat=="NA") then
 {
   "typeProperties": {    
@@ -216,16 +265,56 @@ else if (SourceType=="AzureBlobStorage" && SourceFormat == "Json" && TargetType=
             "value": "@{pipeline().parameters.TaskObject.Target.PreCopySQL}",
             "type": "Expression"
         },
+        "tableOption": "autoCreate",
         "disableMetricsCollection": false
     },
     "enableStaging": false,
     "parallelCopies": {
         "value": "@pipeline().parameters.TaskObject.DegreeOfCopyParallelism",
         "type": "Expression"
+    },
+    "translator": {
+        "value": "@if(and(not(equals(coalesce(pipeline().parameters.TaskObject.Source.SchemaFileName,''),'')),bool(pipeline().parameters.TaskObject.Target.AutoCreateTable)),activity('AF Get Mapping').output.value, null)",
+        "type": "Expression"
     }
   },
 }
-  + Main_CopyActivity_AzureBlobStorage_Json_Inputs(GFPIR)
-  + Main_CopyActivity_AzureSqlTable_NA_Outputs(GFPIR)
+  + Main_CopyActivity_AzureBlobStorage_Json_Inputs(GenerateArm,GFPIR)
+  + Main_CopyActivity_AzureSqlTable_NA_Outputs(GenerateArm,GFPIR)
+else if (SourceType=="AzureBlobStorage" && SourceFormat == "Parquet" && TargetType=="AzureSqlTable"&&TargetFormat=="NA") then
+{
+  "typeProperties": {    
+      "source": {
+        "type": "ParquetSource",
+        "storeSettings": {
+            "type": "AzureBlobStorageReadSettings",
+            "recursive": true
+        },
+        "formatSettings": {
+            "type": "AzureBlobFSReadSettings"
+        }
+    },
+    "sink": {
+        "type": "AzureSqlSink",
+        "preCopyScript": {
+            "value": "@{pipeline().parameters.TaskObject.Target.PreCopySQL}",
+            "type": "Expression"
+        },
+        "tableOption": "autoCreate",
+        "disableMetricsCollection": false
+    },
+    "enableStaging": false,
+    "parallelCopies": {
+        "value": "@pipeline().parameters.TaskObject.DegreeOfCopyParallelism",
+        "type": "Expression"
+    },
+    "translator": {
+        "value": "@if(and(not(equals(coalesce(pipeline().parameters.TaskObject.Source.SchemaFileName,''),'')),bool(pipeline().parameters.TaskObject.Target.AutoCreateTable)),activity('AF Get Mapping').output.value, null)",
+        "type": "Expression"
+    }
+  },
+}
+  + Main_CopyActivity_AzureBlobStorage_Parquet_Inputs(GenerateArm,GFPIR)
+  + Main_CopyActivity_AzureSqlTable_NA_Outputs(GenerateArm,GFPIR)
 else
   error 'Main_CopyActivity_TypeProperties.libsonnet Failed: ' + GFPIR+","+SourceType+","+SourceFormat+","+TargetType+","+TargetFormat

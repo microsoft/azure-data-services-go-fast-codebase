@@ -1,8 +1,11 @@
-function(GFPIR="IRA", TargetType, TargetFormat) 
+function(GenerateArm="false",GFPIR="IRA", TargetType, TargetFormat) 
 if (TargetType=="AzureBlobFS"&&TargetFormat=="Parquet") then
 {
-  "dataset": {
-    "referenceName": "GDS_AzureBlobFS_Parquet_" + GFPIR,
+  local referenceName = "GDS_AzureBlobFS_Parquet_",
+  "dataset": {    
+    "referenceName":if(GenerateArm=="false") 
+                    then referenceName + GFPIR
+                    else "[concat('"+referenceName+"', parameters('integrationRuntimeShortName'))]",   
     "type": "DatasetReference",
     "parameters": {
       "RelativePath": {
@@ -33,8 +36,11 @@ if (TargetType=="AzureBlobFS"&&TargetFormat=="Parquet") then
 }
 else if (TargetType=="AzureBlobStorage"&&TargetFormat=="Parquet") then
 {
-  "dataset": {
-    "referenceName": "GDS_AzureBlobStorage_Parquet_" + GFPIR,
+  local referenceName = "GDS_AzureBlobStorage_Parquet_",
+  "dataset": {    
+    "referenceName":if(GenerateArm=="false") 
+                    then referenceName + GFPIR
+                    else "[concat('"+referenceName+"', parameters('integrationRuntimeShortName'))]",   
     "type": "DatasetReference",
     "parameters": {
       "RelativePath": {

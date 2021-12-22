@@ -5,7 +5,7 @@
          {
             "dependsOn": [ ],
             "linkedServiceName": {
-               "referenceName": "AzureFunctionAdsGoFastDataLakeAccelFunApp",
+               "referenceName": "SLS_AzureFunctionApp",
                "type": "LinkedServiceReference"
             },
             "name": "AF Get Information Schema SQL",
@@ -131,7 +131,7 @@
                }
             ],
             "linkedServiceName": {
-               "referenceName": "AzureFunctionAdsGoFastDataLakeAccelFunApp",
+               "referenceName": "SLS_AzureFunctionApp",
                "type": "LinkedServiceReference"
             },
             "name": "AF Persist Metadata and Get Mapping",
