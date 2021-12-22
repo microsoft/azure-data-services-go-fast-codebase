@@ -1,4 +1,4 @@
-function(TargetType="AzureSqlTable", TargetFormat="NA")
+function(GFPIR="IRA", TargetType="AzureSqlTable", TargetFormat="NA")
 if (TargetType=="AzureSqlTable"&&TargetFormat=="NA") then
 {
     "source": {
@@ -11,7 +11,7 @@ if (TargetType=="AzureSqlTable"&&TargetFormat=="NA") then
       "partitionOption": "None"
     },
     "dataset": {
-        "referenceName": "[concat('GDS_AzureSqlTable_NA_', parameters('integrationRuntimeShortName'))]",
+        "referenceName": "GDS_AzureSqlTable_NA_" + GFPIR,
         "type": "DatasetReference",
         "parameters": {
             "Schema": {
@@ -34,4 +34,4 @@ if (TargetType=="AzureSqlTable"&&TargetFormat=="NA") then
     }
 }
 else
-  error 'Post_Copy_Lookup_MergeSQL_TypeProperties.libsonnet failed. No mapping for:' +TargetType+","+TargetFormat
+  error 'Post_Copy_Lookup_MergeSQL_TypeProperties.libsonnet failed. No mapping for:' +GFPIR+","+TargetType+","+TargetFormat

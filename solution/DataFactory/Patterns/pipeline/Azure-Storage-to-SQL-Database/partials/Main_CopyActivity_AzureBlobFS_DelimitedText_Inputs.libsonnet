@@ -1,8 +1,8 @@
-function() 
+function(GFPIR="IRA") 
 {"inputs":
 [
   {
-    "referenceName": "[concat('GDS_AzureBlobFS_DelimitedText_', parameters('integrationRuntimeShortName'))]",
+    "referenceName": "GDS_AzureBlobFS_DelimitedText_" + GFPIR,
     "type": "DatasetReference",
     "parameters": {
       "RelativePath": {
