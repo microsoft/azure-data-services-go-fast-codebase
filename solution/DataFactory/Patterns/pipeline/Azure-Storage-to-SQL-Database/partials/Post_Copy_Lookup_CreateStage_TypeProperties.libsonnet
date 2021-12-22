@@ -5,7 +5,7 @@ if (TargetType=="AzureSqlTable"&&TargetFormat=="NA") then
     "source": {
       "type": "AzureSqlSource",
       "sqlReaderQuery": {
-          "value": "@activity('AF Get SQL Create Statement Staging').output.InformationSchemaSQL",
+          "value": "@activity('AF Get Information Schema SQL Stage').output.InformationSchemaSQL",
           "type": "Expression"
       },
       "queryTimeout": "02:00:00",
@@ -34,7 +34,8 @@ if (TargetType=="AzureSqlTable"&&TargetFormat=="NA") then
                 "type": "Expression"
             }
         }
-    }
+    },
+     "firstRowOnly": false
 }
 else
   error 'Post_Copy_Lookup_AutoMergeSQL_TypeProperties.libsonnet failed. No mapping for:' +GFPIR+","+TargetType+","+TargetFormat

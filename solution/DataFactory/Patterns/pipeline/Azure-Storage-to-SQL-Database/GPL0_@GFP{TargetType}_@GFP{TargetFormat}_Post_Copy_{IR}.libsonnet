@@ -10,8 +10,8 @@ function(GenerateArm=false, GFPIR="{IRA}", SourceType="AzureBlobFS", SourceForma
 	local pipeline = 
 	{
 		"name":if(GenerateArm=="false") 
-				then "GPL_"+SourceType+"_"+SourceFormat+"_"+TargetType+"_"+TargetFormat+"_Post_Copy_"+GFPIR 
-				else "[concat(parameters('dataFactoryName'), '/','GPL_"+SourceType+"_"+SourceFormat+"_"+TargetType+"_"+TargetFormat+"_Post_Copy_" + "', parameters('integrationRuntimeShortName'))]",
+				then "GPL_"+TargetType+"_"+TargetFormat+"_Post_Copy_"+GFPIR 
+				else "[concat(parameters('dataFactoryName'), '/','GPL_"+TargetType+"_"+TargetFormat+"_Post_Copy_" + "', parameters('integrationRuntimeShortName'))]",
 		"properties": {
 			"activities": [
 				{
@@ -53,7 +53,7 @@ function(GenerateArm=false, GFPIR="{IRA}", SourceType="AzureBlobFS", SourceForma
 								"userProperties": [],
 								"typeProperties": {
 									"pipeline": {
-										"referenceName": "AZ_Function_Generic",
+										"referenceName": "SPL_AzureFunction",
 										"type": "PipelineReference"
 									},
 									"waitOnCompletion": false,
@@ -116,7 +116,7 @@ function(GenerateArm=false, GFPIR="{IRA}", SourceType="AzureBlobFS", SourceForma
 								"userProperties": [],
 								"typeProperties": {
 									"pipeline": {
-										"referenceName": "AZ_Function_Generic",
+										"referenceName": "SPL_AzureFunction",
 										"type": "PipelineReference"
 									},
 									"waitOnCompletion": false,
@@ -316,7 +316,7 @@ function(GenerateArm=false, GFPIR="{IRA}", SourceType="AzureBlobFS", SourceForma
 								"userProperties": [],
 								"typeProperties": {
 									"pipeline": {
-										"referenceName": "AZ_Function_Generic",
+										"referenceName": "SPL_AzureFunction",
 										"type": "PipelineReference"
 									},
 									"waitOnCompletion": false,
@@ -344,7 +344,7 @@ function(GenerateArm=false, GFPIR="{IRA}", SourceType="AzureBlobFS", SourceForma
 								"userProperties": [],
 								"typeProperties": {
 									"pipeline": {
-										"referenceName": "AZ_Function_Generic",
+										"referenceName": "SPL_AzureFunction",
 										"type": "PipelineReference"
 									},
 									"waitOnCompletion": false,
@@ -372,7 +372,7 @@ function(GenerateArm=false, GFPIR="{IRA}", SourceType="AzureBlobFS", SourceForma
 								"userProperties": [],
 								"typeProperties": {
 									"pipeline": {
-										"referenceName": "AZ_Function_Generic",
+										"referenceName": "SPL_AzureFunction",
 										"type": "PipelineReference"
 									},
 									"waitOnCompletion": false,

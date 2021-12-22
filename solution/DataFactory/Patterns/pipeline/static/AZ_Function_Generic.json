@@ -1,5 +1,5 @@
 {
-	"name": "AZ_Function_Generic",
+	"name": "SPL_AzureFunction",
 	"properties": {
 		"activities": [
 			{

@@ -19,7 +19,7 @@ function(GenerateArm="false",GFPIR="IRA",SourceType="AzureSqlTable",SourceFormat
 				"userProperties": [],
 				"typeProperties": {
 					"pipeline": {
-						"referenceName": "AZ_Function_Generic",
+						"referenceName": "SPL_AzureFunction",
 						"type": "PipelineReference"
 					},
 					"waitOnCompletion": false,

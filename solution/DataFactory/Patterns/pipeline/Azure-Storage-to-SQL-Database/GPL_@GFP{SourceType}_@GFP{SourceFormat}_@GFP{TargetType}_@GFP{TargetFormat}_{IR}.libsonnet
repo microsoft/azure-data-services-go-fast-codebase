@@ -17,7 +17,7 @@ function(GenerateArm="true",GFPIR="IRA", SourceType="AzureBlobFS", SourceFormat=
 					"userProperties": [],
 					"typeProperties": {
 						"pipeline": {
-							"referenceName": "AZ_Function_Generic",
+							"referenceName": "SPL_AzureFunction",
 							"type": "PipelineReference"
 						},
 						"waitOnCompletion": false,
@@ -58,7 +58,7 @@ function(GenerateArm="true",GFPIR="IRA", SourceType="AzureBlobFS", SourceFormat=
 									"pipeline": {
 										"referenceName":if(GenerateArm=="false") 
 														then "GPL_"+TargetType+"_"+TargetFormat+"_Create_Table_"+GFPIR 
-														else "[concat('GPL_"+SourceType+"_"+SourceFormat+"_"+TargetType+"_"+TargetFormat+"_Create_Table_" + "', parameters('integrationRuntimeShortName'))]",
+														else "[concat('GPL_"+TargetType+"_"+TargetFormat+"_Create_Table_" + "', parameters('integrationRuntimeShortName'))]",
 										"type": "PipelineReference"
 									},
 									"waitOnCompletion": true,
@@ -140,7 +140,7 @@ function(GenerateArm="true",GFPIR="IRA", SourceType="AzureBlobFS", SourceFormat=
 					"userProperties": [],
 					"typeProperties": {
 						"pipeline": {
-							"referenceName": "AZ_Function_Generic",
+							"referenceName": "SPL_AzureFunction",
 							"type": "PipelineReference"
 						},
 						"waitOnCompletion": false,
@@ -168,7 +168,7 @@ function(GenerateArm="true",GFPIR="IRA", SourceType="AzureBlobFS", SourceFormat=
 					"userProperties": [],
 					"typeProperties": {
 						"pipeline": {
-							"referenceName": "AZ_Function_Generic",
+							"referenceName": "SPL_AzureFunction",
 							"type": "PipelineReference"
 						},
 						"waitOnCompletion": false,

@@ -1,526 +1,526 @@
 {
-   "name": "GPL_AzureSqlTable_NA_AzureBlobFS_Parquet_IRA",
-   "properties": {
-      "activities": [
-         {
-            "dependsOn": [ ],
-            "linkedServiceName": {
-               "referenceName": "SLS_AzureFunctionApp",
-               "type": "LinkedServiceReference"
-            },
-            "name": "AF Get Information Schema SQL",
-            "policy": {
-               "retry": 0,
-               "retryIntervalInSeconds": 30,
-               "secureInput": false,
-               "secureOutput": false,
-               "timeout": "7.00:00:00"
-            },
-            "type": "AzureFunctionActivity",
-            "typeProperties": {
-               "body": {
-                  "type": "Expression",
-                  "value": "@json(concat('{\"TaskInstanceId\":\"', string(pipeline().parameters.TaskObject.TaskInstanceId), '\",\"ExecutionUid\":\"', string(pipeline().parameters.TaskObject.ExecutionUid), '\",\"RunId\":\"', string(pipeline().RunId), '\",\"TableSchema\":\"', string(pipeline().parameters.TaskObject.Source.Extraction.TableSchema), '\",\"TableName\":\"', string(pipeline().parameters.TaskObject.Source.Extraction.TableName),'\"}'))"
-               },
-               "functionName": "GetInformationSchemaSQL",
-               "method": "POST"
-            },
-            "userProperties": [ ]
-         },
-         {
-            "dependsOn": [
-               {
-                  "activity": "AF Get Information Schema SQL",
-                  "dependencyConditions": [
-                     "Succeeded"
-                  ]
-               }
-            ],
-            "name": "Lookup Get SQL Metadata",
-            "policy": {
-               "retry": 0,
-               "retryIntervalInSeconds": 30,
-               "secureInput": false,
-               "secureOutput": false,
-               "timeout": "7.00:00:00"
-            },
-            "type": "Lookup",
-            "typeProperties": {
-               "dataset": {
-                  "parameters": {
-                     "Database": {
-                        "type": "Expression",
-                        "value": "@pipeline().parameters.TaskObject.Source.Database.Name"
-                     },
-                     "Schema": {
-                        "type": "Expression",
-                        "value": "@pipeline().parameters.TaskObject.Source.Extraction.TableSchema"
-                     },
-                     "Server": {
-                        "type": "Expression",
-                        "value": "@pipeline().parameters.TaskObject.Source.Database.SystemName"
-                     },
-                     "Table": {
-                        "type": "Expression",
-                        "value": "@pipeline().parameters.TaskObject.Source.Extraction.TableName"
-                     }
-                  },
-                  "referenceName": "GDS_AzureSqlTable_NA_IRA",
-                  "type": "DatasetReference"
-               },
-               "firstRowOnly": false,
-               "source": {
-                  "partitionOption": "None",
-                  "queryTimeout": "02:00:00",
-                  "sqlReaderQuery": {
-                     "type": "Expression",
-                     "value": "@activity('AF Get Information Schema SQL').output.InformationSchemaSQL"
-                  },
-                  "type": "AzureSqlSource"
-               }
-            },
-            "userProperties": [ ]
-         },
-         {
-            "dependsOn": [
-               {
-                  "activity": "Lookup Get SQL Metadata",
-                  "dependencyConditions": [
-                     "Failed"
-                  ]
-               }
-            ],
-            "name": "AF Log - Get Metadata Failed",
-            "type": "ExecutePipeline",
-            "typeProperties": {
-               "parameters": {
-                  "Body": {
-                     "type": "Expression",
-                     "value": "@json(concat('{\"TaskInstanceId\":\"', string(pipeline().parameters.TaskObject.TaskInstanceId), '\",\"ExecutionUid\":\"', string(pipeline().parameters.TaskObject.ExecutionUid), '\",\"RunId\":\"', string(pipeline().RunId), '\",\"LogTypeId\":1,\"LogSource\":\"ADF\",\"ActivityType\":\"Get Metadata\",\"StartDateTimeOffSet\":\"', string(pipeline().TriggerTime), '\",\"EndDateTimeOffSet\":\"', string(utcnow()), '\",\"Comment\":\"', string(activity('Lookup Get SQL Metadata').error.message), '\",\"Status\":\"Failed\"}'))"
-                  },
-                  "FunctionName": "Log",
-                  "Method": "Post"
-               },
-               "pipeline": {
-                  "referenceName": "AZ_Function_Generic",
-                  "type": "PipelineReference"
-               },
-               "waitOnCompletion": false
-            },
-            "userProperties": [ ]
-         },
-         {
-            "dependsOn": [
-               {
-                  "activity": "Lookup Get SQL Metadata",
-                  "dependencyConditions": [
-                     "Succeeded"
-                  ]
-               }
-            ],
-            "linkedServiceName": {
-               "referenceName": "SLS_AzureFunctionApp",
-               "type": "LinkedServiceReference"
-            },
-            "name": "AF Persist Metadata and Get Mapping",
-            "policy": {
-               "retry": 0,
-               "retryIntervalInSeconds": 30,
-               "secureInput": false,
-               "secureOutput": false,
-               "timeout": "7.00:00:00"
-            },
-            "type": "AzureFunctionActivity",
-            "typeProperties": {
-               "body": {
-                  "type": "Expression",
-                  "value": "@json(concat('{\"TaskInstanceId\":\"', string(pipeline().parameters.TaskObject.TaskInstanceId), '\",\"ExecutionUid\":\"', string(pipeline().parameters.TaskObject.ExecutionUid), '\",\"RunId\":\"', string(pipeline().RunId), '\",\"StorageAccountName\":\"', string(pipeline().parameters.TaskObject.Target.StorageAccountName), '\",\"StorageAccountContainer\":\"', string(pipeline().parameters.TaskObject.Target.StorageAccountContainer), '\",\"RelativePath\":\"', string(pipeline().parameters.TaskObject.Target.RelativePath), '\",\"SchemaFileName\":\"', string(pipeline().parameters.TaskObject.Target.SchemaFileName), '\",\"SourceType\":\"', string(pipeline().parameters.TaskObject.Source.Type), '\",\"TargetType\":\"', string(pipeline().parameters.TaskObject.Target.Type), '\",\"Data\":',string(activity('Lookup Get SQL Metadata').output),',\"MetadataType\":\"SQL\"}'))"
-               },
-               "functionName": "TaskExecutionSchemaFile",
-               "method": "POST"
-            },
-            "userProperties": [ ]
-         },
-         {
-            "dependsOn": [
-               {
-                  "activity": "AF Persist Metadata and Get Mapping",
-                  "dependencyConditions": [
-                     "Succeeded"
-                  ]
-               }
-            ],
-            "name": "Switch Load Type",
-            "type": "Switch",
-            "typeProperties": {
-               "cases": [
-                  {
-                     "activities": [
-                        {
-                           "dependsOn": [ ],
-                           "name": "Execute Full_Load Pipeline",
-                           "type": "ExecutePipeline",
-                           "typeProperties": {
-                              "parameters": {
-                                 "BatchCount": "1",
-                                 "Item": "1",
-                                 "Mapping": {
-                                    "type": "Expression",
-                                    "value": "@activity('AF Persist Metadata and Get Mapping').output.value"
-                                 },
-                                 "TaskObject": {
-                                    "type": "Expression",
-                                    "value": "@pipeline().parameters.TaskObject"
-                                 }
-                              },
-                              "pipeline": {
-                                 "referenceName": "GPL_AzureSqlTable_NA_AzureBlobFS_Parquet_Full_Load_IRA",
-                                 "type": "PipelineReference"
-                              },
-                              "waitOnCompletion": true
-                           },
-                           "userProperties": [ ]
-                        }
-                     ],
-                     "value": "Full"
-                  },
-                  {
-                     "activities": [
-                        {
-                           "dependsOn": [
-                              {
-                                 "activity": "Lookup New Watermark",
-                                 "dependencyConditions": [
-                                    "Succeeded"
-                                 ]
-                              }
-                           ],
-                           "name": "Execute Watermark Pipeline",
-                           "type": "ExecutePipeline",
-                           "typeProperties": {
-                              "parameters": {
-                                 "BatchCount": "1",
-                                 "Item": "1",
-                                 "Mapping": {
-                                    "type": "Expression",
-                                    "value": "@activity('AF Persist Metadata and Get Mapping').output.value"
-                                 },
-                                 "NewWaterMark": {
-                                    "type": "Expression",
-                                    "value": "@activity('Lookup New Watermark').output.firstRow.newWatermark"
-                                 },
-                                 "TaskObject": {
-                                    "type": "Expression",
-                                    "value": "@pipeline().parameters.TaskObject"
-                                 }
-                              },
-                              "pipeline": {
-                                 "referenceName": "GPL_AzureSqlTable_NA_AzureBlobFS_Parquet_Watermark_IRA",
-                                 "type": "PipelineReference"
-                              },
-                              "waitOnCompletion": true
-                           },
-                           "userProperties": [ ]
-                        },
-                        {
-                           "dependsOn": [ ],
-                           "name": "Lookup New Watermark",
-                           "policy": {
-                              "retry": 0,
-                              "retryIntervalInSeconds": 30,
-                              "secureInput": false,
-                              "secureOutput": false,
-                              "timeout": "0.00:30:00"
-                           },
-                           "type": "Lookup",
-                           "typeProperties": {
-                              "dataset": {
-                                 "parameters": {
-                                    "Database": {
-                                       "type": "Expression",
-                                       "value": "@pipeline().parameters.TaskObject.Source.Database.Name"
-                                    },
-                                    "Schema": {
-                                       "type": "Expression",
-                                       "value": "@pipeline().parameters.TaskObject.Source.Extraction.TableSchema"
-                                    },
-                                    "Server": {
-                                       "type": "Expression",
-                                       "value": "@pipeline().parameters.TaskObject.Source.Database.SystemName"
-                                    },
-                                    "Table": {
-                                       "type": "Expression",
-                                       "value": "@pipeline().parameters.TaskObject.Source.Extraction.TableName"
-                                    }
-                                 },
-                                 "referenceName": "GDS_AzureSqlTable_NA_IRA",
-                                 "type": "DatasetReference"
-                              },
-                              "firstRowOnly": true,
-                              "source": {
-                                 "partitionOption": "None",
-                                 "queryTimeout": "02:00:00",
-                                 "sqlReaderQuery": {
-                                    "type": "Expression",
-                                    "value": "@{pipeline().parameters.TaskObject.Source.Extraction.IncrementalSQLStatement}"
-                                 },
-                                 "type": "AzureSqlSource"
-                              }
-                           },
-                           "userProperties": [ ]
-                        }
-                     ],
-                     "value": "Watermark"
-                  },
-                  {
-                     "activities": [
-                        {
-                           "dependsOn": [
-                              {
-                                 "activity": "Lookup Chunk",
-                                 "dependencyConditions": [
-                                    "Succeeded"
-                                 ]
-                              }
-                           ],
-                           "name": "Execute Full Load Chunk Pipeline",
-                           "type": "ExecutePipeline",
-                           "typeProperties": {
-                              "parameters": {
-                                 "BatchCount": {
-                                    "type": "Expression",
-                                    "value": "@activity('Lookup Chunk').output.firstRow.batchcount"
-                                 },
-                                 "Mapping": {
-                                    "type": "Expression",
-                                    "value": "@activity('AF Persist Metadata and Get Mapping').output.value"
-                                 },
-                                 "TaskObject": {
-                                    "type": "Expression",
-                                    "value": "@pipeline().parameters.TaskObject"
-                                 }
-                              },
-                              "pipeline": {
-                                 "referenceName": "GPL_AzureSqlTable_NA_AzureBlobFS_Parquet_Full_Load_Chunk_IRA",
-                                 "type": "PipelineReference"
-                              },
-                              "waitOnCompletion": true
-                           },
-                           "userProperties": [ ]
-                        },
-                        {
-                           "dependsOn": [ ],
-                           "name": "Lookup Chunk",
-                           "policy": {
-                              "retry": 0,
-                              "retryIntervalInSeconds": 30,
-                              "secureInput": false,
-                              "secureOutput": false,
-                              "timeout": "0.00:30:00"
-                           },
-                           "type": "Lookup",
-                           "typeProperties": {
-                              "dataset": {
-                                 "parameters": {
-                                    "Database": {
-                                       "type": "Expression",
-                                       "value": "@pipeline().parameters.TaskObject.Source.Database.Name"
-                                    },
-                                    "Schema": {
-                                       "type": "Expression",
-                                       "value": "@pipeline().parameters.TaskObject.Source.Extraction.TableSchema"
-                                    },
-                                    "Server": {
-                                       "type": "Expression",
-                                       "value": "@pipeline().parameters.TaskObject.Source.Database.SystemName"
-                                    },
-                                    "Table": {
-                                       "type": "Expression",
-                                       "value": "@pipeline().parameters.TaskObject.Source.Extraction.TableName"
-                                    }
-                                 },
-                                 "referenceName": "GDS_AzureSqlTable_NA_IRA",
-                                 "type": "DatasetReference"
-                              },
-                              "firstRowOnly": true,
-                              "source": {
-                                 "partitionOption": "None",
-                                 "queryTimeout": "02:00:00",
-                                 "sqlReaderQuery": {
-                                    "type": "Expression",
-                                    "value": "@{pipeline().parameters.TaskObject.Source.Extraction.IncrementalSQLStatement}"
-                                 },
-                                 "type": "AzureSqlSource"
-                              }
-                           },
-                           "userProperties": [ ]
-                        }
-                     ],
-                     "value": "Full_Chunk"
-                  },
-                  {
-                     "activities": [
-                        {
-                           "dependsOn": [
-                              {
-                                 "activity": "Lookup New Watermark and Chunk",
-                                 "dependencyConditions": [
-                                    "Succeeded"
-                                 ]
-                              }
-                           ],
-                           "name": "Execute Watermark Chunk Pipeline",
-                           "type": "ExecutePipeline",
-                           "typeProperties": {
-                              "parameters": {
-                                 "BatchCount": {
-                                    "type": "Expression",
-                                    "value": "@activity('Lookup New Watermark and Chunk').output.firstRow.batchcount"
-                                 },
-                                 "Mapping": {
-                                    "type": "Expression",
-                                    "value": "@activity('AF Persist Metadata and Get Mapping').output.value"
-                                 },
-                                 "NewWatermark": {
-                                    "type": "Expression",
-                                    "value": "@activity('Lookup New Watermark and Chunk').output.firstRow.newWatermark"
-                                 },
-                                 "TaskObject": {
-                                    "type": "Expression",
-                                    "value": "@pipeline().parameters.TaskObject"
-                                 }
-                              },
-                              "pipeline": {
-                                 "referenceName": "GPL_AzureSqlTable_NA_AzureBlobFS_Parquet_Watermark_Chunk_IRA",
-                                 "type": "PipelineReference"
-                              },
-                              "waitOnCompletion": true
-                           },
-                           "userProperties": [ ]
-                        },
-                        {
-                           "dependsOn": [ ],
-                           "name": "Lookup New Watermark and Chunk",
-                           "policy": {
-                              "retry": 0,
-                              "retryIntervalInSeconds": 30,
-                              "secureInput": false,
-                              "secureOutput": false,
-                              "timeout": "0.00:30:00"
-                           },
-                           "type": "Lookup",
-                           "typeProperties": {
-                              "dataset": {
-                                 "parameters": {
-                                    "Database": {
-                                       "type": "Expression",
-                                       "value": "@pipeline().parameters.TaskObject.Source.Database.Name"
-                                    },
-                                    "Schema": {
-                                       "type": "Expression",
-                                       "value": "@pipeline().parameters.TaskObject.Source.Extraction.TableSchema"
-                                    },
-                                    "Server": {
-                                       "type": "Expression",
-                                       "value": "@pipeline().parameters.TaskObject.Source.Database.SystemName"
-                                    },
-                                    "Table": {
-                                       "type": "Expression",
-                                       "value": "@pipeline().parameters.TaskObject.Source.Extraction.TableName"
-                                    }
-                                 },
-                                 "referenceName": "GDS_AzureSqlTable_NA_IRA",
-                                 "type": "DatasetReference"
-                              },
-                              "firstRowOnly": true,
-                              "source": {
-                                 "partitionOption": "None",
-                                 "queryTimeout": "02:00:00",
-                                 "sqlReaderQuery": {
-                                    "type": "Expression",
-                                    "value": "@{pipeline().parameters.TaskObject.Source.Extraction.IncrementalSQLStatement}"
-                                 },
-                                 "type": "AzureSqlSource"
-                              }
-                           },
-                           "userProperties": [ ]
-                        }
-                     ],
-                     "value": "Watermark_Chunk"
-                  }
-               ],
-               "on": {
-                  "type": "Expression",
-                  "value": "@pipeline().parameters.TaskObject.Source.Extraction.IncrementalType"
-               }
-            },
-            "userProperties": [ ]
-         }
-      ],
-      "annotations": [ ],
-      "folder": {
-         "name": "ADS Go Fast/Data Movement/IRA"
+  "name": "GPL_AzureSqlTable_NA_AzureBlobFS_Parquet_IRA",
+  "properties": {
+    "activities": [
+      {
+        "dependsOn": [],
+        "linkedServiceName": {
+          "referenceName": "SLS_AzureFunctionApp",
+          "type": "LinkedServiceReference"
+        },
+        "name": "AF Get Information Schema SQL",
+        "policy": {
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false,
+          "timeout": "7.00:00:00"
+        },
+        "type": "AzureFunctionActivity",
+        "typeProperties": {
+          "body": {
+            "type": "Expression",
+            "value": "@json(concat('{\"TaskInstanceId\":\"', string(pipeline().parameters.TaskObject.TaskInstanceId), '\",\"ExecutionUid\":\"', string(pipeline().parameters.TaskObject.ExecutionUid), '\",\"RunId\":\"', string(pipeline().RunId), '\",\"TableSchema\":\"', string(pipeline().parameters.TaskObject.Source.Extraction.TableSchema), '\",\"TableName\":\"', string(pipeline().parameters.TaskObject.Source.Extraction.TableName),'\"}'))"
+          },
+          "functionName": "GetInformationSchemaSQL",
+          "method": "POST"
+        },
+        "userProperties": []
       },
-      "lastPublishTime": "2020-08-04T12:40:45Z",
-      "parameters": {
-         "TaskObject": {
-            "defaultValue": {
-               "DataFactory": {
-                  "ADFPipeline": "AZ_SQL_AZ_Storage_Parquet_IRA",
-                  "Id": 1,
-                  "Name": "adsgofastdatakakeacceladf",
-                  "ResourceGroup": "AdsGoFastDataLakeAccel",
-                  "SubscriptionId": "035a1364-f00d-48e2-b582-4fe125905ee3"
-               },
-               "DegreeOfCopyParallelism": 1,
-               "Enabled": 1,
-               "ExecutionUid": "2c5924ee-b855-4d2b-bb7e-4f5dde4c4dd3",
-               "KeyVaultBaseUrl": "https://adsgofastkeyvault.vault.azure.net/",
-               "NumberOfRetries": 111,
-               "ScheduleMasterId": 2,
-               "Source": {
-                  "Database": {
-                     "AuthenticationType": "MSI",
-                     "Name": "AWSample",
-                     "SystemName": "adsgofastdatakakeaccelsqlsvr.database.windows.net"
-                  },
-                  "Extraction": {
-                     "FullOrIncremental": "Full",
-                     "IncrementalType": null,
-                     "TableName": "SalesOrderHeader",
-                     "TableSchema": "SalesLT",
-                     "Type": "Table"
-                  },
-                  "Type": "Azure SQL"
-               },
-               "Target": {
-                  "DataFileName": "SalesLT.SalesOrderHeader.parquet",
-                  "FirstRowAsHeader": null,
-                  "MaxConcorrentConnections": null,
-                  "RelativePath": "/AwSample/SalesLT/SalesOrderHeader/2020/7/9/14/12/",
-                  "SchemaFileName": "SalesLT.SalesOrderHeader",
-                  "SheetName": null,
-                  "SkipLineCount": null,
-                  "StorageAccountAccessMethod": "MSI",
-                  "StorageAccountContainer": "datalakeraw",
-                  "StorageAccountName": "https://adsgofastdatalakeaccelst.blob.core.windows.net",
-                  "Type": "Azure Blob"
-               },
-               "TaskGroupConcurrency": 10,
-               "TaskGroupPriority": 0,
-               "TaskInstanceId": 75,
-               "TaskMasterId": 12,
-               "TaskStatus": "Untried",
-               "TaskType": "SQL Database to Azure Storage"
+      {
+        "dependsOn": [
+          {
+            "activity": "AF Get Information Schema SQL",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ],
+        "name": "Lookup Get SQL Metadata",
+        "policy": {
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false,
+          "timeout": "7.00:00:00"
+        },
+        "type": "Lookup",
+        "typeProperties": {
+          "dataset": {
+            "parameters": {
+              "Database": {
+                "type": "Expression",
+                "value": "@pipeline().parameters.TaskObject.Source.Database.Name"
+              },
+              "Schema": {
+                "type": "Expression",
+                "value": "@pipeline().parameters.TaskObject.Source.Extraction.TableSchema"
+              },
+              "Server": {
+                "type": "Expression",
+                "value": "@pipeline().parameters.TaskObject.Source.Database.SystemName"
+              },
+              "Table": {
+                "type": "Expression",
+                "value": "@pipeline().parameters.TaskObject.Source.Extraction.TableName"
+              }
             },
-            "type": "object"
-         }
+            "referenceName": "GDS_AzureSqlTable_NA_IRA",
+            "type": "DatasetReference"
+          },
+          "firstRowOnly": false,
+          "source": {
+            "partitionOption": "None",
+            "queryTimeout": "02:00:00",
+            "sqlReaderQuery": {
+              "type": "Expression",
+              "value": "@activity('AF Get Information Schema SQL').output.InformationSchemaSQL"
+            },
+            "type": "AzureSqlSource"
+          }
+        },
+        "userProperties": []
       },
-      "variables": {
-         "SQLStatement": {
-            "type": "String"
-         }
+      {
+        "dependsOn": [
+          {
+            "activity": "Lookup Get SQL Metadata",
+            "dependencyConditions": [
+              "Failed"
+            ]
+          }
+        ],
+        "name": "AF Log - Get Metadata Failed",
+        "type": "ExecutePipeline",
+        "typeProperties": {
+          "parameters": {
+            "Body": {
+              "type": "Expression",
+              "value": "@json(concat('{\"TaskInstanceId\":\"', string(pipeline().parameters.TaskObject.TaskInstanceId), '\",\"ExecutionUid\":\"', string(pipeline().parameters.TaskObject.ExecutionUid), '\",\"RunId\":\"', string(pipeline().RunId), '\",\"LogTypeId\":1,\"LogSource\":\"ADF\",\"ActivityType\":\"Get Metadata\",\"StartDateTimeOffSet\":\"', string(pipeline().TriggerTime), '\",\"EndDateTimeOffSet\":\"', string(utcnow()), '\",\"Comment\":\"', string(activity('Lookup Get SQL Metadata').error.message), '\",\"Status\":\"Failed\"}'))"
+            },
+            "FunctionName": "Log",
+            "Method": "Post"
+          },
+          "pipeline": {
+            "referenceName": "SPL_AzureFunction",
+            "type": "PipelineReference"
+          },
+          "waitOnCompletion": false
+        },
+        "userProperties": []
+      },
+      {
+        "dependsOn": [
+          {
+            "activity": "Lookup Get SQL Metadata",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ],
+        "linkedServiceName": {
+          "referenceName": "SLS_AzureFunctionApp",
+          "type": "LinkedServiceReference"
+        },
+        "name": "AF Persist Metadata and Get Mapping",
+        "policy": {
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false,
+          "timeout": "7.00:00:00"
+        },
+        "type": "AzureFunctionActivity",
+        "typeProperties": {
+          "body": {
+            "type": "Expression",
+            "value": "@json(concat('{\"TaskInstanceId\":\"', string(pipeline().parameters.TaskObject.TaskInstanceId), '\",\"ExecutionUid\":\"', string(pipeline().parameters.TaskObject.ExecutionUid), '\",\"RunId\":\"', string(pipeline().RunId), '\",\"StorageAccountName\":\"', string(pipeline().parameters.TaskObject.Target.StorageAccountName), '\",\"StorageAccountContainer\":\"', string(pipeline().parameters.TaskObject.Target.StorageAccountContainer), '\",\"RelativePath\":\"', string(pipeline().parameters.TaskObject.Target.RelativePath), '\",\"SchemaFileName\":\"', string(pipeline().parameters.TaskObject.Target.SchemaFileName), '\",\"SourceType\":\"', string(pipeline().parameters.TaskObject.Source.Type), '\",\"TargetType\":\"', string(pipeline().parameters.TaskObject.Target.Type), '\",\"Data\":',string(activity('Lookup Get SQL Metadata').output),',\"MetadataType\":\"SQL\"}'))"
+          },
+          "functionName": "TaskExecutionSchemaFile",
+          "method": "POST"
+        },
+        "userProperties": []
+      },
+      {
+        "dependsOn": [
+          {
+            "activity": "AF Persist Metadata and Get Mapping",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ],
+        "name": "Switch Load Type",
+        "type": "Switch",
+        "typeProperties": {
+          "cases": [
+            {
+              "activities": [
+                {
+                  "dependsOn": [],
+                  "name": "Execute Full_Load Pipeline",
+                  "type": "ExecutePipeline",
+                  "typeProperties": {
+                    "parameters": {
+                      "BatchCount": "1",
+                      "Item": "1",
+                      "Mapping": {
+                        "type": "Expression",
+                        "value": "@activity('AF Persist Metadata and Get Mapping').output.value"
+                      },
+                      "TaskObject": {
+                        "type": "Expression",
+                        "value": "@pipeline().parameters.TaskObject"
+                      }
+                    },
+                    "pipeline": {
+                      "referenceName": "GPL_AzureSqlTable_NA_AzureBlobFS_Parquet_Full_Load_IRA",
+                      "type": "PipelineReference"
+                    },
+                    "waitOnCompletion": true
+                  },
+                  "userProperties": []
+                }
+              ],
+              "value": "Full"
+            },
+            {
+              "activities": [
+                {
+                  "dependsOn": [
+                    {
+                      "activity": "Lookup New Watermark",
+                      "dependencyConditions": [
+                        "Succeeded"
+                      ]
+                    }
+                  ],
+                  "name": "Execute Watermark Pipeline",
+                  "type": "ExecutePipeline",
+                  "typeProperties": {
+                    "parameters": {
+                      "BatchCount": "1",
+                      "Item": "1",
+                      "Mapping": {
+                        "type": "Expression",
+                        "value": "@activity('AF Persist Metadata and Get Mapping').output.value"
+                      },
+                      "NewWaterMark": {
+                        "type": "Expression",
+                        "value": "@activity('Lookup New Watermark').output.firstRow.newWatermark"
+                      },
+                      "TaskObject": {
+                        "type": "Expression",
+                        "value": "@pipeline().parameters.TaskObject"
+                      }
+                    },
+                    "pipeline": {
+                      "referenceName": "GPL_AzureSqlTable_NA_AzureBlobFS_Parquet_Watermark_IRA",
+                      "type": "PipelineReference"
+                    },
+                    "waitOnCompletion": true
+                  },
+                  "userProperties": []
+                },
+                {
+                  "dependsOn": [],
+                  "name": "Lookup New Watermark",
+                  "policy": {
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureInput": false,
+                    "secureOutput": false,
+                    "timeout": "0.00:30:00"
+                  },
+                  "type": "Lookup",
+                  "typeProperties": {
+                    "dataset": {
+                      "parameters": {
+                        "Database": {
+                          "type": "Expression",
+                          "value": "@pipeline().parameters.TaskObject.Source.Database.Name"
+                        },
+                        "Schema": {
+                          "type": "Expression",
+                          "value": "@pipeline().parameters.TaskObject.Source.Extraction.TableSchema"
+                        },
+                        "Server": {
+                          "type": "Expression",
+                          "value": "@pipeline().parameters.TaskObject.Source.Database.SystemName"
+                        },
+                        "Table": {
+                          "type": "Expression",
+                          "value": "@pipeline().parameters.TaskObject.Source.Extraction.TableName"
+                        }
+                      },
+                      "referenceName": "GDS_AzureSqlTable_NA_IRA",
+                      "type": "DatasetReference"
+                    },
+                    "firstRowOnly": true,
+                    "source": {
+                      "partitionOption": "None",
+                      "queryTimeout": "02:00:00",
+                      "sqlReaderQuery": {
+                        "type": "Expression",
+                        "value": "@{pipeline().parameters.TaskObject.Source.Extraction.IncrementalSQLStatement}"
+                      },
+                      "type": "AzureSqlSource"
+                    }
+                  },
+                  "userProperties": []
+                }
+              ],
+              "value": "Watermark"
+            },
+            {
+              "activities": [
+                {
+                  "dependsOn": [
+                    {
+                      "activity": "Lookup Chunk",
+                      "dependencyConditions": [
+                        "Succeeded"
+                      ]
+                    }
+                  ],
+                  "name": "Execute Full Load Chunk Pipeline",
+                  "type": "ExecutePipeline",
+                  "typeProperties": {
+                    "parameters": {
+                      "BatchCount": {
+                        "type": "Expression",
+                        "value": "@activity('Lookup Chunk').output.firstRow.batchcount"
+                      },
+                      "Mapping": {
+                        "type": "Expression",
+                        "value": "@activity('AF Persist Metadata and Get Mapping').output.value"
+                      },
+                      "TaskObject": {
+                        "type": "Expression",
+                        "value": "@pipeline().parameters.TaskObject"
+                      }
+                    },
+                    "pipeline": {
+                      "referenceName": "GPL_AzureSqlTable_NA_AzureBlobFS_Parquet_Full_Load_Chunk_IRA",
+                      "type": "PipelineReference"
+                    },
+                    "waitOnCompletion": true
+                  },
+                  "userProperties": []
+                },
+                {
+                  "dependsOn": [],
+                  "name": "Lookup Chunk",
+                  "policy": {
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureInput": false,
+                    "secureOutput": false,
+                    "timeout": "0.00:30:00"
+                  },
+                  "type": "Lookup",
+                  "typeProperties": {
+                    "dataset": {
+                      "parameters": {
+                        "Database": {
+                          "type": "Expression",
+                          "value": "@pipeline().parameters.TaskObject.Source.Database.Name"
+                        },
+                        "Schema": {
+                          "type": "Expression",
+                          "value": "@pipeline().parameters.TaskObject.Source.Extraction.TableSchema"
+                        },
+                        "Server": {
+                          "type": "Expression",
+                          "value": "@pipeline().parameters.TaskObject.Source.Database.SystemName"
+                        },
+                        "Table": {
+                          "type": "Expression",
+                          "value": "@pipeline().parameters.TaskObject.Source.Extraction.TableName"
+                        }
+                      },
+                      "referenceName": "GDS_AzureSqlTable_NA_IRA",
+                      "type": "DatasetReference"
+                    },
+                    "firstRowOnly": true,
+                    "source": {
+                      "partitionOption": "None",
+                      "queryTimeout": "02:00:00",
+                      "sqlReaderQuery": {
+                        "type": "Expression",
+                        "value": "@{pipeline().parameters.TaskObject.Source.Extraction.IncrementalSQLStatement}"
+                      },
+                      "type": "AzureSqlSource"
+                    }
+                  },
+                  "userProperties": []
+                }
+              ],
+              "value": "Full_Chunk"
+            },
+            {
+              "activities": [
+                {
+                  "dependsOn": [
+                    {
+                      "activity": "Lookup New Watermark and Chunk",
+                      "dependencyConditions": [
+                        "Succeeded"
+                      ]
+                    }
+                  ],
+                  "name": "Execute Watermark Chunk Pipeline",
+                  "type": "ExecutePipeline",
+                  "typeProperties": {
+                    "parameters": {
+                      "BatchCount": {
+                        "type": "Expression",
+                        "value": "@activity('Lookup New Watermark and Chunk').output.firstRow.batchcount"
+                      },
+                      "Mapping": {
+                        "type": "Expression",
+                        "value": "@activity('AF Persist Metadata and Get Mapping').output.value"
+                      },
+                      "NewWatermark": {
+                        "type": "Expression",
+                        "value": "@activity('Lookup New Watermark and Chunk').output.firstRow.newWatermark"
+                      },
+                      "TaskObject": {
+                        "type": "Expression",
+                        "value": "@pipeline().parameters.TaskObject"
+                      }
+                    },
+                    "pipeline": {
+                      "referenceName": "GPL_AzureSqlTable_NA_AzureBlobFS_Parquet_Watermark_Chunk_IRA",
+                      "type": "PipelineReference"
+                    },
+                    "waitOnCompletion": true
+                  },
+                  "userProperties": []
+                },
+                {
+                  "dependsOn": [],
+                  "name": "Lookup New Watermark and Chunk",
+                  "policy": {
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureInput": false,
+                    "secureOutput": false,
+                    "timeout": "0.00:30:00"
+                  },
+                  "type": "Lookup",
+                  "typeProperties": {
+                    "dataset": {
+                      "parameters": {
+                        "Database": {
+                          "type": "Expression",
+                          "value": "@pipeline().parameters.TaskObject.Source.Database.Name"
+                        },
+                        "Schema": {
+                          "type": "Expression",
+                          "value": "@pipeline().parameters.TaskObject.Source.Extraction.TableSchema"
+                        },
+                        "Server": {
+                          "type": "Expression",
+                          "value": "@pipeline().parameters.TaskObject.Source.Database.SystemName"
+                        },
+                        "Table": {
+                          "type": "Expression",
+                          "value": "@pipeline().parameters.TaskObject.Source.Extraction.TableName"
+                        }
+                      },
+                      "referenceName": "GDS_AzureSqlTable_NA_IRA",
+                      "type": "DatasetReference"
+                    },
+                    "firstRowOnly": true,
+                    "source": {
+                      "partitionOption": "None",
+                      "queryTimeout": "02:00:00",
+                      "sqlReaderQuery": {
+                        "type": "Expression",
+                        "value": "@{pipeline().parameters.TaskObject.Source.Extraction.IncrementalSQLStatement}"
+                      },
+                      "type": "AzureSqlSource"
+                    }
+                  },
+                  "userProperties": []
+                }
+              ],
+              "value": "Watermark_Chunk"
+            }
+          ],
+          "on": {
+            "type": "Expression",
+            "value": "@pipeline().parameters.TaskObject.Source.Extraction.IncrementalType"
+          }
+        },
+        "userProperties": []
       }
-   },
-   "type": "Microsoft.DataFactory/factories/pipelines"
+    ],
+    "annotations": [],
+    "folder": {
+      "name": "ADS Go Fast/Data Movement/IRA"
+    },
+    "lastPublishTime": "2020-08-04T12:40:45Z",
+    "parameters": {
+      "TaskObject": {
+        "defaultValue": {
+          "DataFactory": {
+            "ADFPipeline": "AZ_SQL_AZ_Storage_Parquet_IRA",
+            "Id": 1,
+            "Name": "adsgofastdatakakeacceladf",
+            "ResourceGroup": "AdsGoFastDataLakeAccel",
+            "SubscriptionId": "035a1364-f00d-48e2-b582-4fe125905ee3"
+          },
+          "DegreeOfCopyParallelism": 1,
+          "Enabled": 1,
+          "ExecutionUid": "2c5924ee-b855-4d2b-bb7e-4f5dde4c4dd3",
+          "KeyVaultBaseUrl": "https://adsgofastkeyvault.vault.azure.net/",
+          "NumberOfRetries": 111,
+          "ScheduleMasterId": 2,
+          "Source": {
+            "Database": {
+              "AuthenticationType": "MSI",
+              "Name": "AWSample",
+              "SystemName": "adsgofastdatakakeaccelsqlsvr.database.windows.net"
+            },
+            "Extraction": {
+              "FullOrIncremental": "Full",
+              "IncrementalType": null,
+              "TableName": "SalesOrderHeader",
+              "TableSchema": "SalesLT",
+              "Type": "Table"
+            },
+            "Type": "Azure SQL"
+          },
+          "Target": {
+            "DataFileName": "SalesLT.SalesOrderHeader.parquet",
+            "FirstRowAsHeader": null,
+            "MaxConcorrentConnections": null,
+            "RelativePath": "/AwSample/SalesLT/SalesOrderHeader/2020/7/9/14/12/",
+            "SchemaFileName": "SalesLT.SalesOrderHeader",
+            "SheetName": null,
+            "SkipLineCount": null,
+            "StorageAccountAccessMethod": "MSI",
+            "StorageAccountContainer": "datalakeraw",
+            "StorageAccountName": "https://adsgofastdatalakeaccelst.blob.core.windows.net",
+            "Type": "Azure Blob"
+          },
+          "TaskGroupConcurrency": 10,
+          "TaskGroupPriority": 0,
+          "TaskInstanceId": 75,
+          "TaskMasterId": 12,
+          "TaskStatus": "Untried",
+          "TaskType": "SQL Database to Azure Storage"
+        },
+        "type": "object"
+      }
+    },
+    "variables": {
+      "SQLStatement": {
+        "type": "String"
+      }
+    }
+  },
+  "type": "Microsoft.DataFactory/factories/pipelines"
 }

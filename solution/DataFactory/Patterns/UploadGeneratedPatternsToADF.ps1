@@ -48,7 +48,7 @@ function UploadADFItem ($items) {
 
 
 $UploadGDS = $false
-$UploadGLS = $true
+$UploadGLS = $false
 
 if($UploadGLS -eq $true)
 {
@@ -64,6 +64,16 @@ if($UploadGDS -eq $true)
     UploadADFItem -items $items
 }
 
+
+
+
+
+
+Write-Host "_____________________________"
+Write-Host "Static Pipelines"
+Write-Host "_____________________________"
+$items = (Get-ChildItem -Path "./output/" -Include "SPL_*.json"  -Verbose -recurse)
+UploadADFItem -items $items
 Write-Host "_____________________________"
 Write-Host "Level 0 Pipelines"
 Write-Host "_____________________________"

@@ -34,7 +34,8 @@ if (TargetType=="AzureSqlTable"&&TargetFormat=="NA") then
                 "type": "Expression"
             }
         }
-    }
+    },
+     "firstRowOnly": true
 }
 else
   error 'Post_Copy_Lookup_MergeSQL_TypeProperties.libsonnet failed. No mapping for:' +GFPIR+","+TargetType+","+TargetFormat

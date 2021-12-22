@@ -8,12 +8,12 @@ function(GenerateArm="true", GFPIR="{IRA}", SourceType="AzureBlobFS", SourceForm
 	local pipeline = 
 	{
 		"name":	if(GenerateArm=="false") 
-				then "GPL_"+SourceType+"_"+SourceFormat+"_"+TargetType+"_"+TargetFormat+"_Create_Table_"+GFPIR 
-				else "[concat(parameters('dataFactoryName'), '/','GPL_"+SourceType+"_"+SourceFormat+"_"+TargetType+"_"+TargetFormat+"_Create_Table_" + "', parameters('integrationRuntimeShortName'))]",		
+				then "GPL_"+TargetType+"_"+TargetFormat+"_Create_Table_"+GFPIR 
+				else "[concat(parameters('dataFactoryName'), '/','GPL_"+TargetType+"_"+TargetFormat+"_Create_Table_" + "', parameters('integrationRuntimeShortName'))]",		
 		"properties": {
 			"activities": [
 				{
-					"name": "If exist Target TableName",
+					"name": "If exist Staging TableName",
 					"type": "IfCondition",
 					"dependsOn": [],
 					"userProperties": [],
@@ -84,7 +84,7 @@ function(GenerateArm="true", GFPIR="{IRA}", SourceType="AzureBlobFS", SourceForm
 								"userProperties": [],
 								"typeProperties": {
 									"pipeline": {
-										"referenceName": "AZ_Function_Generic",
+										"referenceName": "SPL_AzureFunction",
 										"type": "PipelineReference"
 									},
 									"waitOnCompletion": false,
@@ -102,7 +102,7 @@ function(GenerateArm="true", GFPIR="{IRA}", SourceType="AzureBlobFS", SourceForm
 					}
 				},
 				{
-					"name": "If exist Staging TableName",
+					"name": "If exist Target TableName",
 					"type": "IfCondition",
 					"dependsOn": [],
 					"userProperties": [],
@@ -156,7 +156,7 @@ function(GenerateArm="true", GFPIR="{IRA}", SourceType="AzureBlobFS", SourceForm
 									"secureInput": false
 								},
 								"userProperties": [],
-								"typeProperties": Create_Table_Lookup_CreateStage_TypeProperties(GenerateArm,GFPIR,TargetType,TargetFormat)
+								"typeProperties": Create_Table_Lookup_CreateTarget_TypeProperties(GenerateArm,GFPIR,TargetType,TargetFormat)
 							},
 							{
 								"name": "AF Log - Create Target Table Failed",
@@ -172,7 +172,7 @@ function(GenerateArm="true", GFPIR="{IRA}", SourceType="AzureBlobFS", SourceForm
 								"userProperties": [],
 								"typeProperties": {
 									"pipeline": {
-										"referenceName": "AZ_Function_Generic",
+										"referenceName": "SPL_AzureFunction",
 										"type": "PipelineReference"
 									},
 									"waitOnCompletion": false,
