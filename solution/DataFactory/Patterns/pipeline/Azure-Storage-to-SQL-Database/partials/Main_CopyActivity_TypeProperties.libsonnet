@@ -1,4 +1,4 @@
-function(GFPIR="IRA", SourceType="AzureBlobFS", SourceFormat="DelimitedText", TargetType="AzureSqlTable",TargetFormat="NA") 
+function(SourceType="AzureBlobFS", SourceFormat="DelimitedText", TargetType="AzureSqlTable",TargetFormat="NA") 
 local Main_CopyActivity_AzureBlobFS_DelimitedText_Inputs = import './Main_CopyActivity_AzureBlobFS_DelimitedText_Inputs.libsonnet';
 local Main_CopyActivity_AzureBlobFS_Excel_Inputs = import './Main_CopyActivity_AzureBlobFS_Excel_Inputs.libsonnet';
 local Main_CopyActivity_AzureBlobFS_Json_Inputs = import './Main_CopyActivity_AzureBlobFS_Json_Inputs.libsonnet';
@@ -33,8 +33,8 @@ if(SourceType=="AzureBlobFS"&&SourceFormat=="Excel"&&TargetType=="AzureSqlTable"
     }
   },
 }
-  + Main_CopyActivity_AzureBlobFS_Excel_Inputs(GFPIR)
-  + Main_CopyActivity_AzureSqlTable_NA_Outputs(GFPIR)
+  + Main_CopyActivity_AzureBlobFS_Excel_Inputs()
+  + Main_CopyActivity_AzureSqlTable_NA_Outputs()
 else if(SourceType=="AzureBlobFS"&&SourceFormat=="DelimitedText"&&TargetType=="AzureSqlTable"&&TargetFormat=="NA") then
 {
   "typeProperties": {    
@@ -85,8 +85,8 @@ else if(SourceType=="AzureBlobFS"&&SourceFormat=="DelimitedText"&&TargetType=="A
     }
   },
 }
-  + Main_CopyActivity_AzureBlobFS_DelimitedText_Inputs(GFPIR)
-  + Main_CopyActivity_AzureSqlTable_NA_Outputs(GFPIR)
+  + Main_CopyActivity_AzureBlobFS_DelimitedText_Inputs()
+  + Main_CopyActivity_AzureSqlTable_NA_Outputs()
 else if (SourceType=="AzureBlobFS" && SourceFormat == "Json" && TargetType=="AzureSqlTable"&&TargetFormat=="NA") then
 {
   "typeProperties": {    
@@ -115,8 +115,8 @@ else if (SourceType=="AzureBlobFS" && SourceFormat == "Json" && TargetType=="Azu
     }
   },
 }
-  + Main_CopyActivity_AzureBlobFS_Json_Inputs(GFPIR)
-  + Main_CopyActivity_AzureSqlTable_NA_Outputs(GFPIR)
+  + Main_CopyActivity_AzureBlobFS_Json_Inputs()
+  + Main_CopyActivity_AzureSqlTable_NA_Outputs()
 else if(SourceType=="AzureBlobStorage"&&SourceFormat=="Excel"&&TargetType=="AzureSqlTable"&&TargetFormat=="NA") then
 {
   "typeProperties": {    
@@ -143,8 +143,8 @@ else if(SourceType=="AzureBlobStorage"&&SourceFormat=="Excel"&&TargetType=="Azur
     }
   },
 }
-  + Main_CopyActivity_AzureBlobStorage_Excel_Inputs(GFPIR)
-  + Main_CopyActivity_AzureSqlTable_NA_Outputs(GFPIR)
+  + Main_CopyActivity_AzureBlobStorage_Excel_Inputs()
+  + Main_CopyActivity_AzureSqlTable_NA_Outputs()
 else if(SourceType=="AzureBlobStorage"&&SourceFormat=="DelimitedText"&&TargetType=="AzureSqlTable"&&TargetFormat=="NA") then
 {
   "typeProperties": {    
@@ -195,8 +195,8 @@ else if(SourceType=="AzureBlobStorage"&&SourceFormat=="DelimitedText"&&TargetTyp
     }
   },
 }
-  + Main_CopyActivity_AzureBlobStorage_DelimitedText_Inputs(GFPIR)
-  + Main_CopyActivity_AzureSqlTable_NA_Outputs(GFPIR)
+  + Main_CopyActivity_AzureBlobStorage_DelimitedText_Inputs()
+  + Main_CopyActivity_AzureSqlTable_NA_Outputs()
 else if (SourceType=="AzureBlobStorage" && SourceFormat == "Json" && TargetType=="AzureSqlTable"&&TargetFormat=="NA") then
 {
   "typeProperties": {    
@@ -225,7 +225,7 @@ else if (SourceType=="AzureBlobStorage" && SourceFormat == "Json" && TargetType=
     }
   },
 }
-  + Main_CopyActivity_AzureBlobStorage_Json_Inputs(GFPIR)
-  + Main_CopyActivity_AzureSqlTable_NA_Outputs(GFPIR)
+  + Main_CopyActivity_AzureBlobStorage_Json_Inputs()
+  + Main_CopyActivity_AzureSqlTable_NA_Outputs()
 else
-  error 'Main_CopyActivity_TypeProperties.libsonnet Failed: ' + GFPIR+","+SourceType+","+SourceFormat+","+TargetType+","+TargetFormat
+  error 'Main_CopyActivity_TypeProperties.libsonnet Failed: '+SourceType+","+SourceFormat+","+TargetType+","+TargetFormat

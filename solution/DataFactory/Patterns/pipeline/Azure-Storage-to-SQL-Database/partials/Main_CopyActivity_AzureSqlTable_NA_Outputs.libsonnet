@@ -1,8 +1,8 @@
-function(GFPIR="IRA") 
+function() 
 {"outputs":
 [
   {
-    "referenceName": "AzureSqlTable_" + GFPIR,
+    "referenceName": "[concat('GDS_AzureSqlTable_NA_', parameters('integrationRuntimeShortName'))]",
     "type": "DatasetReference",
     "parameters": {
       "Schema": {
