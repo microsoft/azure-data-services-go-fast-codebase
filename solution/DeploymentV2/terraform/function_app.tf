@@ -1,5 +1,6 @@
 resource "azuread_application" "function_app" {
   count           = var.deploy_azure_ad_function_app_registration ? 1 : 0
+  owners           = [data.azurerm_client_config.current.object_id]
   display_name    = local.aad_functionapp_name
   identifier_uris = [local.functionapp_identifier_uri]
   web {

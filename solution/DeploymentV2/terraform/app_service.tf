@@ -2,6 +2,7 @@
 resource "azuread_application" "web" {
   count           = var.deploy_azure_ad_web_app_registration ? 1 : 0
   display_name    = local.aad_webapp_name
+  owners           = [data.azurerm_client_config.current.object_id]
   identifier_uris = [local.webapp_identifier_uri]
   web {
     homepage_url  = local.webapp_url
