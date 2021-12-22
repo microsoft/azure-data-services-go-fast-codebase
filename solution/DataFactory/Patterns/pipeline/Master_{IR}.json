@@ -21,7 +21,7 @@
                             "userProperties": [],
                             "typeProperties": {
                                 "pipeline": {
-                                    "referenceName": "AZ_Function_Generic",
+                                    "referenceName": "GPL_AzureFunction_Common",
                                     "type": "PipelineReference"
                                 },
                                 "waitOnCompletion": false,
@@ -72,7 +72,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"pipeline": {
-						"referenceName": "AZ_Function_Generic",
+						"referenceName": "GPL_AzureFunction_Common",
 						"type": "PipelineReference"
 					},
 					"waitOnCompletion": true,
@@ -100,7 +100,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"pipeline": {
-						"referenceName": "AZ_Function_Generic",
+						"referenceName": "GPL_AzureFunction_Common",
 						"type": "PipelineReference"
 					},
 					"waitOnCompletion": true,

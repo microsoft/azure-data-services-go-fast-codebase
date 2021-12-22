@@ -1,5 +1,5 @@
 {
-	"name": "AZ_Function_Generic",
+	"name": "GPL_AzureFunction_Common",
 	"properties": {
 		"activities": [
 			{
@@ -40,7 +40,7 @@
 										}
 									},
 									"linkedServiceName": {
-										"referenceName": "AzureFunctionAdsGoFastDataLakeAccelFunApp",
+										"referenceName": "SLS_AzureFunctionApp",
 										"type": "LinkedServiceReference"
 									}
 								}
@@ -73,7 +73,7 @@
 										}
 									},
 									"linkedServiceName": {
-										"referenceName": "AzureFunctionAdsGoFastDataLakeAccelFunApp",
+										"referenceName": "SLS_AzureFunctionApp",
 										"type": "LinkedServiceReference"
 									}
 								}

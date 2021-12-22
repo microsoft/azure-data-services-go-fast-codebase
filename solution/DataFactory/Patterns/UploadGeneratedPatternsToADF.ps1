@@ -14,7 +14,7 @@ function UploadADFItem ($items) {
                 }
 
                 #Swap out Function App Url
-                if ($lsName -eq "AzureFunctionAdsGoFastDataLakeAccelFunApp") {
+                if ($lsName -eq "SLS_AzureFunctionApp") {
                     $jsonobject.properties.typeProperties.functionAppUrl = "https://$env:AdsOpts_CD_Services_CoreFunctionApp_Name.azurewebsites.net"
                 }
             

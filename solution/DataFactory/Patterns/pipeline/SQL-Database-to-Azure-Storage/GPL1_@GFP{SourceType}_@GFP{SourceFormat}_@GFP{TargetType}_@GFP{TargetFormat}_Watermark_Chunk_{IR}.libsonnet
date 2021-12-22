@@ -17,7 +17,7 @@ function(GFPIR="IRA",SourceType="AzureSqlTable",SourceFormat="NA",TargetType="Az
 				"userProperties": [],
 				"typeProperties": {
 					"pipeline": {
-						"referenceName": "AZ_Function_Generic",
+						"referenceName": "GPL_AzureFunction_Common",
 						"type": "PipelineReference"
 					},
 					"waitOnCompletion": false,

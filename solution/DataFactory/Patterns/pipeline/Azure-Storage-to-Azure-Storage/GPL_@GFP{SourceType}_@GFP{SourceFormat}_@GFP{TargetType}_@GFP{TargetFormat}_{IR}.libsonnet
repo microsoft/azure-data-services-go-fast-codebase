@@ -73,7 +73,7 @@ function(GFPIR="{IRA}",SourceType="AzureBlobFS",TargetType="AzureBlobFS")
 			"userProperties": [],
 			"typeProperties": {
 				"pipeline": {
-					"referenceName": "AZ_Function_Generic",
+					"referenceName": "GPL_AzureFunction_Common",
 					"type": "PipelineReference"
 				},
 				"waitOnCompletion": false,
@@ -94,7 +94,7 @@ function(GFPIR="{IRA}",SourceType="AzureBlobFS",TargetType="AzureBlobFS")
 			"userProperties": [],
 			"typeProperties": {
 				"pipeline": {
-					"referenceName": "AZ_Function_Generic",
+					"referenceName": "GPL_AzureFunction_Common",
 					"type": "PipelineReference"
 				},
 				"waitOnCompletion": false,
@@ -122,7 +122,7 @@ function(GFPIR="{IRA}",SourceType="AzureBlobFS",TargetType="AzureBlobFS")
 			"userProperties": [],
 			"typeProperties": {
 				"pipeline": {
-					"referenceName": "AZ_Function_Generic",
+					"referenceName": "GPL_AzureFunction_Common",
 					"type": "PipelineReference"
 				},
 				"waitOnCompletion": false,

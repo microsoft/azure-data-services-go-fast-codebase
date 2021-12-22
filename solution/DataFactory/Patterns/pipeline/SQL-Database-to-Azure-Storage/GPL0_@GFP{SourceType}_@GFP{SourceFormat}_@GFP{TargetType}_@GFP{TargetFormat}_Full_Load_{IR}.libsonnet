@@ -61,7 +61,7 @@ function(GFPIR="{IRA}",SourceType="SqlServerTable",SourceFormat="NA",TargetType=
 				"userProperties": [],
 				"typeProperties": {
 					"pipeline": {
-						"referenceName": "AZ_Function_Generic",
+						"referenceName": "GPL_AzureFunction_Common",
 						"type": "PipelineReference"
 					},
 					"waitOnCompletion": false,
@@ -103,7 +103,7 @@ function(GFPIR="{IRA}",SourceType="SqlServerTable",SourceFormat="NA",TargetType=
 					}
 				},
 				"linkedServiceName": {
-					"referenceName": "AzureFunctionAdsGoFastDataLakeAccelFunApp",
+					"referenceName": "SLS_AzureFunctionApp",
 					"type": "LinkedServiceReference"
 				}
 			},
@@ -135,7 +135,7 @@ function(GFPIR="{IRA}",SourceType="SqlServerTable",SourceFormat="NA",TargetType=
 				"userProperties": [],
 				"typeProperties": {
 					"pipeline": {
-						"referenceName": "AZ_Function_Generic",
+						"referenceName": "GPL_AzureFunction_Common",
 						"type": "PipelineReference"
 					},
 					"waitOnCompletion": false,
@@ -163,7 +163,7 @@ function(GFPIR="{IRA}",SourceType="SqlServerTable",SourceFormat="NA",TargetType=
 				"userProperties": [],
 				"typeProperties": {
 					"pipeline": {
-						"referenceName": "AZ_Function_Generic",
+						"referenceName": "GPL_AzureFunction_Common",
 						"type": "PipelineReference"
 					},
 					"waitOnCompletion": false,

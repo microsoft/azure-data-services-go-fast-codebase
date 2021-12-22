@@ -2,7 +2,7 @@ function()
 {"inputs":
 [
   {
-      "referenceName": "[concat('GDS_AzureBlobFS_Excel_, parameters('integrationRuntimeShortname'))]",
+      "referenceName": "[concat('GDS_AzureBlobFS_Excel_', parameters('integrationRuntimeShortname'))]",
       "type": "DatasetReference",
       "parameters": {
           "RelativePath": {

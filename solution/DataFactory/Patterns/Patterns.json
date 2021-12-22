@@ -1,11 +1,4 @@
-[
-    {
-        "Folder": "Azure-Storage-to-Azure-Storage",        
-        "SourceType": "AzureSqlTable",
-        "SourceFormat": "NA",
-        "TargetType": "AzureBlobFS",
-        "TargetFormat": "Parquet"
-    },    
+[ 
     {
         "Folder": "SQL-Database-to-Azure-Storage",        
         "SourceType": "AzureSqlTable",

@@ -1,8 +1,8 @@
-function(GFPIR="IRA")
+function()
 {"inputs":
 [
   {
-      "referenceName": "GDS_AzureBlobStorage_Excel_" + GFPIR,
+      "referenceName": "[concat('GDS_AzureBlobStorage_Excel_', parameters('integrationRuntimeShortName'))]",
       "type": "DatasetReference",
       "parameters": {
           "RelativePath": {
