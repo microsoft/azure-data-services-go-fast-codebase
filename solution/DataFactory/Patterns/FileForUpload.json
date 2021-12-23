@@ -1,4 +1,7 @@
 {
+  "Active": true,
+  "Description": "GPL_AzureBlobStorage_Parquet_AzureSqlTable_NA_IRA",
+  "JsonSchema": "GPL_AzureBlobStorage_Parquet_AzureSqlTable_NA",
   "TaskObject": {
     "TaskInstanceId": 75,
     "TaskMasterId": 12,
@@ -13,7 +16,7 @@
     "TaskGroupConcurrency": 10,
     "TaskGroupPriority": 0,
     "Source": {
-      "Type": "Azure Blob",
+      "Type": "Parquet",
       "SystemId": 3,
       "StorageAccountName": "https://adlsjkcgkaibkungm.blob.core.windows.net",
       "StorageAccountAccessMethod": "MSI",
@@ -33,13 +36,13 @@
       "Type": "Table",
       "StagingTableSchema": "dbo",
       "StagingTableName": "stg_customer_7",
-      "AutoCreateTable": "True",
+      "AutoCreateTable": "true",
       "TableSchema": "dbo",
       "TableName": "customer_7",
       "PreCopySQL": "IF OBJECT_ID('dbo.stg_customer_7') IS NOT NULL \r\n Truncate Table stg_customer_7",
       "PostCopySQL": "",
       "MergeSQL": "",
-      "AutoGenerateMerge": "True",
+      "AutoGenerateMerge": "true",
       "Database": {
         "SystemName": "adsgfsvrjkcgkaibkungm.database.windows.net",
         "Name": "AdsGfStaging",

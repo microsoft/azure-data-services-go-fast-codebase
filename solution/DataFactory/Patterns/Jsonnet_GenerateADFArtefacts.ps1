@@ -1,5 +1,5 @@
 
-$GenerateArm="false"
+$GenerateArm="true"
 
 function CoreReplacements ($string, $GFPIR, $SourceType, $SourceFormat, $TargetType, $TargetFormat) {
     $string = $string.Replace("@GFP{SourceType}", $SourceType).Replace("@GFP{SourceFormat}", $SourceFormat).Replace("@GFP{TargetType}", $TargetType).Replace("@GFP{TargetFormat}", $TargetFormat)
@@ -28,7 +28,7 @@ foreach ($pattern in $patterns)
     Write-Host "_____________________________"
 
     foreach ($t in $templates) {
-        $testasjson = ($test | ConvertTo-Json -Depth 100)
+        $testasjson = ($test | ConvertTo-Json)
 
         $GFPIR = $pattern.GFPIR
         $SourceType = $pattern.SourceType

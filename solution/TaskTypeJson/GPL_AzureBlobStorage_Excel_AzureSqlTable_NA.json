@@ -1,188 +1,189 @@
 {
    "$schema": "http://json-schema.org/draft-04/schema#",
-   "Source": {
-      "properties": {
-         "DataFileName": {
-            "options": {
-               "infoText": "Name of the file to be imported.",
-               "inputAttributes": {
-                  "placeholder": "eg. Customer.xlsx"
-               }
-            },
-            "type": "string"
-         },
-         "FirstRowAsHeader": {
-            "default": "true",
-            "enum": [
-               "true",
-               "false"
-            ],
-            "options": {
-               "infoText": "Set to true if you want the first row of data to be used as column names."
-            },
-            "type": "string"
-         },
-         "RelativePath": {
-            "options": {
-               "infoText": "Path of the file to be imported.",
-               "inputAttributes": {
-                  "placeholder": "eg. AwSample/dbo/Customer/{yyyy}/{MM}/{dd}/{hh}/"
-               }
-            },
-            "type": "string"
-         },
-         "SchemaFileName": {
-            "options": {
-               "infoText": "Name of the schema file to use when generating the target table. *Note that if you don't provide a schema file then the schema will be automatically inferred based on the source data.",
-               "inputAttributes": {
-                  "placeholder": "eg. Customer_Schema.json"
-               }
-            },
-            "type": "string"
-         },
-         "SheetName": {
-            "options": {
-               "infoText": "Name of the Excel Worksheet that you wish to import",
-               "inputAttributes": {
-                  "placeholder": "eg. Sheet1"
-               }
-            },
-            "type": "string"
-         },
-         "Type": {
-            "enum": [
-               "Excel"
-            ],
-            "options": {
-               "hidden": true
-            },
-            "type": "string"
-         }
-      },
-      "required": [
-         "Type",
-         "RelativePath",
-         "DataFileName",
-         "SchemaFileName",
-         "FirstRowAsHeader",
-         "SheetName"
-      ],
-      "type": "object"
-   },
-   "Target": {
-      "properties": {
-         "AutoCreateTable": {
-            "default": "true",
-            "enum": [
-               "true",
-               "false"
-            ],
-            "options": {
-               "infoText": "Set to true if you want the framework to automatically create the target table if it does not exist. If this is false and the target table does not exist then the task will fail with an error."
-            },
-            "type": "string"
-         },
-         "AutoGenerateMerge": {
-            "default": "true",
-            "enum": [
-               "true",
-               "false"
-            ],
-            "options": {
-               "infoText": "Set to true if you want the framework to autogenerate the merge based on the primary key of the target table."
-            },
-            "type": "string"
-         },
-         "MergeSQL": {
-            "format": "sql",
-            "options": {
-               "ace": {
-                  "tabSize": 2,
-                  "useSoftTabs": true,
-                  "wrap": true
+   "properties": {
+      "Source": {
+         "properties": {
+            "DataFileName": {
+               "options": {
+                  "infoText": "Name of the file to be imported.",
+                  "inputAttributes": {
+                     "placeholder": "eg. Customer.xlsx"
+                  }
                },
-               "infoText": "A custom merge statement to exectute. Note that this will be ignored if 'AutoGenerateMerge' is true. Click in the box below to view or edit "
+               "type": "string"
             },
-            "type": "string"
+            "FirstRowAsHeader": {
+               "default": "true",
+               "enum": [
+                  "true",
+                  "false"
+               ],
+               "options": {
+                  "infoText": "Set to true if you want the first row of data to be used as column names."
+               },
+               "type": "string"
+            },
+            "RelativePath": {
+               "options": {
+                  "infoText": "Path of the file to be imported.",
+                  "inputAttributes": {
+                     "placeholder": "eg. AwSample/dbo/Customer/{yyyy}/{MM}/{dd}/{hh}/"
+                  }
+               },
+               "type": "string"
+            },
+            "SchemaFileName": {
+               "options": {
+                  "infoText": "Name of the schema file to use when generating the target table. *Note that if you don't provide a schema file then the schema will be automatically inferred based on the source data.",
+                  "inputAttributes": {
+                     "placeholder": "eg. Customer_Schema.json"
+                  }
+               },
+               "type": "string"
+            },
+            "SheetName": {
+               "options": {
+                  "infoText": "Name of the Excel Worksheet that you wish to import",
+                  "inputAttributes": {
+                     "placeholder": "eg. Sheet1"
+                  }
+               },
+               "type": "string"
+            },
+            "Type": {
+               "enum": [
+                  "Excel"
+               ],
+               "options": {
+                  "hidden": true
+               },
+               "type": "string"
+            }
          },
-         "PostCopySQL": {
-            "options": {
-               "infoText": "A SQL statement that you wish to be applied after merging the staging table and the final table",
-               "inputAttributes": {
-                  "placeholder": "eg. Delete from dbo.Customer where Active = 0"
-               }
-            },
-            "type": "string"
-         },
-         "PreCopySQL": {
-            "options": {
-               "infoText": "A SQL statement that you wish to be applied prior to merging the staging table and the final table",
-               "inputAttributes": {
-                  "placeholder": "eg. Delete from dbo.StgCustomer where Active = 0"
-               }
-            },
-            "type": "string"
-         },
-         "StagingTableName": {
-            "options": {
-               "infoText": "Table name for the transient table in which data will first be staged before being merged into final target table.",
-               "inputAttributes": {
-                  "placeholder": "eg. StgCustomer"
-               }
-            },
-            "type": "string"
-         },
-         "StagingTableSchema": {
-            "options": {
-               "infoText": "Schema for the transient table in which data will first be staged before being merged into final target table.",
-               "inputAttributes": {
-                  "placeholder": "eg. dbo"
-               }
-            },
-            "type": "string"
-         },
-         "TableName": {
-            "options": {
-               "infoText": "Name of the final target table.",
-               "inputAttributes": {
-                  "placeholder": "eg. Customer"
-               }
-            },
-            "type": "string"
-         },
-         "TableSchema": {
-            "options": {
-               "infoText": "Schema of the final target table. Note that this must exist in the target database as it will not be autogenerated.",
-               "inputAttributes": {
-                  "placeholder": "eg. dbo"
-               }
-            },
-            "type": "string"
-         },
-         "Type": {
-            "enum": [
-               "Table"
-            ],
-            "options": {
-               "hidden": true
-            },
-            "type": "string"
-         }
+         "required": [
+            "Type",
+            "RelativePath",
+            "DataFileName",
+            "SchemaFileName",
+            "FirstRowAsHeader",
+            "SheetName"
+         ],
+         "type": "object"
       },
-      "required": [
-         "Type",
-         "StagingTableSchema",
-         "StagingTableName",
-         "AutoCreateTable",
-         "TableSchema",
-         "TableName",
-         "PreCopySQL",
-         "PostCopySQL",
-         "AutoGenerateMerge"
-      ],
-      "type": "object"
+      "Target": {
+         "properties": {
+            "AutoCreateTable": {
+               "default": "true",
+               "enum": [
+                  "true",
+                  "false"
+               ],
+               "options": {
+                  "infoText": "Set to true if you want the framework to automatically create the target table if it does not exist. If this is false and the target table does not exist then the task will fail with an error."
+               },
+               "type": "string"
+            },
+            "AutoGenerateMerge": {
+               "default": "true",
+               "enum": [
+                  "true",
+                  "false"
+               ],
+               "options": {
+                  "infoText": "Set to true if you want the framework to autogenerate the merge based on the primary key of the target table."
+               },
+               "type": "string"
+            },
+            "MergeSQL": {
+               "format": "sql",
+               "options": {
+                  "ace": {
+                     "tabSize": 2,
+                     "useSoftTabs": true,
+                     "wrap": true
+                  },
+                  "infoText": "A custom merge statement to exectute. Note that this will be ignored if 'AutoGenerateMerge' is true. Click in the box below to view or edit "
+               },
+               "type": "string"
+            },
+            "PostCopySQL": {
+               "options": {
+                  "infoText": "A SQL statement that you wish to be applied after merging the staging table and the final table",
+                  "inputAttributes": {
+                     "placeholder": "eg. Delete from dbo.Customer where Active = 0"
+                  }
+               },
+               "type": "string"
+            },
+            "PreCopySQL": {
+               "options": {
+                  "infoText": "A SQL statement that you wish to be applied prior to merging the staging table and the final table",
+                  "inputAttributes": {
+                     "placeholder": "eg. Delete from dbo.StgCustomer where Active = 0"
+                  }
+               },
+               "type": "string"
+            },
+            "StagingTableName": {
+               "options": {
+                  "infoText": "Table name for the transient table in which data will first be staged before being merged into final target table.",
+                  "inputAttributes": {
+                     "placeholder": "eg. StgCustomer"
+                  }
+               },
+               "type": "string"
+            },
+            "StagingTableSchema": {
+               "options": {
+                  "infoText": "Schema for the transient table in which data will first be staged before being merged into final target table.",
+                  "inputAttributes": {
+                     "placeholder": "eg. dbo"
+                  }
+               },
+               "type": "string"
+            },
+            "TableName": {
+               "options": {
+                  "infoText": "Name of the final target table.",
+                  "inputAttributes": {
+                     "placeholder": "eg. Customer"
+                  }
+               },
+               "type": "string"
+            },
+            "TableSchema": {
+               "options": {
+                  "infoText": "Schema of the final target table. Note that this must exist in the target database as it will not be autogenerated.",
+                  "inputAttributes": {
+                     "placeholder": "eg. dbo"
+                  }
+               },
+               "type": "string"
+            },
+            "Type": {
+               "enum": [
+                  "Table"
+               ],
+               "options": {
+                  "hidden": true
+               },
+               "type": "string"
+            }
+         },
+         "required": [
+            "Type",
+            "StagingTableSchema",
+            "StagingTableName",
+            "AutoCreateTable",
+            "TableSchema",
+            "TableName",
+            "PreCopySQL",
+            "PostCopySQL",
+            "AutoGenerateMerge"
+         ],
+         "type": "object"
+      }
    },
-   "properties": { },
    "required": [
       "Source",
       "Target"

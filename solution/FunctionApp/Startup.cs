@@ -38,14 +38,6 @@ namespace AdsGoFast
             var azure_root = $"{Environment.GetEnvironmentVariable("HOME")}\\site\\wwwroot";
 
             var actual_root = local_root ?? azure_root;
-
-            var logPath = (actual_root + "/StartupLogs/");
-            if (!Directory.Exists(logPath))
-                Directory.CreateDirectory(logPath);
-            var logFile = System.IO.File.Create(logPath+"/"+DateTime.UtcNow.ToString("yyyyMMddHHmm")+".tmp");
-            var logWriter = new System.IO.StreamWriter(logFile);
-            logWriter.WriteLine("StartingStartup");
-
             
             var config = new ConfigurationBuilder()
               .SetBasePath(actual_root)
@@ -53,8 +45,6 @@ namespace AdsGoFast
               .AddUserSecrets(Assembly.GetExecutingAssembly(), true)
               .AddEnvironmentVariables()
               .Build();
-
-            logWriter.WriteLine("RootPath:" + actual_root);
 
             builder.Services.Configure<AuthOptions>(config.GetSection("AzureAdAuth"));
             builder.Services.Configure<ApplicationOptions>(config.GetSection("ApplicationOptions"));
@@ -128,13 +118,6 @@ namespace AdsGoFast
                 c.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 c.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             }).SetHandlerLifetime(TimeSpan.FromMinutes(5));  //Set lifetime to five minutes
-
-            //builder.Services.AddScoped<Logging>((s) =>
-            //{
-            //    return new Logging();
-            //});
-            logWriter.WriteLine("Finished Startup");
-            logWriter.Dispose();
         }
     }
 }

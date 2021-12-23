@@ -1,6 +1,8 @@
 [
     {
-        "TaskMasterSchema": "",
+        "Active":true,
+        "Description":"GPL_AzureBlobStorage_Excel_AzureSqlTable_NA",
+        "JsonSchema": "GPL_AzureBlobStorage_Excel_AzureSqlTable_NA",
         "TaskObject": {
             "TaskInstanceId": 75,
             "TaskMasterId": 12,
@@ -15,7 +17,7 @@
             "TaskGroupConcurrency": 10,
             "TaskGroupPriority": 0,
             "Source": {
-                "Type": "Azure Blob",
+                "Type": "Excel",
                 "SystemId": 3,
                 "StorageAccountName": "https://AdsOpts_CD_Services_Storage_Blob_Name.blob.core.windows.net",
                 "StorageAccountAccessMethod": "MSI",
@@ -23,7 +25,7 @@
                 "RelativePath": "/samples/",
                 "DataFileName": "yellow_tripdata_2017-03.xlsx",
                 "SchemaFileName": "",
-                "FirstRowAsHeader": "True",
+                "FirstRowAsHeader": "true",
                 "SheetName": "yellow_tripdata_2017-03",
                 "SkipLineCount": 0,
                 "MaxConcorrentConnections": 10,
@@ -37,13 +39,13 @@
                 "Type": "Table",
                 "StagingTableSchema": "dbo",
                 "StagingTableName": "stg_yellow_tripdata_{TestNumber}",
-                "AutoCreateTable": "False",
+                "AutoCreateTable": "false",
                 "TableSchema": "dbo",
                 "TableName": "yellow_tripdata_{TestNumber}",
                 "PreCopySQL": "IF OBJECT_ID('dbo.stg_yellow_tripdata_{TestNumber}') IS NOT NULL \r\n Truncate Table dbo.stg_yellow_tripdata_{TestNumber}",
                 "PostCopySQL": "",
                 "MergeSQL": "",
-                "AutoGenerateMerge": "False",
+                "AutoGenerateMerge": "false",
                 "Database": {
                     "SystemName": "AdsOpts_CD_Services_AzureSQLServer_Name.database.windows.net",
                     "Name": "AdsOpts_CD_Services_AzureSQLServer_StagingDB_Name",
@@ -60,6 +62,9 @@
         }
     },
     {
+        "Active":true,
+        "Description": "GPL_AzureBlobFS_Excel_AzureSqlTable_NA",
+        "JsonSchema": "GPL_AzureBlobFS_Excel_AzureSqlTable_NA",
         "TaskObject": {
             "TaskInstanceId": 75,
             "TaskMasterId": 12,
@@ -74,7 +79,7 @@
             "TaskGroupConcurrency": 10,
             "TaskGroupPriority": 0,
             "Source": {
-                "Type": "Azure Blob",
+                "Type": "Excel",
                 "SystemId": 3,
                 "StorageAccountName": "https://AdsOpts_CD_Services_Storage_ADLS_Name.dfs.core.windows.net",
                 "StorageAccountAccessMethod": "MSI",
@@ -82,7 +87,7 @@
                 "RelativePath": "/samples/",
                 "DataFileName": "yellow_tripdata_2017-03.xlsx",
                 "SchemaFileName": "",
-                "FirstRowAsHeader": "True",
+                "FirstRowAsHeader": "true",
                 "SheetName": "yellow_tripdata_2017-03",
                 "SkipLineCount": 0,
                 "MaxConcorrentConnections": 10,
@@ -96,13 +101,13 @@
                 "Type": "Table",
                 "StagingTableSchema": "dbo",
                 "StagingTableName": "stg_yellow_tripdata_{TestNumber}",
-                "AutoCreateTable": "False",
+                "AutoCreateTable": "false",
                 "TableSchema": "dbo",
                 "TableName": "yellow_tripdata_{TestNumber}",
                 "PreCopySQL": "IF OBJECT_ID('dbo.stg_yellow_tripdata_{TestNumber}') IS NOT NULL \r\n Truncate Table dbo.stg_yellow_tripdata_{TestNumber}",
                 "PostCopySQL": "",
                 "MergeSQL": "",
-                "AutoGenerateMerge": "False",
+                "AutoGenerateMerge": "false",
                 "Database": {
                     "SystemName": "AdsOpts_CD_Services_AzureSQLServer_Name.database.windows.net",
                     "Name": "AdsOpts_CD_Services_AzureSQLServer_StagingDB_Name",
@@ -119,6 +124,9 @@
         }
     },
     {
+        "Active":true,
+        "Description": "GPL_AzureBlobStorage_Json_AzureSqlTable_NA_IRA",
+        "JsonSchema": "GPL_AzureBlobStorage_Json_AzureSqlTable_NA",
         "TaskObject": {
             "TaskInstanceId": 75,
             "TaskMasterId": 12,
@@ -133,7 +141,7 @@
             "TaskGroupConcurrency": 10,
             "TaskGroupPriority": 0,
             "Source": {
-                "Type": "Azure Blob",
+                "Type": "Json",
                 "SystemId": 3,
                 "StorageAccountName": "https://AdsOpts_CD_Services_Storage_Blob_Name.blob.core.windows.net",
                 "StorageAccountAccessMethod": "MSI",
@@ -152,13 +160,13 @@
                 "Type": "Table",
                 "StagingTableSchema": "dbo",
                 "StagingTableName": "stg_yellow_tripdata_{TestNumber}",
-                "AutoCreateTable": "False",
+                "AutoCreateTable": "false",
                 "TableSchema": "dbo",
                 "TableName": "yellow_tripdata_{TestNumber}",
                 "PreCopySQL": "IF OBJECT_ID('dbo.stg_yellow_tripdata_{TestNumber}') IS NOT NULL \r\n Truncate Table dbo.stg_yellow_tripdata_{TestNumber}",
                 "PostCopySQL": "",
                 "MergeSQL": "",
-                "AutoGenerateMerge": "False",
+                "AutoGenerateMerge": "false",
                 "Database": {
                     "SystemName": "AdsOpts_CD_Services_AzureSQLServer_Name.database.windows.net",
                     "Name": "AdsOpts_CD_Services_AzureSQLServer_StagingDB_Name",
@@ -175,6 +183,9 @@
         }
     },
     {
+        "Active":true,
+        "Description": "GPL_AzureBlobFS_Json_AzureSqlTable_NA_IRA",
+        "JsonSchema": "GPL_AzureBlobFS_Json_AzureSqlTable_NA",
         "TaskObject": {
             "TaskInstanceId": 75,
             "TaskMasterId": 12,
@@ -189,7 +200,7 @@
             "TaskGroupConcurrency": 10,
             "TaskGroupPriority": 0,
             "Source": {
-                "Type": "Azure Blob",
+                "Type": "Json",
                 "SystemId": 3,
                 "StorageAccountName": "https://AdsOpts_CD_Services_Storage_ADLS_Name.dfs.core.windows.net",
                 "StorageAccountAccessMethod": "MSI",
@@ -208,13 +219,13 @@
                 "Type": "Table",
                 "StagingTableSchema": "dbo",
                 "StagingTableName": "stg_yellow_tripdata_{TestNumber}",
-                "AutoCreateTable": "False",
+                "AutoCreateTable": "false",
                 "TableSchema": "dbo",
                 "TableName": "yellow_tripdata_{TestNumber}",
                 "PreCopySQL": "IF OBJECT_ID('dbo.stg_yellow_tripdata_{TestNumber}') IS NOT NULL \r\n Truncate Table dbo.stg_yellow_tripdata_{TestNumber}",
                 "PostCopySQL": "",
                 "MergeSQL": "",
-                "AutoGenerateMerge": "False",
+                "AutoGenerateMerge": "false",
                 "Database": {
                     "SystemName": "AdsOpts_CD_Services_AzureSQLServer_Name.database.windows.net",
                     "Name": "AdsOpts_CD_Services_AzureSQLServer_StagingDB_Name",
@@ -231,6 +242,9 @@
         }
     },
     {
+        "Active":true,
+        "Description": "GPL_AzureBlobStorage_DelimitedText_AzureSqlTable_NA_IRA",
+        "JsonSchema": "GPL_AzureBlobStorage_DelimitedText_AzureSqlTable_NA",
         "TaskObject": {
             "TaskInstanceId": 75,
             "TaskMasterId": 12,
@@ -245,7 +259,7 @@
             "TaskGroupConcurrency": 10,
             "TaskGroupPriority": 0,
             "Source": {
-                "Type": "Azure Blob",
+                "Type": "DelimitedText",
                 "SystemId": 3,
                 "StorageAccountName": "https://AdsOpts_CD_Services_Storage_Blob_Name.blob.core.windows.net",
                 "StorageAccountAccessMethod": "MSI",
@@ -253,7 +267,7 @@
                 "RelativePath": "/samples/",
                 "DataFileName": "yellow_tripdata_2017-03.csv",
                 "SchemaFileName": "",
-                "FirstRowAsHeader": "True",
+                "FirstRowAsHeader": "true",
                 "SkipLineCount": 0,
                 "MaxConcorrentConnections": 10,
                 "Recursively": null,
@@ -266,13 +280,13 @@
                 "Type": "Table",
                 "StagingTableSchema": "dbo",
                 "StagingTableName": "stg_yellow_tripdata_{TestNumber}",
-                "AutoCreateTable": "False",
+                "AutoCreateTable": "false",
                 "TableSchema": "dbo",
                 "TableName": "yellow_tripdata_{TestNumber}",
                 "PreCopySQL": "IF OBJECT_ID('dbo.stg_yellow_tripdata_{TestNumber}') IS NOT NULL \r\n Truncate Table dbo.stg_yellow_tripdata_{TestNumber}",
                 "PostCopySQL": "",
                 "MergeSQL": "",
-                "AutoGenerateMerge": "False",
+                "AutoGenerateMerge": "false",
                 "Database": {
                     "SystemName": "AdsOpts_CD_Services_AzureSQLServer_Name.database.windows.net",
                     "Name": "AdsOpts_CD_Services_AzureSQLServer_StagingDB_Name",
@@ -290,6 +304,9 @@
         }
     },
     {
+        "Active":true,
+        "Description": "GPL_AzureBlobFS_DelimitedText_AzureSqlTable_NA_IRA",
+        "JsonSchema": "GPL_AzureBlobFS_DelimitedText_AzureSqlTable_NA",
         "TaskObject": {
             "TaskInstanceId": 75,
             "TaskMasterId": 12,
@@ -304,7 +321,7 @@
             "TaskGroupConcurrency": 10,
             "TaskGroupPriority": 0,
             "Source": {
-                "Type": "Azure Blob",
+                "Type": "DelimitedText",
                 "SystemId": 3,
                 "StorageAccountName": "https://AdsOpts_CD_Services_Storage_ADLS_Name.dfs.core.windows.net",
                 "StorageAccountAccessMethod": "MSI",
@@ -312,7 +329,7 @@
                 "RelativePath": "/samples/",
                 "DataFileName": "yellow_tripdata_2017-03.csv",
                 "SchemaFileName": "",
-                "FirstRowAsHeader": "True",
+                "FirstRowAsHeader": "true",
                 "SkipLineCount": 0,
                 "MaxConcorrentConnections": 10,
                 "Recursively": null,
@@ -325,13 +342,13 @@
                 "Type": "Table",
                 "StagingTableSchema": "dbo",
                 "StagingTableName": "stg_yellow_tripdata_{TestNumber}",
-                "AutoCreateTable": "False",
+                "AutoCreateTable": "false",
                 "TableSchema": "dbo",
                 "TableName": "yellow_tripdata_{TestNumber}",
                 "PreCopySQL": "IF OBJECT_ID('dbo.stg_yellow_tripdata_{TestNumber}') IS NOT NULL \r\n Truncate Table dbo.stg_yellow_tripdata_{TestNumber}",
                 "PostCopySQL": "",
                 "MergeSQL": "",
-                "AutoGenerateMerge": "False",
+                "AutoGenerateMerge": "false",
                 "Database": {
                     "SystemName": "AdsOpts_CD_Services_AzureSQLServer_Name.database.windows.net",
                     "Name": "AdsOpts_CD_Services_AzureSQLServer_StagingDB_Name",
@@ -349,6 +366,9 @@
         }
     },
     {
+        "Active":true,
+        "Description": "GPL_AzureBlobFS_Parquet_AzureSqlTable_NA_IRA",
+        "JsonSchema": "GPL_AzureBlobFS_Parquet_AzureSqlTable_NA",
         "TaskObject": {
             "TaskInstanceId": 75,
             "TaskMasterId": 12,
@@ -363,7 +383,7 @@
             "TaskGroupConcurrency": 10,
             "TaskGroupPriority": 0,
             "Source": {
-                "Type": "ADLS",
+                "Type": "Parquet",
                 "SystemId": 3,
                 "StorageAccountName": "https://adlsjkcgkaibkungm.dfs.core.windows.net",
                 "StorageAccountAccessMethod": "MSI",
@@ -383,13 +403,13 @@
                 "Type": "Table",
                 "StagingTableSchema": "dbo",
                 "StagingTableName": "stg_customer_{TestNumber}",
-                "AutoCreateTable": "True",
+                "AutoCreateTable": "true",
                 "TableSchema": "dbo",
                 "TableName": "customer_{TestNumber}",
                 "PreCopySQL": "IF OBJECT_ID('dbo.stg_customer_{TestNumber}') IS NOT NULL \r\n Truncate Table stg_customer_{TestNumber}",
                 "PostCopySQL": "",
                 "MergeSQL": "",
-                "AutoGenerateMerge": "False",
+                "AutoGenerateMerge": "false",
                 "Database": {
                     "SystemName": "adsgfsvrjkcgkaibkungm.database.windows.net",
                     "Name": "AdsGfStaging",
@@ -406,6 +426,9 @@
         }
     },
     {
+        "Active":true,
+        "Description": "GPL_AzureBlobStorage_Parquet_AzureSqlTable_NA_IRA",
+        "JsonSchema": "GPL_AzureBlobStorage_Parquet_AzureSqlTable_NA",
         "TaskObject": {
             "TaskInstanceId": 75,
             "TaskMasterId": 12,
@@ -420,7 +443,7 @@
             "TaskGroupConcurrency": 10,
             "TaskGroupPriority": 0,
             "Source": {
-                "Type": "Azure Blob",
+                "Type": "Parquet",
                 "SystemId": 3,
                 "StorageAccountName": "https://adlsjkcgkaibkungm.blob.core.windows.net",
                 "StorageAccountAccessMethod": "MSI",
@@ -440,13 +463,13 @@
                 "Type": "Table",
                 "StagingTableSchema": "dbo",
                 "StagingTableName": "stg_customer_{TestNumber}",
-                "AutoCreateTable": "True",
+                "AutoCreateTable": "true",
                 "TableSchema": "dbo",
                 "TableName": "customer_{TestNumber}",
                 "PreCopySQL": "IF OBJECT_ID('dbo.stg_customer_{TestNumber}') IS NOT NULL \r\n Truncate Table stg_customer_{TestNumber}",
                 "PostCopySQL": "",
                 "MergeSQL": "",
-                "AutoGenerateMerge": "True",
+                "AutoGenerateMerge": "true",
                 "Database": {
                     "SystemName": "adsgfsvrjkcgkaibkungm.database.windows.net",
                     "Name": "AdsGfStaging",
