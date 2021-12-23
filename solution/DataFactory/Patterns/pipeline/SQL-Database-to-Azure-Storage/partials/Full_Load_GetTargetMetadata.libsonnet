@@ -1,4 +1,4 @@
-function(GenerateArm="false",GFPIR="IRA", TargetType, TargetFormat) 
+function(GenerateArm="false",GFPIR="IRA", TargetType="AzureBlobFS", TargetFormat="Parquet") 
 if (TargetType=="AzureBlobFS"&&TargetFormat=="Parquet") then
 {
   local referenceName = "GDS_AzureBlobFS_Parquet_",

@@ -34,7 +34,7 @@
                 }
             },
             "Target": {
-                "Type": "Azure Blob",
+                "Type": "Parquet",
                 "StorageAccountName": "https://AdsOpts_CD_Services_Storage_Blob_Name.blob.core.windows.net",
                 "StorageAccountContainer": "datalakeraw",
                 "StorageAccountAccessMethod": "MSI",
@@ -90,8 +90,8 @@
                 }
             },
             "Target": {
-                "Type": "Azure Blob",
-                "StorageAccountName": "https://AdsOpts_CD_Services_Storage_ADLS_Name.blob.core.windows.net",
+                "Type": "Parquet",
+                "StorageAccountName": "https://AdsOpts_CD_Services_Storage_ADLS_Name.dfs.core.windows.net",
                 "StorageAccountContainer": "datalakeraw",
                 "StorageAccountAccessMethod": "MSI",
                 "RelativePath": "/Tests/{Pattern}/{TestNumber}/",
@@ -146,8 +146,8 @@
                 }
             },
             "Target": {
-                "Type": "Azure Blob",
-                "StorageAccountName": "https://AdsOpts_CD_Services_Storage_ADLS_Name.blob.core.windows.net",
+                "Type": "Parquet",
+                "StorageAccountName": "https://AdsOpts_CD_Services_Storage_ADLS_Name.dfs.core.windows.net",
                 "StorageAccountContainer": "datalakeraw",
                 "StorageAccountAccessMethod": "MSI",
                 "RelativePath": "/Tests/{Pattern}/{TestNumber}/",
