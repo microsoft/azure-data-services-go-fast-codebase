@@ -1,0 +1,34 @@
+{
+  "TaskInstanceId": 2,
+  "TaskMasterId": 1,
+  "TaskStatus": "Untried",
+  "TaskType": "AzureStorageToAzureStorage_IRA",
+  "Enabled": true,
+  "ExecutionUid": 1,
+  "KeyVaultBaseUrl": "https://adsgofastkeyvault.vault.azure.net/",
+  "DegreeOfCopyParallelism": 1,
+  "Source":
+    {
+      "StorageAccountName": "https://arkstgdlsadslluvblob.dfs.core.windows.net",
+      "Type": "Blob",
+      "StorageAccountContainer": "datalakeraw",
+      "StorageAccountAccessMethod": "MSI",
+      "StorageAccountSASUriKeyVaultSecretName": null,
+      "RelativePath": "/samples/",
+      "DataFileName": "yellow_tripdata_2017-03.csv",
+      "SchemaFileName": null,
+      "Recursively":false,
+      "DeleteAfterCompletion":false
+    },
+  "Target":
+    {
+      "StorageAccountName": "https://arkstgdlsadslluvadsl.dfs.core.windows.net",
+      "Type": "Blob",
+      "StorageAccountContainer": "datalakeraw",
+      "StorageAccountAccessMethod": "MSI",
+      "StorageAccountSASUriKeyVaultSecretName": null,
+      "RelativePath": "/samples/",
+      "DataFileName": "copied_yellow_tripdata_2017.csv",
+      "SchemaFileName": null
+    }
+}

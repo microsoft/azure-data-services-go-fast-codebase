@@ -1,0 +1,185 @@
+name: 'GLP_AzureBlobFS_AzureBlobFS_{IRA}'
+properties:
+  activities:
+    - dependsOn:
+        - activity: Pipefile AF Log - AzureBlobFS to AzureBlobFS Start
+          dependencyConditions:
+            - Succeeded
+      inputs:
+        - parameters:
+            Directory:
+              type: Expression
+              value: '@pipeline().parameters.TaskObject.Source.RelativePath'
+            File:
+              type: Expression
+              value: '@pipeline().parameters.TaskObject.Source.DataFileName'
+            FileSystem:
+              type: Expression
+              value: '@pipeline().parameters.TaskObject.Source.StorageAccountContainer'
+            StorageAccountEndpoint:
+              type: Expression
+              value: '@pipeline().parameters.TaskObject.Source.StorageAccountName'
+          referenceName: 'GDS_AzureBlobFS_Binary_{IRA}'
+          type: DatasetReference
+      name: Copy AzureBlobFS to AzureBlobFS
+      outputs:
+        - parameters:
+            Directory:
+              type: Expression
+              value: '@pipeline().parameters.TaskObject.Target.RelativePath'
+            File:
+              type: Expression
+              value: '@pipeline().parameters.TaskObject.Target.DataFileName'
+            FileSystem:
+              type: Expression
+              value: '@pipeline().parameters.TaskObject.Target.StorageAccountContainer'
+            StorageAccountEndpoint:
+              type: Expression
+              value: '@pipeline().parameters.TaskObject.Target.StorageAccountName'
+          referenceName: 'GDS_AzureBlobFS_Binary_{IRA}'
+          type: DatasetReference
+      policy:
+        retry: 0
+        retryIntervalInSeconds: 30
+        secureInput: false
+        secureOutput: false
+        timeout: '7.00:00:00'
+      type: Copy
+      typeProperties:
+        enableStaging: false
+        parallelCopies:
+          type: Expression
+          value: '@pipeline().parameters.TaskObject.DegreeOfCopyParallelism'
+        sink:
+          storeSettings:
+            copyBehavior: PreserveHierarchy
+            type: AzureBlobFSWriteSettings
+          type: BinarySink
+        source:
+          formatSettings:
+            type: BinaryReadSettings
+          storeSettings:
+            deleteFilesAfterCompletion:
+              type: Expression
+              value: '@pipeline().parameters.TaskObject.Source.DeleteAfterCompletion'
+            recursive:
+              type: Expression
+              value: '@pipeline().parameters.TaskObject.Source.Recursively'
+            type: AzureBlobFSReadSettings
+            wildcardFileName:
+              type: Expression
+              value: '@pipeline().parameters.TaskObject.Source.DataFileName'
+          type: BinarySource
+      userProperties: []
+    - dependsOn:
+        - activity: Copy AzureBlobFS to AzureBlobFS
+          dependencyConditions:
+            - Failed
+      name: Pipeline AF Log - AzureBlobFS to AzureBlobFS Failed
+      type: ExecutePipeline
+      typeProperties:
+        parameters:
+          Body:
+            type: Expression
+            value: >-
+              @json(concat('{"TaskInstanceId":"',
+              string(pipeline().parameters.TaskObject.TaskInstanceId),
+              '","ExecutionUid":"',
+              string(pipeline().parameters.TaskObject.ExecutionUid),
+              '","RunId":"', string(pipeline().RunId),
+              '","LogTypeId":1,"LogSource":"ADF","ActivityType":"Copy Blob to
+              Blob","StartDateTimeOffSet":"', string(pipeline().TriggerTime),
+              '","EndDateTimeOffSet":"', string(utcnow()), '","Comment":"',
+              string(activity('Copy AzureBlobFS to AzureBlobFS').error.message),
+              '","Status":"Failed"}'))
+          FunctionName: Log
+          Method: Post
+        pipeline:
+          referenceName: AZ_Function_Generic
+          type: PipelineReference
+        waitOnCompletion: false
+      userProperties: []
+    - dependsOn: []
+      name: Pipeline AF Log - AzureBlobFS to AzureBlobFS Start
+      type: ExecutePipeline
+      typeProperties:
+        parameters:
+          Body:
+            type: Expression
+            value: >-
+              @json(concat('{"TaskInstanceId":"',
+              string(pipeline().parameters.TaskObject.TaskInstanceId),
+              '","ExecutionUid":"',
+              string(pipeline().parameters.TaskObject.ExecutionUid),
+              '","RunId":"', string(pipeline().RunId),
+              '","LogTypeId":3,"LogSource":"ADF","ActivityType":"Copy Blob to
+              Blob","StartDateTimeOffSet":"', string(pipeline().TriggerTime),
+              '","Status":"Started"}'))
+          FunctionName: Log
+          Method: Post
+        pipeline:
+          referenceName: AZ_Function_Generic
+          type: PipelineReference
+        waitOnCompletion: false
+      userProperties: []
+    - dependsOn:
+        - activity: Copy AzureBlobFS to AzureBlobFS
+          dependencyConditions:
+            - Succeeded
+      name: Pipeline AF Log - AzureBlobFS to AzureBlobFS Succeed
+      type: ExecutePipeline
+      typeProperties:
+        parameters:
+          Body:
+            type: Expression
+            value: >-
+              @json(concat('{"TaskInstanceId":"',
+              string(pipeline().parameters.TaskObject.TaskInstanceId),
+              '","ExecutionUid":"',
+              string(pipeline().parameters.TaskObject.ExecutionUid),
+              '","RunId":"', string(pipeline().RunId),
+              '","LogTypeId":1,"LogSource":"ADF","ActivityType":"Copy Blob to
+              Blob","StartDateTimeOffSet":"', string(pipeline().TriggerTime),
+              '","EndDateTimeOffSet":"', string(utcnow()), '","RowsInserted":"',
+              string(activity('Copy AzureBlobFS to
+              AzureBlobFS').output.filesWritten),
+              '","Comment":"","Status":"Complete"}'))
+          FunctionName: Log
+          Method: Post
+        pipeline:
+          referenceName: AZ_Function_Generic
+          type: PipelineReference
+        waitOnCompletion: false
+      userProperties: []
+  annotations: []
+  folder:
+    name: 'ADS Go Fast/Data Movement/{IRA}'
+  lastPublishTime: '2020-08-05T04:14:00Z'
+  parameters:
+    TaskObject:
+      defaultValue: >-
+        [   {     "TaskInstanceId": 2,     "TaskMasterId": 1,     "TaskStatus":
+        "Untried",     "TaskType": "AzureStorageToAzureStorage_IRA",    
+        "Enabled": true,     "ExecutionUid": 1,     "KeyVaultBaseUrl":
+        "https://adsgofastkeyvault.vault.azure.net/",     "Source": {      
+        "StorageAccountName":
+        "https://adsgofastdatalakeadls.dfs.core.windows.net",       "Type":
+        "ADLS",       "StorageAccountContainer": "datalakelanding",      
+        "StorageAccountAccessMethod": "MSI",      
+        "StorageAccountSASUriKeyVaultSecretName": null,       "RelativePath":
+        "/Unprocessed/adsgofastdatakakeaccelsqlsvr/AWSample/SalesLT/2020/06/08/17/",      
+        "DataFileName": "Customer_Data.parquet",       "SchemaFileName":
+        "Customer_Schema.json"     },     "Target": {      
+        "StorageAccountName":
+        "https://adsgofastdatalakeadls.dfs.core.windows.net",       "Type":
+        "ADLS",       "StorageAccountContainer": "datalakelanding",      
+        "StorageAccountAccessMethod": "MSI",      
+        "StorageAccountSASUriKeyVaultSecretName": null,       "RelativePath":
+        "/Processed/adsgofastdatakakeaccelsqlsvr/AWSample/SalesLT/2020/06/08/17/",      
+        "DataFileName": "Customer_Data.parquet",       "SchemaFileName":
+        "Customer_Schema.json"     },     "DataFactory": {       "Id": 1,      
+        "Name": "adsgofastdatakakeacceladf",       "ResourceGroup":
+        "AdsGoFastDataLakeAccel",       "SubscriptionId":
+        "035a1364-f00d-48e2-b582-4fe125905ee3",     }   } ]
+      type: object
+type: Microsoft.DataFactory/factories/pipelines

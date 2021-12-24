@@ -95,4 +95,19 @@
         "TargetType": "AzureSqlTable",
         "TargetFormat": "NA"
     }
+    ,
+    {
+        "Folder": "Azure-Storage-to-Azure-Storage",                
+        "GFPIR": "IRA",
+        "SourceType": "AzureBlobFS",
+        "SourceFormat": "Excel",
+        "TargetType": "AzureBlobFS",
+        "TargetFormat": "DelimitedText"
+    }
 ]
+
+"SourceType": "AzureBlobStorage",
+"SourceFormat": "Excel",
+"SourceFormat": "Parquet",
+"SourceFormat": "DelimitedText",
+"SourceFormat": "Json",
