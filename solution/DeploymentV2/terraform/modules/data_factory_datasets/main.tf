@@ -104,7 +104,7 @@ resource "azurerm_resource_group_template_deployment" "mssql_dataset" {
 
 resource "azurerm_resource_group_template_deployment" "file_dataset" {
   for_each            = {
-    for ir in fileset(path.module, "arm/File*.json"):  
+    for ir in fileset(path.module, "arm/GDS_File*.json"):  
     ir => ir 
     if var.is_azure == false
   }
