@@ -1,4 +1,6 @@
-function (GenerateArm=false, SourceType = "AzureBlobStorage", GFPIR = "{IRA}")
+function()	
 {
-    "type": "BinaryReadSettings"
+    "formatSettings": {
+        "type": "BinaryReadSettings"
+    }
 }

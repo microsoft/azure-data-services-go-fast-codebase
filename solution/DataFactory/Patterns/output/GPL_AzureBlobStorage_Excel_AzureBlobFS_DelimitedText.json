@@ -110,39 +110,23 @@
                         "value": "@pipeline().parameters.TaskObject.DegreeOfCopyParallelism"
                      },
                      "sink": {
-                        "formatSettings": { },
                         "storeSettings": {
                            "copyBehavior": "PreserveHierarchy",
+                           "formatSettings": {
+                              "fileExtension": ".txt",
+                              "quoteAllText": true,
+                              "type": "DelimitedTextWriteSettings"
+                           },
                            "type": "AzureBlobFSWriteSettings"
                         },
-                        "type": "ExcelSink"
+                        "type": "DelimitedTextSink"
                      },
                      "source": {
-                        "formatSettings": {
-                           "skipLineCount": {
-                              "type": "Expression",
-                              "value": "@pipeline().parameters.TaskObject.Source.SkipLineCount"
-                           },
-                           "type": "DelimitedTextReadSettings"
-                        },
                         "storeSettings": {
-                           "enablePartitionDiscovery": false,
-                           "maxConcurrentConnections": {
-                              "type": "Expression",
-                              "value": "@pipeline().parameters.TaskObject.Source.MaxConcorrentConnections"
-                           },
                            "recursive": true,
-                           "type": "AzureBlobStorageReadSettings",
-                           "wildcardFileName": {
-                              "type": "Expression",
-                              "value": "@pipeline().parameters.TaskObject.Source.DataFileName"
-                           },
-                           "wildcardFolderPath": {
-                              "type": "Expression",
-                              "value": "@pipeline().parameters.TaskObject.Source.RelativePath"
-                           }
+                           "type": "AzureBlobStorageReadSettings"
                         },
-                        "type": "DelimitedTextSource"
+                        "type": "ExcelSource"
                      }
                   },
                   "userProperties": [ ]

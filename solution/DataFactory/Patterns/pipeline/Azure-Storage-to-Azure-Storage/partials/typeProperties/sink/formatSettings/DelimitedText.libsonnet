@@ -1,6 +1,8 @@
 function()
 {
-    "type": "DelimitedTextWriteSettings",
-    "quoteAllText": true,
-    "fileExtension": ".txt"
+    "formatSettings": {
+        "type": "DelimitedTextWriteSettings",
+        "quoteAllText": true,
+        "fileExtension": ".txt"
+    }
 }

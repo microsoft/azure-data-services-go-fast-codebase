@@ -98,39 +98,32 @@
                         "value": "@pipeline().parameters.TaskObject.DegreeOfCopyParallelism"
                      },
                      "sink": {
-                        "formatSettings": { },
                         "storeSettings": {
                            "copyBehavior": "PreserveHierarchy",
-                           "type": "AzureBlobFSWriteSettings"
+                           "type": "AzureBlobStorageWriteSettings"
                         },
-                        "type": "ExcelSink"
+                        "type": "BinarySink"
                      },
                      "source": {
-                        "formatSettings": {
-                           "skipLineCount": {
-                              "type": "Expression",
-                              "value": "@pipeline().parameters.TaskObject.Source.SkipLineCount"
-                           },
-                           "type": "DelimitedTextReadSettings"
-                        },
                         "storeSettings": {
-                           "enablePartitionDiscovery": false,
-                           "maxConcurrentConnections": {
+                           "deleteFilesAfterCompletion": {
                               "type": "Expression",
-                              "value": "@pipeline().parameters.TaskObject.Source.MaxConcorrentConnections"
+                              "value": "@pipeline().parameters.TaskObject.Source.DeleteAfterCompletion"
                            },
-                           "recursive": true,
-                           "type": "AzureBlobStorageReadSettings",
+                           "formatSettings": {
+                              "type": "BinaryReadSettings"
+                           },
+                           "recursive": {
+                              "type": "Expression",
+                              "value": "@pipeline().parameters.TaskObject.Source.Recursively"
+                           },
+                           "type": "AzureBlobFSReadSettings",
                            "wildcardFileName": {
                               "type": "Expression",
                               "value": "@pipeline().parameters.TaskObject.Source.DataFileName"
-                           },
-                           "wildcardFolderPath": {
-                              "type": "Expression",
-                              "value": "@pipeline().parameters.TaskObject.Source.RelativePath"
                            }
                         },
-                        "type": "DelimitedTextSource"
+                        "type": "BinarySource"
                      }
                   },
                   "userProperties": [ ]

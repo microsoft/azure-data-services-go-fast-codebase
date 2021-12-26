@@ -12,6 +12,6 @@ function(TargetType="AzureBlobFS", TargetFormat="DelimitedText")
     "storeSettings": {
         "type": "%(TargetType)sWriteSettings" % {TargetType:TargetType},
         "copyBehavior": "PreserveHierarchy"
-    },
-    "formatSettings": formatSettings[TargetFormat]()
+    }
+    + formatSettings[TargetFormat]()
 }

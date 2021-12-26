@@ -1,5 +1,5 @@
 
-function(SourceFormat="DelimitedText")
+function(SourceType = "AzureBlobStorage", SourceFormat = "Excel")	
 {
     local formatSettings = {
 		"Binary" : import './formatSettings/Binary.libsonnet',
@@ -15,7 +15,9 @@ function(SourceFormat="DelimitedText")
 		"Json" : import './storeSettings/Json.libsonnet',
 		"Parquet" : import './storeSettings/Parquet.libsonnet'
 	},    
-    "type": "%(TargetFormat)sSource" % { TargetFormat: SourceFormat },
-    "storeSettings": storeSettings[SourceFormat](),
-    "formatSettings": formatSettings[SourceFormat](),
+    "type": "%(SourceFormat)sSource" % { SourceFormat: SourceFormat },
+
+    "storeSettings": storeSettings[SourceFormat](SourceType)
+    +formatSettings[SourceFormat]()
 }
+

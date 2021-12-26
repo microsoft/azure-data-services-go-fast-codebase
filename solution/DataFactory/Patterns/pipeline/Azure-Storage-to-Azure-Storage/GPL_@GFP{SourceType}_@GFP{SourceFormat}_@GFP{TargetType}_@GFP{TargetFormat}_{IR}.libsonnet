@@ -1,4 +1,4 @@
-function(GenerateArm="true",GFPIR="{IRA}",SourceType="AzureBlobFS",SourceFormat="Binary", TargetType="AzureBlobFS", TargetFormat="Excel")
+function(GenerateArm="true",GFPIR="{IRA}",SourceType="AzureBlobFS",SourceFormat="Binary", TargetType="AzureBlobFS", TargetFormat="Binary")
 
 local generateArmAsBool = GenerateArm == "true";
 local Wrapper = import '../static/partials/wrapper.libsonnet';
@@ -46,7 +46,7 @@ local pipeline = {
                     "secureInput": false
                 },
                 "userProperties": [],
-                "typeProperties": typeProperties(),
+                "typeProperties": typeProperties(generateArmAsBool, GFPIR, SourceType, SourceFormat, TargetType, TargetFormat),
                 "inputs": [datasets[SourceFormat](generateArmAsBool, SourceType, GFPIR, 'Source')],
                 "outputs": [datasets[TargetFormat](generateArmAsBool, TargetType, GFPIR, 'Target')],
             },

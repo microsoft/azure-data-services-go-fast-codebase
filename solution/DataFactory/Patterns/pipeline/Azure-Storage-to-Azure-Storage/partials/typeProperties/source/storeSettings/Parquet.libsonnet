@@ -1,11 +1,5 @@
-function (GenerateArm=false, SourceType = "AzureBlobStorage", GFPIR = "{IRA}")
+function(SourceType = "AzureBlobStorage")	
 {
     "type": "%(SourceType)sReadSettings" % {SourceType:SourceType},
-    "recursive": false,
-    "wildcardFolderPath": {
-        "value": "@pipeline().parameters.TaskObject.Source.RelativePath",
-        "type": "Expression"
-    },
-    "wildcardFileName": "*.parquet",
-    "enablePartitionDiscovery": false
+    "recursive": true
 }

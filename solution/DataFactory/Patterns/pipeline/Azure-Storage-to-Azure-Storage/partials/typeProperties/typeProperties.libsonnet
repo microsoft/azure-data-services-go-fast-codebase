@@ -3,7 +3,7 @@ function(GenerateArm=false,GFPIR="{IRA}",SourceType="AzureBlobStorage",SourceFor
     local source = import './source/source.libsonnet',	
     local sink   = import './sink/sink.libsonnet',	
 
-    "source": source(SourceFormat),
+    "source": source(SourceType, SourceFormat),
     "sink": sink(TargetType, TargetFormat),
     "enableStaging": false,
     "parallelCopies": {

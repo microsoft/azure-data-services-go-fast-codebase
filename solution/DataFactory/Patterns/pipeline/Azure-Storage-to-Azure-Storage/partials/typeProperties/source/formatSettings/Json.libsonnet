@@ -1,4 +1,6 @@
-function (GenerateArm=false, SourceType = "AzureBlobStorage", GFPIR = "{IRA}")
+function()	
 {
-    "type": "JsonReadSettings"
+    "formatSettings": {
+        "type": "JsonReadSettings"
+    }
 }

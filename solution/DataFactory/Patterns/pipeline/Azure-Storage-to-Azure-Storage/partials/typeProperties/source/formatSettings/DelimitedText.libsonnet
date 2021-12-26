@@ -1,8 +1,10 @@
-function (GenerateArm=false, SourceType = "AzureBlobStorage", GFPIR = "{IRA}")
+function()	
 {
+    "formatSettings": {
         "type": "DelimitedTextReadSettings",
         "skipLineCount": {
             "value": "@pipeline().parameters.TaskObject.Source.SkipLineCount",
             "type": "Expression"
         }
     }
+}

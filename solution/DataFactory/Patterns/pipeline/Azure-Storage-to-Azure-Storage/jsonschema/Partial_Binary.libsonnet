@@ -33,6 +33,8 @@ function()
     "required": [
         "Type",
         "RelativePath",
-        "DataFileName"
+        "DataFileName",
+        "MaxConcorrentConnections",
+        "DeleteAfterCompletion"
     ]
 }

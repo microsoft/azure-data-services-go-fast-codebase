@@ -65,6 +65,7 @@ function()
         "DataFileName",
         "SchemaFileName",
         "FirstRowAsHeader",
-        "SheetName"
+        "SheetName",
+        "SkipLineCount"
     ]
 }
