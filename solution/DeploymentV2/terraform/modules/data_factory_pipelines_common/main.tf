@@ -10,5 +10,5 @@ resource "azurerm_resource_group_template_deployment" "pipeline_generic_function
       value = var.linkedservice_azure_function_name
     }
   })
-  template_content = file("${path.module}/arm/GPL_AzureFunction_Common.json")
+  template_content = file("${path.module}/arm/SPL_AzureFunction.json")
 }

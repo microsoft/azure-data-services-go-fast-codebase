@@ -22,7 +22,7 @@
    "resources": [
       {
          "apiVersion": "2018-06-01",
-         "name": "[concat(parameters('dataFactoryName'), '/', 'GPL_AzureSqlTable_NA_Post_Copy_', parameters('integrationRuntimeShortName'))]",
+         "name": "[concat(parameters('dataFactoryName'), '/','GPL_AzureSqlTable_NA_Post_Copy_', parameters('integrationRuntimeShortName'))]",
          "properties": {
             "activities": [
                {
@@ -102,7 +102,7 @@
                                  "Method": "Post"
                               },
                               "pipeline": {
-                                 "referenceName": "GPL_AzureFunction_Common",
+                                 "referenceName": "SPL_AzureFunction",
                                  "type": "PipelineReference"
                               },
                               "waitOnCompletion": false
@@ -164,6 +164,7 @@
                                  "referenceName": "[concat('GDS_AzureSqlTable_NA_', parameters('integrationRuntimeShortName'))]",
                                  "type": "DatasetReference"
                               },
+                              "firstRowOnly": true,
                               "source": {
                                  "partitionOption": "None",
                                  "queryTimeout": "02:00:00",
@@ -197,7 +198,7 @@
                                  "Method": "Post"
                               },
                               "pipeline": {
-                                 "referenceName": "GPL_AzureFunction_Common",
+                                 "referenceName": "SPL_AzureFunction",
                                  "type": "PipelineReference"
                               },
                               "waitOnCompletion": false
@@ -266,6 +267,7 @@
                                  "referenceName": "[concat('GDS_AzureSqlTable_NA_', parameters('integrationRuntimeShortName'))]",
                                  "type": "DatasetReference"
                               },
+                              "firstRowOnly": false,
                               "source": {
                                  "partitionOption": "None",
                                  "queryTimeout": "02:00:00",
@@ -382,12 +384,13 @@
                                  "referenceName": "[concat('GDS_AzureSqlTable_NA_', parameters('integrationRuntimeShortName'))]",
                                  "type": "DatasetReference"
                               },
+                              "firstRowOnly": false,
                               "source": {
                                  "partitionOption": "None",
                                  "queryTimeout": "02:00:00",
                                  "sqlReaderQuery": {
                                     "type": "Expression",
-                                    "value": "@activity('AF Get Information Schema SQL Stage').output.CreateStatement"
+                                    "value": "@activity('AF Get Information Schema SQL Stage').output.InformationSchemaSQL"
                                  },
                                  "type": "AzureSqlSource"
                               }
@@ -435,12 +438,13 @@
                                  "referenceName": "[concat('GDS_AzureSqlTable_NA_', parameters('integrationRuntimeShortName'))]",
                                  "type": "DatasetReference"
                               },
+                              "firstRowOnly": false,
                               "source": {
                                  "partitionOption": "None",
                                  "queryTimeout": "02:00:00",
                                  "sqlReaderQuery": {
                                     "type": "Expression",
-                                    "value": "@activity('AF Get Information Schema SQL Target').output.CreateStatement"
+                                    "value": "@activity('AF Get Information Schema SQL Target').output.InformationSchemaSQL"
                                  },
                                  "type": "AzureSqlSource"
                               }
@@ -493,7 +497,7 @@
                                  "Method": "Post"
                               },
                               "pipeline": {
-                                 "referenceName": "GPL_AzureFunction_Common",
+                                 "referenceName": "SPL_AzureFunction",
                                  "type": "PipelineReference"
                               },
                               "waitOnCompletion": false
@@ -521,7 +525,7 @@
                                  "Method": "Post"
                               },
                               "pipeline": {
-                                 "referenceName": "GPL_AzureFunction_Common",
+                                 "referenceName": "SPL_AzureFunction",
                                  "type": "PipelineReference"
                               },
                               "waitOnCompletion": false
@@ -549,7 +553,7 @@
                                  "Method": "Post"
                               },
                               "pipeline": {
-                                 "referenceName": "GPL_AzureFunction_Common",
+                                 "referenceName": "SPL_AzureFunction",
                                  "type": "PipelineReference"
                               },
                               "waitOnCompletion": false
@@ -563,7 +567,7 @@
             ],
             "annotations": [ ],
             "folder": {
-               "name": "[concat('ADS Go Fast/Data Movement/', parameters('integrationRuntimeName') ,'/Common')]"
+               "name": "[concat('ADS Go Fast/Data Movement/', parameters('integrationRuntimeShortName'), '/Common')]"
             },
             "lastPublishTime": "2020-08-04T13:09:30Z",
             "parameters": {

@@ -39,7 +39,7 @@
                         "Method": "Post"
                      },
                      "pipeline": {
-                        "referenceName": "GPL_AzureFunction_Common",
+                        "referenceName": "SPL_AzureFunction",
                         "type": "PipelineReference"
                      },
                      "waitOnCompletion": false
@@ -50,6 +50,79 @@
                   "dependsOn": [
                      {
                         "activity": "Pipeline AF Log - ADLS to Azure SQL Start",
+                        "dependencyConditions": [
+                           "Succeeded"
+                        ]
+                     }
+                  ],
+                  "description": "Auto Creates Table Using a Schema File",
+                  "name": "If Auto Create Table",
+                  "type": "IfCondition",
+                  "typeProperties": {
+                     "expression": {
+                        "type": "Expression",
+                        "value": "@and(not(equals(coalesce(pipeline().parameters.TaskObject.Source.SchemaFileName,''),'')),bool(pipeline().parameters.TaskObject.Target.AutoCreateTable))"
+                     },
+                     "ifTrueActivities": [
+                        {
+                           "dependsOn": [ ],
+                           "name": "Execute Create Table",
+                           "type": "ExecutePipeline",
+                           "typeProperties": {
+                              "parameters": {
+                                 "TaskObject": {
+                                    "type": "Expression",
+                                    "value": "@pipeline().parameters.TaskObject"
+                                 }
+                              },
+                              "pipeline": {
+                                 "referenceName": "[concat('GPL_AzureSqlTable_NA_Create_Table_', parameters('integrationRuntimeShortName'))]",
+                                 "type": "PipelineReference"
+                              },
+                              "waitOnCompletion": true
+                           },
+                           "userProperties": [ ]
+                        },
+                        {
+                           "dependsOn": [
+                              {
+                                 "activity": "Execute Create Table",
+                                 "dependencyConditions": [
+                                    "Succeeded"
+                                 ]
+                              }
+                           ],
+                           "linkedServiceName": {
+                              "referenceName": "SLS_AzureFunctionApp",
+                              "type": "LinkedServiceReference"
+                           },
+                           "name": "AF Get Mapping",
+                           "policy": {
+                              "retry": 0,
+                              "retryIntervalInSeconds": 30,
+                              "secureInput": false,
+                              "secureOutput": false,
+                              "timeout": "7.00:00:00"
+                           },
+                           "type": "AzureFunctionActivity",
+                           "typeProperties": {
+                              "body": {
+                                 "type": "Expression",
+                                 "value": "@json(\n concat('{\"TaskInstanceId\":\"', \n  string(pipeline().parameters.TaskObject.TaskInstanceId), \n  '\",\"ExecutionUid\":\"', \n  string(pipeline().parameters.TaskObject.ExecutionUid), \n  '\",\"RunId\":\"', \n  string(pipeline().RunId), \n  '\",\"StorageAccountName\":\"', \n  string(pipeline().parameters.TaskObject.Source.StorageAccountName), \n  '\",\"StorageAccountContainer\":\"', \n  string(pipeline().parameters.TaskObject.Source.StorageAccountContainer), \n  '\",\"RelativePath\":\"', \n  string(pipeline().parameters.TaskObject.Source.RelativePath), \n  '\",\"SchemaFileName\":\"', \n  string(pipeline().parameters.TaskObject.Source.SchemaFileName), \n  '\",\"SourceType\":\"', \n  if(\n     contains(string(pipeline().parameters.TaskObject.Source.StorageAccountName),'.dfs.core.windows.net'),\n     'ADLS',\n     'Azure Blob'\n    ), \n  '\",\"TargetType\":\"', \n  string(pipeline().parameters.TaskObject.Target.Type), \n  '\",\"MetadataType\":\"Parquet\"}')\n)"
+                              },
+                              "functionName": "GetSourceTargetMapping",
+                              "method": "POST"
+                           },
+                           "userProperties": [ ]
+                        }
+                     ]
+                  },
+                  "userProperties": [ ]
+               },
+               {
+                  "dependsOn": [
+                     {
+                        "activity": "If Auto Create Table",
                         "dependencyConditions": [
                            "Succeeded"
                         ]
@@ -141,6 +214,10 @@
                            "type": "AzureBlobStorageReadSettings"
                         },
                         "type": "ExcelSource"
+                     },
+                     "translator": {
+                        "type": "Expression",
+                        "value": "@if(and(not(equals(coalesce(pipeline().parameters.TaskObject.Source.SchemaFileName,''),'')),bool(pipeline().parameters.TaskObject.Target.AutoCreateTable)),activity('AF Get Mapping').output.value, null)"
                      }
                   },
                   "userProperties": [ ]
@@ -166,7 +243,7 @@
                         "Method": "Post"
                      },
                      "pipeline": {
-                        "referenceName": "GPL_AzureFunction_Common",
+                        "referenceName": "SPL_AzureFunction",
                         "type": "PipelineReference"
                      },
                      "waitOnCompletion": false
@@ -194,7 +271,7 @@
                         "Method": "Post"
                      },
                      "pipeline": {
-                        "referenceName": "GPL_AzureFunction_Common",
+                        "referenceName": "SPL_AzureFunction",
                         "type": "PipelineReference"
                      },
                      "waitOnCompletion": false
@@ -230,7 +307,7 @@
             ],
             "annotations": [ ],
             "folder": {
-               "name": "[concat('ADS Go Fast/Data Movement/', parameters('integrationRuntimeName'))]"
+               "name": "[concat('ADS Go Fast/Data Movement/', parameters('integrationRuntimeShortName'))]"
             },
             "lastPublishTime": "2020-07-29T09:43:40Z",
             "parameters": {

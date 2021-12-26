@@ -2,6 +2,7 @@ module "data_factory_datasets" {
   for_each = {
     for ir in local.integration_runtimes :
     ir.short_name => ir
+    if (ir.is_azure == true || var.is_onprem_datafactory_ir_registered == true)
   }
   source                         = "./modules/data_factory_datasets"
   resource_group_name            = var.resource_group_name

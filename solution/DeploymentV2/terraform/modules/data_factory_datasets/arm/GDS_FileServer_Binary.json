@@ -1,0 +1,93 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "name": {
+            "type": "String",
+            "metadata": "name of the resource"
+        },
+        "dataFactoryName": {
+            "type": "String",
+            "metadata": "Data Factory name",
+            "defaultValue": "arkstgdfads"
+        },
+        "linkedServiceName": {
+            "type": "String",
+            "metadata": "The name of the linked service that this dataset uses"
+        },
+        "integrationRuntimeName": {
+            "type": "String",
+            "metadata": "The name of the integration runtime this dataset uses"
+        }
+
+    },
+    "resources": [
+        {
+            "apiVersion": "2018-06-01",
+            "name": "[concat(parameters('dataFactoryName'), '/', parameters('name'))]",
+		"properties": {
+			"linkedServiceName": {
+				"referenceName": "GenericFileServer_IRB",
+				"type": "LinkedServiceReference",
+				"parameters": {
+					"Host": {
+						"value": "@dataset().Host",
+						"type": "Expression"
+					},
+					"UserId": {
+						"value": "@dataset().UserId",
+						"type": "Expression"
+					},
+					"Secret": {
+						"value": "@dataset().Secret",
+						"type": "Expression"
+					},
+					"KeyVaultBaseUrl": {
+						"value": "@dataset().KeyVaultBaseUrl",
+						"type": "Expression"
+					}
+				}
+			},
+			"parameters": {
+				"Host": {
+					"type": "string"
+				},
+				"UserId": {
+					"type": "string"
+				},
+				"Secret": {
+					"type": "string"
+				},
+				"Directory": {
+					"type": "string"
+				},
+				"File": {
+					"type": "string"
+				},
+				"KeyVaultBaseUrl": {
+					"type": "string"
+				}
+			},
+			"folder": {
+				"name": "[concat('ADS Go Fast/Generic/', parameters('integrationRuntimeName'))]"
+			},
+			"annotations": [],
+			"type": "Binary",
+			"typeProperties": {
+				"location": {
+					"type": "FileServerLocation",
+					"fileName": {
+						"value": "@dataset().File",
+						"type": "Expression"
+					},
+					"folderPath": {
+						"value": "@dataset().Directory",
+						"type": "Expression"
+					}
+				}
+			}
+		},
+		"type": "Microsoft.DataFactory/factories/datasets"
+	}
+	]
+}

@@ -105,6 +105,10 @@ resource "azurerm_synapse_managed_private_endpoint" "adls" {
   synapse_workspace_id = azurerm_synapse_workspace.synapse[0].id
   target_resource_id   = azurerm_storage_account.adls[0].id
   subresource_name     = "dfs"
+  // Because we deploy synapse in private (no public access) we only propose to create/destroy but never update
+  lifecycle {
+    ignore_changes = all
+  }
 }
 
 # --------------------------------------------------------------------------------------------------------------------

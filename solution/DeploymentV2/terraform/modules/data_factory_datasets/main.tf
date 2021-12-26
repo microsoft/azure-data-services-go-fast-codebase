@@ -28,7 +28,7 @@ resource "azurerm_resource_group_template_deployment" "blob_dataset" {
   for_each            = {
     for ir in fileset(path.module, "arm/GDS_AzureBlobStorage*.json"):  
     ir => ir 
-    if var.is_azure == true
+    # if var.is_azure == true
   }
   name                = "${replace(replace(each.value, ".json", ""), "arm/", "")}_${var.integration_runtime_short_name}_${var.name_suffix}"
   resource_group_name = var.resource_group_name

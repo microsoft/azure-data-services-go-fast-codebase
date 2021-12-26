@@ -54,6 +54,12 @@ variable "domain" {
   description = "The AAD domain"
   type        = string
 }
+//Onprem linked services and pipelines won't be registered until you complete the IR registration and set this to true
+variable "is_onprem_datafactory_ir_registered" {
+  description = "Are all on-premise Integration runtimes configured?"
+  default     = false
+  type        = bool
+}
 
 variable "is_vnet_isolated" {
   description = "Whether to deploy the resources as vnet attached / private linked"

@@ -35,7 +35,7 @@ module "data_factory_pipelines_selfhosted" {
   for_each = {
     for ir in local.integration_runtimes :
     ir.short_name => ir
-    if ir.is_azure == false
+    if (ir.is_azure == false && var.is_onprem_datafactory_ir_registered == true)
   }
   resource_group_name            = var.resource_group_name
   data_factory_name              = local.data_factory_name
