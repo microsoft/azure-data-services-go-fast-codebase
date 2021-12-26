@@ -3,7 +3,7 @@ resource "azurerm_resource_group_template_deployment" "azure_pipelines_level_0" 
     for pipeline in fileset(path.module, "arm/GPL0_Azure*.json"):  
     pipeline => pipeline 
   }
-  name                = "${replace(replace(each.value, ".json", ""), "arm/", "")}_${var.integration_runtime_short_name}_${var.name_suffix}"
+  name                = substr(sha256("${replace(replace(each.value, ".json", ""), "arm/", "")}_${var.integration_runtime_short_name}_${var.name_suffix}"), 0,30)
   resource_group_name = var.resource_group_name
   deployment_mode     = "Incremental"
   parameters_content = jsonencode({
