@@ -25,7 +25,7 @@ function(GFPIR="IRA")
 			"StorageAccountContainerName": {
 				"type": "string"
 			},
-			"FirstRownAsHeader": {
+			"FirstRowAsHeader": {
 				"type": "bool"
 			}
 		},
@@ -53,7 +53,7 @@ function(GFPIR="IRA")
 			"columnDelimiter": ",",
 			"escapeChar": "\\",
 			"firstRowAsHeader": {
-				"value": "@dataset().FirstRownAsHeader",
+				"value": "@dataset().FirstRowAsHeader",
 				"type": "Expression"
 			},
 			"quoteChar": "\""

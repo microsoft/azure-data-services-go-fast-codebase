@@ -1,4 +1,4 @@
-function(GenerateArm="true",GFPIR="{IRA}",SourceType="AzureBlobFS",SourceFormat="DelimitedText", TargetType="AzureBlobFS", TargetFormat="Excel")
+function(GenerateArm="true",GFPIR="{IRA}",SourceType="AzureBlobFS",SourceFormat="Binary", TargetType="AzureBlobFS", TargetFormat="Excel")
 
 local generateArmAsBool = GenerateArm == "true";
 local Wrapper = import '../static/partials/wrapper.libsonnet';

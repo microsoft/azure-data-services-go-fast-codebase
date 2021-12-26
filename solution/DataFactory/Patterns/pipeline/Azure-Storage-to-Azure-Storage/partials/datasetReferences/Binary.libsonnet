@@ -1,6 +1,6 @@
 function (GenerateArm=false, Type = "AzureBlobStorage", GFPIR = "{IRA}", SourceOrTarget = "Source")
 {
-    local Format = "DelimitedText",
+    local Format = "Binary",
     "referenceName":  if(GenerateArm) 
                       then "[concat('GDS_%(Type)s_%(Format)s_', parameters('integrationRuntimeShortName'))]" % {Type:Type, Format:Format, GFPIR:GFPIR}
                       else "GDS_%(Type)s_%(Format)s_%(GFPIR)s" % {Type:Type, Format:Format, GFPIR:GFPIR},

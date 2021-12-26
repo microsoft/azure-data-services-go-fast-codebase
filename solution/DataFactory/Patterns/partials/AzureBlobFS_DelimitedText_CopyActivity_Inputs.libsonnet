@@ -20,7 +20,7 @@ function(GFPIR="IRA")
         "value": "@pipeline().parameters.TaskObject.Source.StorageAccountContainer",
         "type": "Expression"
       },
-      "FirstRownAsHeader": {
+      "FirstRowAsHeader": {
         "value": "@pipeline().parameters.TaskObject.Source.FirstRowAsHeader",
         "type": "Expression"
       }

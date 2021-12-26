@@ -54,7 +54,7 @@
                               "value": "@pipeline().parameters.TaskObject.Source.StorageAccountName"
                            }
                         },
-                        "referenceName": "[concat('GDS_AzureBlobStorage_DelimitedText_', parameters('integrationRuntimeShortName'))]",
+                        "referenceName": "[concat('GDS_AzureBlobStorage_Binary_', parameters('integrationRuntimeShortName'))]",
                         "type": "DatasetReference"
                      }
                   ],
@@ -79,7 +79,7 @@
                               "value": "@pipeline().parameters.TaskObject.Target.StorageAccountName"
                            }
                         },
-                        "referenceName": "[concat('GDS_AzureBlobFS_DelimitedText_', parameters('integrationRuntimeShortName'))]",
+                        "referenceName": "[concat('GDS_AzureBlobFS_Binary_', parameters('integrationRuntimeShortName'))]",
                         "type": "DatasetReference"
                      }
                   ],

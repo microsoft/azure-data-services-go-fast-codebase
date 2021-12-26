@@ -135,7 +135,7 @@
                               "type": "Expression",
                               "value": "@pipeline().parameters.TaskObject.Source.DataFileName"
                            },
-                           "FirstRownAsHeader": {
+                           "FirstRowAsHeader": {
                               "type": "Expression",
                               "value": "@pipeline().parameters.TaskObject.Source.FirstRowAsHeader"
                            },
