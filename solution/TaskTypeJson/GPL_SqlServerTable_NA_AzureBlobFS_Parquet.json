@@ -1,0 +1,141 @@
+{
+   "$schema": "http://json-schema.org/draft-04/schema#",
+   "properties": {
+      "Source": {
+         "properties": {
+            "ChunkField": {
+               "default": "",
+               "options": {
+                  "infoText": "If you want to break an extraction down into multiple files fill out the chunk fields. Otherwise leave blank.",
+                  "inputAttributes": {
+                     "placeholder": "eg. Customer Id"
+                  }
+               },
+               "type": "string"
+            },
+            "ChunkSize": {
+               "default": 0,
+               "options": {
+                  "infoText": "Number of rows to use for each 'chunk' of data.",
+                  "inputAttributes": {
+                     "placeholder": 0
+                  }
+               },
+               "type": "integer"
+            },
+            "ExtractionSQL": {
+               "default": "",
+               "options": {
+                  "infoText": "A custom SQL statement that you wish to be used to extract the data. **Note that this is ignored if the Source Type is 'Table'",
+                  "inputAttributes": {
+                     "placeholder": "eg. Select top 100 * from Customer"
+                  }
+               },
+               "type": "string"
+            },
+            "IncrementalType": {
+               "default": "Table",
+               "description": "Full Extraction or Incremental based on a Watermark Column",
+               "enum": [
+                  "Full",
+                  "Watermark"
+               ],
+               "options": {
+                  "infoText": "Select Full for Full Table Extraction & Watermark for Incremental based on a Watermark column"
+               },
+               "type": "string"
+            },
+            "TableName": {
+               "default": "",
+               "options": {
+                  "infoText": "The name of the table to extract. **Note that this is ignored if the Source Type is 'SQL'",
+                  "inputAttributes": {
+                     "placeholder": "eg. Customer"
+                  }
+               },
+               "type": "string"
+            },
+            "TableSchema": {
+               "default": "",
+               "options": {
+                  "infoText": "The schema of the table to extract. **Note that this is ignored if the Source Type is 'SQL'",
+                  "inputAttributes": {
+                     "placeholder": "eg. dbo"
+                  }
+               },
+               "type": "string"
+            },
+            "Type": {
+               "enum": [
+                  "Table",
+                  "SQL"
+               ],
+               "options": {
+                  "hidden": true,
+                  "infoText": "Select TABLE if you want to select all columns in a table. Select SQL if you want to define a custom SQL statement to be used to extract data."
+               },
+               "type": "string"
+            }
+         },
+         "required": [
+            "Type",
+            "IncrementalType"
+         ],
+         "type": "object"
+      },
+      "Target": {
+         "properties": {
+            "DataFileName": {
+               "options": {
+                  "infoText": "Name of the file that will hold the extracted data",
+                  "inputAttributes": {
+                     "placeholder": "dbo.Customer.parquet"
+                  }
+               },
+               "type": "string"
+            },
+            "RelativePath": {
+               "options": {
+                  "infoText": "The path of the directory into which you want your extracted data to be written. You can use placeholders such (eg. {yyyy}/{MM}/{dd}/{hh}/). ",
+                  "inputAttributes": {
+                     "placeholder": "AwSample/dbo/Customer/{yyyy}/{MM}/{dd}/{hh}/"
+                  }
+               },
+               "type": "string"
+            },
+            "SchemaFileName": {
+               "options": {
+                  "infoText": "Name of the file that will hold the schema associated with the extracted data.",
+                  "inputAttributes": {
+                     "placeholder": "dbo.Customer.json"
+                  }
+               },
+               "type": "string"
+            },
+            "Type": {
+               "enum": [
+                  "Parquet"
+               ],
+               "options": {
+                  "hidden": true,
+                  "infoText": "Presently only Parquet is supported"
+               },
+               "type": "string"
+            }
+         },
+         "required": [
+            "Type",
+            "RelativePath",
+            "DataFileName",
+            "SchemaFileName"
+         ],
+         "type": "object"
+      }
+   },
+   "required": [
+      "Source",
+      "Target"
+   ],
+   "title": "TaskMasterJson",
+   "type": "object"
+}

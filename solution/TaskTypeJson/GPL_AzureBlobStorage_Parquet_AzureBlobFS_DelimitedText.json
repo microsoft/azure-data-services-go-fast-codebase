@@ -1,0 +1,132 @@
+{
+   "$schema": "http://json-schema.org/draft-04/schema#",
+   "Source": {
+      "properties": {
+         "DataFileName": {
+            "options": {
+               "infoText": "Name of the file to be imported.",
+               "inputAttributes": {
+                  "placeholder": "eg. Customer.xlsx"
+               }
+            },
+            "type": "string"
+         },
+         "RelativePath": {
+            "options": {
+               "infoText": "Path of the file to be imported.",
+               "inputAttributes": {
+                  "placeholder": "eg. AwSample/dbo/Customer/{yyyy}/{MM}/{dd}/{hh}/"
+               }
+            },
+            "type": "string"
+         },
+         "SchemaFileName": {
+            "options": {
+               "infoText": "Name of the schema file to use when generating the target table. *Note that if you don't provide a schema file then the schema will be automatically inferred based on the source data.",
+               "inputAttributes": {
+                  "placeholder": "eg. Customer_Schema.json"
+               }
+            },
+            "type": "string"
+         },
+         "Type": {
+            "enum": [
+               "Parquet"
+            ],
+            "options": {
+               "hidden": true
+            },
+            "type": "string"
+         }
+      },
+      "required": [
+         "Type",
+         "RelativePath",
+         "DataFileName",
+         "SchemaFileName"
+      ],
+      "type": "object"
+   },
+   "Target": {
+      "properties": {
+         "DataFileName": {
+            "options": {
+               "infoText": "Name of the file to be imported.",
+               "inputAttributes": {
+                  "placeholder": "eg. Customer.xlsx"
+               }
+            },
+            "type": "string"
+         },
+         "FirstRowAsHeader": {
+            "default": "true",
+            "enum": [
+               "true",
+               "false"
+            ],
+            "options": {
+               "infoText": "Set to true if you want the first row of data to be used as column names."
+            },
+            "type": "string"
+         },
+         "MaxConcorrentConnections": {
+            "default": 100,
+            "options": {
+               "infoText": "The upper limit of concurrent connections established to the data store during the activity run. Specify a value only when you want to limit concurrent connections"
+            },
+            "type": "integer"
+         },
+         "RelativePath": {
+            "options": {
+               "infoText": "Path of the file to be imported.",
+               "inputAttributes": {
+                  "placeholder": "eg. AwSample/dbo/Customer/{yyyy}/{MM}/{dd}/{hh}/"
+               }
+            },
+            "type": "string"
+         },
+         "SchemaFileName": {
+            "options": {
+               "infoText": "Name of the schema file to use when generating the target table. *Note that if you don't provide a schema file then the schema will be automatically inferred based on the source data.",
+               "inputAttributes": {
+                  "placeholder": "eg. Customer_Schema.json"
+               }
+            },
+            "type": "string"
+         },
+         "SkipLineCount": {
+            "default": 0,
+            "options": {
+               "infoText": "Number of lines to skip."
+            },
+            "type": "integer"
+         },
+         "Type": {
+            "enum": [
+               "Csv"
+            ],
+            "options": {
+               "hidden": true
+            },
+            "type": "string"
+         }
+      },
+      "required": [
+         "Type",
+         "RelativePath",
+         "DataFileName",
+         "SchemaFileName",
+         "SkipLineCount",
+         "FirstRowAsHeader",
+         "MaxConcorrentConnections"
+      ],
+      "type": "object"
+   },
+   "properties": { },
+   "required": [
+      "Source",
+      "Target"
+   ],
+   "title": "TaskMasterJson",
+   "type": "object"
+}
