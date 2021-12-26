@@ -1,44 +1,80 @@
 {
    "$schema": "http://json-schema.org/draft-04/schema#",
-   "properties": {
-      "Source": {
-         "properties": {
-            "DataFileName": {
-               "options": {
-                  "infoText": "Name of the file to be imported.",
-                  "inputAttributes": {
-                     "placeholder": "eg. Customer.xlsx"
-                  }
-               },
-               "type": "string"
+   "Source": {
+      "properties": {
+         "DataFileName": {
+            "options": {
+               "infoText": "Name of the file to be imported.",
+               "inputAttributes": {
+                  "placeholder": "eg. Customer.xlsx"
+               }
             },
-            "RelativePath": {
-               "options": {
-                  "infoText": "Path of the file to be imported.",
-                  "inputAttributes": {
-                     "placeholder": "eg. AwSample/dbo/Customer/{yyyy}/{MM}/{dd}/{hh}/"
-                  }
-               },
-               "type": "string"
-            },
-            "Type": {
-               "enum": [
-                  "Binary"
-               ],
-               "options": {
-                  "hidden": true
-               },
-               "type": "string"
-            }
+            "type": "string"
          },
-         "required": [
-            "Type",
-            "RelativePath",
-            "DataFileName"
-         ],
-         "type": "object"
-      }
+         "RelativePath": {
+            "options": {
+               "infoText": "Path of the file to be imported.",
+               "inputAttributes": {
+                  "placeholder": "eg. AwSample/dbo/Customer/{yyyy}/{MM}/{dd}/{hh}/"
+               }
+            },
+            "type": "string"
+         },
+         "Type": {
+            "enum": [
+               "Binary"
+            ],
+            "options": {
+               "hidden": true
+            },
+            "type": "string"
+         }
+      },
+      "required": [
+         "Type",
+         "RelativePath",
+         "DataFileName"
+      ],
+      "type": "object"
    },
+   "Target": {
+      "properties": {
+         "DataFileName": {
+            "options": {
+               "infoText": "Name of the file to be imported.",
+               "inputAttributes": {
+                  "placeholder": "eg. Customer.xlsx"
+               }
+            },
+            "type": "string"
+         },
+         "RelativePath": {
+            "options": {
+               "infoText": "Path of the file to be imported.",
+               "inputAttributes": {
+                  "placeholder": "eg. AwSample/dbo/Customer/{yyyy}/{MM}/{dd}/{hh}/"
+               }
+            },
+            "type": "string"
+         },
+         "Type": {
+            "enum": [
+               "Binary"
+            ],
+            "options": {
+               "hidden": true
+            },
+            "type": "string"
+         }
+      },
+      "required": [
+         "Type",
+         "RelativePath",
+         "DataFileName"
+      ],
+      "type": "object"
+   },
+   "properties": { },
    "required": [
       "Source",
       "Target"
