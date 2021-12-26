@@ -1,5 +1,6 @@
-function(GenerateArm=true,GFPIR="{IRA}",SourceType="AzureBlobFS",SourceFormat="DelimitedText", TargetType="AzureBlobFS", TargetFormat="Excel")
+function(GenerateArm="true",GFPIR="{IRA}",SourceType="AzureBlobFS",SourceFormat="DelimitedText", TargetType="AzureBlobFS", TargetFormat="Excel")
 
+local generateArmAsBool = GenerateArm == "true";
 local Wrapper = import '../static/partials/wrapper.libsonnet';
 
 local typeProperties = import './partials/typeProperties/typeProperties.libsonnet';
@@ -13,9 +14,9 @@ local datasets = {
 
 local parameterDefaultValue = import './partials/parameterDefaultValue.libsonnet';
 
-local name =  if(GenerateArm) 
-					then "[concat(parameters('dataFactoryName'), '/','GDS_%(SourceType)s_%(SourceFormat)s_', parameters('integrationRuntimeShortName'))]" % {SourceType:SourceType, SourceFormat:SourceFormat, GFPIR:GFPIR}
-					else "GDS_%(SourceType)s_%(SourceFormat)s_%(GFPIR)s" % {SourceType:SourceType, SourceFormat:SourceFormat, GFPIR:GFPIR};
+local name =  if(!generateArmAsBool) 
+			then "GPL_"+SourceType+"_"+SourceFormat+"_"+TargetType+"_"+TargetFormat+"_"+GFPIR 
+			else "[concat(parameters('dataFactoryName'), '/','GPL_"+SourceType+"_"+SourceFormat+"_"+TargetType+"_"+TargetFormat+"_" + "', parameters('integrationRuntimeShortName'))]";
 
 local copyActivityName = "Copy %(Source)s to %(Target)s" % {Source: SourceType, Target: TargetType};
 local logSuccessActivityName = "%(ActivityName)s Succeed" % {ActivityName: copyActivityName};
@@ -46,8 +47,8 @@ local pipeline = {
                 },
                 "userProperties": [],
                 "typeProperties": typeProperties(),
-                "inputs": [datasets[SourceFormat](GenerateArm, SourceType, GFPIR)],
-                "outputs": [datasets[TargetFormat](GenerateArm, SourceType, GFPIR)],
+                "inputs": [datasets[SourceFormat](generateArmAsBool, SourceType, GFPIR, 'Source')],
+                "outputs": [datasets[TargetFormat](generateArmAsBool, TargetType, GFPIR, 'Target')],
             },
 			{
 			"name": logFailedActivityName,
@@ -129,7 +130,9 @@ local pipeline = {
 		],
 		"parameters": parameterDefaultValue(SourceType),
 		"folder": {
-			"name": "ADS Go Fast/Data Movement/" + GFPIR
+			"name": if(GenerateArm=="false") 
+					then "ADS Go Fast/Data Movement/" + GFPIR
+					else "[concat('ADS Go Fast/Data Movement/', parameters('integrationRuntimeShortName'))]",
 		},
 		"annotations": [],
 		"lastPublishTime": "2020-08-05T04:14:00Z"

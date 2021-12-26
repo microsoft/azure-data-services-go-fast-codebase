@@ -1,9 +1,8 @@
 function(GenerateArm="false",GFPIR="IRA",SourceType="SqlServerTable",SourceFormat="NA",TargetType="AzureBlobFS",TargetFormat="Parquet")
-{
-	local CopyActivity_TypeProperties = import './partials/Full_Load_CopyActivity_TypeProperties.libsonnet',
-	local Full_Load_GetTargetMetadata = import './partials/Full_Load_GetTargetMetadata.libsonnet',
-
-	
+local CopyActivity_TypeProperties = import './partials/Full_Load_CopyActivity_TypeProperties.libsonnet';
+local Full_Load_GetTargetMetadata = import './partials/Full_Load_GetTargetMetadata.libsonnet';
+local Wrapper = import '../static/partials/wrapper.libsonnet';
+local pipeline = {
 	"name":	if(GenerateArm=="false") 
 			then "GPL_"+SourceType+"_"+SourceFormat+"_"+TargetType+"_"+TargetFormat+"_Full_Load_"+GFPIR 
 			else "[concat(parameters('dataFactoryName'), '/','GPL_"+SourceType+"_"+SourceFormat+"_"+TargetType+"_"+TargetFormat+"_Full_Load_" + "', parameters('integrationRuntimeShortName'))]",
@@ -256,4 +255,6 @@ function(GenerateArm="false",GFPIR="IRA",SourceType="SqlServerTable",SourceForma
 		"annotations": []
 	},
 	"type": "Microsoft.DataFactory/factories/pipelines"
-}
+};
+	
+Wrapper(GenerateArm,pipeline)+{}

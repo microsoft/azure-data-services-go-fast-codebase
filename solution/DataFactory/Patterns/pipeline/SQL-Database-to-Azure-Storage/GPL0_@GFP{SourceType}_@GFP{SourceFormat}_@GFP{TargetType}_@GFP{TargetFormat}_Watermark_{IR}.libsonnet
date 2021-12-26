@@ -1,7 +1,8 @@
 function(GenerateArm="false",GFPIR="IRA",SourceType="AzureSqlTable",SourceFormat="NA",TargetType="AzureBlobFS",TargetFormat="Parquet")
-{
-	local CopyActivity_TypeProperties = import './partials/Full_Load_CopyActivity_TypeProperties.libsonnet',
-	local Full_Load_GetTargetMetadata = import './partials/Full_Load_GetTargetMetadata.libsonnet',
+local CopyActivity_TypeProperties = import './partials/Full_Load_CopyActivity_TypeProperties.libsonnet';
+local Full_Load_GetTargetMetadata = import './partials/Full_Load_GetTargetMetadata.libsonnet';
+local Wrapper = import '../static/partials/wrapper.libsonnet';
+local pipeline =  {
 
 		
 	"name":	if(GenerateArm=="false") 
@@ -253,4 +254,6 @@ function(GenerateArm="false",GFPIR="IRA",SourceType="AzureSqlTable",SourceFormat
 		"annotations": []
 	},
 	"type": "Microsoft.DataFactory/factories/pipelines"
-}
+};
+	
+Wrapper(GenerateArm,pipeline)+{}

@@ -1,1 +1,0 @@
-jsonnet './GPL_@GFP{SourceType}_Binary_@GFP{TargetType}_Binary.libsonnet' --tla-str SourceType="AzureBlobStorage" --tla-str TargetType="AzureBlobStorage" --tla-str SourceFormat="Excel" --tla-str TargetFormat="DelimitedText" -o GPL_AzureBlobStorage_Excel_AzureBlobStorage_CSV.json   

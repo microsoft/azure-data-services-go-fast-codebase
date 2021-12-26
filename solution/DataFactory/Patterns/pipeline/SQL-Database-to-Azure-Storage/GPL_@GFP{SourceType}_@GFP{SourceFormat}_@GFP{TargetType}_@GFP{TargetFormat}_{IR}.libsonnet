@@ -1,8 +1,10 @@
 
 function(GenerateArm="false",GFPIR="IRA",SourceType="SqlServerTable",SourceFormat="NA",TargetType="AzureBlobFS",TargetFormat="Parquet")
-{
-	local infoschemasource = import './partials/Main_Lookup_GetInformationSchema_TypeProperties.libsonnet',
-	local Watermarksource = import './partials/Main_Lookup_GetNextWaterMarkOrChunk.libsonnet',
+local infoschemasource = import './partials/Main_Lookup_GetInformationSchema_TypeProperties.libsonnet';
+local Watermarksource = import './partials/Main_Lookup_GetNextWaterMarkOrChunk.libsonnet';
+local Wrapper = import '../static/partials/wrapper.libsonnet';
+local pipeline = {
+	
 	"name":	if(GenerateArm=="false") 
 			then "GPL_"+SourceType+"_"+SourceFormat+"_"+TargetType+"_"+TargetFormat+"_"+GFPIR 
 			else "[concat(parameters('dataFactoryName'), '/','GPL_"+SourceType+"_"+SourceFormat+"_"+TargetType+"_"+TargetFormat+"_" + "', parameters('integrationRuntimeShortName'))]",
@@ -407,4 +409,6 @@ function(GenerateArm="false",GFPIR="IRA",SourceType="SqlServerTable",SourceForma
 		"lastPublishTime": "2020-08-04T12:40:45Z"
 	},
 	"type": "Microsoft.DataFactory/factories/pipelines"
-}
+};
+	
+Wrapper(GenerateArm,pipeline)+{}

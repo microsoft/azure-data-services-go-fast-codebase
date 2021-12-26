@@ -1,29 +1,29 @@
-function (GenerateArm=false, SourceType = "AzureBlobStorage", GFPIR = "{IRA}")
+function (GenerateArm=false, Type = "AzureBlobStorage", GFPIR = "{IRA}", SourceOrTarget = "Source")
 {
-    local SourceFormat = "DelimitedText",
+    local Format = "DelimitedText",
     "referenceName":  if(GenerateArm) 
-                      then "[concat('GDS_%(SourceType)s_%(SourceFormat)s_', parameters('integrationRuntimeShortName'))]" % {SourceType:SourceType, SourceFormat:SourceFormat, GFPIR:GFPIR}
-                      else "GDS_%(SourceType)s_%(SourceFormat)s_%(GFPIR)s" % {SourceType:SourceType, SourceFormat:SourceFormat, GFPIR:GFPIR},
+                      then "[concat('GDS_%(Type)s_%(Format)s_', parameters('integrationRuntimeShortName'))]" % {Type:Type, Format:Format, GFPIR:GFPIR}
+                      else "GDS_%(Type)s_%(Format)s_%(GFPIR)s" % {Type:Type, Format:Format, GFPIR:GFPIR},
     "type": "DatasetReference",
     "parameters": {
         "RelativePath": {
-            "value": "@pipeline().parameters.TaskObject.Source.RelativePath",
+            "value": "@pipeline().parameters.TaskObject.%(SourceOrTarget)s.RelativePath" % { SourceOrTarget : SourceOrTarget},
             "type": "Expression"
         },
         "FileName": {
-            "value": "@pipeline().parameters.TaskObject.Source.DataFileName",
+            "value": "@pipeline().parameters.TaskObject.%(SourceOrTarget)s.DataFileName" % { SourceOrTarget : SourceOrTarget},
             "type": "Expression"
         },
         "StorageAccountEndpoint": {
-            "value": "@pipeline().parameters.TaskObject.Source.StorageAccountName",
+            "value": "@pipeline().parameters.TaskObject.%(SourceOrTarget)s.StorageAccountName" % { SourceOrTarget : SourceOrTarget},
             "type": "Expression"
         },
         "StorageAccountContainerName": {
-            "value": "@pipeline().parameters.TaskObject.Source.StorageAccountContainer",
+            "value": "@pipeline().parameters.TaskObject.%(SourceOrTarget)s.StorageAccountContainer" % { SourceOrTarget : SourceOrTarget},
             "type": "Expression"
         },
         "FirstRowAsHeader": {
-            "value": "@pipeline().parameters.TaskObject.Source.FirstRowAsHeader",
+            "value": "@pipeline().parameters.TaskObject.%(SourceOrTarget)s.FirstRowAsHeader" % { SourceOrTarget : SourceOrTarget},
             "type": "Expression"
         }
     }

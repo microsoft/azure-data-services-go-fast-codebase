@@ -1,5 +1,6 @@
 function(GenerateArm="false",GFPIR="IRA",SourceType="AzureSqlTable",SourceFormat="NA",TargetType="AzureBlobFS",TargetFormat="Parquet")
-{
+local Wrapper = import '../static/partials/wrapper.libsonnet';
+local pipeline =  {
 	"name":	if(GenerateArm=="false") 
 		then "GPL_"+SourceType+"_"+SourceFormat+"_"+TargetType+"_"+TargetFormat+"_Full_Load_Chunk_"+GFPIR 
 		else "[concat(parameters('dataFactoryName'), '/','GPL_"+SourceType+"_"+SourceFormat+"_"+TargetType+"_"+TargetFormat+"_Full_Load_Chunk_" + "', parameters('integrationRuntimeShortName'))]",	
@@ -122,4 +123,6 @@ function(GenerateArm="false",GFPIR="IRA",SourceType="AzureSqlTable",SourceFormat
 		"annotations": []
 	},
 	"type": "Microsoft.DataFactory/factories/pipelines"
-}
+};
+	
+Wrapper(GenerateArm,pipeline)+{}
