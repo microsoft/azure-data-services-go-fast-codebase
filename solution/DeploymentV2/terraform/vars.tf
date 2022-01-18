@@ -54,6 +54,12 @@ variable "domain" {
   description = "The AAD domain"
   type        = string
 }
+variable "cicd_sp_id" {
+  description = "The AAD domain"
+  type        = string
+  default     = ""
+}
+
 //Onprem linked services and pipelines won't be registered until you complete the IR registration and set this to true
 variable "is_onprem_datafactory_ir_registered" {
   description = "Are all on-premise Integration runtimes configured?"

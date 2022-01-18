@@ -35,4 +35,9 @@ resource "azurerm_windows_virtual_machine" "jumphost" {
     sku       = "2016-Datacenter"
     version   = "latest"
   }
+  lifecycle {
+    ignore_changes = [
+      admin_password
+    ]
+  }
 }

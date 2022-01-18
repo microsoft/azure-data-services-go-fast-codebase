@@ -24,7 +24,8 @@ resource "azurerm_key_vault" "app_vault" {
 
 // Grant secret and key access to the current app to store the secret values --------------------------
 // Allows the deployment service principal to compare / check state later
-resource "azurerm_key_vault_access_policy" "cicd_access" {
+resource "azurerm_key_vault_access_policy" "user_access" {
+  count        = (var.cicd_sp_id == data.azurerm_client_config.current.object_id? 0 : 1)
   key_vault_id = azurerm_key_vault.app_vault.id
   tenant_id    = data.azurerm_client_config.current.tenant_id
   object_id    = data.azurerm_client_config.current.object_id
@@ -40,6 +41,26 @@ resource "azurerm_key_vault_access_policy" "cicd_access" {
     azurerm_key_vault.app_vault,
   ]
 }
+
+resource "azurerm_key_vault_access_policy" "cicd_access" {
+  count        = (var.cicd_sp_id == ""? 0 : 1)
+  key_vault_id = azurerm_key_vault.app_vault.id
+  tenant_id    = data.azurerm_client_config.current.tenant_id
+  object_id    = var.cicd_sp_id
+
+  key_permissions = [
+    "Delete", "List", "Get", "Create", "Update", "Purge"
+  ]
+
+  secret_permissions = [
+    "Delete", "List", "Get", "Set", "Purge"
+  ]
+  depends_on = [
+    azurerm_key_vault.app_vault,
+  ]
+}
+
+
 
 // Allows the data factory to retrieve the azure function host key
 resource "azurerm_key_vault_access_policy" "adf_access" {
