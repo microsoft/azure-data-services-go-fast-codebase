@@ -24,7 +24,7 @@
 
 
 
-$environmentName = "arkahna" # currently supports (local, staging)
+$environmentName = "local" # currently supports (local, staging)
 $myIp = (Invoke-WebRequest ifconfig.me/ip).Content
 $skipTerraformDeployment = $true
 $skipWebApp = $true
