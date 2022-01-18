@@ -22,9 +22,9 @@
     <None Remove="0-1-0-beta\A-Journaled\017-AddIntegrationRuntime.sql" />
     <None Remove="0-1-0-beta\A-Journaled\018-AddIntegrationRuntimeData.sql" />
     <None Remove="0-1-0-beta\A-Journaled\019-CleanSamples.sql" />
-    <None Remove="0-1-0-beta\A-Journaled\020-CleanSamples-v1.1.sql" />
     <None Remove="0-1-0-beta\A-Journaled\020-UpdateSourceAndTargetSystems" />
     <None Remove="0-1-0-beta\A-Journaled\020-UpdateSourceAndTargetSystems.sql" />
+    <None Remove="0-1-0-beta\A-Journaled\021-CleanSamples-v1.1.sql" />
     <None Remove="0-1-0-beta\B-Always\001-Schemas.sql" />
     <None Remove="0-1-0-beta\B-Always\002-Tables.sql" />
     <None Remove="0-1-0-beta\B-Always\003-StoredProcsEtc.sql" />
@@ -56,7 +56,7 @@
     <EmbeddedResource Include="0-1-0-beta\A-Journaled\016-NewTaskTypeMapping_NoIR_Updated.sql" />
     <EmbeddedResource Include="0-1-0-beta\A-Journaled\019-CleanSamples.sql" />
     <EmbeddedResource Include="0-1-0-beta\A-Journaled\020-UpdateSourceAndTargetSystems.sql" />
-    <EmbeddedResource Include="0-1-0-beta\A-Journaled\020-CleanSamples-v1.1.sql" />
+    <EmbeddedResource Include="0-1-0-beta\A-Journaled\021-CleanSamples-v1.1.sql" />
     <EmbeddedResource Include="0-1-0-beta\A-Journaled\018-AddIntegrationRuntimeData.sql" />
     <EmbeddedResource Include="0-1-0-beta\A-Journaled\017-AddIntegrationRuntime.sql" />
     <EmbeddedResource Include="0-1-0-beta\A-Journaled\021-CorrectMappingForCsvToSql.sql" />

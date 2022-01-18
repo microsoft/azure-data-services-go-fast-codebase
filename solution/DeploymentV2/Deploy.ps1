@@ -24,14 +24,15 @@
 
 
 
-$environmentName = "local" # currently supports (local, staging)
+$environmentName = "arkahna" # currently supports (local, staging)
 $myIp = (Invoke-WebRequest ifconfig.me/ip).Content
 $skipTerraformDeployment = $true
 $skipWebApp = $true
+$skipSynapse = $false
 $skipFunctionApp = $true
-$skipDatabase = $false
-$skipSampleFiles = $true
-$skipNetworking = $true
+$skipDatabase = $true
+$skipSampleFiles = $false
+$skipNetworking = $false
 $deploymentFolderPath = (Get-Location).Path
 $AddCurrentUserAsWebAppAdmin = $true
 
@@ -80,6 +81,8 @@ $sampledb_name=$outputs.sampledb_name.value
 $metadatadb_name=$outputs.metadatadb_name.value
 $loganalyticsworkspace_id=$outputs.loganalyticsworkspace_id.value
 $purview_sp_name=$outputs.purview_sp_name.value
+$synapse_workspace_name=$outputs.synapse_workspace_name.value
+$synapse_sql_pool_name=$outputs.synapse_sql_pool_name.value
 
 if ($skipNetworking -or $tout.is_vnet_isolated -eq $false) {
     Write-Host "Skipping Private Link Connnections"    
@@ -260,6 +263,40 @@ else {
             Invoke-Sqlcmd -ServerInstance "$sqlserver_name.database.windows.net,1433" -Database $database -AccessToken $token -query $ddlCommand   
     }
 }
+
+
+#----------------------------------------------------------------------------------------------------------------
+#   Configure Synapse Logins
+#----------------------------------------------------------------------------------------------------------------
+if($skipSynapse) {
+    Write-Host "Skipping Synapse SQL Users"    
+}
+else {
+    Write-Host "Configuring Synapse SQL Users"
+
+    #Add Ip to SQL Firewall
+    # $result = az sql server update -n $sqlserver_name -g $resource_group_name  --set publicNetworkAccess="Enabled"
+    # $result = az sql server firewall-rule create -g $resource_group_name -s $sqlserver_name -n "Deploy.ps1" --start-ip-address $myIp --end-ip-address $myIp
+
+    # Fix the MSI registrations on the other databases. I'd like a better way of doing this in the future
+    $SqlInstalled = Get-InstalledModule SqlServer
+    if($null -eq $SqlInstalled)
+    {
+        write-host "Installing SqlServer Module"
+        Install-Module -Name SqlServer -Scope CurrentUser -Force
+    }
+
+
+
+    $token=$(az account get-access-token --resource=https://sql.azuresynapse.net --query accessToken --output tsv)
+    if (![string]::IsNullOrEmpty($datafactory_name))
+    {
+        # For a Spark user to read and write directly from Spark into or from a SQL pool, db_owner permission is required.
+        Invoke-Sqlcmd -ServerInstance "$synapse_workspace_name.sql.azuresynapse.net,1433" -Database $synapse_sql_pool_name -AccessToken $token -query "CREATE USER [$datafactory_name] FROM EXTERNAL PROVIDER"    
+        Invoke-Sqlcmd -ServerInstance "$synapse_workspace_name.sql.azuresynapse.net,1433" -Database $synapse_sql_pool_name -AccessToken $token -query "EXEC sp_addrolemember 'db_owner', '$datafactory_name'"
+    }
+}
+
 
 
 

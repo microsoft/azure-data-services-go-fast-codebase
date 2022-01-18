@@ -65,3 +65,13 @@ output "aad_funcreg_id" {
 output "purview_sp_id" {
   value = var.deploy_purview ?   azuread_application.purview_ir[0].application_id : "0"
 }
+output "synapse_workspace_name" {
+  value = var.deploy_synapse ?   azurerm_synapse_workspace.synapse[0].name : ""
+}
+output "synapse_sql_pool_name" {
+  value = var.deploy_synapse_sqlpool ?   azurerm_synapse_sql_pool.synapse_sql_pool[0].name : ""
+}
+output "synapse_spark_pool_name" {
+  value = var.deploy_synapse_sparkpool ?   azurerm_synapse_spark_pool.synapse_spark_pool[0].name : ""
+}
+
