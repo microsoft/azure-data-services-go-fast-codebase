@@ -15,7 +15,13 @@ namespace DbUp.SqlServer
             {
 
                 var tokenRequestContext = new TokenRequestContext(new[] { "https://database.windows.net//.default" });
-                var defaultAzureCredentialOptions = new DefaultAzureCredentialOptions();
+                var defaultAzureCredentialOptions = new DefaultAzureCredentialOptions()
+                {
+                    ExcludeEnvironmentCredential = true,
+                    ExcludeVisualStudioCodeCredential = true,
+                    ExcludeVisualStudioCredential = true,
+                    ExcludeSharedTokenCacheCredential = true
+                };
                 // Excluded to support running on github actions linux runner
                 defaultAzureCredentialOptions.ExcludeSharedTokenCacheCredential = true;
                 var credential = new DefaultAzureCredential(defaultAzureCredentialOptions);
