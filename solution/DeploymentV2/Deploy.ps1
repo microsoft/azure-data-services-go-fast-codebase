@@ -79,6 +79,7 @@ $stagingdb_name=$outputs.stagingdb_name.value
 $sampledb_name=$outputs.sampledb_name.value
 $metadatadb_name=$outputs.metadatadb_name.value
 $loganalyticsworkspace_id=$outputs.loganalyticsworkspace_id.value
+$purview_sp_name=$outputs.purview_sp_name.value
 
 if ($skipNetworking -or $tout.is_vnet_isolated -eq $false) {
     Write-Host "Skipping Private Link Connnections"    
