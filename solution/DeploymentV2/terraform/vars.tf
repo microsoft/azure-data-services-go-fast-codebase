@@ -55,7 +55,7 @@ variable "domain" {
   type        = string
 }
 variable "cicd_sp_id" {
-  description = "The AAD domain"
+  description = "The Object Id of the GitHub Service Principal. This will ensure that keyvault access policies are configured for GitHub/terraform to read secret state later"
   type        = string
   default     = ""
 }
