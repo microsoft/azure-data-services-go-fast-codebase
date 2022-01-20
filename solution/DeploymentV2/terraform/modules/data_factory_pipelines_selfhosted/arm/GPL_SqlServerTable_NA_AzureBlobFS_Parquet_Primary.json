@@ -1,0 +1,599 @@
+{
+   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+   "contentVersion": "1.0.0.0",
+   "parameters": {
+      "dataFactoryName": {
+         "metadata": "The name of the data factory",
+         "type": "String"
+      },
+      "integrationRuntimeName": {
+         "metadata": "The name of the integration runtime this pipeline uses",
+         "type": "String"
+      },
+      "integrationRuntimeShortName": {
+         "metadata": "The short name of the integration runtime this pipeline uses",
+         "type": "String"
+      },
+      "sharedKeyVaultUri": {
+         "metadata": "The uri of the shared KeyVault",
+         "type": "String"
+      }
+   },
+   "resources": [
+      {
+         "apiVersion": "2018-06-01",
+         "name": "[concat(parameters('dataFactoryName'), '/','GPL_SqlServerTable_NA_AzureBlobFS_Parquet_Primary_', parameters('integrationRuntimeShortName'))]",
+         "properties": {
+            "activities": [
+               {
+                  "dependsOn": [ ],
+                  "linkedServiceName": {
+                     "referenceName": "SLS_AzureFunctionApp",
+                     "type": "LinkedServiceReference"
+                  },
+                  "name": "AF Get Information Schema SQL",
+                  "policy": {
+                     "retry": 0,
+                     "retryIntervalInSeconds": 30,
+                     "secureInput": false,
+                     "secureOutput": false,
+                     "timeout": "7.00:00:00"
+                  },
+                  "type": "AzureFunctionActivity",
+                  "typeProperties": {
+                     "body": {
+                        "type": "Expression",
+                        "value": "@json(concat('{\"TaskInstanceId\":\"', string(pipeline().parameters.TaskObject.TaskInstanceId), '\",\"ExecutionUid\":\"', string(pipeline().parameters.TaskObject.ExecutionUid), '\",\"RunId\":\"', string(pipeline().RunId), '\",\"TableSchema\":\"', string(pipeline().parameters.TaskObject.Source.TableSchema), '\",\"TableName\":\"', string(pipeline().parameters.TaskObject.Source.TableName),'\"}'))"
+                     },
+                     "functionName": "GetInformationSchemaSQL",
+                     "method": "POST"
+                  },
+                  "userProperties": [ ]
+               },
+               {
+                  "dependsOn": [
+                     {
+                        "activity": "AF Get Information Schema SQL",
+                        "dependencyConditions": [
+                           "Succeeded"
+                        ]
+                     }
+                  ],
+                  "name": "Lookup Get SQL Metadata",
+                  "policy": {
+                     "retry": 0,
+                     "retryIntervalInSeconds": 30,
+                     "secureInput": false,
+                     "secureOutput": false,
+                     "timeout": "7.00:00:00"
+                  },
+                  "type": "Lookup",
+                  "typeProperties": {
+                     "dataset": {
+                        "parameters": {
+                           "Database": {
+                              "type": "Expression",
+                              "value": "@pipeline().parameters.TaskObject.Source.System.Database"
+                           },
+                           "KeyVaultBaseUrl": {
+                              "type": "Expression",
+                              "value": "@pipeline().parameters.TaskObject.KeyVaultBaseUrl"
+                           },
+                           "PasswordSecret": {
+                              "type": "Expression",
+                              "value": "@pipeline().parameters.TaskObject.Source.System.PasswordKeyVaultSecretName"
+                           },
+                           "Server": {
+                              "type": "Expression",
+                              "value": "@pipeline().parameters.TaskObject.Source.System.SystemServer"
+                           },
+                           "TableName": {
+                              "type": "Expression",
+                              "value": "@pipeline().parameters.TaskObject.Source.TableName"
+                           },
+                           "TableSchema": {
+                              "type": "Expression",
+                              "value": "@pipeline().parameters.TaskObject.Source.TableSchema"
+                           },
+                           "UserName": {
+                              "type": "Expression",
+                              "value": "@pipeline().parameters.TaskObject.Source.System.Username"
+                           }
+                        },
+                        "referenceName": "[concat('GDS_SqlServerTable_NA_', parameters('integrationRuntimeShortName'))]",
+                        "type": "DatasetReference"
+                     },
+                     "firstRowOnly": false,
+                     "source": {
+                        "partitionOption": "None",
+                        "queryTimeout": "02:00:00",
+                        "sqlReaderQuery": {
+                           "type": "Expression",
+                           "value": "@activity('AF Get Information Schema SQL').output.InformationSchemaSQL"
+                        },
+                        "type": "SqlServerSource"
+                     }
+                  },
+                  "userProperties": [ ]
+               },
+               {
+                  "dependsOn": [
+                     {
+                        "activity": "Lookup Get SQL Metadata",
+                        "dependencyConditions": [
+                           "Failed"
+                        ]
+                     }
+                  ],
+                  "name": "AF Log - Get Metadata Failed",
+                  "type": "ExecutePipeline",
+                  "typeProperties": {
+                     "parameters": {
+                        "Body": {
+                           "type": "Expression",
+                           "value": "@json(concat('{\"TaskInstanceId\":\"', string(pipeline().parameters.TaskObject.TaskInstanceId), '\",\"ExecutionUid\":\"', string(pipeline().parameters.TaskObject.ExecutionUid), '\",\"RunId\":\"', string(pipeline().RunId), '\",\"LogTypeId\":1,\"LogSource\":\"ADF\",\"ActivityType\":\"Get Metadata\",\"StartDateTimeOffSet\":\"', string(pipeline().TriggerTime), '\",\"EndDateTimeOffSet\":\"', string(utcnow()), '\",\"Comment\":\"', string(activity('Lookup Get SQL Metadata').error.message), '\",\"Status\":\"Failed\"}'))"
+                        },
+                        "FunctionName": "Log",
+                        "Method": "Post"
+                     },
+                     "pipeline": {
+                        "referenceName": "SPL_AzureFunction",
+                        "type": "PipelineReference"
+                     },
+                     "waitOnCompletion": false
+                  },
+                  "userProperties": [ ]
+               },
+               {
+                  "dependsOn": [
+                     {
+                        "activity": "Lookup Get SQL Metadata",
+                        "dependencyConditions": [
+                           "Succeeded"
+                        ]
+                     }
+                  ],
+                  "linkedServiceName": {
+                     "referenceName": "SLS_AzureFunctionApp",
+                     "type": "LinkedServiceReference"
+                  },
+                  "name": "AF Persist Metadata and Get Mapping",
+                  "policy": {
+                     "retry": 0,
+                     "retryIntervalInSeconds": 30,
+                     "secureInput": false,
+                     "secureOutput": false,
+                     "timeout": "7.00:00:00"
+                  },
+                  "type": "AzureFunctionActivity",
+                  "typeProperties": {
+                     "body": {
+                        "type": "Expression",
+                        "value": "@json(\n concat('{\"TaskInstanceId\":\"',\n string(pipeline().parameters.TaskObject.TaskInstanceId), \n '\",\"ExecutionUid\":\"', \n string(pipeline().parameters.TaskObject.ExecutionUid), \n '\",\"RunId\":\"', string(pipeline().RunId), \n '\",\"StorageAccountName\":\"', \n string(pipeline().parameters.TaskObject.Target.System.SystemServer),\n  '\",\"StorageAccountContainer\":\"', \n  string(pipeline().parameters.TaskObject.Target.System.Container), \n  '\",\"RelativePath\":\"', \n  string(pipeline().parameters.TaskObject.Target.Instance.TargetRelativePath), \n  '\",\"SchemaFileName\":\"', \n  string(pipeline().parameters.TaskObject.Target.SchemaFileName), \n  '\",\"SourceType\":\"', \n  string(pipeline().parameters.TaskObject.Source.System.Type), \n  '\",\"TargetType\":\"', \n  if(\n    contains(\n    string(pipeline().parameters.TaskObject.Target.System.SystemServer),\n    '.dfs.core.windows.net'\n    ),\n   'ADLS',\n   'Azure Blob'), \n  '\",\"Data\":',\n  string(activity('Lookup Get SQL Metadata').output),\n  ',\"MetadataType\":\"SQL\"}')\n)"
+                     },
+                     "functionName": "TaskExecutionSchemaFile",
+                     "method": "POST"
+                  },
+                  "userProperties": [ ]
+               },
+               {
+                  "dependsOn": [
+                     {
+                        "activity": "AF Persist Metadata and Get Mapping",
+                        "dependencyConditions": [
+                           "Succeeded"
+                        ]
+                     }
+                  ],
+                  "name": "Switch Load Type",
+                  "type": "Switch",
+                  "typeProperties": {
+                     "cases": [
+                        {
+                           "activities": [
+                              {
+                                 "dependsOn": [ ],
+                                 "name": "Execute Full_Load Pipeline",
+                                 "type": "ExecutePipeline",
+                                 "typeProperties": {
+                                    "parameters": {
+                                       "BatchCount": "1",
+                                       "Item": "1",
+                                       "Mapping": {
+                                          "type": "Expression",
+                                          "value": "@activity('AF Persist Metadata and Get Mapping').output.value"
+                                       },
+                                       "TaskObject": {
+                                          "type": "Expression",
+                                          "value": "@pipeline().parameters.TaskObject"
+                                       }
+                                    },
+                                    "pipeline": {
+                                       "referenceName": "[concat('GPL_SqlServerTable_NA_AzureBlobFS_Parquet_Full_Load_', parameters('integrationRuntimeShortName'))]",
+                                       "type": "PipelineReference"
+                                    },
+                                    "waitOnCompletion": true
+                                 },
+                                 "userProperties": [ ]
+                              }
+                           ],
+                           "value": "Full"
+                        },
+                        {
+                           "activities": [
+                              {
+                                 "dependsOn": [
+                                    {
+                                       "activity": "Lookup New Watermark",
+                                       "dependencyConditions": [
+                                          "Succeeded"
+                                       ]
+                                    }
+                                 ],
+                                 "name": "Execute Watermark Pipeline",
+                                 "type": "ExecutePipeline",
+                                 "typeProperties": {
+                                    "parameters": {
+                                       "BatchCount": "1",
+                                       "Item": "1",
+                                       "Mapping": {
+                                          "type": "Expression",
+                                          "value": "@activity('AF Persist Metadata and Get Mapping').output.value"
+                                       },
+                                       "NewWaterMark": {
+                                          "type": "Expression",
+                                          "value": "@activity('Lookup New Watermark').output.firstRow.newWatermark"
+                                       },
+                                       "TaskObject": {
+                                          "type": "Expression",
+                                          "value": "@pipeline().parameters.TaskObject"
+                                       }
+                                    },
+                                    "pipeline": {
+                                       "referenceName": "[concat('GPL_SqlServerTable_NA_AzureBlobFS_Parquet_Watermark_', parameters('integrationRuntimeShortName'))]",
+                                       "type": "PipelineReference"
+                                    },
+                                    "waitOnCompletion": true
+                                 },
+                                 "userProperties": [ ]
+                              },
+                              {
+                                 "dependsOn": [ ],
+                                 "name": "Lookup New Watermark",
+                                 "policy": {
+                                    "retry": 0,
+                                    "retryIntervalInSeconds": 30,
+                                    "secureInput": false,
+                                    "secureOutput": false,
+                                    "timeout": "0.00:30:00"
+                                 },
+                                 "type": "Lookup",
+                                 "typeProperties": {
+                                    "dataset": {
+                                       "parameters": {
+                                          "Database": {
+                                             "type": "Expression",
+                                             "value": "@pipeline().parameters.TaskObject.Source.System.Database"
+                                          },
+                                          "KeyVaultBaseUrl": {
+                                             "type": "Expression",
+                                             "value": "@pipeline().parameters.TaskObject.KeyVaultBaseUrl"
+                                          },
+                                          "PasswordSecret": {
+                                             "type": "Expression",
+                                             "value": "@pipeline().parameters.TaskObject.Source.System.PasswordKeyVaultSecretName"
+                                          },
+                                          "Server": {
+                                             "type": "Expression",
+                                             "value": "@pipeline().parameters.TaskObject.Source.System.SystemServer"
+                                          },
+                                          "TableName": {
+                                             "type": "Expression",
+                                             "value": "@pipeline().parameters.TaskObject.Source.TableName"
+                                          },
+                                          "TableSchema": {
+                                             "type": "Expression",
+                                             "value": "@pipeline().parameters.TaskObject.Source.TableSchema"
+                                          },
+                                          "UserName": {
+                                             "type": "Expression",
+                                             "value": "@pipeline().parameters.TaskObject.Source.System.Username"
+                                          }
+                                       },
+                                       "referenceName": "[concat('GDS_SqlServerTable_NA_', parameters('integrationRuntimeShortName'))]",
+                                       "type": "DatasetReference"
+                                    },
+                                    "firstRowOnly": true,
+                                    "source": {
+                                       "partitionOption": "None",
+                                       "queryTimeout": "02:00:00",
+                                       "sqlReaderQuery": {
+                                          "type": "Expression",
+                                          "value": "@{pipeline().parameters.TaskObject.Source.IncrementalSQLStatement}"
+                                       },
+                                       "type": "SqlServerSource"
+                                    }
+                                 },
+                                 "userProperties": [ ]
+                              }
+                           ],
+                           "value": "Watermark"
+                        },
+                        {
+                           "activities": [
+                              {
+                                 "dependsOn": [
+                                    {
+                                       "activity": "Lookup Chunk",
+                                       "dependencyConditions": [
+                                          "Succeeded"
+                                       ]
+                                    }
+                                 ],
+                                 "name": "Execute Full Load Chunk Pipeline",
+                                 "type": "ExecutePipeline",
+                                 "typeProperties": {
+                                    "parameters": {
+                                       "BatchCount": {
+                                          "type": "Expression",
+                                          "value": "@activity('Lookup Chunk').output.firstRow.batchcount"
+                                       },
+                                       "Mapping": {
+                                          "type": "Expression",
+                                          "value": "@activity('AF Persist Metadata and Get Mapping').output.value"
+                                       },
+                                       "TaskObject": {
+                                          "type": "Expression",
+                                          "value": "@pipeline().parameters.TaskObject"
+                                       }
+                                    },
+                                    "pipeline": {
+                                       "referenceName": "[concat('GPL_SqlServerTable_NA_AzureBlobFS_Parquet_Full_Load_Chunk_', parameters('integrationRuntimeShortName'))]",
+                                       "type": "PipelineReference"
+                                    },
+                                    "waitOnCompletion": true
+                                 },
+                                 "userProperties": [ ]
+                              },
+                              {
+                                 "dependsOn": [ ],
+                                 "name": "Lookup Chunk",
+                                 "policy": {
+                                    "retry": 0,
+                                    "retryIntervalInSeconds": 30,
+                                    "secureInput": false,
+                                    "secureOutput": false,
+                                    "timeout": "0.00:30:00"
+                                 },
+                                 "type": "Lookup",
+                                 "typeProperties": {
+                                    "dataset": {
+                                       "parameters": {
+                                          "Database": {
+                                             "type": "Expression",
+                                             "value": "@pipeline().parameters.TaskObject.Source.System.Database"
+                                          },
+                                          "KeyVaultBaseUrl": {
+                                             "type": "Expression",
+                                             "value": "@pipeline().parameters.TaskObject.KeyVaultBaseUrl"
+                                          },
+                                          "PasswordSecret": {
+                                             "type": "Expression",
+                                             "value": "@pipeline().parameters.TaskObject.Source.System.PasswordKeyVaultSecretName"
+                                          },
+                                          "Server": {
+                                             "type": "Expression",
+                                             "value": "@pipeline().parameters.TaskObject.Source.System.SystemServer"
+                                          },
+                                          "TableName": {
+                                             "type": "Expression",
+                                             "value": "@pipeline().parameters.TaskObject.Source.TableName"
+                                          },
+                                          "TableSchema": {
+                                             "type": "Expression",
+                                             "value": "@pipeline().parameters.TaskObject.Source.TableSchema"
+                                          },
+                                          "UserName": {
+                                             "type": "Expression",
+                                             "value": "@pipeline().parameters.TaskObject.Source.System.Username"
+                                          }
+                                       },
+                                       "referenceName": "[concat('GDS_SqlServerTable_NA_', parameters('integrationRuntimeShortName'))]",
+                                       "type": "DatasetReference"
+                                    },
+                                    "firstRowOnly": true,
+                                    "source": {
+                                       "partitionOption": "None",
+                                       "queryTimeout": "02:00:00",
+                                       "sqlReaderQuery": {
+                                          "type": "Expression",
+                                          "value": "@{pipeline().parameters.TaskObject.Source.IncrementalSQLStatement}"
+                                       },
+                                       "type": "SqlServerSource"
+                                    }
+                                 },
+                                 "userProperties": [ ]
+                              }
+                           ],
+                           "value": "Full_Chunk"
+                        },
+                        {
+                           "activities": [
+                              {
+                                 "dependsOn": [
+                                    {
+                                       "activity": "Lookup New Watermark and Chunk",
+                                       "dependencyConditions": [
+                                          "Succeeded"
+                                       ]
+                                    }
+                                 ],
+                                 "name": "Execute Watermark Chunk Pipeline",
+                                 "type": "ExecutePipeline",
+                                 "typeProperties": {
+                                    "parameters": {
+                                       "BatchCount": {
+                                          "type": "Expression",
+                                          "value": "@activity('Lookup New Watermark and Chunk').output.firstRow.batchcount"
+                                       },
+                                       "Mapping": {
+                                          "type": "Expression",
+                                          "value": "@activity('AF Persist Metadata and Get Mapping').output.value"
+                                       },
+                                       "NewWatermark": {
+                                          "type": "Expression",
+                                          "value": "@activity('Lookup New Watermark and Chunk').output.firstRow.newWatermark"
+                                       },
+                                       "TaskObject": {
+                                          "type": "Expression",
+                                          "value": "@pipeline().parameters.TaskObject"
+                                       }
+                                    },
+                                    "pipeline": {
+                                       "referenceName": "[concat('GPL_SqlServerTable_NA_AzureBlobFS_Parquet_Watermark_Chunk_', parameters('integrationRuntimeShortName'))]",
+                                       "type": "PipelineReference"
+                                    },
+                                    "waitOnCompletion": true
+                                 },
+                                 "userProperties": [ ]
+                              },
+                              {
+                                 "dependsOn": [ ],
+                                 "name": "Lookup New Watermark and Chunk",
+                                 "policy": {
+                                    "retry": 0,
+                                    "retryIntervalInSeconds": 30,
+                                    "secureInput": false,
+                                    "secureOutput": false,
+                                    "timeout": "0.00:30:00"
+                                 },
+                                 "type": "Lookup",
+                                 "typeProperties": {
+                                    "dataset": {
+                                       "parameters": {
+                                          "Database": {
+                                             "type": "Expression",
+                                             "value": "@pipeline().parameters.TaskObject.Source.System.Database"
+                                          },
+                                          "KeyVaultBaseUrl": {
+                                             "type": "Expression",
+                                             "value": "@pipeline().parameters.TaskObject.KeyVaultBaseUrl"
+                                          },
+                                          "PasswordSecret": {
+                                             "type": "Expression",
+                                             "value": "@pipeline().parameters.TaskObject.Source.System.PasswordKeyVaultSecretName"
+                                          },
+                                          "Server": {
+                                             "type": "Expression",
+                                             "value": "@pipeline().parameters.TaskObject.Source.System.SystemServer"
+                                          },
+                                          "TableName": {
+                                             "type": "Expression",
+                                             "value": "@pipeline().parameters.TaskObject.Source.TableName"
+                                          },
+                                          "TableSchema": {
+                                             "type": "Expression",
+                                             "value": "@pipeline().parameters.TaskObject.Source.TableSchema"
+                                          },
+                                          "UserName": {
+                                             "type": "Expression",
+                                             "value": "@pipeline().parameters.TaskObject.Source.System.Username"
+                                          }
+                                       },
+                                       "referenceName": "[concat('GDS_SqlServerTable_NA_', parameters('integrationRuntimeShortName'))]",
+                                       "type": "DatasetReference"
+                                    },
+                                    "firstRowOnly": true,
+                                    "source": {
+                                       "partitionOption": "None",
+                                       "queryTimeout": "02:00:00",
+                                       "sqlReaderQuery": {
+                                          "type": "Expression",
+                                          "value": "@{pipeline().parameters.TaskObject.Source.IncrementalSQLStatement}"
+                                       },
+                                       "type": "SqlServerSource"
+                                    }
+                                 },
+                                 "userProperties": [ ]
+                              }
+                           ],
+                           "value": "Watermark_Chunk"
+                        }
+                     ],
+                     "on": {
+                        "type": "Expression",
+                        "value": "@pipeline().parameters.TaskObject.Source.IncrementalType"
+                     }
+                  },
+                  "userProperties": [ ]
+               }
+            ],
+            "annotations": [ ],
+            "folder": {
+               "name": "[concat('ADS Go Fast/Data Movement/', parameters('integrationRuntimeShortName'))]"
+            },
+            "lastPublishTime": "2020-08-04T12:40:45Z",
+            "parameters": {
+               "TaskObject": {
+                  "defaultValue": {
+                     "DataFactory": {
+                        "ADFPipeline": "AZ_SQL_AZ_Storage_Parquet_Azure",
+                        "Id": 1,
+                        "Name": "adsgofastdatakakeacceladf",
+                        "ResourceGroup": "AdsGoFastDataLakeAccel",
+                        "SubscriptionId": "035a1364-f00d-48e2-b582-4fe125905ee3"
+                     },
+                     "DegreeOfCopyParallelism": 1,
+                     "Enabled": 1,
+                     "ExecutionUid": "2c5924ee-b855-4d2b-bb7e-4f5dde4c4dd3",
+                     "KeyVaultBaseUrl": "https://adsgofastkeyvault.vault.azure.net/",
+                     "NumberOfRetries": 111,
+                     "ScheduleMasterId": 2,
+                     "Source": {
+                        "Database": {
+                           "AuthenticationType": "MSI",
+                           "Name": "AWSample",
+                           "SystemName": "adsgofastdatakakeaccelsqlsvr.database.windows.net"
+                        },
+                        "Extraction": {
+                           "FullOrIncremental": "Full",
+                           "IncrementalType": null,
+                           "TableName": "SalesOrderHeader",
+                           "TableSchema": "SalesLT",
+                           "Type": "Table"
+                        },
+                        "Type": "Azure SQL"
+                     },
+                     "Target": {
+                        "DataFileName": "SalesLT.SalesOrderHeader.parquet",
+                        "FirstRowAsHeader": null,
+                        "MaxConcorrentConnections": null,
+                        "RelativePath": "/AwSample/SalesLT/SalesOrderHeader/2020/7/9/14/12/",
+                        "SchemaFileName": "SalesLT.SalesOrderHeader",
+                        "SheetName": null,
+                        "SkipLineCount": null,
+                        "StorageAccountAccessMethod": "MSI",
+                        "StorageAccountContainer": "datalakeraw",
+                        "StorageAccountName": "https://adsgofastdatalakeaccelst.blob.core.windows.net",
+                        "Type": "Azure Blob"
+                     },
+                     "TaskGroupConcurrency": 10,
+                     "TaskGroupPriority": 0,
+                     "TaskInstanceId": 75,
+                     "TaskMasterId": 12,
+                     "TaskStatus": "Untried",
+                     "TaskType": "SQL Database to Azure Storage"
+                  },
+                  "type": "object"
+               }
+            },
+            "variables": {
+               "SQLStatement": {
+                  "type": "String"
+               }
+            }
+         },
+         "type": "Microsoft.DataFactory/factories/pipelines"
+      }
+   ]
+}

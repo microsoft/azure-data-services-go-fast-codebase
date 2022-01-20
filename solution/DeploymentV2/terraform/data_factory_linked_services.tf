@@ -5,6 +5,7 @@ locals {
   linkedservice_generic_adls_prefix     = "GLS_AzureBlobFS_"
   linkedservice_generic_blob_prefix     = "GLS_AzureBlobStorage_"
   linkedservice_generic_azuresql_prefix = "GLS_AzureSqlDatabase_"
+  linkedservice_generic_azuresynapse_prefix= "GLS_AzureSynapse_"
   linkedservice_generic_mssql_prefix    = "GLS_SqlServerDatabase_"
   linkedservice_generic_file_prefix     = "GLS_FileServer_"
 }
@@ -35,11 +36,11 @@ resource "azurerm_data_factory_linked_service_azure_function" "function_app" {
 # Generic Linked Services (1 per Integration Runtime)
 #------------------------------------------------------------------------------------------------------
 resource "azurerm_data_factory_linked_custom_service" "generic_kv" {
-  for_each = {
-    for ir in local.integration_runtimes :
-    ir.short_name => ir
-    if(ir.is_azure == true || var.is_onprem_datafactory_ir_registered == true)
-  }
+  for_each             = { 
+    for ir in local.integration_runtimes : 
+    ir.short_name => ir 
+    if (ir.is_azure == true || var.is_onprem_datafactory_ir_registered == true)
+    }
   name                 = "${local.linkedservice_generic_kv_prefix}${each.value.short_name}"
   data_factory_id      = azurerm_data_factory.data_factory.id
   type                 = "AzureKeyVault"
@@ -92,7 +93,7 @@ resource "azurerm_data_factory_linked_custom_service" "blob" {
   for_each = {
     for ir in local.integration_runtimes :
     ir.short_name => ir
-    if(ir.is_azure == true || var.is_onprem_datafactory_ir_registered == true)
+    if (ir.is_azure == true || var.is_onprem_datafactory_ir_registered == true)
   }
   name                 = "${local.linkedservice_generic_blob_prefix}${each.value.short_name}"
   data_factory_id      = azurerm_data_factory.data_factory.id
@@ -143,11 +144,39 @@ JSON
   ]
 }
 
+resource "azurerm_data_factory_linked_custom_service" "synapse" {
+  for_each = {
+    for ir in local.integration_runtimes :
+    ir.short_name => ir
+    if ir.is_azure == true
+  }
+  name            = "${local.linkedservice_generic_azuresynapse_prefix}${each.value.short_name}"
+  description     = "Generic Azure Synapse"
+  type            = "AzureSqlDW"
+  data_factory_id = azurerm_data_factory.data_factory.id
+  integration_runtime {
+    name = each.value.name
+  }
+  type_properties_json = <<JSON
+    {
+			"connectionString": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=@{linkedService().Server};Initial Catalog=@{linkedService().Database}"
+		}
+JSON
+  parameters = {
+    Server   = ""
+    Database = ""
+  }
+  depends_on = [
+    azurerm_data_factory_integration_runtime_azure.azure_ir,
+    azurerm_data_factory_integration_runtime_self_hosted.self_hosted_ir
+  ]
+}
+
 resource "azurerm_data_factory_linked_custom_service" "mssqldatabase" {
   for_each = {
     for ir in local.integration_runtimes :
     ir.short_name => ir
-    if(var.is_onprem_datafactory_ir_registered == true)
+    if (var.is_onprem_datafactory_ir_registered == true)
   }
   name            = "${local.linkedservice_generic_mssql_prefix}${each.value.short_name}"
   data_factory_id = azurerm_data_factory.data_factory.id
@@ -194,10 +223,10 @@ JSON
 
 
 resource "azurerm_data_factory_linked_custom_service" "file" {
-  for_each = {
-    for ir in local.integration_runtimes :
-    ir.short_name => ir
-    if(ir.is_azure == true || var.is_onprem_datafactory_ir_registered == true)
+  for_each        = { 
+    for ir in local.integration_runtimes : 
+    ir.short_name => ir 
+    if (ir.is_azure == true || var.is_onprem_datafactory_ir_registered == true)
   }
   name            = "${local.linkedservice_generic_file_prefix}${each.value.short_name}"
   data_factory_id = azurerm_data_factory.data_factory.id

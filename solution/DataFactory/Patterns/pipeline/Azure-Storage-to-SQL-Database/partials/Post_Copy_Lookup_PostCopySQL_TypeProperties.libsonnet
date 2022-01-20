@@ -1,9 +1,10 @@
 function(GenerateArm="true",GFPIR="IRA", TargetType="AzureSqlTable", TargetFormat="NA")
-if (TargetType=="AzureSqlTable"&&TargetFormat=="NA") then
+if ((TargetType=="AzureSqlTable" || TargetType=="AzureSqlDWTable") && TargetFormat=="NA") then
 {
-    local referenceName = "GDS_AzureSqlTable_NA_",
+    local referenceName = "GDS_"+TargetType+"_NA_",
+    local sqlSource = if(TargetType=="AzureSqlTable") then "AzureSqlSource" else "SqlDWSource",
     "source": {
-      "type": "AzureSqlSource",
+      "type": sqlSource,
       "sqlReaderQuery": {
           "value": "@pipeline().parameters.TaskObject.Target.PostCopySQL",
           "type": "Expression"

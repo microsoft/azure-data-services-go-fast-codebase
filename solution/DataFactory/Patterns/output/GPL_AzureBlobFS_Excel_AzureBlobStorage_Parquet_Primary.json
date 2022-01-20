@@ -1,0 +1,217 @@
+{
+   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+   "contentVersion": "1.0.0.0",
+   "parameters": {
+      "dataFactoryName": {
+         "metadata": "The name of the data factory",
+         "type": "String"
+      },
+      "integrationRuntimeName": {
+         "metadata": "The name of the integration runtime this pipeline uses",
+         "type": "String"
+      },
+      "integrationRuntimeShortName": {
+         "metadata": "The short name of the integration runtime this pipeline uses",
+         "type": "String"
+      },
+      "sharedKeyVaultUri": {
+         "metadata": "The uri of the shared KeyVault",
+         "type": "String"
+      }
+   },
+   "resources": [
+      {
+         "apiVersion": "2018-06-01",
+         "name": "[concat(parameters('dataFactoryName'), '/','GPL_AzureBlobFS_Excel_AzureBlobStorage_Parquet_Primary_', parameters('integrationRuntimeShortName'))]",
+         "properties": {
+            "activities": [
+               {
+                  "dependsOn": [
+                     {
+                        "activity": "Copy AzureBlobFS to AzureBlobStorage Started",
+                        "dependencyConditions": [
+                           "Succeeded"
+                        ]
+                     }
+                  ],
+                  "inputs": [
+                     {
+                        "parameters": {
+                           "FileName": {
+                              "type": "Expression",
+                              "value": "@pipeline().parameters.TaskObject.Source.DataFileName"
+                           },
+                           "FirstRowAsHeader": {
+                              "type": "Expression",
+                              "value": "@pipeline().parameters.TaskObject.Source.FirstRowAsHeader"
+                           },
+                           "RelativePath": {
+                              "type": "Expression",
+                              "value": "@pipeline().parameters.TaskObject.Source.RelativePath"
+                           },
+                           "SheetName": {
+                              "type": "Expression",
+                              "value": "@pipeline().parameters.TaskObject.Source.SheetName"
+                           },
+                           "StorageAccountContainerName": {
+                              "type": "Expression",
+                              "value": "@pipeline().parameters.TaskObject.Source.System.Container"
+                           },
+                           "StorageAccountEndpoint": {
+                              "type": "Expression",
+                              "value": "@pipeline().parameters.TaskObject.Source.System.SystemServer"
+                           }
+                        },
+                        "referenceName": "[concat('GDS_AzureBlobFS_Excel_', parameters('integrationRuntimeShortName'))]",
+                        "type": "DatasetReference"
+                     }
+                  ],
+                  "name": "Copy AzureBlobFS to AzureBlobStorage",
+                  "outputs": [
+                     {
+                        "parameters": {
+                           "FileName": {
+                              "type": "Expression",
+                              "value": "@pipeline().parameters.TaskObject.Target.DataFileName"
+                           },
+                           "RelativePath": {
+                              "type": "Expression",
+                              "value": "@pipeline().parameters.TaskObject.Target.RelativePath"
+                           },
+                           "StorageAccountContainerName": {
+                              "type": "Expression",
+                              "value": "@pipeline().parameters.TaskObject.Target.System.Container"
+                           },
+                           "StorageAccountEndpoint": {
+                              "type": "Expression",
+                              "value": "@pipeline().parameters.TaskObject.Target.System.SystemServer"
+                           }
+                        },
+                        "referenceName": "[concat('GDS_AzureBlobStorage_Parquet_', parameters('integrationRuntimeShortName'))]",
+                        "type": "DatasetReference"
+                     }
+                  ],
+                  "policy": {
+                     "retry": 0,
+                     "retryIntervalInSeconds": 30,
+                     "secureInput": false,
+                     "secureOutput": false,
+                     "timeout": "7.00:00:00"
+                  },
+                  "type": "Copy",
+                  "typeProperties": {
+                     "enableStaging": false,
+                     "parallelCopies": {
+                        "type": "Expression",
+                        "value": "@pipeline().parameters.TaskObject.DegreeOfCopyParallelism"
+                     },
+                     "sink": {
+                        "storeSettings": {
+                           "copyBehavior": "PreserveHierarchy",
+                           "type": "AzureBlobStorageWriteSettings"
+                        },
+                        "type": "ParquetSink"
+                     },
+                     "source": {
+                        "storeSettings": {
+                           "recursive": true,
+                           "type": "AzureBlobFSReadSettings"
+                        },
+                        "type": "ExcelSource"
+                     }
+                  },
+                  "userProperties": [ ]
+               },
+               {
+                  "dependsOn": [
+                     {
+                        "activity": "Copy AzureBlobFS to AzureBlobStorage",
+                        "dependencyConditions": [
+                           "Failed"
+                        ]
+                     }
+                  ],
+                  "name": "Copy AzureBlobFS to AzureBlobStorage Failed",
+                  "type": "ExecutePipeline",
+                  "typeProperties": {
+                     "parameters": {
+                        "Body": {
+                           "type": "Expression",
+                           "value": "@json(concat('{\"TaskInstanceId\":\"', string(pipeline().parameters.TaskObject.TaskInstanceId), '\",\"ExecutionUid\":\"', string(pipeline().parameters.TaskObject.ExecutionUid), '\",\"RunId\":\"', string(pipeline().RunId), '\",\"LogTypeId\":1,\"LogSource\":\"ADF\",\"ActivityType\":\"Copy Blob to Blob\",\"StartDateTimeOffSet\":\"', string(pipeline().TriggerTime), '\",\"EndDateTimeOffSet\":\"', string(utcnow()), '\",\"Comment\":\"', string(activity('Copy AzureBlobFS to AzureBlobStorage').error.message), '\",\"Status\":\"Failed\"}'))"
+                        },
+                        "FunctionName": "Log",
+                        "Method": "Post"
+                     },
+                     "pipeline": {
+                        "referenceName": "SPL_AzureFunction",
+                        "type": "PipelineReference"
+                     },
+                     "waitOnCompletion": false
+                  },
+                  "userProperties": [ ]
+               },
+               {
+                  "dependsOn": [ ],
+                  "name": "Copy AzureBlobFS to AzureBlobStorage Started",
+                  "type": "ExecutePipeline",
+                  "typeProperties": {
+                     "parameters": {
+                        "Body": {
+                           "type": "Expression",
+                           "value": "@json(concat('{\"TaskInstanceId\":\"', string(pipeline().parameters.TaskObject.TaskInstanceId), '\",\"ExecutionUid\":\"', string(pipeline().parameters.TaskObject.ExecutionUid), '\",\"RunId\":\"', string(pipeline().RunId), '\",\"LogTypeId\":3,\"LogSource\":\"ADF\",\"ActivityType\":\"Copy Blob to Blob\",\"StartDateTimeOffSet\":\"', string(pipeline().TriggerTime), '\",\"Status\":\"Started\"}'))"
+                        },
+                        "FunctionName": "Log",
+                        "Method": "Post"
+                     },
+                     "pipeline": {
+                        "referenceName": "SPL_AzureFunction",
+                        "type": "PipelineReference"
+                     },
+                     "waitOnCompletion": false
+                  },
+                  "userProperties": [ ]
+               },
+               {
+                  "dependsOn": [
+                     {
+                        "activity": "Copy AzureBlobFS to AzureBlobStorage",
+                        "dependencyConditions": [
+                           "Succeeded"
+                        ]
+                     }
+                  ],
+                  "name": "Copy AzureBlobFS to AzureBlobStorage Succeed",
+                  "type": "ExecutePipeline",
+                  "typeProperties": {
+                     "parameters": {
+                        "Body": {
+                           "type": "Expression",
+                           "value": "@json(concat('{\"TaskInstanceId\":\"', string(pipeline().parameters.TaskObject.TaskInstanceId), '\",\"ExecutionUid\":\"', string(pipeline().parameters.TaskObject.ExecutionUid), '\",\"RunId\":\"', string(pipeline().RunId), '\",\"LogTypeId\":1,\"LogSource\":\"ADF\",\"ActivityType\":\"Copy Blob to Blob\",\"StartDateTimeOffSet\":\"', string(pipeline().TriggerTime), '\",\"EndDateTimeOffSet\":\"', string(utcnow()), '\",\"RowsInserted\":\"', string(activity('Copy AzureBlobFS to AzureBlobStorage').output.filesWritten), '\",\"Comment\":\"\",\"Status\":\"Complete\"}'))"
+                        },
+                        "FunctionName": "Log",
+                        "Method": "Post"
+                     },
+                     "pipeline": {
+                        "referenceName": "SPL_AzureFunction",
+                        "type": "PipelineReference"
+                     },
+                     "waitOnCompletion": false
+                  },
+                  "userProperties": [ ]
+               }
+            ],
+            "annotations": [ ],
+            "folder": {
+               "name": "[concat('ADS Go Fast/Data Movement/', parameters('integrationRuntimeShortName'))]"
+            },
+            "lastPublishTime": "2020-08-05T04:14:00Z",
+            "parameters": {
+               "TaskObject": {
+                  "type": "object"
+               }
+            }
+         },
+         "type": "Microsoft.DataFactory/factories/pipelines"
+      }
+   ]
+}

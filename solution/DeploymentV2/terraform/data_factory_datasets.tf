@@ -11,6 +11,7 @@ module "data_factory_datasets" {
   integration_runtime_name       = each.value.name
   integration_runtime_short_name = each.value.short_name
   azure_sql_linkedservice_name   = "${local.linkedservice_generic_azuresql_prefix}${each.value.short_name}"
+  azure_synapse_linkedservice_name="${local.linkedservice_generic_azuresynapse_prefix}${each.value.short_name}"
   data_lake_linkedservice_name   = "${local.linkedservice_generic_adls_prefix}${each.value.short_name}"
   blob_linkedservice_name        = "${local.linkedservice_generic_blob_prefix}${each.value.short_name}"
   mssql_linkedservice_name       = "${local.linkedservice_generic_mssql_prefix}${each.value.short_name}"

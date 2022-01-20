@@ -5,11 +5,13 @@ local Main_CopyActivity_AzureBlobFS_Json_Inputs = import './Main_CopyActivity_Az
 local Main_CopyActivity_AzureBlobStorage_DelimitedText_Inputs = import './Main_CopyActivity_AzureBlobStorage_DelimitedText_Inputs.libsonnet';
 local Main_CopyActivity_AzureBlobStorage_Excel_Inputs = import './Main_CopyActivity_AzureBlobStorage_Excel_Inputs.libsonnet';
 local Main_CopyActivity_AzureBlobStorage_Json_Inputs = import './Main_CopyActivity_AzureBlobStorage_Json_Inputs.libsonnet';
-local Main_CopyActivity_AzureSqlTable_NA_Outputs = import './Main_CopyActivity_AzureSqlTable_NA_Outputs.libsonnet';
+local Main_CopyActivity_AzureSqlTable_NA_Outputs = import './Main_CopyActivity_Outputs.libsonnet';
 local Main_CopyActivity_AzureBlobFS_Parquet_Inputs = import './Main_CopyActivity_AzureBlobFS_Parquet_Inputs.libsonnet';
 local Main_CopyActivity_AzureBlobStorage_Parquet_Inputs = import './Main_CopyActivity_AzureBlobStorage_Parquet_Inputs.libsonnet';
 
-if(SourceType=="AzureBlobFS"&&SourceFormat=="Excel"&&TargetType=="AzureSqlTable"&&TargetFormat=="NA") then
+local sinkType = if(TargetType=="AzureSqlTable") then "AzureSqlSink" else "SqlDWSink";
+
+if(SourceType=="AzureBlobFS"&&SourceFormat=="Excel"&&(TargetType=="AzureSqlTable" || TargetType=="AzureSqlDWTable") &&TargetFormat=="NA") then
 {
   "typeProperties": {    
     "source": {
@@ -20,7 +22,7 @@ if(SourceType=="AzureBlobFS"&&SourceFormat=="Excel"&&TargetType=="AzureSqlTable"
         }
     },
     "sink": {
-        "type": "AzureSqlSink",
+        "type": sinkType,
         "preCopyScript": {
             "value": "@{pipeline().parameters.TaskObject.Target.PreCopySQL}",
             "type": "Expression"
@@ -41,7 +43,7 @@ if(SourceType=="AzureBlobFS"&&SourceFormat=="Excel"&&TargetType=="AzureSqlTable"
 }
   + Main_CopyActivity_AzureBlobFS_Excel_Inputs(GenerateArm,GFPIR)
   + Main_CopyActivity_AzureSqlTable_NA_Outputs(GenerateArm,GFPIR)
-else if(SourceType=="AzureBlobFS"&&SourceFormat=="DelimitedText"&&TargetType=="AzureSqlTable"&&TargetFormat=="NA") then
+else if(SourceType=="AzureBlobFS"&&SourceFormat=="DelimitedText"&&(TargetType=="AzureSqlTable" || TargetType=="AzureSqlDWTable") &&TargetFormat=="NA") then
 {
   "typeProperties": {    
     "source": {
@@ -72,7 +74,7 @@ else if(SourceType=="AzureBlobFS"&&SourceFormat=="DelimitedText"&&TargetType=="A
       }
     },
     "sink": {
-      "type": "AzureSqlSink",
+      "type": sinkType,
       "preCopyScript": {
         "value": "@{pipeline().parameters.TaskObject.Target.PreCopySQL}",
         "type": "Expression"
@@ -93,7 +95,7 @@ else if(SourceType=="AzureBlobFS"&&SourceFormat=="DelimitedText"&&TargetType=="A
 }
   + Main_CopyActivity_AzureBlobFS_DelimitedText_Inputs(GenerateArm,GFPIR)
   + Main_CopyActivity_AzureSqlTable_NA_Outputs(GenerateArm,GFPIR)
-else if (SourceType=="AzureBlobFS" && SourceFormat == "Json" && TargetType=="AzureSqlTable"&&TargetFormat=="NA") then
+else if (SourceType=="AzureBlobFS" && SourceFormat == "Json" && (TargetType=="AzureSqlTable" || TargetType=="AzureSqlDWTable") &&TargetFormat=="NA") then
 {
   "typeProperties": {    
       "source": {
@@ -107,7 +109,7 @@ else if (SourceType=="AzureBlobFS" && SourceFormat == "Json" && TargetType=="Azu
         }
     },
     "sink": {
-        "type": "AzureSqlSink",
+        "type": sinkType,
         "preCopyScript": {
             "value": "@{pipeline().parameters.TaskObject.Target.PreCopySQL}",
             "type": "Expression"
@@ -127,7 +129,7 @@ else if (SourceType=="AzureBlobFS" && SourceFormat == "Json" && TargetType=="Azu
 }
   + Main_CopyActivity_AzureBlobFS_Json_Inputs(GenerateArm,GFPIR)
   + Main_CopyActivity_AzureSqlTable_NA_Outputs(GenerateArm,GFPIR)
-else if (SourceType=="AzureBlobFS" && SourceFormat == "Parquet" && TargetType=="AzureSqlTable"&&TargetFormat=="NA") then
+else if (SourceType=="AzureBlobFS" && SourceFormat == "Parquet" && (TargetType=="AzureSqlTable" || TargetType=="AzureSqlDWTable") &&TargetFormat=="NA") then
 {
   "typeProperties": {    
       "source": {
@@ -150,7 +152,7 @@ else if (SourceType=="AzureBlobFS" && SourceFormat == "Parquet" && TargetType=="
         }
     },
     "sink": {
-        "type": "AzureSqlSink",
+        "type": sinkType,
         "preCopyScript": {
             "value": "@{pipeline().parameters.TaskObject.Target.PreCopySQL}",
             "type": "Expression"
@@ -171,7 +173,7 @@ else if (SourceType=="AzureBlobFS" && SourceFormat == "Parquet" && TargetType=="
 }
   + Main_CopyActivity_AzureBlobFS_Parquet_Inputs(GenerateArm,GFPIR)
   + Main_CopyActivity_AzureSqlTable_NA_Outputs(GenerateArm,GFPIR)
-else if(SourceType=="AzureBlobStorage"&&SourceFormat=="Excel"&&TargetType=="AzureSqlTable"&&TargetFormat=="NA") then
+else if(SourceType=="AzureBlobStorage"&&SourceFormat=="Excel"&&(TargetType=="AzureSqlTable" || TargetType=="AzureSqlDWTable") &&TargetFormat=="NA") then
 {
   "typeProperties": {    
     "source": {
@@ -182,7 +184,7 @@ else if(SourceType=="AzureBlobStorage"&&SourceFormat=="Excel"&&TargetType=="Azur
         }
     },
     "sink": {
-        "type": "AzureSqlSink",
+        "type": sinkType,
         "preCopyScript": {
             "value": "@{pipeline().parameters.TaskObject.Target.PreCopySQL}",
             "type": "Expression"
@@ -203,7 +205,7 @@ else if(SourceType=="AzureBlobStorage"&&SourceFormat=="Excel"&&TargetType=="Azur
 }
   + Main_CopyActivity_AzureBlobStorage_Excel_Inputs(GenerateArm,GFPIR)
   + Main_CopyActivity_AzureSqlTable_NA_Outputs(GenerateArm,GFPIR)
-else if(SourceType=="AzureBlobStorage"&&SourceFormat=="DelimitedText"&&TargetType=="AzureSqlTable"&&TargetFormat=="NA") then
+else if(SourceType=="AzureBlobStorage"&&SourceFormat=="DelimitedText"&&(TargetType=="AzureSqlTable" || TargetType=="AzureSqlDWTable") &&TargetFormat=="NA") then
 {
   "typeProperties": {    
     "source": {
@@ -234,7 +236,7 @@ else if(SourceType=="AzureBlobStorage"&&SourceFormat=="DelimitedText"&&TargetTyp
       }
     },
     "sink": {
-      "type": "AzureSqlSink",
+      "type": sinkType,
       "preCopyScript": {
         "value": "@{pipeline().parameters.TaskObject.Target.PreCopySQL}",
         "type": "Expression"
@@ -255,7 +257,7 @@ else if(SourceType=="AzureBlobStorage"&&SourceFormat=="DelimitedText"&&TargetTyp
 }
   + Main_CopyActivity_AzureBlobStorage_DelimitedText_Inputs(GenerateArm,GFPIR)
   + Main_CopyActivity_AzureSqlTable_NA_Outputs(GenerateArm,GFPIR)
-else if (SourceType=="AzureBlobStorage" && SourceFormat == "Json" && TargetType=="AzureSqlTable"&&TargetFormat=="NA") then
+else if (SourceType=="AzureBlobStorage" && SourceFormat == "Json" && (TargetType=="AzureSqlTable" || TargetType=="AzureSqlDWTable") &&TargetFormat=="NA") then
 {
   "typeProperties": {    
       "source": {
@@ -269,7 +271,7 @@ else if (SourceType=="AzureBlobStorage" && SourceFormat == "Json" && TargetType=
         }
     },
     "sink": {
-        "type": "AzureSqlSink",
+        "type": sinkType,
         "preCopyScript": {
             "value": "@{pipeline().parameters.TaskObject.Target.PreCopySQL}",
             "type": "Expression"
@@ -290,7 +292,7 @@ else if (SourceType=="AzureBlobStorage" && SourceFormat == "Json" && TargetType=
 }
   + Main_CopyActivity_AzureBlobStorage_Json_Inputs(GenerateArm,GFPIR)
   + Main_CopyActivity_AzureSqlTable_NA_Outputs(GenerateArm,GFPIR)
-else if (SourceType=="AzureBlobStorage" && SourceFormat == "Parquet" && TargetType=="AzureSqlTable"&&TargetFormat=="NA") then
+else if (SourceType=="AzureBlobStorage" && SourceFormat == "Parquet" && (TargetType=="AzureSqlTable" || TargetType=="AzureSqlDWTable") &&TargetFormat=="NA") then
 {
   "typeProperties": {    
       "source": {
@@ -313,7 +315,7 @@ else if (SourceType=="AzureBlobStorage" && SourceFormat == "Parquet" && TargetTy
         }
     },
     "sink": {
-        "type": "AzureSqlSink",
+        "type": sinkType,
         "preCopyScript": {
             "value": "@{pipeline().parameters.TaskObject.Target.PreCopySQL}",
             "type": "Expression"

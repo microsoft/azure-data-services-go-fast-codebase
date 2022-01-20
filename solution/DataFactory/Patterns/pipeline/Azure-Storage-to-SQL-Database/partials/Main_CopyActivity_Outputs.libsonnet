@@ -1,6 +1,6 @@
-function(GenerateArm=false,GFPIR="IRA")
+function(GenerateArm=false,GFPIR="IRA", TargetType = "AzureSqlDWTable")
 {
-local referenceName = "GDS_AzureSqlTable_NA_",
+local referenceName = "GDS_"+TargetType+"_NA_",
 "outputs":
 [
   {

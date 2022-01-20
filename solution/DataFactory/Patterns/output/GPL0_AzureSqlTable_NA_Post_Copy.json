@@ -1,0 +1,582 @@
+{
+   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+   "contentVersion": "1.0.0.0",
+   "parameters": {
+      "dataFactoryName": {
+         "metadata": "The name of the data factory",
+         "type": "String"
+      },
+      "integrationRuntimeName": {
+         "metadata": "The name of the integration runtime this pipeline uses",
+         "type": "String"
+      },
+      "integrationRuntimeShortName": {
+         "metadata": "The short name of the integration runtime this pipeline uses",
+         "type": "String"
+      },
+      "sharedKeyVaultUri": {
+         "metadata": "The uri of the shared KeyVault",
+         "type": "String"
+      }
+   },
+   "resources": [
+      {
+         "apiVersion": "2018-06-01",
+         "name": "[concat(parameters('dataFactoryName'), '/','GPL_AzureSqlTable_NA_Post_Copy_', parameters('integrationRuntimeShortName'))]",
+         "properties": {
+            "activities": [
+               {
+                  "dependsOn": [ ],
+                  "name": "If Exist PostCopySQL",
+                  "type": "IfCondition",
+                  "typeProperties": {
+                     "expression": {
+                        "type": "Expression",
+                        "value": "@not(empty(pipeline().parameters.TaskObject.Target.PostCopySQL))"
+                     },
+                     "ifTrueActivities": [
+                        {
+                           "dependsOn": [ ],
+                           "name": "Run PostCopySQL",
+                           "policy": {
+                              "retry": 0,
+                              "retryIntervalInSeconds": 30,
+                              "secureInput": false,
+                              "secureOutput": false,
+                              "timeout": "7.00:00:00"
+                           },
+                           "type": "Lookup",
+                           "typeProperties": {
+                              "dataset": {
+                                 "parameters": {
+                                    "Database": {
+                                       "type": "Expression",
+                                       "value": "@pipeline().parameters.TaskObject.Target.System.Database"
+                                    },
+                                    "Schema": {
+                                       "type": "Expression",
+                                       "value": "@pipeline().parameters.TaskObject.Target.TableSchema"
+                                    },
+                                    "Server": {
+                                       "type": "Expression",
+                                       "value": "@pipeline().parameters.TaskObject.Target.System.SystemServer"
+                                    },
+                                    "Table": {
+                                       "type": "Expression",
+                                       "value": "@pipeline().parameters.TaskObject.Target.TableName"
+                                    }
+                                 },
+                                 "referenceName": "[concat('GDS_AzureSqlTable_NA_', parameters('integrationRuntimeShortName'))]",
+                                 "type": "DatasetReference"
+                              },
+                              "source": {
+                                 "partitionOption": "None",
+                                 "queryTimeout": "02:00:00",
+                                 "sqlReaderQuery": {
+                                    "type": "Expression",
+                                    "value": "@pipeline().parameters.TaskObject.Target.PostCopySQL"
+                                 },
+                                 "type": "AzureSqlSource"
+                              }
+                           },
+                           "userProperties": [ ]
+                        },
+                        {
+                           "dependsOn": [
+                              {
+                                 "activity": "Run PostCopySQL",
+                                 "dependencyConditions": [
+                                    "Failed"
+                                 ]
+                              }
+                           ],
+                           "name": "AF Log - Run PostCopySQL Failed",
+                           "type": "ExecutePipeline",
+                           "typeProperties": {
+                              "parameters": {
+                                 "Body": {
+                                    "type": "Expression",
+                                    "value": "@json(concat('{\"TaskInstanceId\":\"', string(pipeline().parameters.TaskObject.TaskInstanceId), '\",\"ExecutionUid\":\"', string(pipeline().parameters.TaskObject.ExecutionUid), '\",\"RunId\":\"', string(pipeline().RunId), '\",\"LogTypeId\":1,\"LogSource\":\"ADF\",\"ActivityType\":\"Run PostCopySQL\",\"StartDateTimeOffSet\":\"', string(pipeline().TriggerTime), '\",\"EndDateTimeOffSet\":\"', string(utcnow()), '\",\"Comment\":\"', string(activity('Run PostCopySQL').error.message), '\",\"Status\":\"Failed\"}'))"
+                                 },
+                                 "FunctionName": "Log",
+                                 "Method": "Post"
+                              },
+                              "pipeline": {
+                                 "referenceName": "SPL_AzureFunction",
+                                 "type": "PipelineReference"
+                              },
+                              "waitOnCompletion": false
+                           },
+                           "userProperties": [ ]
+                        }
+                     ]
+                  },
+                  "userProperties": [ ]
+               },
+               {
+                  "dependsOn": [
+                     {
+                        "activity": "If Exist PostCopySQL",
+                        "dependencyConditions": [
+                           "Succeeded"
+                        ]
+                     }
+                  ],
+                  "name": "If Exist MergeSQL",
+                  "type": "IfCondition",
+                  "typeProperties": {
+                     "expression": {
+                        "type": "Expression",
+                        "value": "@not(empty(pipeline().parameters.TaskObject.Target.MergeSQL))"
+                     },
+                     "ifTrueActivities": [
+                        {
+                           "dependsOn": [ ],
+                           "name": "Run MergeSQL",
+                           "policy": {
+                              "retry": 0,
+                              "retryIntervalInSeconds": 30,
+                              "secureInput": false,
+                              "secureOutput": false,
+                              "timeout": "7.00:00:00"
+                           },
+                           "type": "Lookup",
+                           "typeProperties": {
+                              "dataset": {
+                                 "parameters": {
+                                    "Database": {
+                                       "type": "Expression",
+                                       "value": "@pipeline().parameters.TaskObject.Target.System.Database"
+                                    },
+                                    "Schema": {
+                                       "type": "Expression",
+                                       "value": "@pipeline().parameters.TaskObject.Target.TableSchema"
+                                    },
+                                    "Server": {
+                                       "type": "Expression",
+                                       "value": "@pipeline().parameters.TaskObject.Target.System.SystemServer"
+                                    },
+                                    "Table": {
+                                       "type": "Expression",
+                                       "value": "@pipeline().parameters.TaskObject.Target.TableName"
+                                    }
+                                 },
+                                 "referenceName": "[concat('GDS_AzureSqlTable_NA_', parameters('integrationRuntimeShortName'))]",
+                                 "type": "DatasetReference"
+                              },
+                              "firstRowOnly": true,
+                              "source": {
+                                 "partitionOption": "None",
+                                 "queryTimeout": "02:00:00",
+                                 "sqlReaderQuery": {
+                                    "type": "Expression",
+                                    "value": "@pipeline().parameters.TaskObject.Target.MergeSQL"
+                                 },
+                                 "type": "AzureSqlSource"
+                              }
+                           },
+                           "userProperties": [ ]
+                        },
+                        {
+                           "dependsOn": [
+                              {
+                                 "activity": "Run MergeSQL",
+                                 "dependencyConditions": [
+                                    "Failed"
+                                 ]
+                              }
+                           ],
+                           "name": "AF Log - Run MergeSQL Failed",
+                           "type": "ExecutePipeline",
+                           "typeProperties": {
+                              "parameters": {
+                                 "Body": {
+                                    "type": "Expression",
+                                    "value": "@json(concat('{\"TaskInstanceId\":\"', string(pipeline().parameters.TaskObject.TaskInstanceId), '\",\"ExecutionUid\":\"', string(pipeline().parameters.TaskObject.ExecutionUid), '\",\"RunId\":\"', string(pipeline().RunId), '\",\"LogTypeId\":1,\"LogSource\":\"ADF\",\"ActivityType\":\"Run MergeSQL\",\"StartDateTimeOffSet\":\"', string(pipeline().TriggerTime), '\",\"EndDateTimeOffSet\":\"', string(utcnow()), '\",\"Comment\":\"', string(activity('Run MergeSQL').error.message), '\",\"Status\":\"Failed\"}'))"
+                                 },
+                                 "FunctionName": "Log",
+                                 "Method": "Post"
+                              },
+                              "pipeline": {
+                                 "referenceName": "SPL_AzureFunction",
+                                 "type": "PipelineReference"
+                              },
+                              "waitOnCompletion": false
+                           },
+                           "userProperties": [ ]
+                        }
+                     ]
+                  },
+                  "userProperties": [ ]
+               },
+               {
+                  "dependsOn": [
+                     {
+                        "activity": "If Exist PostCopySQL",
+                        "dependencyConditions": [
+                           "Succeeded"
+                        ]
+                     }
+                  ],
+                  "name": "If AutoGenerateMerge",
+                  "type": "IfCondition",
+                  "typeProperties": {
+                     "expression": {
+                        "type": "Expression",
+                        "value": "@bool(pipeline().parameters.TaskObject.Target.AutoGenerateMerge)"
+                     },
+                     "ifTrueActivities": [
+                        {
+                           "dependsOn": [
+                              {
+                                 "activity": "AF Get Merge Statement",
+                                 "dependencyConditions": [
+                                    "Succeeded"
+                                 ]
+                              }
+                           ],
+                           "name": "Run MergeStatement",
+                           "policy": {
+                              "retry": 0,
+                              "retryIntervalInSeconds": 30,
+                              "secureInput": false,
+                              "secureOutput": false,
+                              "timeout": "7.00:00:00"
+                           },
+                           "type": "Lookup",
+                           "typeProperties": {
+                              "dataset": {
+                                 "parameters": {
+                                    "Database": {
+                                       "type": "Expression",
+                                       "value": "@pipeline().parameters.TaskObject.Target.System.Database"
+                                    },
+                                    "Schema": {
+                                       "type": "Expression",
+                                       "value": "@pipeline().parameters.TaskObject.Target.TableSchema"
+                                    },
+                                    "Server": {
+                                       "type": "Expression",
+                                       "value": "@pipeline().parameters.TaskObject.Target.System.SystemServer"
+                                    },
+                                    "Table": {
+                                       "type": "Expression",
+                                       "value": "@pipeline().parameters.TaskObject.Target.TableName"
+                                    }
+                                 },
+                                 "referenceName": "[concat('GDS_AzureSqlTable_NA_', parameters('integrationRuntimeShortName'))]",
+                                 "type": "DatasetReference"
+                              },
+                              "firstRowOnly": false,
+                              "source": {
+                                 "partitionOption": "None",
+                                 "queryTimeout": "02:00:00",
+                                 "sqlReaderQuery": {
+                                    "type": "Expression",
+                                    "value": "@activity('AF Get Merge Statement').output.MergeStatement"
+                                 },
+                                 "type": "AzureSqlSource"
+                              }
+                           },
+                           "userProperties": [ ]
+                        },
+                        {
+                           "dependsOn": [ ],
+                           "linkedServiceName": {
+                              "referenceName": "SLS_AzureFunctionApp",
+                              "type": "LinkedServiceReference"
+                           },
+                           "name": "AF Get Information Schema SQL Stage",
+                           "policy": {
+                              "retry": 0,
+                              "retryIntervalInSeconds": 30,
+                              "secureInput": false,
+                              "secureOutput": false,
+                              "timeout": "7.00:00:00"
+                           },
+                           "type": "AzureFunctionActivity",
+                           "typeProperties": {
+                              "body": {
+                                 "type": "Expression",
+                                 "value": "@json(concat('{\"TaskInstanceId\":\"', string(pipeline().parameters.TaskObject.TaskInstanceId), '\",\"ExecutionUid\":\"', string(pipeline().parameters.TaskObject.ExecutionUid), '\",\"RunId\":\"', string(pipeline().RunId), '\",\"TableSchema\":\"', string(pipeline().parameters.TaskObject.Target.StagingTableSchema), '\",\"TableName\":\"', string(pipeline().parameters.TaskObject.Target.StagingTableName),'\"}'))"
+                              },
+                              "functionName": "GetInformationSchemaSQL",
+                              "method": "POST"
+                           },
+                           "userProperties": [ ]
+                        },
+                        {
+                           "dependsOn": [
+                              {
+                                 "activity": "Lookup Get Metadata Stage",
+                                 "dependencyConditions": [
+                                    "Succeeded"
+                                 ]
+                              },
+                              {
+                                 "activity": "Lookup Get Metadata Target",
+                                 "dependencyConditions": [
+                                    "Succeeded"
+                                 ]
+                              }
+                           ],
+                           "linkedServiceName": {
+                              "referenceName": "SLS_AzureFunctionApp",
+                              "type": "LinkedServiceReference"
+                           },
+                           "name": "AF Get Merge Statement",
+                           "policy": {
+                              "retry": 0,
+                              "retryIntervalInSeconds": 30,
+                              "secureInput": false,
+                              "secureOutput": false,
+                              "timeout": "7.00:00:00"
+                           },
+                           "type": "AzureFunctionActivity",
+                           "typeProperties": {
+                              "body": {
+                                 "type": "Expression",
+                                 "value": "@json(concat('{\"TaskInstanceId\":\"', string(pipeline().parameters.TaskObject.TaskInstanceId), '\",\"ExecutionUid\":\"', string(pipeline().parameters.TaskObject.ExecutionUid), '\",\"RunId\":\"', string(pipeline().RunId),'\",\"TargetTableSchema\":\"',string(pipeline().parameters.TaskObject.Target.TableSchema),'\",\"TargetTableName\":\"',string(pipeline().parameters.TaskObject.Target.TableName),'\",\"StagingTableSchema\":\"',string(pipeline().parameters.TaskObject.Target.StagingTableSchema),'\",\"StagingTableName\":\"',string(pipeline().parameters.TaskObject.Target.StagingTableName),'\",\"Stage\":', string(activity('Lookup Get Metadata Stage').output.value), ',\"Target\":', string(activity('Lookup Get Metadata Target').output.value),'}'))"
+                              },
+                              "functionName": "GetSQLMergeStatement",
+                              "method": "POST"
+                           },
+                           "userProperties": [ ]
+                        },
+                        {
+                           "dependsOn": [
+                              {
+                                 "activity": "AF Get Information Schema SQL Stage",
+                                 "dependencyConditions": [
+                                    "Succeeded"
+                                 ]
+                              }
+                           ],
+                           "name": "Lookup Get Metadata Stage",
+                           "policy": {
+                              "retry": 0,
+                              "retryIntervalInSeconds": 30,
+                              "secureInput": false,
+                              "secureOutput": false,
+                              "timeout": "7.00:00:00"
+                           },
+                           "type": "Lookup",
+                           "typeProperties": {
+                              "dataset": {
+                                 "parameters": {
+                                    "Database": {
+                                       "type": "Expression",
+                                       "value": "@pipeline().parameters.TaskObject.Target.System.Database"
+                                    },
+                                    "Schema": {
+                                       "type": "Expression",
+                                       "value": "@pipeline().parameters.TaskObject.Target.StagingTableSchema"
+                                    },
+                                    "Server": {
+                                       "type": "Expression",
+                                       "value": "@pipeline().parameters.TaskObject.Target.System.SystemServer"
+                                    },
+                                    "Table": {
+                                       "type": "Expression",
+                                       "value": "@pipeline().parameters.TaskObject.Target.StagingTableName"
+                                    }
+                                 },
+                                 "referenceName": "[concat('GDS_AzureSqlTable_NA_', parameters('integrationRuntimeShortName'))]",
+                                 "type": "DatasetReference"
+                              },
+                              "firstRowOnly": false,
+                              "source": {
+                                 "partitionOption": "None",
+                                 "queryTimeout": "02:00:00",
+                                 "sqlReaderQuery": {
+                                    "type": "Expression",
+                                    "value": "@activity('AF Get Information Schema SQL Stage').output.InformationSchemaSQL"
+                                 },
+                                 "type": "AzureSqlSource"
+                              }
+                           },
+                           "userProperties": [ ]
+                        },
+                        {
+                           "dependsOn": [
+                              {
+                                 "activity": "AF Get Information Schema SQL Target",
+                                 "dependencyConditions": [
+                                    "Succeeded"
+                                 ]
+                              }
+                           ],
+                           "name": "Lookup Get Metadata Target",
+                           "policy": {
+                              "retry": 0,
+                              "retryIntervalInSeconds": 30,
+                              "secureInput": false,
+                              "secureOutput": false,
+                              "timeout": "7.00:00:00"
+                           },
+                           "type": "Lookup",
+                           "typeProperties": {
+                              "dataset": {
+                                 "parameters": {
+                                    "Database": {
+                                       "type": "Expression",
+                                       "value": "@pipeline().parameters.TaskObject.Target.System.Database"
+                                    },
+                                    "Schema": {
+                                       "type": "Expression",
+                                       "value": "@pipeline().parameters.TaskObject.Target.TableSchema"
+                                    },
+                                    "Server": {
+                                       "type": "Expression",
+                                       "value": "@pipeline().parameters.TaskObject.Target.System.SystemServer"
+                                    },
+                                    "Table": {
+                                       "type": "Expression",
+                                       "value": "@pipeline().parameters.TaskObject.Target.TableName"
+                                    }
+                                 },
+                                 "referenceName": "[concat('GDS_AzureSqlTable_NA_', parameters('integrationRuntimeShortName'))]",
+                                 "type": "DatasetReference"
+                              },
+                              "firstRowOnly": false,
+                              "source": {
+                                 "partitionOption": "None",
+                                 "queryTimeout": "02:00:00",
+                                 "sqlReaderQuery": {
+                                    "type": "Expression",
+                                    "value": "@activity('AF Get Information Schema SQL Target').output.InformationSchemaSQL"
+                                 },
+                                 "type": "AzureSqlSource"
+                              }
+                           },
+                           "userProperties": [ ]
+                        },
+                        {
+                           "dependsOn": [ ],
+                           "linkedServiceName": {
+                              "referenceName": "SLS_AzureFunctionApp",
+                              "type": "LinkedServiceReference"
+                           },
+                           "name": "AF Get Information Schema SQL Target",
+                           "policy": {
+                              "retry": 0,
+                              "retryIntervalInSeconds": 30,
+                              "secureInput": false,
+                              "secureOutput": false,
+                              "timeout": "7.00:00:00"
+                           },
+                           "type": "AzureFunctionActivity",
+                           "typeProperties": {
+                              "body": {
+                                 "type": "Expression",
+                                 "value": "@json(concat('{\"TaskInstanceId\":\"', string(pipeline().parameters.TaskObject.TaskInstanceId), '\",\"ExecutionUid\":\"', string(pipeline().parameters.TaskObject.ExecutionUid), '\",\"RunId\":\"', string(pipeline().RunId), '\",\"TableSchema\":\"', string(pipeline().parameters.TaskObject.Target.TableSchema), '\",\"TableName\":\"', string(pipeline().parameters.TaskObject.Target.TableName),'\"}'))"
+                              },
+                              "functionName": "GetInformationSchemaSQL",
+                              "method": "POST"
+                           },
+                           "userProperties": [ ]
+                        },
+                        {
+                           "dependsOn": [
+                              {
+                                 "activity": "Run MergeStatement",
+                                 "dependencyConditions": [
+                                    "Failed"
+                                 ]
+                              }
+                           ],
+                           "name": "AF Log - Run AutoMerge Failed",
+                           "type": "ExecutePipeline",
+                           "typeProperties": {
+                              "parameters": {
+                                 "Body": {
+                                    "type": "Expression",
+                                    "value": "@json(concat('{\"TaskInstanceId\":\"', string(pipeline().parameters.TaskObject.TaskInstanceId), '\",\"ExecutionUid\":\"', string(pipeline().parameters.TaskObject.ExecutionUid), '\",\"RunId\":\"', string(pipeline().RunId), '\",\"LogTypeId\":1,\"LogSource\":\"ADF\",\"ActivityType\":\"Run AutoMerge\",\"StartDateTimeOffSet\":\"', string(pipeline().TriggerTime), '\",\"EndDateTimeOffSet\":\"', string(utcnow()), '\",\"Comment\":\"', string(activity('Run MergeStatement').error.message), '\",\"Status\":\"Failed\"}'))"
+                                 },
+                                 "FunctionName": "Log",
+                                 "Method": "Post"
+                              },
+                              "pipeline": {
+                                 "referenceName": "SPL_AzureFunction",
+                                 "type": "PipelineReference"
+                              },
+                              "waitOnCompletion": false
+                           },
+                           "userProperties": [ ]
+                        },
+                        {
+                           "dependsOn": [
+                              {
+                                 "activity": "Lookup Get Metadata Target",
+                                 "dependencyConditions": [
+                                    "Failed"
+                                 ]
+                              }
+                           ],
+                           "name": "AF Log - Run Lookup Get Metadata Target Failed",
+                           "type": "ExecutePipeline",
+                           "typeProperties": {
+                              "parameters": {
+                                 "Body": {
+                                    "type": "Expression",
+                                    "value": "@json(concat('{\"TaskInstanceId\":\"', string(pipeline().parameters.TaskObject.TaskInstanceId), '\",\"ExecutionUid\":\"', string(pipeline().parameters.TaskObject.ExecutionUid), '\",\"RunId\":\"', string(pipeline().RunId), '\",\"LogTypeId\":1,\"LogSource\":\"ADF\",\"ActivityType\":\"Lookup Get Metadata Target\",\"StartDateTimeOffSet\":\"', string(pipeline().TriggerTime), '\",\"EndDateTimeOffSet\":\"', string(utcnow()), '\",\"Comment\":\"', string(activity('Lookup Get Metadata Target').error.message), '\",\"Status\":\"Failed\"}'))"
+                                 },
+                                 "FunctionName": "Log",
+                                 "Method": "Post"
+                              },
+                              "pipeline": {
+                                 "referenceName": "SPL_AzureFunction",
+                                 "type": "PipelineReference"
+                              },
+                              "waitOnCompletion": false
+                           },
+                           "userProperties": [ ]
+                        },
+                        {
+                           "dependsOn": [
+                              {
+                                 "activity": "Lookup Get Metadata Stage",
+                                 "dependencyConditions": [
+                                    "Failed"
+                                 ]
+                              }
+                           ],
+                           "name": "AF Log - Lookup Get Metadata Stage Failed",
+                           "type": "ExecutePipeline",
+                           "typeProperties": {
+                              "parameters": {
+                                 "Body": {
+                                    "type": "Expression",
+                                    "value": "@json(concat('{\"TaskInstanceId\":\"', string(pipeline().parameters.TaskObject.TaskInstanceId), '\",\"ExecutionUid\":\"', string(pipeline().parameters.TaskObject.ExecutionUid), '\",\"RunId\":\"', string(pipeline().RunId), '\",\"LogTypeId\":1,\"LogSource\":\"ADF\",\"ActivityType\":\"Lookup Get Metadata Stage\",\"StartDateTimeOffSet\":\"', string(pipeline().TriggerTime), '\",\"EndDateTimeOffSet\":\"', string(utcnow()), '\",\"Comment\":\"', string(activity('Lookup Get Metadata Stage').error.message), '\",\"Status\":\"Failed\"}'))"
+                                 },
+                                 "FunctionName": "Log",
+                                 "Method": "Post"
+                              },
+                              "pipeline": {
+                                 "referenceName": "SPL_AzureFunction",
+                                 "type": "PipelineReference"
+                              },
+                              "waitOnCompletion": false
+                           },
+                           "userProperties": [ ]
+                        }
+                     ]
+                  },
+                  "userProperties": [ ]
+               }
+            ],
+            "annotations": [ ],
+            "folder": {
+               "name": "[concat('ADS Go Fast/Data Movement/', parameters('integrationRuntimeShortName'), '/Common')]"
+            },
+            "lastPublishTime": "2020-08-04T13:09:30Z",
+            "parameters": {
+               "TaskObject": {
+                  "type": "object"
+               }
+            }
+         },
+         "type": "Microsoft.DataFactory/factories/pipelines"
+      }
+   ]
+}

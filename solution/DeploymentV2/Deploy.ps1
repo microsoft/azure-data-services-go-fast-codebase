@@ -24,12 +24,12 @@
 
 
 
-$environmentName = "local" # currently supports (local, staging)
+$environmentName = "arkahna" # currently supports (local, staging)
 $myIp = (Invoke-WebRequest ifconfig.me/ip).Content
-$skipTerraformDeployment = $true
+$skipTerraformDeployment = $false
 $skipWebApp = $true
 $skipFunctionApp = $true
-$skipDatabase = $false
+$skipDatabase = $true
 $skipSampleFiles = $true
 $skipNetworking = $true
 $deploymentFolderPath = (Get-Location).Path

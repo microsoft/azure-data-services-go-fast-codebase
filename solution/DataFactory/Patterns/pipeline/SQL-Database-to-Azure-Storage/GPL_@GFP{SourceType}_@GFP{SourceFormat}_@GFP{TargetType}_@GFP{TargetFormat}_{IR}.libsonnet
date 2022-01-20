@@ -7,7 +7,7 @@ local Name = if(GenerateArm=="false")
 			else "[concat(parameters('dataFactoryName'), '/','GPL_"+SourceType+"_"+SourceFormat+"_"+TargetType+"_"+TargetFormat+"_" + "', parameters('integrationRuntimeShortName'))]";
 local CalledPipelineName = if(GenerateArm=="false") 
 			then "GPL_"+SourceType+"_"+SourceFormat+"_"+TargetType+"_"+TargetFormat+ "_Primary_"+GFPIR 
-			else "[concat(parameters('dataFactoryName'), '/','GPL_"+SourceType+"_"+SourceFormat+"_"+TargetType+"_"+TargetFormat+"_Primary_" + "', parameters('integrationRuntimeShortName'))]";
+			else "[concat('GPL_"+SourceType+"_"+SourceFormat+"_"+TargetType+"_"+TargetFormat+"_Primary_" + "', parameters('integrationRuntimeShortName'))]";
 local Folder =  if(GenerateArm=="false") 
 					then "ADS Go Fast/Data Movement/" + GFPIR
 					else "[concat('ADS Go Fast/Data Movement/', parameters('integrationRuntimeShortName'))]";
