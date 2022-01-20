@@ -17,7 +17,7 @@
     },
     {
         "Folder": "SQL-Database-to-Azure-Storage",        
-        "GFPIR": "Azure",
+        "GFPIR": "SelfHosted",
         "SourceType": "SqlServerTable",
         "SourceFormat": "NA",
         "TargetType": "AzureBlobFS",
@@ -25,7 +25,7 @@
     },
     {
         "Folder": "SQL-Database-to-Azure-Storage",        
-        "GFPIR": "Azure",
+        "GFPIR": "SelfHosted",
         "SourceType": "SqlServerTable",
         "SourceFormat": "NA",
         "TargetType": "AzureBlobStorage",
@@ -256,7 +256,7 @@
         "TargetFormat": "Parquet"
     },
     {
-        "Folder": "Azure-Storage-to-SQL-Database",        
+        "Folder": "Azure-Storage-to-SQL-Database",              
         "GFPIR": "Azure",
         "SourceType": "AzureBlobFS",
         "SourceFormat": "Excel",
@@ -264,7 +264,7 @@
         "TargetFormat": "NA"
     },
     {
-        "Folder": "Azure-Storage-to-SQL-Database",        
+        "Folder": "Azure-Storage-to-Azure-Database",                
         "GFPIR": "Azure",
         "SourceType": "AzureBlobStorage",
         "SourceFormat": "Excel",
@@ -272,7 +272,7 @@
         "TargetFormat": "NA"
     },
     {
-        "Folder": "Azure-Storage-to-SQL-Database",        
+        "Folder": "Azure-Storage-to-SQL-Database",              
         "GFPIR": "Azure",
         "SourceType": "AzureBlobFS",
         "SourceFormat": "Json",
@@ -280,7 +280,7 @@
         "TargetFormat": "NA"
     },
     {
-        "Folder": "Azure-Storage-to-SQL-Database",                
+        "Folder": "Azure-Storage-to-SQL-Database",                    
         "GFPIR": "Azure",
         "SourceType": "AzureBlobStorage",
         "SourceFormat": "Json",
@@ -288,7 +288,7 @@
         "TargetFormat": "NA"
     },
     {
-        "Folder": "Azure-Storage-to-SQL-Database",        
+        "Folder": "Azure-Storage-to-SQL-Database",                
         "GFPIR": "Azure",
         "SourceType": "AzureBlobFS",
         "SourceFormat": "DelimitedText",
@@ -296,7 +296,7 @@
         "TargetFormat": "NA"
     },
     {
-        "Folder": "Azure-Storage-to-SQL-Database",                
+        "Folder": "Azure-Storage-to-SQL-Database",                     
         "GFPIR": "Azure",
         "SourceType": "AzureBlobStorage",
         "SourceFormat": "DelimitedText",
@@ -304,7 +304,7 @@
         "TargetFormat": "NA"
     },
     {
-        "Folder": "Azure-Storage-to-SQL-Database",                
+        "Folder": "Azure-Storage-to-SQL-Database",            
         "GFPIR": "Azure",
         "SourceType": "AzureBlobStorage",
         "SourceFormat": "Parquet",
@@ -312,11 +312,11 @@
         "TargetFormat": "NA"
     },
     {
-        "Folder": "Azure-Storage-to-SQL-Database",                
+        "Folder": "Azure-Storage-to-SQL-Database",            
         "GFPIR": "Azure",
         "SourceType": "AzureBlobFS",
         "SourceFormat": "Parquet",
         "TargetType": "AzureSqlDWTable",
         "TargetFormat": "NA"
-    },   
+    }
 ]
