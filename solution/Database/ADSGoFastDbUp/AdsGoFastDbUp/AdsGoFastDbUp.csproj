@@ -23,6 +23,7 @@
     <None Remove="0-1-0-beta\A-Journaled\018-AddIntegrationRuntimeData.sql" />
     <None Remove="0-1-0-beta\A-Journaled\019-CleanSamples.sql" />
     <None Remove="0-1-0-beta\A-Journaled\020-UpdateSourceAndTargetSystems.sql" />
+    <None Remove="0-1-0-beta\A-Journaled\022-Synapse-TaskTypes.sql" />
     <None Remove="0-1-0-beta\B-Always\001-Schemas.sql" />
     <None Remove="0-1-0-beta\B-Always\002-Tables.sql" />
     <None Remove="0-1-0-beta\B-Always\003-StoredProcsEtc.sql" />
@@ -58,6 +59,7 @@
     <EmbeddedResource Include="0-1-0-beta\A-Journaled\020-UpdateSourceAndTargetSystems.sql" />
     <EmbeddedResource Include="0-1-0-beta\A-Journaled\018-AddIntegrationRuntimeData.sql" />
     <EmbeddedResource Include="0-1-0-beta\A-Journaled\017-AddIntegrationRuntime.sql" />
+    <EmbeddedResource Include="0-1-0-beta\A-Journaled\022-Synapse-TaskTypes.sql" />
     <EmbeddedResource Include="0-1-0-beta\A-Journaled\021-CorrectMappingForCsvToSql.sql" />
     <EmbeddedResource Include="0-1-0-beta\A-Journaled\022-GetTaskGroups.sql" />
     <EmbeddedResource Include="0-1-0-beta\A-Journaled\023-AddSynapseSourceAndTarget.sql" />    

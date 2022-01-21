@@ -22,7 +22,7 @@
    "resources": [
       {
          "apiVersion": "2018-06-01",
-         "name": "[concat(parameters('dataFactoryName'), '/','GPL_AzureBlobFS_DelimitedText_AzureSqlTable_NA_Primary_', parameters('integrationRuntimeShortName'))]",
+         "name": "[concat(parameters('dataFactoryName'), '/','GPL_AzureBlobFS_Excel_AzureSqlDWTable_NA_Primary_', parameters('integrationRuntimeShortName'))]",
          "properties": {
             "activities": [
                {
@@ -76,7 +76,7 @@
                                  }
                               },
                               "pipeline": {
-                                 "referenceName": "[concat('GPL_AzureSqlTable_NA_Create_Table_', parameters('integrationRuntimeShortName'))]",
+                                 "referenceName": "[concat('GPL_AzureSqlDWTable_NA_Create_Table_', parameters('integrationRuntimeShortName'))]",
                                  "type": "PipelineReference"
                               },
                               "waitOnCompletion": true
@@ -143,6 +143,10 @@
                               "type": "Expression",
                               "value": "@pipeline().parameters.TaskObject.Source.Instance.SourceRelativePath"
                            },
+                           "SheetName": {
+                              "type": "Expression",
+                              "value": "@pipeline().parameters.TaskObject.Source.SheetName"
+                           },
                            "StorageAccountContainerName": {
                               "type": "Expression",
                               "value": "@pipeline().parameters.TaskObject.Source.System.Container"
@@ -152,7 +156,7 @@
                               "value": "@pipeline().parameters.TaskObject.Source.System.SystemServer"
                            }
                         },
-                        "referenceName": "[concat('GDS_AzureBlobFS_DelimitedText_', parameters('integrationRuntimeShortName'))]",
+                        "referenceName": "[concat('GDS_AzureBlobFS_Excel_', parameters('integrationRuntimeShortName'))]",
                         "type": "DatasetReference"
                      }
                   ],
@@ -202,38 +206,18 @@
                            "value": "@{pipeline().parameters.TaskObject.Target.PreCopySQL}"
                         },
                         "tableOption": "autoCreate",
-                        "type": "AzureSqlSink"
+                        "type": "SqlDWSink"
                      },
                      "source": {
-                        "formatSettings": {
-                           "skipLineCount": {
-                              "type": "Expression",
-                              "value": "@pipeline().parameters.TaskObject.Source.SkipLineCount"
-                           },
-                           "type": "DelimitedTextReadSettings"
-                        },
                         "storeSettings": {
-                           "enablePartitionDiscovery": false,
-                           "maxConcurrentConnections": {
-                              "type": "Expression",
-                              "value": "@pipeline().parameters.TaskObject.Source.MaxConcorrentConnections"
-                           },
                            "recursive": true,
-                           "type": "AzureBlobFSReadSettings",
-                           "wildcardFileName": {
-                              "type": "Expression",
-                              "value": "@pipeline().parameters.TaskObject.Source.DataFileName"
-                           },
-                           "wildcardFolderPath": {
-                              "type": "Expression",
-                              "value": "@pipeline().parameters.TaskObject.Source.Instance.SourceRelativePath"
-                           }
+                           "type": "AzureBlobFSReadSettings"
                         },
-                        "type": "DelimitedTextSource"
+                        "type": "ExcelSource"
                      },
                      "translator": {
                         "type": "Expression",
-                        "value": "@pipeline().parameters.TaskObject.Target.DynamicMapping"
+                        "value": "@if(and(not(equals(coalesce(pipeline().parameters.TaskObject.Source.SchemaFileName,''),'')),bool(pipeline().parameters.TaskObject.Target.AutoCreateTable)),activity('AF Get Mapping').output.value, null)"
                      }
                   },
                   "userProperties": [ ]
@@ -313,7 +297,7 @@
                         }
                      },
                      "pipeline": {
-                        "referenceName": "[concat('GPL_AzureSqlTable_NA_Post_Copy_', parameters('integrationRuntimeShortName'))]",
+                        "referenceName": "[concat('GPL_AzureSqlDWTable_NA_Post_Copy_', parameters('integrationRuntimeShortName'))]",
                         "type": "PipelineReference"
                      },
                      "waitOnCompletion": true

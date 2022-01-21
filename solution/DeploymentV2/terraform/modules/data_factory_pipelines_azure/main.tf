@@ -51,10 +51,11 @@ resource "azurerm_resource_group_template_deployment" "azure_pipelines_level_1" 
   ]  
 }
 
-resource "azurerm_resource_group_template_deployment" "azure_pipelines" {
+resource "azurerm_resource_group_template_deployment" "azure_pipelines_primary" {
   for_each            = {
     for pipeline in fileset(path.module, "arm/GPL_Azure*.json"):  
     pipeline => pipeline 
+    if length(split("Primary", pipeline)) > 1
   }
   name                = substr(sha256("${replace(replace(each.value, ".json", ""), "arm/", "")}_${var.integration_runtime_short_name}_${var.name_suffix}"), 0,30)
   resource_group_name = var.resource_group_name
@@ -80,10 +81,11 @@ resource "azurerm_resource_group_template_deployment" "azure_pipelines" {
   ]
 }
 
-resource "azurerm_resource_group_template_deployment" "azure_pipelines_wrapper" {
+resource "azurerm_resource_group_template_deployment" "azure_pipelines" {
   for_each            = {
-    for pipeline in fileset(path.module, "arm/GPL-1_Azure*.json"):  
+    for pipeline in fileset(path.module, "arm/GPL_Azure*.json"):  
     pipeline => pipeline 
+    if length(split("Primary", pipeline)) == 1
   }
   name                = substr(sha256("${replace(replace(each.value, ".json", ""), "arm/", "")}_${var.integration_runtime_short_name}_${var.name_suffix}"), 0,30)
   resource_group_name = var.resource_group_name
@@ -104,6 +106,9 @@ resource "azurerm_resource_group_template_deployment" "azure_pipelines_wrapper" 
   })
   template_content = file("${path.module}/${each.value}")
   depends_on = [
-    azurerm_resource_group_template_deployment.azure_pipelines    
+    azurerm_resource_group_template_deployment.azure_pipelines_level_0,
+    azurerm_resource_group_template_deployment.azure_pipelines_level_1,
+    azurerm_resource_group_template_deployment.azure_pipelines_primary
+    
   ]
 }

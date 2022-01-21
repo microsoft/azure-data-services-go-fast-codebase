@@ -181,7 +181,7 @@
                               "value": "@pipeline().parameters.TaskObject.Target.StagingTableName"
                            }
                         },
-                        "referenceName": "[concat('GDS_AzureSqlTable_NA_', parameters('integrationRuntimeShortName'))]",
+                        "referenceName": "[concat('GDS_AzureSqlDWTable_NA_', parameters('integrationRuntimeShortName'))]",
                         "type": "DatasetReference"
                      }
                   ],
