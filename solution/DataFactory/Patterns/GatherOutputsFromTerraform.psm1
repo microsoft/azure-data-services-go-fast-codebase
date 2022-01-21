@@ -1,5 +1,6 @@
 function GatherOutputsFromTerraform()
 {
+    $environmentName = $env:TFenvironmentName
     $environmentName = "local" # currently supports (local, staging)
     $myIp = (Invoke-WebRequest ifconfig.me/ip).Content
 

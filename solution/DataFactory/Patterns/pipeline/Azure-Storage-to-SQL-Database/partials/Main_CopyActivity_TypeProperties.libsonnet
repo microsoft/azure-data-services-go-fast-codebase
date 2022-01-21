@@ -6,6 +6,7 @@ local Main_CopyActivity_AzureBlobStorage_DelimitedText_Inputs = import './Main_C
 local Main_CopyActivity_AzureBlobStorage_Excel_Inputs = import './Main_CopyActivity_AzureBlobStorage_Excel_Inputs.libsonnet';
 local Main_CopyActivity_AzureBlobStorage_Json_Inputs = import './Main_CopyActivity_AzureBlobStorage_Json_Inputs.libsonnet';
 local Main_CopyActivity_AzureSqlTable_NA_Outputs = import './Main_CopyActivity_AzureSqlTable_NA_Outputs.libsonnet';
+local Main_CopyActivity_AzureSqlDWTable_NA_Outputs = import './Main_CopyActivity_AzureSqlDWTable_NA_Outputs.libsonnet';
 local Main_CopyActivity_AzureBlobFS_Parquet_Inputs = import './Main_CopyActivity_AzureBlobFS_Parquet_Inputs.libsonnet';
 local Main_CopyActivity_AzureBlobStorage_Parquet_Inputs = import './Main_CopyActivity_AzureBlobStorage_Parquet_Inputs.libsonnet';
 
@@ -171,6 +172,56 @@ else if (SourceType=="AzureBlobFS" && SourceFormat == "Parquet" && TargetType=="
 }
   + Main_CopyActivity_AzureBlobFS_Parquet_Inputs(GenerateArm,GFPIR)
   + Main_CopyActivity_AzureSqlTable_NA_Outputs(GenerateArm,GFPIR)
+else if (SourceType=="AzureBlobFS" && SourceFormat == "Parquet" && TargetType=="AzureSqlDWTable"&&TargetFormat=="NA") then
+{
+  "typeProperties": {    
+      "source": {
+        "type": "ParquetSource",
+        "storeSettings": {
+            "type": "AzureBlobFSReadSettings",
+            "recursive": false,
+            "wildcardFolderPath": {
+                                      "value": "@pipeline().parameters.TaskObject.Source.Instance.SourceRelativePath",
+                                      "type": "Expression"
+                                  },
+            "wildcardFileName": {
+                                      "value": "@concat(\n    replace(\n        pipeline().parameters.TaskObject.Source.DataFileName,\n        '.parquet',\n        ''\n        ),\n    '*.parquet'\n)",
+                                      "type": "Expression"
+                                  },
+            "enablePartitionDiscovery": false
+        },
+        "formatSettings": {
+            "type": "AzureBlobFSReadSettings"
+        }
+    },
+    "sink": {
+        "type": "AzureSqlDWSink",
+        "preCopyScript": {
+            "value": "@{pipeline().parameters.TaskObject.Target.PreCopySQL}",
+            "type": "Expression"
+        },
+        "allowPolyBase": true,
+        "polyBaseSettings": {
+            "rejectValue": 0,
+            "rejectType": "value",
+            "useTypeDefault": true
+        },
+        "tableOption": "autoCreate",
+        "disableMetricsCollection": false
+    },
+    "enableStaging": false,
+    "parallelCopies": {
+        "value": "@pipeline().parameters.TaskObject.DegreeOfCopyParallelism",
+        "type": "Expression"
+    },
+    "translator": {
+        "value": "@if(and(not(equals(coalesce(pipeline().parameters.TaskObject.Source.SchemaFileName,''),'')),bool(pipeline().parameters.TaskObject.Target.AutoCreateTable)),activity('AF Get Mapping').output.value, null)",
+        "type": "Expression"
+    }
+  },
+}
+  + Main_CopyActivity_AzureBlobFS_Parquet_Inputs(GenerateArm,GFPIR)
+  + Main_CopyActivity_AzureSqlDWTable_NA_Outputs(GenerateArm,GFPIR)
 else if(SourceType=="AzureBlobStorage"&&SourceFormat=="Excel"&&TargetType=="AzureSqlTable"&&TargetFormat=="NA") then
 {
   "typeProperties": {    
@@ -334,5 +385,55 @@ else if (SourceType=="AzureBlobStorage" && SourceFormat == "Parquet" && TargetTy
 }
   + Main_CopyActivity_AzureBlobStorage_Parquet_Inputs(GenerateArm,GFPIR)
   + Main_CopyActivity_AzureSqlTable_NA_Outputs(GenerateArm,GFPIR)
+else if (SourceType=="AzureBlobStorage" && SourceFormat == "Parquet" && TargetType=="AzureSqlDWTable"&&TargetFormat=="NA") then
+{
+  "typeProperties": {    
+      "source": {
+        "type": "ParquetSource",
+        "storeSettings": {
+            "type": "AzureBlobStorageReadSettings",
+            "recursive": false,
+            "wildcardFolderPath": {
+                                      "value": "@pipeline().parameters.TaskObject.Source.Instance.SourceRelativePath",
+                                      "type": "Expression"
+                                  },
+            "wildcardFileName": {
+                                      "value": "@concat(\n    replace(\n        pipeline().parameters.TaskObject.Source.DataFileName,\n        '.parquet',\n        ''\n        ),\n    '*.parquet'\n)",
+                                      "type": "Expression"
+                                  },
+            "enablePartitionDiscovery": false
+        },
+        "formatSettings": {
+            "type": "AzureBlobStorageReadSettings"
+        }
+    },
+    "sink": {
+        "type": "AzureSqlDWSink",
+        "preCopyScript": {
+            "value": "@{pipeline().parameters.TaskObject.Target.PreCopySQL}",
+            "type": "Expression"
+        },
+        "allowPolyBase": true,
+        "polyBaseSettings": {
+            "rejectValue": 0,
+            "rejectType": "value",
+            "useTypeDefault": true
+        },
+        "tableOption": "autoCreate",
+        "disableMetricsCollection": false
+    },
+    "enableStaging": false,
+    "parallelCopies": {
+        "value": "@pipeline().parameters.TaskObject.DegreeOfCopyParallelism",
+        "type": "Expression"
+    },
+    "translator": {
+        "value": "@if(and(not(equals(coalesce(pipeline().parameters.TaskObject.Source.SchemaFileName,''),'')),bool(pipeline().parameters.TaskObject.Target.AutoCreateTable)),activity('AF Get Mapping').output.value, null)",
+        "type": "Expression"
+    }
+  },
+}
+  + Main_CopyActivity_AzureBlobStorage_Parquet_Inputs(GenerateArm,GFPIR)
+  + Main_CopyActivity_AzureSqlDWTable_NA_Outputs(GenerateArm,GFPIR)
 else
   error 'Main_CopyActivity_TypeProperties.libsonnet Failed: ' + GFPIR+","+SourceType+","+SourceFormat+","+TargetType+","+TargetFormat

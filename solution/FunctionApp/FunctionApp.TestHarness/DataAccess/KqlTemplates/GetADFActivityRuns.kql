@@ -1,0 +1,68 @@
+﻿//-----------------------------------------------------------------------
+//
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
+//
+//-----------------------------------------------------------------------*/
+
+let SelfHostedOrchestrationCostRate = toreal({SelfHostedOrchestrationCostRate});
+let NilAmount = toreal(0.0000000000);
+let SelfHostedDataMovementCostRate = toreal({SelfHostedDataMovementCostRate});
+let CloudOrchestrationFeeRate = {CloudOrchestrationFeeRate};
+let CloudDataMovementCostRate = toreal({CloudDataMovementCostRate});
+let SelfHostedPipelineActivityCostRate = toreal({SelfHostedPipelineActivityCostRate});
+let CloudPipelineActivityCostRate = toreal({CloudPipelineActivityCostRate});
+ADFActivityRun 
+        | where TimeGenerated >  datetime({MaxActivityTimeGenerated}) and Status in ("Succeeded", "Failed", "Cancelled")  
+            and ResourceId  == "/SUBSCRIPTIONS/{SubscriptionId}/RESOURCEGROUPS/{ResourceGroupName}/PROVIDERS/MICROSOFT.DATAFACTORY/FACTORIES/{DataFactoryName}"
+        | extend        MeterType = tostring(parse_json(Output).billingReference.billableDuration[0].meterType),  
+                        MeterDuration = toreal(parse_json(Output).billingReference.billableDuration[0].duration)*60,  
+                        MeterUnit = parse_json(Output).billingReference.billableDuration[0].unit,
+                        rowsCopied_ = toint(parse_json(Output).rowsCopied),
+                        dataRead_ = toint(parse_json(Output).dataRead),
+                        dataWritten_ = toint(parse_json(Output).dataWritten), 
+                        throughput_ = toint(parse_json(Output).throughput),
+                        FailedActivities1 = case(Status=="Failed",1,0)
+        | extend    IncursOrchestrationFee = true,
+                    IncursExecutionTimeFee = case(isnotnull(MeterType) or MeterType != "",true,false),
+                    DurationToNearestMinute = coalesce(MeterDuration,0.0)
+        | extend    CloudOrchestrationCost1 = toreal(case((MeterType == "AzureIR" or isnull(MeterType) or MeterType == "") and IncursOrchestrationFee, CloudOrchestrationFeeRate, 0.0000000000)),       
+                    SelfHostedOrchestrationCost1 = toreal(case(MeterType == "SelfhostedIR" and IncursOrchestrationFee, SelfHostedOrchestrationCostRate, NilAmount)),    
+                    SelfHostedDataMovementCost1 = toreal(case(IncursExecutionTimeFee and ActivityType == "Copy" and MeterType == "SelfhostedIR", SelfHostedDataMovementCostRate,NilAmount)*DurationToNearestMinute),
+                    CloudDataMovementCost1 = toreal(case(IncursExecutionTimeFee and ActivityType == "Copy" and MeterType == "AzureIR", CloudDataMovementCostRate,                                                 
+                                NilAmount)*DurationToNearestMinute),
+                    SelfHostedPipelineActivityCost1 = toreal(case(IncursExecutionTimeFee and ActivityType in ("GetMetaData", "Lookup") and MeterType == "SelfhostedIR", SelfHostedPipelineActivityCostRate/toreal(60.0000000000),toreal(0.0000000000))*DurationToNearestMinute),
+                    CloudPipelineActivityCost1 = toreal(case(IncursExecutionTimeFee and ActivityType in ("GetMetaData", "Lookup") and MeterType == "AzureIR", CloudPipelineActivityCostRate/toreal(60.0000000000),                                                 
+                                NilAmount)*DurationToNearestMinute) 
+        | extend 
+                    TotalCost1 = (  SelfHostedDataMovementCost1 + SelfHostedOrchestrationCost1 + CloudOrchestrationCost1)
+        | project 
+                    PipelineRunId,
+                    ActivityRunId,
+                    //ActivityName,
+                    rowsCopied_,
+                    dataRead_,
+                    dataWritten_, 
+                    throughput_,
+                    CloudOrchestrationCost1,
+                    SelfHostedOrchestrationCost1,
+                    SelfHostedDataMovementCost1,
+                    CloudDataMovementCost1,
+                    SelfHostedPipelineActivityCost1,
+                    CloudPipelineActivityCost1,
+                    TotalCost1, 
+                    FailedActivities1,
+                    TimeGenerated
+        | summarize Activities = dcount(ActivityRunId), 
+        TotalCost = sum(TotalCost1),
+        CloudOrchestrationCost = sum(CloudOrchestrationCost1),      
+        SelfHostedOrchestrationCost =  sum(SelfHostedOrchestrationCost1),  
+        SelfHostedDataMovementCost = sum(SelfHostedDataMovementCost1),
+        SelfHostedPipelineActivityCost = sum(SelfHostedPipelineActivityCost1),
+        CloudPipelineActivityCost = sum(CloudPipelineActivityCost1),
+        rowsCopied = sum(rowsCopied_),
+        dataRead = sum(dataRead_),
+        dataWritten = sum(dataWritten_), 
+        FailedActivities = sum(FailedActivities1),
+        MaxActivityTimeGenerated = max(TimeGenerated)
+by PipelineRunUid = PipelineRunId

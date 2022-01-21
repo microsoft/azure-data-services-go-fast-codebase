@@ -1,0 +1,32 @@
+{
+    "name": "GDS_RestResource_Anonymous",
+    "properties": {
+        "linkedServiceName": {
+            "referenceName": "GLS_RestService_Anonymous",
+            "type": "LinkedServiceReference",
+            "parameters": {
+                "BaseUrl": {
+                    "value": "@dataset().BaseUrl",
+                    "type": "Expression"
+                }
+            }
+        },
+        "parameters": {
+            "BaseUrl": {
+                "type": "string"
+            },
+            "RelativePath": {
+                "type": "string"
+            }
+        },
+        "annotations": [],
+        "type": "RestResource",
+        "typeProperties": {
+            "relativeUrl": {
+                "value": "@dataset().RelativePath",
+                "type": "Expression"
+            }
+        },
+        "schema": []
+    }
+}

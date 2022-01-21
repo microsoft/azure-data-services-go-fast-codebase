@@ -254,5 +254,21 @@
         "SourceFormat": "Excel",
         "TargetType": "AzureBlobFS",
         "TargetFormat": "Parquet"
+    },
+    {
+        "Folder": "Azure-Storage-to-SQL-Database",        
+        "GFPIR": "Azure",
+        "SourceType": "AzureBlobFS",
+        "SourceFormat": "Parquet",
+        "TargetType": "AzureSqlDWTable",
+        "TargetFormat": "NA"
+    },
+    {
+        "Folder": "Azure-Storage-to-SQL-Database",        
+        "GFPIR": "Azure",
+        "SourceType": "AzureBlobStorage",
+        "SourceFormat": "Parquet",
+        "TargetType": "AzureSqlDWTable",
+        "TargetFormat": "NA"
     }
 ]

@@ -30,4 +30,3 @@ inputs = {
   deploy_purview                        = false      
   deploy_synapse                        = true  
 } 
-

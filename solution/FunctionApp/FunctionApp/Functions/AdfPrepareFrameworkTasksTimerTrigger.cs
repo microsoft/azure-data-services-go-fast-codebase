@@ -61,96 +61,14 @@ namespace FunctionApp.Functions
 
             short frameworkWideMaxConcurrency = _appOptions.Value.FrameworkWideMaxConcurrency;
 
-            //var longrunningPipes = CheckLongRunningPipelines(logging).Result;
-
-            //Get Count of All runnning pipelines directly from the database
-            short runningPipeline = CountRunnningPipelines(logging);
-            short availableConcurrencySlots = (short)(frameworkWideMaxConcurrency - runningPipeline);
-
             //Generate new task instances based on task master and schedules
             CreateScheduleAndTaskInstances(logging);
 
-            //Is there is Available Slots Proceed and assign the task instances to task runners
-            if (availableConcurrencySlots > 0)
-            {
-                List<TaskGroup> taskGroups = GetActiveTaskGroups();
-
-                if (taskGroups.Count > 0)
-                {
-                    short concurrencySlotsAllocated = 0;
-                    short defaultTasksPerGroup = 0;
-                    short distributionLoopCounter = 1;
-
-                    //Distribute Concurrency Slots 
-                    while (availableConcurrencySlots > 0)
-                    {
-                        DistributeConcurrencySlots(ref taskGroups, ref defaultTasksPerGroup, ref concurrencySlotsAllocated, ref availableConcurrencySlots, distributionLoopCounter);
-                        distributionLoopCounter += 1;
-                    }
-
-                    SqlTable tempTarget = new SqlTable
-                    {
-                        Schema = "dbo",
-                        Name = "#TempGroups" + logging.DefaultActivityLogItem.ExecutionUid.ToString()
-                    };
-                    using SqlConnection con = _taskMetaDataDatabase.GetSqlConnection();
-                    using var table = taskGroups.ToDataTable();
-                    TaskMetaDataDatabase.BulkInsert(table, tempTarget, true, con);
-                    Dictionary<string, string> @params = new Dictionary<string, string>
-                    {
-                        { "TempTable", tempTarget.QuotedSchemaAndName() }
-                    };
-                    string sql = GenerateSqlStatementTemplates.GetSql(System.IO.Path.Combine(EnvironmentHelper.GetWorkingFolder(), _appOptions.Value.LocalPaths.SQLTemplateLocation), "UpdateTaskInstancesWithTaskRunner", @params);
-                    TaskMetaDataDatabase.ExecuteSql(sql, con);
-                }
-            }
+            _taskMetaDataDatabase.ExecuteSql("exec dbo.DistributeTasksToRunnners " + frameworkWideMaxConcurrency.ToString());
 
             return new { };
         }
-
-        private static void DistributeConcurrencySlots(ref List<TaskGroup> taskGroups, ref short defaultTasksPerGroup, ref short concurrencySlotsAllocated, ref short availableConcurrencySlots, short DistributionLoopCount)
-        {
-            short taskGroupLoopCount = 1;
-            short maxTaskGroupIndex = 32767;
-
-            //Ensure that we have at least one concurrency slot per group
-            if (taskGroups.Count > availableConcurrencySlots)
-            {
-                maxTaskGroupIndex = availableConcurrencySlots;
-                defaultTasksPerGroup = 1;
-            }
-            else
-            {
-                defaultTasksPerGroup = (short)Math.Floor((decimal)(availableConcurrencySlots / taskGroups.Count));
-            }
-
-            foreach (TaskGroup taskGroup in taskGroups)
-            {
-                if (DistributionLoopCount == 1)
-                { taskGroup.TasksUnAllocated = taskGroup.TaskCount; }
-
-                if (taskGroup.TasksUnAllocated < defaultTasksPerGroup)
-                {
-                    concurrencySlotsAllocated += taskGroup.TaskCount;
-                    availableConcurrencySlots -= taskGroup.TaskCount;
-                    taskGroup.ConcurrencySlotsAllocated += taskGroup.TaskCount;
-                    taskGroup.TasksUnAllocated -= taskGroup.TaskCount;
-                }
-                else
-                {
-                    concurrencySlotsAllocated += defaultTasksPerGroup;
-                    availableConcurrencySlots -= defaultTasksPerGroup;
-                    taskGroup.ConcurrencySlotsAllocated += defaultTasksPerGroup;
-                    taskGroup.TasksUnAllocated -= defaultTasksPerGroup;
-                }
-
-                taskGroupLoopCount += 1;
-                //Break the foreach if we have hit the max
-                if (taskGroupLoopCount >= maxTaskGroupIndex) { break; }
-            }
-
-
-        }
+       
         private void CreateScheduleAndTaskInstances(Logging.Logging logging)
         {
             logging.LogInformation("Create ScheduleInstance called.");

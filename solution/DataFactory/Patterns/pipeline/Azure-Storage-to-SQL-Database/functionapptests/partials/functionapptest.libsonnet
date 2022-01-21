@@ -92,7 +92,7 @@ function(
     "SourceSystemAuthType":SourceSystemAuthType,
     "SourceSystemSecretName":"",
     "SourceSystemUserName":"",   
-    "TargetSystemId":2,
+    "TargetSystemId":if(TargetType == "Azure Synapse") then 10 else 2,
     "TargetSystemJSON":std.manifestJson(TargetSystemJson),
     "TargetSystemType":TargetType,
     "TargetSystemServer":vars.sqlserver_name + ".database.windows.net",

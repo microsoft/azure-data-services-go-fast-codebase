@@ -59,4 +59,3 @@ resource "azurerm_data_factory_managed_private_endpoint" "sqlserver" {
 #   target_resource_id = azurerm_mssql_server.sqlserver[0].id
 #   subresource_name   = "Sql, SqlOnDemand, Dev"
 # }
-

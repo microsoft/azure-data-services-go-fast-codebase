@@ -397,8 +397,8 @@ function(GenerateArm=false, GFPIR="{IRA}", SourceType="AzureBlobFS", SourceForma
 			},
 			"folder": {
 				"name": if(GenerateArm=="false") 
-							then "ADS Go Fast/Data Movement/" + GFPIR + "/Common"
-							else "[concat('ADS Go Fast/Data Movement/', parameters('integrationRuntimeShortName'), '/Common')]",
+							then "ADS Go Fast/Data Movement/Azure-Storage-to-SQL-Database/" + GFPIR + "/Common"
+							else "[concat('ADS Go Fast/Data Movement/Azure-Storage-to-SQL-Database/', parameters('integrationRuntimeShortName'), '/Common')]",
 			},
 			"annotations": [],
 			"lastPublishTime": "2020-08-04T13:09:30Z"

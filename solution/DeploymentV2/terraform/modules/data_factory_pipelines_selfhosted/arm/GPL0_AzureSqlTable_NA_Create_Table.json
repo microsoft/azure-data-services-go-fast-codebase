@@ -1,0 +1,285 @@
+{
+   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+   "contentVersion": "1.0.0.0",
+   "parameters": {
+      "dataFactoryName": {
+         "metadata": "The name of the data factory",
+         "type": "String"
+      },
+      "integrationRuntimeName": {
+         "metadata": "The name of the integration runtime this pipeline uses",
+         "type": "String"
+      },
+      "integrationRuntimeShortName": {
+         "metadata": "The short name of the integration runtime this pipeline uses",
+         "type": "String"
+      },
+      "sharedKeyVaultUri": {
+         "metadata": "The uri of the shared KeyVault",
+         "type": "String"
+      }
+   },
+   "resources": [
+      {
+         "apiVersion": "2018-06-01",
+         "name": "[concat(parameters('dataFactoryName'), '/','GPL_AzureSqlTable_NA_Create_Table_', parameters('integrationRuntimeShortName'))]",
+         "properties": {
+            "activities": [
+               {
+                  "dependsOn": [ ],
+                  "name": "If exist Staging TableName",
+                  "type": "IfCondition",
+                  "typeProperties": {
+                     "expression": {
+                        "type": "Expression",
+                        "value": "@not(empty(pipeline().parameters.TaskObject.Target.TableName))"
+                     },
+                     "ifTrueActivities": [
+                        {
+                           "dependsOn": [ ],
+                           "linkedServiceName": {
+                              "referenceName": "SLS_AzureFunctionApp",
+                              "type": "LinkedServiceReference"
+                           },
+                           "name": "AF Get SQL Create Statement Staging",
+                           "policy": {
+                              "retry": 0,
+                              "retryIntervalInSeconds": 30,
+                              "secureInput": false,
+                              "secureOutput": false,
+                              "timeout": "7.00:00:00"
+                           },
+                           "type": "AzureFunctionActivity",
+                           "typeProperties": {
+                              "body": {
+                                 "type": "Expression",
+                                 "value": "@json(concat('{\"TaskInstanceId\":\"', string(pipeline().parameters.TaskObject.TaskInstanceId), '\",\"ExecutionUid\":\"', string(pipeline().parameters.TaskObject.ExecutionUid), '\",\"RunId\":\"', string(pipeline().RunId), '\",\"TableSchema\":\"',string(pipeline().parameters.TaskObject.Target.TableSchema), '\",\"TableName\":\"', string(pipeline().parameters.TaskObject.Target.TableName),'\",\"StorageAccountName\":\"', string(pipeline().parameters.TaskObject.Source.System.SystemServer), '\",\"StorageAccountContainer\":\"', string(pipeline().parameters.TaskObject.Source.System.Container), '\",\"RelativePath\":\"', string(pipeline().parameters.TaskObject.Source.Instance.SourceRelativePath), '\",\"SchemaFileName\":\"', string(pipeline().parameters.TaskObject.Source.SchemaFileName), '\"}'))"
+                              },
+                              "functionName": "GetSQLCreateStatementFromSchema",
+                              "method": "POST"
+                           },
+                           "userProperties": [ ]
+                        },
+                        {
+                           "dependsOn": [
+                              {
+                                 "activity": "AF Get SQL Create Statement Staging",
+                                 "dependencyConditions": [
+                                    "Succeeded"
+                                 ]
+                              }
+                           ],
+                           "name": "Lookup Create Staging Table",
+                           "policy": {
+                              "retry": 0,
+                              "retryIntervalInSeconds": 30,
+                              "secureInput": false,
+                              "secureOutput": false,
+                              "timeout": "7.00:00:00"
+                           },
+                           "type": "Lookup",
+                           "typeProperties": {
+                              "dataset": {
+                                 "parameters": {
+                                    "Database": {
+                                       "type": "Expression",
+                                       "value": "@pipeline().parameters.TaskObject.Target.System.Database"
+                                    },
+                                    "Schema": {
+                                       "type": "Expression",
+                                       "value": "@pipeline().parameters.TaskObject.Target.StagingTableSchema"
+                                    },
+                                    "Server": {
+                                       "type": "Expression",
+                                       "value": "@pipeline().parameters.TaskObject.Target.System.SystemServer"
+                                    },
+                                    "Table": {
+                                       "type": "Expression",
+                                       "value": "@pipeline().parameters.TaskObject.Target.StagingTableName"
+                                    }
+                                 },
+                                 "referenceName": "[concat('GDS_AzureSqlTable_NA_', parameters('integrationRuntimeShortName'))]",
+                                 "type": "DatasetReference"
+                              },
+                              "firstRowOnly": false,
+                              "source": {
+                                 "partitionOption": "None",
+                                 "queryTimeout": "02:00:00",
+                                 "sqlReaderQuery": {
+                                    "type": "Expression",
+                                    "value": "@activity('AF Get SQL Create Statement Staging').output.CreateStatement"
+                                 },
+                                 "type": "AzureSqlSource"
+                              }
+                           },
+                           "userProperties": [ ]
+                        },
+                        {
+                           "dependsOn": [
+                              {
+                                 "activity": "Lookup Create Staging Table",
+                                 "dependencyConditions": [
+                                    "Failed"
+                                 ]
+                              }
+                           ],
+                           "name": "AF Log - Create Staging Table Failed",
+                           "type": "ExecutePipeline",
+                           "typeProperties": {
+                              "parameters": {
+                                 "Body": {
+                                    "type": "Expression",
+                                    "value": "@json(concat('{\"TaskInstanceId\":\"', string(pipeline().parameters.TaskObject.TaskInstanceId), '\",\"ExecutionUid\":\"', string(pipeline().parameters.TaskObject.ExecutionUid), '\",\"RunId\":\"', string(pipeline().RunId), '\",\"LogTypeId\":1,\"LogSource\":\"ADF\",\"ActivityType\":\"Create Staging Table\",\"StartDateTimeOffSet\":\"', string(pipeline().TriggerTime), '\",\"EndDateTimeOffSet\":\"', string(utcnow()), '\",\"Comment\":\"', string(activity('Lookup Create Staging Table').error.message), '\",\"Status\":\"Failed\"}'))"
+                                 },
+                                 "FunctionName": "Log",
+                                 "Method": "Post"
+                              },
+                              "pipeline": {
+                                 "referenceName": "SPL_AzureFunction",
+                                 "type": "PipelineReference"
+                              },
+                              "waitOnCompletion": false
+                           },
+                           "userProperties": [ ]
+                        }
+                     ]
+                  },
+                  "userProperties": [ ]
+               },
+               {
+                  "dependsOn": [ ],
+                  "name": "If exist Target TableName",
+                  "type": "IfCondition",
+                  "typeProperties": {
+                     "expression": {
+                        "type": "Expression",
+                        "value": "@not(empty(pipeline().parameters.TaskObject.Target.StagingTableName))"
+                     },
+                     "ifTrueActivities": [
+                        {
+                           "dependsOn": [ ],
+                           "linkedServiceName": {
+                              "referenceName": "SLS_AzureFunctionApp",
+                              "type": "LinkedServiceReference"
+                           },
+                           "name": "AF Get SQL Create Statement Target",
+                           "policy": {
+                              "retry": 0,
+                              "retryIntervalInSeconds": 30,
+                              "secureInput": false,
+                              "secureOutput": false,
+                              "timeout": "7.00:00:00"
+                           },
+                           "type": "AzureFunctionActivity",
+                           "typeProperties": {
+                              "body": {
+                                 "type": "Expression",
+                                 "value": "@json(concat('{\"TaskInstanceId\":\"', string(pipeline().parameters.TaskObject.TaskInstanceId), '\",\"ExecutionUid\":\"', string(pipeline().parameters.TaskObject.ExecutionUid), '\",\"RunId\":\"', string(pipeline().RunId), '\",\"TableSchema\":\"',string(pipeline().parameters.TaskObject.Target.StagingTableSchema), '\",\"TableName\":\"', string(pipeline().parameters.TaskObject.Target.StagingTableName),'\",\"StorageAccountName\":\"', string(pipeline().parameters.TaskObject.Source.System.SystemServer), '\",\"StorageAccountContainer\":\"', string(pipeline().parameters.TaskObject.Source.System.Container), '\",\"RelativePath\":\"', string(pipeline().parameters.TaskObject.Source.Instance.SourceRelativePath), '\",\"SchemaFileName\":\"', string(pipeline().parameters.TaskObject.Source.SchemaFileName), '\",\"DropIfExist\":\"True\"}'))"
+                              },
+                              "functionName": "GetSQLCreateStatementFromSchema",
+                              "method": "POST"
+                           },
+                           "userProperties": [ ]
+                        },
+                        {
+                           "dependsOn": [
+                              {
+                                 "activity": "AF Get SQL Create Statement Target",
+                                 "dependencyConditions": [
+                                    "Succeeded"
+                                 ]
+                              }
+                           ],
+                           "name": "Lookup Create Target Table",
+                           "policy": {
+                              "retry": 0,
+                              "retryIntervalInSeconds": 30,
+                              "secureInput": false,
+                              "secureOutput": false,
+                              "timeout": "7.00:00:00"
+                           },
+                           "type": "Lookup",
+                           "typeProperties": {
+                              "dataset": {
+                                 "parameters": {
+                                    "Database": {
+                                       "type": "Expression",
+                                       "value": "@pipeline().parameters.TaskObject.Target.System.Database"
+                                    },
+                                    "Schema": {
+                                       "type": "Expression",
+                                       "value": "@pipeline().parameters.TaskObject.Target.TableSchema"
+                                    },
+                                    "Server": {
+                                       "type": "Expression",
+                                       "value": "@pipeline().parameters.TaskObject.Target.System.SystemServer"
+                                    },
+                                    "Table": {
+                                       "type": "Expression",
+                                       "value": "@pipeline().parameters.TaskObject.Target.TableName"
+                                    }
+                                 },
+                                 "referenceName": "[concat('GDS_AzureSqlTable_NA_', parameters('integrationRuntimeShortName'))]",
+                                 "type": "DatasetReference"
+                              },
+                              "firstRowOnly": false,
+                              "source": {
+                                 "partitionOption": "None",
+                                 "queryTimeout": "02:00:00",
+                                 "sqlReaderQuery": {
+                                    "type": "Expression",
+                                    "value": "@activity('AF Get SQL Create Statement Target').output.CreateStatement"
+                                 },
+                                 "type": "AzureSqlSource"
+                              }
+                           },
+                           "userProperties": [ ]
+                        },
+                        {
+                           "dependsOn": [
+                              {
+                                 "activity": "Lookup Create Target Table",
+                                 "dependencyConditions": [
+                                    "Failed"
+                                 ]
+                              }
+                           ],
+                           "name": "AF Log - Create Target Table Failed",
+                           "type": "ExecutePipeline",
+                           "typeProperties": {
+                              "parameters": {
+                                 "Body": {
+                                    "type": "Expression",
+                                    "value": "@json(concat('{\"TaskInstanceId\":\"', string(pipeline().parameters.TaskObject.TaskInstanceId), '\",\"ExecutionUid\":\"', string(pipeline().parameters.TaskObject.ExecutionUid), '\",\"RunId\":\"', string(pipeline().RunId), '\",\"LogTypeId\":1,\"LogSource\":\"ADF\",\"ActivityType\":\"Create Target Table\",\"StartDateTimeOffSet\":\"', string(pipeline().TriggerTime), '\",\"EndDateTimeOffSet\":\"', string(utcnow()), '\",\"Comment\":\"', string(activity('Lookup Create Target Table').error.message), '\",\"Status\":\"Failed\"}'))"
+                                 },
+                                 "FunctionName": "Log",
+                                 "Method": "Post"
+                              },
+                              "pipeline": {
+                                 "referenceName": "SPL_AzureFunction",
+                                 "type": "PipelineReference"
+                              },
+                              "waitOnCompletion": false
+                           },
+                           "userProperties": [ ]
+                        }
+                     ]
+                  },
+                  "userProperties": [ ]
+               }
+            ],
+            "annotations": [ ],
+            "folder": {
+               "name": "[concat('ADS Go Fast/Data Movement/', parameters('integrationRuntimeShortName'))]"
+            },
+            "lastPublishTime": "2020-08-04T13:09:30Z",
+            "parameters": {
+               "TaskObject": {
+                  "type": "object"
+               }
+            }
+         },
+         "type": "Microsoft.DataFactory/factories/pipelines"
+      }
+   ]
+}

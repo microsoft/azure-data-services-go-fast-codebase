@@ -68,8 +68,8 @@ function UploadADFItem ($items) {
 }
 
 
-$UploadGDS = $true
-$UploadGLS = $true
+$UploadGDS = $false
+$UploadGLS = $false
 
 if($UploadGLS -eq $true)
 {
@@ -111,4 +111,9 @@ Write-Host "_____________________________"
 Write-Host "Top Level Pipelines"
 Write-Host "_____________________________"
 $items = (Get-ChildItem -Path "./output/" -Include "GPL_*.json" -Verbose -recurse)
+UploadADFItem -items $items
+Write-Host "_____________________________"
+Write-Host "Wrapper Pipelines"
+Write-Host "_____________________________"
+$items = (Get-ChildItem -Path "./output/" -Include "GPL-1_*.json" -Verbose -recurse)
 UploadADFItem -items $items

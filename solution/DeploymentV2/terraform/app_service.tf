@@ -31,11 +31,18 @@ resource "azuread_application" "web_reg" {
   }
 }
 
+resource "time_sleep" "wait_30_seconds" {
+  depends_on = [azuread_application.web_reg]
+  create_duration = "30s"
+}
+
 resource "azuread_service_principal" "web_sp" {
   count          = var.deploy_azure_ad_web_app_registration ? 1 : 0
   application_id = azuread_application.web_reg[0].application_id
   owners         = [data.azurerm_client_config.current.object_id]
+  depends_on = [time_sleep.wait_30_seconds]
 }
+
 
 resource "azurerm_app_service" "web" {
   count               = var.deploy_web_app ? 1 : 0

@@ -330,4 +330,3 @@ resource "azurerm_monitor_diagnostic_setting" "synapse_diagnostic_logs" {
 
 
 }
-

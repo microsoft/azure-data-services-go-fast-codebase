@@ -254,8 +254,8 @@ local pipeline =  {
 		},
 		"folder": {
 					"name": if(GenerateArm=="false") 
-					then "ADS Go Fast/Data Movement/" + GFPIR + "/Components"
-					else "[concat('ADS Go Fast/Data Movement/', parameters('integrationRuntimeShortName'), '/Components')]",
+					then "ADS Go Fast/Data Movement/SQL-Database-to-Azure-Storage/" + GFPIR + "/Components"
+					else "[concat('ADS Go Fast/Data Movement/SQL-Database-to-Azure-Storage/', parameters('integrationRuntimeShortName'), '/Components')]",
 		},
 		"annotations": []
 	},

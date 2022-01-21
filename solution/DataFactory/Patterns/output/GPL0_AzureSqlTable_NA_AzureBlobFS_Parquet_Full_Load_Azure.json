@@ -278,7 +278,7 @@
     ],
     "annotations": [],
     "folder": {
-      "name": "ADS Go Fast/Data Movement/Azure/Components"
+      "name": "ADS Go Fast/Data Movement/SQL-Database-to-Azure-Storage/Azure/Components"
     },
     "parameters": {
       "BatchCount": {

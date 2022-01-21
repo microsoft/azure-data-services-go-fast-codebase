@@ -131,8 +131,8 @@ local pipeline = {
 		"parameters": parameterDefaultValue(SourceType),
 		"folder": {
 			"name": if(GenerateArm=="false") 
-					then "ADS Go Fast/Data Movement/" + GFPIR
-					else "[concat('ADS Go Fast/Data Movement/', parameters('integrationRuntimeShortName'))]",
+					then "ADS Go Fast/Data Movement/Azure-Storage-to-Azure-Storage/" + GFPIR
+					else "[concat('ADS Go Fast/Data Movement/Azure-Storage-to-Azure-Storage/', parameters('integrationRuntimeShortName'))]",
 		},
 		"annotations": [],
 		"lastPublishTime": "2020-08-05T04:14:00Z"

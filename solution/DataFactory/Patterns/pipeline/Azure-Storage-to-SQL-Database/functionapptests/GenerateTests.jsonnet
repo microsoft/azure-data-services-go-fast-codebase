@@ -270,6 +270,39 @@ local tests =
         "Description": "FullLoad",  
         "ADFPipeline": "GPL_AzureBlobFS_json_AzureSqlTable_NA_IRA"
        
+    },
+    //Azure Synapse
+    {
+        "Active": true,        
+        "Pattern": "Azure Storage to SQL Database",         
+        "SourceSystemAuthType": "MSI",
+        
+        "SourceFormat":"Parquet",
+        "SourceType":"Azure Blob",        
+        "DataFilename":"SalesLT.Customer.parquet",
+        "SchemaFileName":"SalesLT.Customer.json", 
+        "SkipLineCount":"",
+        "FirstRowAsHeader": "false",
+        "SheetName":"",
+        "MaxConcorrentConnections":0,
+        "Recursively":"false",
+        "DeleteAfterCompletion":"false",
+        
+        "TargetFormat":"Table",
+        "TargetType": "Azure Synapse", 
+        "TableSchema":"dbo",
+        "TableName":"Customer",
+        "StagingTableSchema":"dbo",
+        "StagingTableName":"stg_Customer",
+        "AutoCreateTable": "false",
+        "PreCopySQL": "",
+        "PostCopySQL": "",
+        "AutoGenerateMerge": "false",
+        "MergeSQL":"", 
+        
+        "Description": "FullLoad",  
+        "ADFPipeline": "GPL_AzureBlobStorage_Parquet_AzureSqlDWTable_NA_IRA" 
+       
     }
 
 ];
