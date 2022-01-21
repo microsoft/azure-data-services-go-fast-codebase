@@ -1,4 +1,4 @@
-$patterns = ((Get-Content "Patterns.json") | ConvertFrom-Json).Folder | Get-Unique
+$patterns = ((Get-Content "Patterns.json") | ConvertFrom-Json).Folder | Sort-Object | Get-Unique
 
 foreach ($pattern in $patterns) {    
     Write-Host "_____________________________"

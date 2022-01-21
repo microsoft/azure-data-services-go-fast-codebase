@@ -65,6 +65,11 @@ resource "azurerm_storage_account" "storage_acccount_security_logs" {
   }
 }
 
+resource "azurerm_role_assignment" "blob_function_app_sec" {
+  scope                = azurerm_storage_account.storage_acccount_security_logs.id
+  role_definition_name = "Storage Blob Data Contributor"
+  principal_id         = azurerm_function_app.function_app.identity[0].principal_id
+}
 
 resource "azurerm_private_endpoint" "storage_private_endpoint_with_dns" {
   count               = var.is_vnet_isolated ? 1 : 0

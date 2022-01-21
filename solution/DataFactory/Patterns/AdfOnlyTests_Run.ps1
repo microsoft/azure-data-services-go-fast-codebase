@@ -9,7 +9,7 @@ if($tout.resource_group_name -eq "") {
     $tout.resource_group_name = Read-Host "Enter the name of the resource group"
 }
 
-$patterns = ((Get-Content "Patterns.json") | ConvertFrom-Json).Folder | Get-Unique
+$patterns = ((Get-Content "Patterns.json") | ConvertFrom-Json).Folder | Sort-Object | Get-Unique
 
 foreach ($folder in $patterns)
 {   

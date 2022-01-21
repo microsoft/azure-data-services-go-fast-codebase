@@ -1,0 +1,118 @@
+{
+   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+   "contentVersion": "1.0.0.0",
+   "parameters": {
+      "dataFactoryName": {
+         "metadata": "The name of the data factory",
+         "type": "String"
+      },
+      "integrationRuntimeName": {
+         "metadata": "The name of the integration runtime this pipeline uses",
+         "type": "String"
+      },
+      "integrationRuntimeShortName": {
+         "metadata": "The short name of the integration runtime this pipeline uses",
+         "type": "String"
+      },
+      "sharedKeyVaultUri": {
+         "metadata": "The uri of the shared KeyVault",
+         "type": "String"
+      }
+   },
+   "resources": [
+      {
+         "apiVersion": "2018-06-01",
+         "name": "[concat(parameters('dataFactoryName'), '/','GPL_AzureBlobFS_Binary_AzureBlobFS_Binary_', parameters('integrationRuntimeShortName'))]",
+         "properties": {
+            "activities": [
+               {
+                  "dependsOn": [ ],
+                  "name": "Execute Main Pipeline",
+                  "type": "ExecutePipeline",
+                  "typeProperties": {
+                     "parameters": {
+                        "TaskObject": {
+                           "type": "Expression",
+                           "value": "@pipeline().parameters.TaskObject"
+                        }
+                     },
+                     "pipeline": {
+                        "referenceName": "[concat('GPL_AzureBlobFS_Binary_AzureBlobFS_Binary_Primary_', parameters('integrationRuntimeShortName'))]",
+                        "type": "PipelineReference"
+                     },
+                     "waitOnCompletion": true
+                  },
+                  "userProperties": [ ]
+               },
+               {
+                  "dependsOn": [
+                     {
+                        "activity": "Execute Main Pipeline",
+                        "dependencyConditions": [
+                           "Failed"
+                        ]
+                     }
+                  ],
+                  "name": "Pipeline AF Log - Failed",
+                  "type": "ExecutePipeline",
+                  "typeProperties": {
+                     "parameters": {
+                        "Body": {
+                           "type": "Expression",
+                           "value": "@json(\n    concat(\n        '{\"TaskInstanceId\":\"', \n        string(pipeline().parameters.TaskObject.TaskInstanceId), \n        '\",\"ExecutionUid\":\"', \n        string(pipeline().parameters.TaskObject.ExecutionUid), \n        '\",\"RunId\":\"', \n        string(pipeline().RunId), \n        '\",\"LogTypeId\":1,\"LogSource\":\"ADF\",\"ActivityType\":\"Data-Movement-Master\",\"StartDateTimeOffSet\":\"', \n        string(pipeline().TriggerTime), \n        '\",\"EndDateTimeOffSet\":\"', \n        string(utcnow()), \n        '\",\"Comment\":\"', \n        string(activity('Execute Main Pipeline').error.message), \n        '\",\"Status\":\"Failed\",\"NumberOfRetries\":\"', \n        string(pipeline().parameters.TaskObject.NumberOfRetries),\n        '\"}'\n    )\n)"
+                        },
+                        "FunctionName": "Log",
+                        "Method": "Post"
+                     },
+                     "pipeline": {
+                        "referenceName": "SPL_AzureFunction",
+                        "type": "PipelineReference"
+                     },
+                     "waitOnCompletion": true
+                  },
+                  "userProperties": [ ]
+               },
+               {
+                  "dependsOn": [
+                     {
+                        "activity": "Execute Main Pipeline",
+                        "dependencyConditions": [
+                           "Succeeded"
+                        ]
+                     }
+                  ],
+                  "name": "Pipeline AF Log - Succeed",
+                  "type": "ExecutePipeline",
+                  "typeProperties": {
+                     "parameters": {
+                        "Body": {
+                           "type": "Expression",
+                           "value": "@json(\n    concat(\n        '{\"TaskInstanceId\":\"', \n        string(\n            pipeline().parameters.TaskObject.TaskInstanceId\n            ), \n        '\",\"ExecutionUid\":\"', \n        string(pipeline().parameters.TaskObject.ExecutionUid), \n        '\",\"RunId\":\"', \n        string(pipeline().RunId), \n        '\",\"LogTypeId\":1,\"LogSource\":\"ADF\",\"ActivityType\":\"Data-Movement-Master\",\"StartDateTimeOffSet\":\"', \n        string(pipeline().TriggerTime), \n        '\",\"EndDateTimeOffSet\":\"', \n        string(utcnow()), \n        '\",\"Comment\":\"\",\"Status\":\"Complete\",\"NumberOfRetries\":\"', \n        string(pipeline().parameters.TaskObject.NumberOfRetries),\n        '\"}'\n    )\n)"
+                        },
+                        "FunctionName": "Log",
+                        "Method": "Post"
+                     },
+                     "pipeline": {
+                        "referenceName": "SPL_AzureFunction",
+                        "type": "PipelineReference"
+                     },
+                     "waitOnCompletion": true
+                  },
+                  "userProperties": [ ]
+               }
+            ],
+            "annotations": [ ],
+            "folder": {
+               "name": "[concat('ADS Go Fast/Data Movement/', parameters('integrationRuntimeShortName'))]"
+            },
+            "lastPublishTime": "2020-08-06T06:27:14Z",
+            "parameters": {
+               "TaskObject": {
+                  "type": "object"
+               }
+            }
+         },
+         "type": "Microsoft.DataFactory/factories/pipelines"
+      }
+   ]
+}

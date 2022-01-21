@@ -21,19 +21,12 @@
 # You can run this script multiple times if needed.
 #----------------------------------------------------------------------------------------------------------------
 
+$environmentName = "staging" # currently supports (local, staging)
+[System.Environment]::SetEnvironmentVariable('TFenvironmentName',$environmentName)
 
-
-
-$environmentName = "local" # currently supports (local, staging)
 $myIp = (Invoke-WebRequest ifconfig.me/ip).Content
 $skipTerraformDeployment = $false
-$skipWebApp = $true
-$skipFunctionApp = $true
-$skipDatabase = $true
-$skipSampleFiles = $true
-$skipNetworking = $true
 $deploymentFolderPath = (Get-Location).Path
-$AddCurrentUserAsWebAppAdmin = $true
 
 #----------------------------------------------------------------------------------------------------------------
 #   Deploy Infrastructure
@@ -44,7 +37,7 @@ $AddCurrentUserAsWebAppAdmin = $true
 # - If the firewall is blocking you, add your IP as firewall rule / exemption to the appropriate resource
 # - If you havn't run prepare but want to run this script on its own, set the TF_VAR_jumphost_password and TF_VAR_domain env vars
 #------------------------------------------------------------------------------------------------------------
-Set-Location ".\terraform"
+Set-Location "./terraform"
 $env:TF_VAR_ip_address = $myIp
 
 if ($skipTerraformDeployment) {
@@ -79,6 +72,26 @@ $stagingdb_name=$outputs.stagingdb_name.value
 $sampledb_name=$outputs.sampledb_name.value
 $metadatadb_name=$outputs.metadatadb_name.value
 $loganalyticsworkspace_id=$outputs.loganalyticsworkspace_id.value
+$purview_sp_name=$outputs.purview_sp_name.value
+$synapse_workspace_name=if([string]::IsNullOrEmpty($outputs.synapse_workspace_name.value)) {"Dummy"} else {$outputs.synapse_workspace_name.value}
+$synapse_sql_pool_name=if([string]::IsNullOrEmpty($outputs.synapse_sql_pool_name.value)) {"Dummy"} else {$outputs.synapse_sql_pool_name.value}
+
+$skipWebApp = if($tout.publish_web_app) {$false} else {$true}
+$skipFunctionApp = if($tout.publish_function_app) {$false} else {$true}
+$skipDatabase = if($tout.publish_database) {$false} else {$true}
+$skipSampleFiles = if($tout.publish_sample_files){$false} else {$true}
+$skipNetworking = if($tout.configure_networking){$false} else {$true}
+$skipDataFactoryPipelines = if($tout.publish_datafactory_pipelines) {$false} else {$true}
+$AddCurrentUserAsWebAppAdmin = if($tout.publish_web_app_addcurrentuserasadmin) {$true} else {$false}
+
+if ($skipDataFactoryPipelines) {
+    Write-Host "Skipping DataFactory Pipelines"    
+}
+else {
+    Set-Location ../
+    Invoke-Expression ./GenerateAndUploadADFPipelines.ps1
+    Set-Location ./terraform
+}
 
 if ($skipNetworking -or $tout.is_vnet_isolated -eq $false) {
     Write-Host "Skipping Private Link Connnections"    
@@ -210,7 +223,7 @@ else {
     Set-Location ".\bin\publish\unzipped\database\"
 
     # This has been updated to use the Azure CLI cred
-    dotnet AdsGoFastDbUp.dll -a True -c "Data Source=tcp:${sqlserver_name}.database.windows.net;Initial Catalog=${metadatadb_name};" -v True --DataFactoryName $datafactory_name --ResourceGroupName $resource_group_name --KeyVaultName $keyvault_name --LogAnalyticsWorkspaceId $loganalyticsworkspace_id --SubscriptionId $subscription_id --SampleDatabaseName $sampledb_name --StagingDatabaseName $stagingdb_name --MetadataDatabaseName $metadatadb_name --BlobStorageName $blobstorage_name --AdlsStorageName $adlsstorage_name --WebAppName $webapp_name --FunctionAppName $functionapp_name --SqlServerName $sqlserver_name
+    dotnet AdsGoFastDbUp.dll -a True -c "Data Source=tcp:${sqlserver_name}.database.windows.net;Initial Catalog=${metadatadb_name};" -v True --DataFactoryName $datafactory_name --ResourceGroupName $resource_group_name --KeyVaultName $keyvault_name --LogAnalyticsWorkspaceId $loganalyticsworkspace_id --SubscriptionId $subscription_id --SampleDatabaseName $sampledb_name --StagingDatabaseName $stagingdb_name --MetadataDatabaseName $metadatadb_name --BlobStorageName $blobstorage_name --AdlsStorageName $adlsstorage_name --WebAppName $webapp_name --FunctionAppName $functionapp_name --SqlServerName $sqlserver_name --SynapseWorkspaceName $synapse_workspace_name --SynapseDatabaseName $synapse_sql_pool_name
 
     # Fix the MSI registrations on the other databases. I'd like a better way of doing this in the future
     $SqlInstalled = Get-InstalledModule SqlServer
@@ -260,7 +273,53 @@ else {
     }
 }
 
+#----------------------------------------------------------------------------------------------------------------
+#   Configure Synapse Logins
+#----------------------------------------------------------------------------------------------------------------
+if([string]::IsNullOrEmpty($tout.synapse_workspace_name)) {
+    Write-Host "Skipping Synapse SQL Users"    
+}
+else {
+    Write-Host "Configuring Synapse SQL Users"
 
+    #Add Ip to SQL Firewall
+    #$result = az synapse workspace update -n $synapse_workspace_name -g $resource_group_name  --set publicNetworkAccess="Enabled"
+    $result = az synapse workspace firewall-rule create --resource-group $resource_group_name --workspace-name $synapse_workspace_name --name "Deploy.ps1" --start-ip-address $myIp --end-ip-address $myIp
+
+    if ($tout.is_vnet_isolated -eq $false)
+    {
+         $result = az synapse workspace firewall-rule create --resource-group $resource_group_name --workspace-name $synapse_workspace_name --name "AllowAllWindowsAzureIps" --start-ip-address "0.0.0.0" --end-ip-address "0.0.0.0"
+    }
+   
+    if([string]::IsNullOrEmpty($synapse_sql_pool_name))
+    {
+        write-host "Synapse pool is not deployed."
+    }
+    else 
+    {
+        # Fix the MSI registrations on the other databases. I'd like a better way of doing this in the future
+        $SqlInstalled = Get-InstalledModule SqlServer
+        if($null -eq $SqlInstalled)
+        {
+            write-host "Installing SqlServer Module"
+            Install-Module -Name SqlServer -Scope CurrentUser -Force
+        }
+
+
+
+        $token=$(az account get-access-token --resource=https://sql.azuresynapse.net --query accessToken --output tsv)
+        if (![string]::IsNullOrEmpty($datafactory_name))
+        {
+            # For a Spark user to read and write directly from Spark into or from a SQL pool, db_owner permission is required.
+            Invoke-Sqlcmd -ServerInstance "$synapse_workspace_name.sql.azuresynapse.net,1433" -Database $synapse_sql_pool_name -AccessToken $token -query "IF NOT EXISTS (SELECT name
+    FROM [sys].[database_principals]
+    WHERE [type] = 'E' AND name = N'$datafactory_name') BEGIN CREATE USER [$datafactory_name] FROM EXTERNAL PROVIDER END"    
+            Invoke-Sqlcmd -ServerInstance "$synapse_workspace_name.sql.azuresynapse.net,1433" -Database $synapse_sql_pool_name -AccessToken $token -query "EXEC sp_addrolemember 'db_owner', '$datafactory_name'"
+        }
+    }
+
+
+}
 
 #----------------------------------------------------------------------------------------------------------------
 #   Deploy Sample Files

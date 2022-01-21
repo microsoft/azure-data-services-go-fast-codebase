@@ -62,7 +62,8 @@ jobs:
       TF_VAR_tenant_id : ${{ secrets.ARM_TENANT_ID }}     
       TF_VAR_resource_group_name  : ${{ secrets.ARM_RESOURCE_GROUP_NAME }}     
       TF_VAR_state_storage_account_name  : ${{ secrets.ARM_STORAGE_NAME }}     
-      TF_VAR_jumphost_password : ${{secrets.JUMPHOST_PASSWORD}}
+      TF_VAR_jumphost_password : ${{secrets.ARM_JUMPHOST_PASSWORD}}
+      TF_VAR_synapse_sql_password : ${{secrets.ARM_SYNAPSE_PASSWORD}}
     environment: 
       name: staging
     needs: [publish-function-app, publish-web-app, publish-dbup-app, publish-terraform]
@@ -160,7 +161,8 @@ jobs:
       TF_VAR_tenant_id : ${{ secrets.ARM_TENANT_ID }}     
       TF_VAR_resource_group_name  : ${{ secrets.ARM_RESOURCE_GROUP_NAME }}     
       TF_VAR_state_storage_account_name  : ${{ secrets.ARM_STORAGE_NAME }}     
-      TF_VAR_jumphost_password : ${{secrets.JUMPHOST_PASSWORD}}
+      TF_VAR_jumphost_password : ${{secrets.ARM_JUMPHOST_PASSWORD}}
+      TF_VAR_synapse_sql_password : ${{secrets.ARM_SYNAPSE_PASSWORD}}
     environment: 
       name: production
     needs: [deploy-to-staging]

@@ -35,6 +35,11 @@ variable "azure_synapse_linkedservice_name" {
   type        = string
 }
 
+variable "azure_synapse_linkedservice_name" {
+  description = "The name of the linked service for AZURE Synapse"
+  type        = string
+}
+
 variable "mssql_linkedservice_name" {
   description = "The name of the linked service for SQL server"
   type        = string

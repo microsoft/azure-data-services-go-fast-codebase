@@ -16,23 +16,27 @@
     "TaskGroupConcurrency": 10,
     "TaskGroupPriority": 0,
     "Source": {
-      "Type": "Azure SQL",
-      "Database": {
+      "System": {
+        "Type": "Azure SQL",
         "SystemName": "AdsOpts_CD_Services_AzureSQLServer_Name.database.windows.net",
         "Name": "AdsOpts_CD_Services_AzureSQLServer_SampleDB_Name",
         "AuthenticationType": "MSI"
       },
-      "Extraction": {
-        "Type": "Table",
-        "FullOrIncremental": "Full",
-        "IncrementalType": "Full",
-        "TableSchema": "SalesLT",
-        "TableName": "SalesOrderHeader",
-        "ExtractionSQL": "",
-        "SQLStatement": ""
-      }
+      "Type": "Table",
+      "FullOrIncremental": "Full",
+      "IncrementalType": "Full",
+      "TableSchema": "SalesLT",
+      "TableName": "SalesOrderHeader",
+      "ExtractionSQL": "",
+      "SQLStatement": ""
     },
     "Target": {
+      "System": {
+        "Type": "Azure SQL",
+        "SystemName": "AdsOpts_CD_Services_AzureSQLServer_Name.database.windows.net",
+        "Name": "AdsOpts_CD_Services_AzureSQLServer_SampleDB_Name",
+        "AuthenticationType": "MSI"
+      },
       "Type": "Parquet",
       "StorageAccountName": "https://AdsOpts_CD_Services_Storage_Blob_Name.blob.core.windows.net",
       "StorageAccountContainer": "datalakeraw",

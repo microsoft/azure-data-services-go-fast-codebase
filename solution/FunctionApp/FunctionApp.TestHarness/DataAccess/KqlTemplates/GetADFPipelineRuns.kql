@@ -1,0 +1,33 @@
+﻿//-----------------------------------------------------------------------
+//
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
+//
+//-----------------------------------------------------------------------*/
+
+ADFPipelineRun
+| where Status in ("Succeeded", "Failed", "Cancelled")
+        and TimeGenerated > datetime({MaxPipelineTimeGenerated})
+        and ResourceId  == "/SUBSCRIPTIONS/{SubscriptionId}/RESOURCEGROUPS/{ResourceGroupName}/PROVIDERS/MICROSOFT.DATAFACTORY/FACTORIES/{DataFactoryName}"
+| extend        TaskInstanceId =    coalesce(toint(parse_json(tostring(parse_json(Parameters).Body)).TaskInstanceId),
+                                        coalesce(toint(parse_json(tostring(parse_json(Parameters).TaskObject)).TaskInstanceId),
+                                             toint( parse_json(tostring(parse_json(Parameters))).TaskInstanceId)
+                                                )
+                                            ),     
+                ExecutionUid = coalesce(tostring(parse_json(tostring(parse_json(Parameters).Body)).ExecutionUid),
+                                      coalesce(tostring(parse_json(tostring(parse_json(Parameters).TaskObject)).ExecutionUid), 
+                                        tostring( parse_json(tostring(parse_json(Parameters))).ExecutionUid)
+                                        )
+                                    )
+| where isnotnull(TaskInstanceId) and isnotnull(ExecutionUid)
+| project  TaskInstanceId, ExecutionUid, PipelineStatus = Status, RunId, Start, End, TimeGenerated, ResourceId, PipelineName
+| summarize        
+        Start = max(Start), 
+        End = max(End),        
+        MaxPipelineTimeGenerated = max(TimeGenerated)
+by 
+    TaskInstanceId,
+    ExecutionUid,
+    PipelineName,
+    PipelineRunUid = RunId, 
+    PipelineRunStatus = PipelineStatus

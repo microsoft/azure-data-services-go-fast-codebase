@@ -54,6 +54,11 @@ variable "domain" {
   description = "The AAD domain"
   type        = string
 }
+variable "cicd_sp_id" {
+  description = "The Object Id of the GitHub Service Principal. This will ensure that keyvault access policies are configured for GitHub/terraform to read secret state later"
+  type        = string
+  default     = ""
+}
 //Onprem linked services and pipelines won't be registered until you complete the IR registration and set this to true
 variable "is_onprem_datafactory_ir_registered" {
   description = "Are all on-premise Integration runtimes configured?"
@@ -223,7 +228,50 @@ variable "deploy_synapse_sparkpool" {
   type        = bool
 }
 
+#---------------------------------------------------------------
+# Post IAC - Feature Toggles 
+#---------------------------------------------------------------
+variable "publish_web_app" {
+  description = "Feature toggle for Publishing Web Application Code Base"
+  default     = true
+  type        = bool
+}
 
+variable "publish_function_app" {
+  description = "Feature toggle for Publishing Function Application Code Base"
+  default     = true
+  type        = bool
+}
+
+variable "publish_sample_files" {
+  description = "Feature toggle for Publishing Sample Filess"
+  default     = true
+  type        = bool
+}
+
+variable "publish_database" {
+  description = "Feature toggle for Publishing Database schema and seeding with data"
+  default     = true
+  type        = bool
+}
+
+variable "configure_networking" {
+  description = "Feature toggle for post IAC network configuration"
+  default     = true
+  type        = bool
+}
+
+variable "publish_datafactory_pipelines" {
+  description = "Feature toggle for post IAC data factory pipeline deployment"
+  default     = true
+  type        = bool
+}
+
+variable "publish_web_app_addcurrentuserasadmin" {
+  description = "Feature toggle for adding user running deployment as a webapp admin"
+  default     = false
+  type        = bool
+}
 
 #---------------------------------------------------------------
 # Naming Prefix Settings

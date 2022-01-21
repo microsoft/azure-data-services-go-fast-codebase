@@ -1,0 +1,143 @@
+{
+   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+   "contentVersion": "1.0.0.0",
+   "parameters": {
+      "dataFactoryName": {
+         "metadata": "The name of the data factory",
+         "type": "String"
+      },
+      "integrationRuntimeName": {
+         "metadata": "The name of the integration runtime this pipeline uses",
+         "type": "String"
+      },
+      "integrationRuntimeShortName": {
+         "metadata": "The short name of the integration runtime this pipeline uses",
+         "type": "String"
+      },
+      "sharedKeyVaultUri": {
+         "metadata": "The uri of the shared KeyVault",
+         "type": "String"
+      }
+   },
+   "resources": [
+      {
+         "apiVersion": "2018-06-01",
+         "name": "[concat(parameters('dataFactoryName'), '/','GPL_AzureSqlTable_NA_AzureBlobStorage_Parquet_Full_Load_Chunk_', parameters('integrationRuntimeShortName'))]",
+         "properties": {
+            "activities": [
+               {
+                  "dependsOn": [ ],
+                  "name": "ForEach Chunk",
+                  "type": "ForEach",
+                  "typeProperties": {
+                     "activities": [
+                        {
+                           "dependsOn": [ ],
+                           "name": "Execute Full Load",
+                           "type": "ExecutePipeline",
+                           "typeProperties": {
+                              "parameters": {
+                                 "BatchCount": {
+                                    "type": "Expression",
+                                    "value": "@pipeline().parameters.BatchCount"
+                                 },
+                                 "Item": {
+                                    "type": "Expression",
+                                    "value": "@item()"
+                                 },
+                                 "Mapping": {
+                                    "type": "Expression",
+                                    "value": "@pipeline().parameters.Mapping"
+                                 },
+                                 "TaskObject": {
+                                    "type": "Expression",
+                                    "value": "@pipeline().parameters.TaskObject"
+                                 }
+                              },
+                              "pipeline": {
+                                 "referenceName": "[concat('GPL_AzureSqlTable_NA_AzureBlobStorage_Parquet_Full_Load_', parameters('integrationRuntimeShortName'))]",
+                                 "type": "PipelineReference"
+                              },
+                              "waitOnCompletion": true
+                           },
+                           "userProperties": [ ]
+                        }
+                     ],
+                     "isSequential": true,
+                     "items": {
+                        "type": "Expression",
+                        "value": "@range(1, pipeline().parameters.BatchCount)"
+                     }
+                  },
+                  "userProperties": [ ]
+               }
+            ],
+            "annotations": [ ],
+            "folder": {
+               "name": "[concat('ADS Go Fast/Data Movement/', parameters('integrationRuntimeShortName'), '/Components')]"
+            },
+            "parameters": {
+               "BatchCount": {
+                  "type": "int"
+               },
+               "Mapping": {
+                  "type": "object"
+               },
+               "TaskObject": {
+                  "defaultValue": {
+                     "DataFactory": {
+                        "ADFPipeline": "SH-AZ_Storage_Parquet_Azure",
+                        "Id": 1,
+                        "Name": "adsgofastdatakakeacceladf",
+                        "ResourceGroup": "AdsGoFastDataLakeAccel",
+                        "SubscriptionId": "035a1364-f00d-48e2-b582-4fe125905ee3"
+                     },
+                     "DegreeOfCopyParallelism": 1,
+                     "Enabled": 1,
+                     "ExecutionUid": "2c5924ee-b855-4d2b-bb7e-4f5dde4c4dd3",
+                     "KeyVaultBaseUrl": "https://adsgofastkeyvault.vault.azure.net/",
+                     "NumberOfRetries": 111,
+                     "ScheduleMasterId": 2,
+                     "Source": {
+                        "Database": {
+                           "AuthenticationType": "MSI",
+                           "Name": "AWSample",
+                           "SystemName": "adsgofastdatakakeaccelsqlsvr.database.windows.net"
+                        },
+                        "Extraction": {
+                           "FullOrIncremental": "Full",
+                           "IncrementalType": null,
+                           "TableName": "SalesOrderHeader",
+                           "TableSchema": "SalesLT",
+                           "Type": "Table"
+                        },
+                        "Type": "Azure SQL"
+                     },
+                     "Target": {
+                        "DataFileName": "SalesLT.SalesOrderHeader.parquet",
+                        "FirstRowAsHeader": null,
+                        "MaxConcorrentConnections": null,
+                        "RelativePath": "/AwSample/SalesLT/SalesOrderHeader/2020/7/9/14/12/",
+                        "SchemaFileName": "SalesLT.SalesOrderHeader",
+                        "SheetName": null,
+                        "SkipLineCount": null,
+                        "StorageAccountAccessMethod": "MSI",
+                        "StorageAccountContainer": "datalakeraw",
+                        "StorageAccountName": "https://adsgofastdatalakeaccelst.blob.core.windows.net",
+                        "Type": "Azure Blob"
+                     },
+                     "TaskGroupConcurrency": 10,
+                     "TaskGroupPriority": 0,
+                     "TaskInstanceId": 75,
+                     "TaskMasterId": 12,
+                     "TaskStatus": "Untried",
+                     "TaskType": "SQL Database to Azure Storage"
+                  },
+                  "type": "object"
+               }
+            }
+         },
+         "type": "Microsoft.DataFactory/factories/pipelines"
+      }
+   ]
+}

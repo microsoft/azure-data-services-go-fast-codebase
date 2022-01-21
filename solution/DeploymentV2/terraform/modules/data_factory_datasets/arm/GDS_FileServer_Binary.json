@@ -27,7 +27,7 @@
             "name": "[concat(parameters('dataFactoryName'), '/', parameters('name'))]",
 		"properties": {
 			"linkedServiceName": {
-				"referenceName": "GenericFileServer_IRB",
+				"referenceName": "[parameters('linkedServiceName')]",
 				"type": "LinkedServiceReference",
 				"parameters": {
 					"Host": {
