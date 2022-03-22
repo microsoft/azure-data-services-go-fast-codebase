@@ -44,7 +44,7 @@ foreach ($t in $tests)
     $TargetSystemId = $t.TargetSystemId
     $DegreeOfCopyParallelism = $t.DegreeOfCopyParallelism
     $AllowMultipleActiveInstances = 0
-    $TaskDatafactoryIR = "'Azure'"
+    $TaskDatafactoryIR = $t.TaskDatafactoryIR
     $TaskMasterJSON = $t.TaskMasterJson
     $ActiveYN = 0
     $DependencyChainTag = ""
@@ -82,7 +82,7 @@ foreach ($t in $tests)
         $TargetSystemId                        ,
         $DegreeOfCopyParallelism               ,
         $AllowMultipleActiveInstances          ,
-        $TaskDatafactoryIR                     ,
+        '$TaskDatafactoryIR'                   ,
         '$TaskMasterJSON'                      ,
         $ActiveYN                              ,
         '$DependencyChainTag'                  ,

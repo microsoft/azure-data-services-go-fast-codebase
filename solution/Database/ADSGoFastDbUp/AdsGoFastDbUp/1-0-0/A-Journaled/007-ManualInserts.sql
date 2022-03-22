@@ -101,16 +101,22 @@ WHERE SystemId = '-8'
 GO
 
 UPDATE [dbo].[SourceAndTargetSystems]
-SET SystemServer = 'https://$AdlsStorageName$.dfs.core.windows.net'
+SET SystemServer = '(local)'
 	,SystemKeyVaultBaseUrl = 'https://$KeyVaultName$.vault.azure.net/'
-	,SystemJSON = '{  "Database" : "msdb"  , "Username" : "adminuser", "PasswordKeyVaultSecretName":"selfhostedsqlpw"   }'
+	,SystemJSON = '{  "Database" : "msdb"  , "PasswordKeyVaultSecretName":"selfhostedsqlpw"   }'
+	,SystemAuthType = 'WindowsAuth'
+	,SystemUserName = 'adminuser'
+	,SystemSecretName = 'selfhostedsqlpw'
+	,SystemType = 'SQL Server'
 WHERE SystemId = '-14'
 GO
 
 UPDATE [dbo].[SourceAndTargetSystems]
 SET SystemServer = '(local)'
 	,SystemKeyVaultBaseUrl = 'https://$KeyVaultName$.vault.azure.net/'
-	,SystemJSON = '{}'
+	,SystemJSON = '{     "PasswordKeyVaultSecretName": "selfhostedsqlpw",     "Username": "adminuser" }'
+	,SystemUserName = 'adminuser'
+	,SystemSecretName = 'selfhostedsqlpw'
 WHERE SystemId = '-15'
 GO
 

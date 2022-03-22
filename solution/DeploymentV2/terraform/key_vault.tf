@@ -121,22 +121,23 @@ resource "azurerm_key_vault_access_policy" "function_app" {
 }
 
 // Allows the synapse workspace to retrieve the azure function host key
-resource "azurerm_key_vault_access_policy" "synapse_access" {
-  key_vault_id = azurerm_key_vault.app_vault.id
-  tenant_id    = var.tenant_id
-  object_id    = azurerm_synapse_workspace.synapse[0].identity[0].principal_id
+// Commenting out because not dpeloying Synapse at this stage
+// resource "azurerm_key_vault_access_policy" "synapse_access" {
+//   key_vault_id = azurerm_key_vault.app_vault.id
+//   tenant_id    = var.tenant_id
+//   object_id    = azurerm_synapse_workspace.synapse[0].identity[0].principal_id
 
-  key_permissions = [
-    "Get", "List"
-  ]
+//   key_permissions = [
+//     "Get", "List"
+//   ]
 
-  secret_permissions = [
-    "list", "get"
-  ]
-  depends_on = [
-    azurerm_key_vault.app_vault,
-  ]
-}
+//   secret_permissions = [
+//     "list", "get"
+//   ]
+//   depends_on = [
+//     azurerm_key_vault.app_vault,
+//   ]
+// }
 
 
 // private endpoints --------------------------
