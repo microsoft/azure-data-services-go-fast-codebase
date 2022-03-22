@@ -34,7 +34,8 @@ local tests =
         "MergeSQL":"", 
         
         "Description": "FullLoad",  
-        "ADFPipeline": "GPL_AzureBlobFS_Parquet_AzureSqlTable_NA" 
+        "ADFPipeline": "GPL_AzureBlobFS_Parquet_AzureSqlTable_NA",
+        "TaskDatafactoryIR":"Azure"
        
     },
     //GPL_AzureBlobStorage_Parquet_AzureSqlTable_NA_FullLoad
@@ -67,7 +68,8 @@ local tests =
         "MergeSQL":"", 
         
         "Description": "FullLoad",  
-        "ADFPipeline": "GPL_AzureBlobStorage_Parquet_AzureSqlTable_NA" 
+        "ADFPipeline": "GPL_AzureBlobStorage_Parquet_AzureSqlTable_NA",
+        "TaskDatafactoryIR":"Azure"
        
     },
     //GPL_AzureBlobFS_Excel_AzureSqlTable_NA_FullLoad
@@ -100,7 +102,8 @@ local tests =
         "MergeSQL":"", 
         
         "Description": "FullLoad",  
-        "ADFPipeline": "GPL_AzureBlobFS_Excel_AzureSqlTable_NA" 
+        "ADFPipeline": "GPL_AzureBlobFS_Excel_AzureSqlTable_NA",
+        "TaskDatafactoryIR":"Azure"
        
     },
     //GPL_AzureBlobStorage_Excel_AzureSqlTable_NA_FullLoad
@@ -133,7 +136,8 @@ local tests =
         "MergeSQL":"", 
         
         "Description": "FullLoad",  
-        "ADFPipeline": "GPL_AzureBlobStorage_Excel_AzureSqlTable_NA" 
+        "ADFPipeline": "GPL_AzureBlobStorage_Excel_AzureSqlTable_NA",
+        "TaskDatafactoryIR":"Azure"
        
     },
     //GPL_AzureBlobStorage_DelimitedText_AzureSqlTable_NA_FullLoad
@@ -168,7 +172,8 @@ local tests =
 
         
         "Description": "FullLoad",  
-        "ADFPipeline": "GPL_AzureBlobStorage_DelimitedText_AzureSqlTable_NA" 
+        "ADFPipeline": "GPL_AzureBlobStorage_DelimitedText_AzureSqlTable_NA",
+        "TaskDatafactoryIR":"Azure"
        
     },
     //GPL_AzureBlobStorage_json_AzureSqlTable_NA_FullLoad
@@ -202,7 +207,8 @@ local tests =
 
         
         "Description": "FullLoad",  
-        "ADFPipeline": "GPL_AzureBlobStorage_json_AzureSqlTable_NA" 
+        "ADFPipeline": "GPL_AzureBlobStorage_json_AzureSqlTable_NA",
+        "TaskDatafactoryIR":"Azure"
        
     },
     //GPL_AzureBlobFS_DelimitedText_AzureSqlTable_NA_FullLoad
@@ -237,7 +243,8 @@ local tests =
 
         
         "Description": "FullLoad",  
-        "ADFPipeline": "GPL_AzureBlobFS_DelimitedText_AzureSqlTable_NA" 
+        "ADFPipeline": "GPL_AzureBlobFS_DelimitedText_AzureSqlTable_NA",
+        "TaskDatafactoryIR":"Azure"
        
     },
     //GPL_AzureBlobFS_json_AzureSqlTable_NA_FullLoad
@@ -271,7 +278,8 @@ local tests =
 
         
         "Description": "FullLoad",  
-        "ADFPipeline": "GPL_AzureBlobFS_json_AzureSqlTable_NA"
+        "ADFPipeline": "GPL_AzureBlobFS_json_AzureSqlTable_NA",
+        "TaskDatafactoryIR":"Azure"
        
     },
 //****************************************************************/
@@ -307,7 +315,8 @@ local tests =
         "MergeSQL":"", 
         
         "Description": "FullLoad",  
-        "ADFPipeline": "GPL_AzureBlobFS_Parquet_AzureSqlDWTable_NA" 
+        "ADFPipeline": "GPL_AzureBlobFS_Parquet_AzureSqlDWTable_NA",
+        "TaskDatafactoryIR":"Azure" 
        
     },
     //GPL_AzureBlobStorage_Parquet_AzureSqlDWTable_NA_FullLoad
@@ -340,7 +349,8 @@ local tests =
         "MergeSQL":"", 
         
         "Description": "FullLoad",  
-        "ADFPipeline": "GPL_AzureBlobStorage_Parquet_AzureSqlDWTable_NA" 
+        "ADFPipeline": "GPL_AzureBlobStorage_Parquet_AzureSqlDWTable_NA",
+        "TaskDatafactoryIR":"Azure" 
        
     },
     //GPL_AzureBlobFS_Excel_AzureSqlDWTable_NA_FullLoad
@@ -373,7 +383,8 @@ local tests =
         "MergeSQL":"", 
         
         "Description": "FullLoad",  
-        "ADFPipeline": "GPL_AzureBlobFS_Excel_AzureSqlDWTable_NA" 
+        "ADFPipeline": "GPL_AzureBlobFS_Excel_AzureSqlDWTable_NA",
+        "TaskDatafactoryIR":"Azure"
        
     },
     //GPL_AzureBlobStorage_Excel_AzureSqlDWTable_NA_FullLoad
@@ -406,7 +417,8 @@ local tests =
         "MergeSQL":"", 
         
         "Description": "FullLoad",  
-        "ADFPipeline": "GPL_AzureBlobStorage_Excel_AzureSqlDWTable_NA" 
+        "ADFPipeline": "GPL_AzureBlobStorage_Excel_AzureSqlDWTable_NA",
+        "TaskDatafactoryIR":"Azure"
        
     },
     //GPL_AzureBlobStorage_DelimitedText_AzureSqlDWTable_NA_FullLoad
@@ -441,7 +453,8 @@ local tests =
 
         
         "Description": "FullLoad",  
-        "ADFPipeline": "GPL_AzureBlobStorage_DelimitedText_AzureSqlDWTable_NA" 
+        "ADFPipeline": "GPL_AzureBlobStorage_DelimitedText_AzureSqlDWTable_NA",
+        "TaskDatafactoryIR":"Azure"
        
     },
     //GPL_AzureBlobStorage_json_AzureSqlDWTable_NA_FullLoad
@@ -475,7 +488,8 @@ local tests =
 
         
         "Description": "FullLoad",  
-        "ADFPipeline": "GPL_AzureBlobStorage_json_AzureSqlDWTable_NA" 
+        "ADFPipeline": "GPL_AzureBlobStorage_json_AzureSqlDWTable_NA",
+        "TaskDatafactoryIR":"Azure"
        
     },
     //GPL_AzureBlobFS_DelimitedText_AzureSqlDWTable_NA_FullLoad
@@ -510,7 +524,8 @@ local tests =
 
         
         "Description": "FullLoad",  
-        "ADFPipeline": "GPL_AzureBlobFS_DelimitedText_AzureSqlDWTable_NA" 
+        "ADFPipeline": "GPL_AzureBlobFS_DelimitedText_AzureSqlDWTable_NA",
+        "TaskDatafactoryIR":"Azure"
        
     },
     //GPL_AzureBlobFS_json_AzureSqlDWTable_NA_FullLoad
@@ -544,7 +559,8 @@ local tests =
 
         
         "Description": "FullLoad",  
-        "ADFPipeline": "GPL_AzureBlobFS_json_AzureSqlDWTable_NA"
+        "ADFPipeline": "GPL_AzureBlobFS_json_AzureSqlDWTable_NA",
+        "TaskDatafactoryIR":"Azure"
        
     }
 
@@ -579,7 +595,8 @@ template(
     t.PostCopySQL,
     t.AutoGenerateMerge,
     t.MergeSQL,
-    t.Description
+    t.Description,
+    t.TaskDatafactoryIR
 );
 
 

@@ -16,7 +16,8 @@ local tests =
         "Description": "FullLoad",
         "ChunkField":"",
         "ChunkSize":0,
-        "IncrementalType": "Full"
+        "IncrementalType": "Full",
+        "TaskDatafactoryIR":"Azure"
     },
     {
         "Active": true,
@@ -33,7 +34,8 @@ local tests =
         "Description": "FullLoad",
         "ChunkField":"",
         "ChunkSize":0,
-         "IncrementalType": "Full"
+         "IncrementalType": "Full",
+        "TaskDatafactoryIR":"Azure"
     },
     {
         "Active": true,
@@ -50,7 +52,8 @@ local tests =
         "Description": "FullLoadUsingExtractionSql",
         "ChunkField":"",
         "ChunkSize":0,
-        "IncrementalType": "Full"
+        "IncrementalType": "Full",
+        "TaskDatafactoryIR":"Azure"
     },    
     {
         "Active": true,
@@ -67,7 +70,8 @@ local tests =
         "Description": "FullLoadWithChunk",
         "ChunkField":"CustomerID",
         "ChunkSize":100,
-        "IncrementalType": "Full"
+        "IncrementalType": "Full",
+        "TaskDatafactoryIR":"Azure"
     },    
     {
         "Active": true,
@@ -84,7 +88,8 @@ local tests =
         "Description": "IncrementalLoad",
         "ChunkField":"",
         "ChunkSize":0,
-        "IncrementalType": "Watermark"
+        "IncrementalType": "Watermark",
+        "TaskDatafactoryIR":"Azure"
     },    
     {
         "Active": true,
@@ -101,7 +106,8 @@ local tests =
         "Description": "FullLoad",
         "ChunkField":"",
         "ChunkSize":0,
-        "IncrementalType": "Full"
+        "IncrementalType": "Full",
+        "TaskDatafactoryIR":"Azure"
     },    
     {
         "Active": true,
@@ -118,7 +124,8 @@ local tests =
         "Description": "FullLoad",
         "ChunkField":"",
         "ChunkSize":0,
-        "IncrementalType": "Full"
+        "IncrementalType": "Full",
+        "TaskDatafactoryIR":"Azure"
     },
     {
         "Active": true,
@@ -135,7 +142,63 @@ local tests =
         "Description": "FullLoad",
         "ChunkField":"",
         "ChunkSize":0,
-        "IncrementalType": "Full"
+        "IncrementalType": "Full",
+        "TaskDatafactoryIR":"Azure"
+    },
+    // Using OnPrem IR
+    {
+        "Active": true,
+        "Pattern": "SQL Database to Azure Storage",         
+        "SourceFormat":"Table",
+        "SourceType":"SQL Server",
+        "ExtractionSQL":"",
+        "DataFilename":"dbo.all_objects.parquet",
+        "SchemaFileName":"dbo_all_objects.json",
+        "SourceSystemAuthType": "Windows",
+        "TargetFormat":"Parquet",
+        "TargetType": "ADLS",
+        "ADFPipeline": "GPL_SqlServerTable_NA_AzureBlobFS_Parquet",
+        "Description": "FullLoad",
+        "ChunkField":"",
+        "ChunkSize":0,
+        "IncrementalType": "Full",
+        "TaskDatafactoryIR":"OnPrem"
+    },
+    {
+        "Active": true,
+        "Pattern": "SQL Database to Azure Storage",         
+        "SourceFormat":"Table",
+        "SourceType":"SQL Server",
+        "ExtractionSQL":"",
+        "DataFilename":"dbo.all_objects.parquet",
+        "SchemaFileName":"dbo_all_objects.json",
+        "SourceSystemAuthType": "Windows",
+        "TargetFormat":"Parquet",
+        "TargetType": "Azure Blob",
+        "ADFPipeline": "GPL_SqlServerTable_NA_AzureBlobStorage_Parquet_Primary_OnPrem",
+        "Description": "FullLoad",
+        "ChunkField":"",
+        "ChunkSize":0,
+        "IncrementalType": "Full",
+        "TaskDatafactoryIR":"OnPrem"
+    },
+    {
+        "Active": true,
+        "Pattern": "SQL Database to Azure Storage",         
+        "SourceFormat":"Table",
+        "SourceType":"SQL Server",
+        "ExtractionSQL":"",
+        "DataFilename":"dbo.all_objects.parquet",
+        "SchemaFileName":"dbo_all_objects.json",
+        "SourceSystemAuthType": "Windows",
+        "TargetFormat":"Parquet",
+        "TargetType": "FileServer",
+        "ADFPipeline": "GPL_SqlServerTable_NA_FileServer_Parquet_Primary_OnPrem",
+        "Description": "FullLoad",
+        "ChunkField":"",
+        "ChunkSize":0,
+        "IncrementalType": "Full",
+        "TaskDatafactoryIR":"OnPrem"
     }
 ];
 
@@ -157,7 +220,8 @@ template(
     t.ChunkField,
     t.ChunkSize,
     t.IncrementalType,
-    t.Description
+    t.Description,
+    t.TaskDatafactoryIR
 );
 
 

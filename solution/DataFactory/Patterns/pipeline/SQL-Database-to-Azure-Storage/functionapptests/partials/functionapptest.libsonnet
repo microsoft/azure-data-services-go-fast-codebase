@@ -16,6 +16,7 @@ function(
     ChunkSize = 0,
     IncrementalType = "Full",
     TestDescription = "",
+    TaskDatafactoryIR = ""
     )
 {
     local TaskMasterJson =     
@@ -31,7 +32,7 @@ function(
         },
         "Target":{
             "Type":TargetFormat,
-            "RelativePath":"/Tests/"+Pattern+"/"+TestNumber,
+            "RelativePath":if TargetType == "FileServer" then "c:/Tests/"+Pattern+"/"+TestNumber else "/Tests/"+Pattern+"/"+TestNumber,
             "DataFileName": DataFilename,
             "SchemaFileName": SchemaFileName
         }
@@ -63,7 +64,7 @@ function(
     "EngineJson":  "{}",
     "TaskMasterJson":std.manifestJson(TaskMasterJson),       
     "TaskMasterId":TestNumber,
-    "SourceSystemId":if(SourceType == "Azure SQL") then -1 else -6,
+    "SourceSystemId":if(SourceType == "Azure SQL") then -1 else if(SourceType == "SQL Server") then -14 else -6,
     "SourceSystemJSON":std.manifestJson(SourceSystemJson),
     "SourceSystemType":SourceType,
     "SourceSystemServer":vars.sqlserver_name + ".database.windows.net",
@@ -71,7 +72,7 @@ function(
     "SourceSystemAuthType":SourceSystemAuthType,
     "SourceSystemSecretName":"",
     "SourceSystemUserName":"",   
-    "TargetSystemId":if(SourceType == "Azure Blob") then -3 else if(SourceType == "FileServer") then -15 else -4,
+    "TargetSystemId":if(TargetType == "Azure Blob") then -3 else if(TargetType == "FileServer") then -15 else -4,
     "TargetSystemJSON":std.manifestJson(TargetSystemJson),
     "TargetSystemType":TargetType,
     "TargetSystemServer":if(TargetType == "Azure Blob") then "https://" + vars.blobstorage_name + ".blob.core.windows.net" else "https://" + vars.adlsstorage_name + ".dfs.core.windows.net",
@@ -80,6 +81,7 @@ function(
     "TargetSystemSecretName":"",
 	"TargetSystemUserName":"",
     "ADFPipeline": ADFPipeline,
-    "TestDescription": "[" + TestNumber + "] " +  " " + TestDescription + " of " + "SalesLT.Customer" + " (" + SourceFormat + ") from " + SourceType + " to " + DataFilename  + " in " + TargetType +  "(" + TargetFormat + ")"
+    "TestDescription": "[" + TestNumber + "] " +  " " + TestDescription + " of " + "SalesLT.Customer" + " (" + SourceFormat + ") from " + SourceType + " to " + DataFilename  + " in " + TargetType +  "(" + TargetFormat + ")",
+    "TaskDatafactoryIR": if(TaskDatafactoryIR == null) then "Azure" else TaskDatafactoryIR
 }+commons
 

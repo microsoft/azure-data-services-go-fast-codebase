@@ -27,13 +27,14 @@ function(
     TargetRecursively = "false",
     TargetDeleteAfterCompletion = "",
     TestDescription = "",
+    TaskDatafactoryIR = ""
     )
 {
     local TaskMasterJson =     
     {
         "Source":{
-            "Type": SourceFormat,                       
-            "RelativePath": "samples/",
+            "Type": SourceFormat,
+            "RelativePath":if SourceType == "FileServer" then "c:/Sample/" else "samples/",
             "DataFileName": SourceDataFilename,
             "SchemaFileName": SourceSchemaFileName,
             "MaxConcurrentConnections": SourceMaxConcurrentConnections,
@@ -90,7 +91,7 @@ function(
     "EngineJson":  "{}",
     "TaskMasterJson":std.manifestJson(TaskMasterJson),       
     "TaskMasterId":TestNumber,
-    "SourceSystemId":if(SourceType == "Azure Blob") then -3 else -4,
+    "SourceSystemId":if(SourceType == "Azure Blob") then -3 else if(SourceType == "FileServer") then -15 else -4,
     "SourceSystemJSON":std.manifestJson(SourceSystemJson),
     "SourceSystemType":SourceType,
     "SourceSystemServer":if(SourceType == "Azure Blob") then "https://" + vars.blobstorage_name + ".blob.core.windows.net" else "https://" + vars.adlsstorage_name + ".dfs.core.windows.net",
@@ -107,6 +108,7 @@ function(
     "TargetSystemSecretName":"",
 	"TargetSystemUserName":"",
     "ADFPipeline": ADFPipeline,
-    "TestDescription": "[" + TestNumber + "] " +  " " + TestDescription + " of " + SourceDataFilename + " (" + SourceFormat + ") from " + SourceType + " to " + TargetType + " " + TargetDataFilename + " (" + TargetFormat + ")" 
+    "TestDescription": "[" + TestNumber + "] " +  " " + TestDescription + " of " + SourceDataFilename + " (" + SourceFormat + ") from " + SourceType + " to " + TargetType + " " + TargetDataFilename + " (" + TargetFormat + ")",
+    "TaskDatafactoryIR": if(TaskDatafactoryIR == null) then "Azure" else TaskDatafactoryIR
 }+commons
 

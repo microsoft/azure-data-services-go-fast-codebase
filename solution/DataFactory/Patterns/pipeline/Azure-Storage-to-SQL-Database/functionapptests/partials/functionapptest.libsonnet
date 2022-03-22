@@ -27,6 +27,7 @@ function(
     AutoGenerateMerge,
     MergeSQL,
     TestDescription = "",
+    TaskDatafactoryIR = ""
     )
 {
     local TaskMasterJson =     
@@ -94,7 +95,7 @@ function(
     "SourceSystemAuthType":SourceSystemAuthType,
     "SourceSystemSecretName":"",
     "SourceSystemUserName":"",   
-    "TargetSystemId":if(TargetType == "Azure Synapse") then -10 else -2,
+    "TargetSystemId":if(TargetType == "Azure Synapse") then -10 else if(TargetType == "SQL Server") then -14 else -2,
     "TargetSystemJSON":std.manifestJson(TargetSystemJson),
     "TargetSystemType":TargetType,
     "TargetSystemServer":if(TargetType == "Azure Synapse") then vars.synapse_workspace_name + ".database.windows.net" else vars.sqlserver_name + ".database.windows.net",
@@ -103,6 +104,7 @@ function(
     "TargetSystemSecretName":"",
 	"TargetSystemUserName":"",
     "ADFPipeline": ADFPipeline,
-    "TestDescription": "[" + TestNumber + "] " +  " " + TestDescription + " of " + DataFilename + " (" + SourceFormat + ") from " + SourceType + " to " + TargetType
+    "TestDescription": "[" + TestNumber + "] " +  " " + TestDescription + " of " + DataFilename + " (" + SourceFormat + ") from " + SourceType + " to " + TargetType,
+    "TaskDatafactoryIR": if(TaskDatafactoryIR == null) then "Azure" else TaskDatafactoryIR
 }+commons
 
