@@ -258,6 +258,11 @@ resource "azurerm_key_vault_secret" "selfhostedsql_password" {
   depends_on = [
     time_sleep.cicd_access,
   ]
+  lifecycle {
+    ignore_changes = [
+      value
+    ]
+  }
 }
 
 
