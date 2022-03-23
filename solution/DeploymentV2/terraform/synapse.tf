@@ -334,41 +334,43 @@ resource "azurerm_monitor_diagnostic_setting" "synapse_diagnostic_logs" {
 
 }
 
-// Commenting out because not deploying synapse at this stage
-// resource "azurerm_synapse_role_assignment" "synapse_function_app_assignment" {
-//   synapse_workspace_id = azurerm_synapse_workspace.synapse[0].id
-//   role_name            = "Synapse Administrator"
-//   principal_id         = azurerm_function_app.function_app.identity[0].principal_id
-// 
-// }
-// 
-// resource "azurerm_synapse_linked_service" "synapse_keyvault_linkedservice" {
-//   name                 = "SLS_AzureKeyVault"
-//   synapse_workspace_id = azurerm_synapse_workspace.synapse[0].id
-//   type                 = "AzureKeyVault"
-//   type_properties_json = <<JSON
-// {
-//   "baseUrl": "${azurerm_key_vault.app_vault.vault_uri}"
-// }
-// JSON
-// }
-// 
-// resource "azurerm_synapse_linked_service" "synapse_functionapp_linkedservice" {
-//   name                 = "SLS_AzureFunctionApp"
-//   synapse_workspace_id = azurerm_synapse_workspace.synapse[0].id
-//   type                 = "AzureFunction"
-//   type_properties_json = <<JSON
-// {
-//   "functionAppUrl": "${azurerm_key_vault.app_vault.vault_uri}",
-//   "functionKey": {
-//     "type": "AzureKeyVaultSecret",
-//     "store": {
-//       "referenceName": "${azurerm_synapse_linked_service.synapse_keyvault_linkedservice.name}",
-//       "type": "LinkedServiceReference"
-//     },
-//     "secretName": "AzureFunctionClientSecret"
-//   },
-//   "authentication": "Anonymous"
-// }
-// JSON
-// }
+resource "azurerm_synapse_role_assignment" "synapse_function_app_assignment" {
+  count                = var.deploy_synapse ? 1 : 0
+  synapse_workspace_id = azurerm_synapse_workspace.synapse[0].id
+  role_name            = "Synapse Administrator"
+  principal_id         = azurerm_function_app.function_app.identity[0].principal_id
+
+}
+
+resource "azurerm_synapse_linked_service" "synapse_keyvault_linkedservice" {
+  count                = var.deploy_synapse ? 1 : 0
+  name                 = "SLS_AzureKeyVault"
+  synapse_workspace_id = azurerm_synapse_workspace.synapse[0].id
+  type                 = "AzureKeyVault"
+  type_properties_json = <<JSON
+{
+  "baseUrl": "${azurerm_key_vault.app_vault.vault_uri}"
+}
+JSON
+}
+
+resource "azurerm_synapse_linked_service" "synapse_functionapp_linkedservice" {
+  count                = var.deploy_synapse ? 1 : 0
+  name                 = "SLS_AzureFunctionApp"
+  synapse_workspace_id = azurerm_synapse_workspace.synapse[0].id
+  type                 = "AzureFunction"
+  type_properties_json = <<JSON
+{
+  "functionAppUrl": "${azurerm_key_vault.app_vault.vault_uri}",
+  "functionKey": {
+    "type": "AzureKeyVaultSecret",
+    "store": {
+      "referenceName": "${azurerm_synapse_linked_service.synapse_keyvault_linkedservice[count.index].name}",
+      "type": "LinkedServiceReference"
+    },
+    "secretName": "AzureFunctionClientSecret"
+  },
+  "authentication": "Anonymous"
+}
+JSON
+}
