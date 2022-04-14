@@ -291,3 +291,6 @@ solution/Synapse/Patterns/SqlTests.sql
 solution/Synapse/Patterns/pipeline/*/output/
 solution/FunctionApp/Patterns/pipeline/*/output/
 
+/.vscode/extensions.json
+/.vscode/launch.json
+/.vscode/tasks.json

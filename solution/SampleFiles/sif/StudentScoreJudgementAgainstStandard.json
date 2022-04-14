@@ -1,0 +1,19 @@
+{
+  "StudentScoreJudgementAgainstStandard": {
+    "RefId": "5810E283-E928-459C-BBA7-6EFE1963F784",
+    "SchoolYear": "2018",
+    "TermInfoRefId": "1F971F3D-414E-4146-9325-66638290E6C1",
+    "StudentPersonalRefId": "8F0934CC-2F04-48F8-BBD7-88AA1ADE691B",
+    "YearLevel": {
+      "Code": "10"
+    },
+    "TeachingGroupRefId": "E5EDAE63-A04D-47E4-9D02-24A32956B074",
+    "StaffPersonalRefId": "9D0934CC-2F04-48F8-BBD7-88AA1ADE691B",
+    "CurriculumCode": "AUSVELS",
+    "CurriculumNodeCode": "MATNUM",
+    "Score": "10",
+    "SpecialCircumstanceLocalCode": "SCMP",
+    "ManagedPathwayLocalCode": "MPOMP",
+    "SchoolInfoRefId": "E6EDAE63-A04D-47E4-9D02-24A32956B075"
+  }
+}

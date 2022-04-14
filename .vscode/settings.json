@@ -7,5 +7,10 @@
             "name": "mststgsynwads mststgsynspads",
             "filePath": "/workspaces/adsgf/solution/Python/Synapse.py"
         }
-    ]
+    ],
+    "azureFunctions.deploySubpath": "solution\\FunctionApp\\FunctionApp/bin/Release/netcoreapp3.1/publish",
+    "azureFunctions.projectLanguage": "C#",
+    "azureFunctions.projectRuntime": "~3",
+    "debug.internalConsoleOptions": "neverOpen",
+    "azureFunctions.preDeployTask": "publish (functions)"
 }
