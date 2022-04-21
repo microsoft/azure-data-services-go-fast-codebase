@@ -86,7 +86,6 @@ resource "azurerm_mssql_database" "sif" {
   name        = local.sif_database_name
   server_id   = azurerm_mssql_server.sqlserver[0].id
   sku_name    = "S0"
-  sif_database_name = "sif"
   tags        = local.tags
   lifecycle {
     ignore_changes = [
