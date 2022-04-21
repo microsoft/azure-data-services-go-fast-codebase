@@ -1,0 +1,14 @@
+{
+  "GradingAssignment": {
+    "RefId": "359D7510-1AD0-A9D7-A8C3-DAD0A85103A2",
+    "TeachingGroupRefId": "D0A0A27A-D0A8-510A-D9D7-5101A8C3DA39",
+    "SchoolInfoRefId": "11737EA4-301C-ADCA-75C8-7214A7C46BDB",
+    "GradingCategory": "Classroom Test",
+    "Description": "Pop Quiz",
+    "PointsPossible": 100,
+    "CreateDate": "2000-11-21",
+    "DueDate": "2000-11-25",
+    "Weight": 1.0,
+    "DetailedDescriptionURL": "http://www.assignmentinfo.com/assignment1.pdf"
+  }
+}

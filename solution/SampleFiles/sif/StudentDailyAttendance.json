@@ -1,0 +1,29 @@
+{
+  "StudentDailyAttendance": {
+    "RefId": "2FFB63B4-CFEF-4820-8501-E7D1E54555CB",
+    "StudentPersonalRefId": "D3E34B35-9D75-101A-8C3D-00AA001A1652",
+    "SchoolInfoRefId": "CA285746-359D-7510-1A8C-36432A901A16",
+    "Date": "2002-11-01",
+    "SchoolYear": "2003",
+    "DayValue": "Partial",
+    "AttendanceCode": {
+      "Code": "200",
+      "OtherCodeList": {
+        "OtherCode": [
+          {
+            "Codeset": "Local",
+            "value": "S"
+          },
+          {
+            "Codeset": "Text",
+            "value": "C"
+          }
+        ]
+      }
+    },
+    "AttendanceStatus": "01",
+    "TimeIn": "13:30:00",
+    "TimeOut": "12:05:00",
+    "AttendanceNote": "Left for Orthodontist appt. and returned to school afterward"
+  }
+}

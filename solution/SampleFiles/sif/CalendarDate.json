@@ -1,0 +1,20 @@
+{
+  "CalendarDate": {
+    "CalendarDateRefId": "B5739375-800A-C4CC-6385-0BB2754114AA",
+    "Date": "2007-08-31",
+    "CalendarSummaryRefId": "A8A34E56-1C97-345C-0A4E-11BB113C2753",
+    "SchoolInfoRefId": "B7A34E56-1C97-345C-0A4E-11BB112B2753",
+    "SchoolYear": "2007",
+    "CalendarDateType": {
+      "Code": "INST"
+    },
+    "StudentAttendance": {
+      "CountsTowardAttendance": "Yes",
+      "AttendanceValue": 1.0
+    },
+    "TeacherAttendance": {
+      "CountsTowardAttendance": "Yes",
+      "AttendanceValue": 1.0
+    }
+  }
+}

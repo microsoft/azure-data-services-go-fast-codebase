@@ -20,7 +20,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{15490FB1
 		..\build\azure-pipelines-build.yml = ..\build\azure-pipelines-build.yml
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApplication.DataAccess", "WebApplication\WebApplication.DataAccess\WebApplication.DataAccess.csproj", "{B772907A-1E3F-4B15-BAC4-0833F32FBDB4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApplication.DataAccess", "WebApplication\WebApplication.DataAccess\WebApplication.DataAccess.csproj", "{B772907A-1E3F-4B15-BAC4-0833F32FBDB4}"
+EndProject
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "SIFDM", "Database\ADSGoFastDatabase\SIFDM\SIFDM.sqlproj", "{AD4DEE29-C01D-4445-967A-0270063F1627}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -56,6 +58,12 @@ Global
 		{B772907A-1E3F-4B15-BAC4-0833F32FBDB4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B772907A-1E3F-4B15-BAC4-0833F32FBDB4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B772907A-1E3F-4B15-BAC4-0833F32FBDB4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AD4DEE29-C01D-4445-967A-0270063F1627}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD4DEE29-C01D-4445-967A-0270063F1627}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AD4DEE29-C01D-4445-967A-0270063F1627}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{AD4DEE29-C01D-4445-967A-0270063F1627}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AD4DEE29-C01D-4445-967A-0270063F1627}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AD4DEE29-C01D-4445-967A-0270063F1627}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -63,6 +71,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{0B746030-51B3-4202-A870-025681B613BF} = {0A86C96E-8CA8-4B5C-9122-1EF6B11AFACE}
 		{8B7C0038-3709-4B9C-9849-F406DE71BFED} = {0A86C96E-8CA8-4B5C-9122-1EF6B11AFACE}
+		{AD4DEE29-C01D-4445-967A-0270063F1627} = {0A86C96E-8CA8-4B5C-9122-1EF6B11AFACE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7680EAD2-F393-4E54-A382-09AFA04195CB}

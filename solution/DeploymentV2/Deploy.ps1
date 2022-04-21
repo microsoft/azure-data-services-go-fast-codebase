@@ -86,6 +86,7 @@ $skipWebApp = if($tout.publish_web_app) {$false} else {$true}
 $skipFunctionApp = if($tout.publish_function_app) {$false} else {$true}
 $skipDatabase = if($tout.publish_database) {$false} else {$true}
 $skipSampleFiles = if($tout.publish_sample_files){$false} else {$true}
+$skipSif= if($tout.publish_sif){$false} else {$true}
 $skipNetworking = if($tout.configure_networking){$false} else {$true}
 $skipDataFactoryPipelines = if($tout.publish_datafactory_pipelines) {$false} else {$true}
 $AddCurrentUserAsWebAppAdmin = if($tout.publish_web_app_addcurrentuserasadmin) {$true} else {$false}
@@ -379,12 +380,25 @@ else
     #    $result = az storage blob upload --file $file --container-name "datalakeraw" --name samples/$file --account-name $blobstorage_name --auth-mode login
     #}
 
-
-
+#----------------------------------------------------------------------------------------------------------------
+#   Deploy SIF 
+#----------------------------------------------------------------------------------------------------------------
+if ($skipSif) {
+    Write-Host "Skipping Deploying SIF"    
+}
+else {
+    Set-Location $deploymentFolderPath
+    Set-Location "../SampleFiles/SIF/"
     if ($tout.is_vnet_isolated -eq $true)
     {
-        $result = az storage account update --resource-group $resource_group_name --name $adlsstorage_name --default-action Deny
-}
+        $result = az storage account update --resource-group $resource_group_name --name $adlsstorage_name --default-action Allow
+    }
+    $files = Get-ChildItem -Name
+    foreach ($file in $files) {
+        $result = az storage blob upload --file $file --container-name "datalakeraw" --name samples/$file --account-name $adlsstorage_name --auth-mode login
+        $result = az storage blob upload --file $file --container-name "datalakeraw" --name samples/$file --account-name $blobstorage_name --auth-mode login
+    }
+   }
 
 }
 

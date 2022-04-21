@@ -22,6 +22,7 @@ locals {
   log_analytics_workspace_name = (var.log_analytics_workspace_name != "" ? var.log_analytics_workspace_name : module.naming.log_analytics_workspace.name_unique)
   metadata_database_name       = "MetadataDb"
   sample_database_name         = "Samples"
+  sif_database_name  = "sif"
   staging_database_name        = "Staging"
   adls_storage_account_name    = (var.adls_storage_account_name != "" ? var.adls_storage_account_name : "${module.naming.data_lake_store.name_unique}adsl")
   blob_storage_account_name    = (var.blob_storage_account_name != "" ? var.blob_storage_account_name : "${module.naming.data_lake_store.name_unique}blob")

@@ -81,6 +81,20 @@ resource "azurerm_mssql_database" "staging_db" {
     ]
   }
 }
+resource "azurerm_mssql_database" "sif" {
+  count       = var.deploy_sql_server ? 1 : 0
+  name        = local.sif_database_name
+  server_id   = azurerm_mssql_server.sqlserver[0].id
+  sku_name    = "S0"
+  sif_database_name = "sif"
+  tags        = local.tags
+  lifecycle {
+    ignore_changes = [
+      tags
+    ]
+  }
+}
+
 
 resource "azurerm_private_endpoint" "db_private_endpoint_with_dns" {
   count               = var.is_vnet_isolated ? 1 : 0
