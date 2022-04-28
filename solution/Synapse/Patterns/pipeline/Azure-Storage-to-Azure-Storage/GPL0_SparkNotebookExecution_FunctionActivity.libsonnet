@@ -66,7 +66,7 @@ local pipeline =
                                 },
                                 "snapshot": true,
                                 "sparkPool": {
-                                    "referenceName": "adsdevsynspads",
+                                    "referenceName": SparkPoolName,
                                     "type": "BigDataPoolReference"
                                 }
                             }
