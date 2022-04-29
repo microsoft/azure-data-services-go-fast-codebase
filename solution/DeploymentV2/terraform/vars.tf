@@ -100,6 +100,12 @@ variable "allow_public_access_to_synapse_studio" {
   default     = false
 }
 
+variable "sif_database_name" {
+  description = "SIF DataMart Name"
+  type        = string
+  default  = "SIFDM"
+}
+
 variable "vnet_cidr" {
   description = "CIDR of the vnet"
   type        = string
@@ -260,6 +266,15 @@ variable "publish_database" {
   default     = true
   type        = bool
 }
+
+variable "publish_sif_database" {
+  description = "Feature toggle for Publishing SIF DataMart and seeding data lake"
+  default     = true
+  type        = bool
+}
+
+
+
 
 variable "configure_networking" {
   description = "Feature toggle for post IAC network configuration"

@@ -22,7 +22,7 @@ locals {
   log_analytics_workspace_name = (var.log_analytics_workspace_name != "" ? var.log_analytics_workspace_name : module.naming.log_analytics_workspace.name_unique)
   metadata_database_name       = "MetadataDb"
   sample_database_name         = "Samples"
-  sif_database_name  = "sif"
+  sif_database_name            = (var.sif_database_name != "" ? var.sif_database_name : "${module.naming.sql_server_name.name_unique}DM")
   staging_database_name        = "Staging"
   adls_storage_account_name    = (var.adls_storage_account_name != "" ? var.adls_storage_account_name : "${module.naming.data_lake_store.name_unique}adsl")
   blob_storage_account_name    = (var.blob_storage_account_name != "" ? var.blob_storage_account_name : "${module.naming.data_lake_store.name_unique}blob")
@@ -32,14 +32,16 @@ locals {
   purview_resource_group_name  = "managed-${module.naming.resource_group.name_unique}-purview"
   purview_ir_app_reg_name      = (var.purview_ir_app_reg_name != "" ? var.purview_ir_app_reg_name : "ADS GoFast Purview Integration Runtime (${var.environment_tag})")
   jumphost_vm_name             = module.naming.virtual_machine.name
+
   jumphost_password            = ((var.is_vnet_isolated && var.jumphost_password == null) ? "" : var.jumphost_password)
+  synapse_sql_password         = ((var.deploy_synapse && var.synapse_sql_password == null) ? "" : var.synapse_sql_password)
+
   synapse_data_lake_name       = (var.synapse_data_lake_name != "" ? var.synapse_data_lake_name : module.naming.data_lake_store.name_unique)
   synapse_workspace_name       = (var.synapse_workspace_name != "" ? var.synapse_workspace_name : "${var.prefix}${var.environment_tag}synw${var.app_name}${element(split("-", module.naming.data_factory.name_unique),length(split("-", module.naming.data_factory.name_unique))-1)}")
   synapse_dwpool_name          = (var.synapse_dwpool_name != "" ? var.synapse_dwpool_name : "${var.prefix}${var.environment_tag}syndp${var.app_name}")
   synapse_sppool_name          = (var.synapse_sppool_name != "" ? var.synapse_sppool_name : "${var.prefix}${var.environment_tag}synsp${var.app_name}")
   synapse_resource_group_name  = "managed-${module.naming.resource_group.name_unique}-synapse"
-  synapse_sql_password         = ((var.deploy_synapse && var.synapse_sql_password == null) ? "" : var.synapse_sql_password)
-  selfhostedsqlvm_name         = "sqlvm${var.app_name}${element(split("-", module.naming.data_factory.name_unique),length(split("-", module.naming.data_factory.name_unique))-1)}"
+    selfhostedsqlvm_name         = "sqlvm${var.app_name}${element(split("-", module.naming.data_factory.name_unique),length(split("-", module.naming.data_factory.name_unique))-1)}"
   tags = {
     Environment = var.environment_tag
     Owner       = var.owner_tag

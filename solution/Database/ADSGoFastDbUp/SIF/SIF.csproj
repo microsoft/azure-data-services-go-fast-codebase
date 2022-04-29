@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
     <PropertyGroup>
@@ -15,8 +15,8 @@
     <None Remove="1-0-0\A-Journaled\003-Views.sql" />       
     <None Remove="1-0-0\A-Journaled\004-StoredProcsAndUserDefinedFuncs.sql" />       
     <None Remove="1-0-0\A-Journaled\005-Users.sql" />       
-    <None Remove="1-0-0\A-Journaled\006-Data.sql" />       
-    <None Remove="1-0-0\A-Journaled\007-ManualInserts.sql" />
+    <None Remove="1-0-0\A-Journaled\006-DataInsert.sql" />       
+    <None Remove="1-0-0\A-Journaled\007-ManualUpdate.sql" />
     <None Remove="1-0-0\A-Journaled\008-CreateMSILogins.sql" />
     
   </ItemGroup>
@@ -27,8 +27,8 @@
     <EmbeddedResource Include="1-0-0\A-Journaled\003-Views.sql" />       
     <EmbeddedResource Include="1-0-0\A-Journaled\004-StoredProcsAndUserDefinedFuncs.sql" />       
     <EmbeddedResource Include="1-0-0\A-Journaled\005-Users.sql" />       
-    <EmbeddedResource Include="1-0-0\A-Journaled\006-Data.sql" />       
-    <EmbeddedResource Include="1-0-0\A-Journaled\007-ManualInserts.sql" />       
+    <EmbeddedResource Include="1-0-0\A-Journaled\006-DataInsert.sql" />       
+    <EmbeddedResource Include="1-0-0\A-Journaled\007-ManualUpdate.sql" />       
     <EmbeddedResource Include="1-0-0\A-Journaled\008-CreateMSILogins.sql" />    
   </ItemGroup>
 
@@ -40,7 +40,6 @@
 
   <ItemGroup>
     <Folder Include="1-0-0\B-Always\" />
-    <Folder Include="1-0-0\" />
   </ItemGroup>
 
   <ItemGroup>

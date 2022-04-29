@@ -74,6 +74,9 @@ $blobstorage_name=$outputs.blobstorage_name.value
 $adlsstorage_name=$outputs.adlsstorage_name.value
 $datafactory_name=$outputs.datafactory_name.value
 $keyvault_name=$outputs.keyvault_name.value
+
+$sif_database_name  = $outputs.$sif_database_name
+
 $stagingdb_name=$outputs.stagingdb_name.value
 $sampledb_name=$outputs.sampledb_name.value
 $metadatadb_name=$outputs.metadatadb_name.value
@@ -162,7 +165,7 @@ else {
         $cu = az ad signed-in-user show | ConvertFrom-Json
         $callinguser = $cu.objectId
         $authappid = $authapp.appId
-        $authappobjectid =  (az ad sp show --id $authapp.appId | ConvertFrom-Json).objectId
+        $authappobjectid =  (az ad sp show --id $authappid | ConvertFrom-Json).objectId
 
         $body = '{"principalId": "@principalid","resourceId":"@resourceId","appRoleId": "@appRoleId"}' | ConvertFrom-Json
         $body.resourceId = $authappobjectid
@@ -389,6 +392,7 @@ if ($skipSif) {
 else {
     Set-Location $deploymentFolderPath
     Set-Location "../SampleFiles/SIF/"
+    Write-Host "Deploying SIF files"
     if ($tout.is_vnet_isolated -eq $true)
     {
         $result = az storage account update --resource-group $resource_group_name --name $adlsstorage_name --default-action Allow
@@ -396,8 +400,7 @@ else {
     $files = Get-ChildItem -Name
     foreach ($file in $files) {
         $result = az storage blob upload --file $file --container-name "datalakeraw" --name samples/$file --account-name $adlsstorage_name --auth-mode login
-        $result = az storage blob upload --file $file --container-name "datalakeraw" --name samples/$file --account-name $blobstorage_name --auth-mode login
-    }
+       }
    }
 
 }

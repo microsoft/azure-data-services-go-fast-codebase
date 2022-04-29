@@ -81,7 +81,7 @@ resource "azurerm_mssql_database" "staging_db" {
     ]
   }
 }
-resource "azurerm_mssql_database" "sif" {
+resource "azurerm_mssql_database" "SIFDM" {
   count       = var.deploy_sql_server ? 1 : 0
   name        = local.sif_database_name
   server_id   = azurerm_mssql_server.sqlserver[0].id

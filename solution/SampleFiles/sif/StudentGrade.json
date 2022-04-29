@@ -1,5 +1,4 @@
-{
-  "StudentGrade": {
+ {
     "RefId": "359D7510-1AD0-A9D7-A8C3-DAD0A85103A2",
     "StudentPersonalRefId": "A137D78A-E00B-C744-EF90-F2871CEB90A2",
     "SchoolInfoRefId": "B237D78A-E00B-C744-EF90-F2871CEB91A2",
@@ -12,4 +11,3 @@
     "TermSpan": "0828",
     "SchoolYear": "2021"
   }
-}

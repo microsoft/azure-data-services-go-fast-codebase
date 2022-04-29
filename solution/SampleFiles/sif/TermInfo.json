@@ -1,5 +1,4 @@
 {
-  "TermInfo": {
     "RefId": "7E59D751-01A8-0A70-0163-75DE097A0726",
     "SchoolInfoRefId": "A2E35B35-9D75-101A-8C3D-00AA001A0000",
     "SchoolYear": "2012",
@@ -10,5 +9,5 @@
     "TermCode": "Sp2004",
     "Track": "PreK",
     "TermSpan": "0833"
-  }
+  
 }

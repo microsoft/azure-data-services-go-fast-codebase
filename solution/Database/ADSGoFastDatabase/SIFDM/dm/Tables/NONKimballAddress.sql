@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dm].[DimAddress] (
+﻿CREATE TABLE [dm].[NONKimballAddress] (
     [AddressKey]  BIGINT         IDENTITY (1, 1) NOT NULL,
     [StudentID]   VARCHAR (50)   NOT NULL,
     [City]        VARCHAR (50)   NOT NULL,

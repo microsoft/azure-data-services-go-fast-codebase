@@ -72,9 +72,9 @@
     <Build Include="dm\Tables\FactNaplan.sql" />
     <Build Include="dm\Tables\FactEnrollment.sql" />
     <Build Include="dm\Tables\DimConduct.sql" />
-    <Build Include="dm\Tables\DimAddress.sql" />
+    <Build Include="dm\Tables\NONKimballAddress.sql" />
     <Build Include="dm\Tables\DimAbsent.sql" />
     <Build Include="dm\Stored Procedures\usp_Generate_DimDate.sql" />
-    <Build Include="Security\dm.sql" />
+    <Build Include="Security\001-Schemas.sql" />
   </ItemGroup>
 </Project>
