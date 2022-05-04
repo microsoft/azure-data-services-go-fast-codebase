@@ -224,7 +224,7 @@ if ($PersistEnv -eq "Yes")
     # Templated Configurations
     #------------------------------------------------------------------------------------------------------------
 
-    $templateName = Get-SelectionFromUser -Options ('Minimal-NoVNET,No Purview, No Synapse','Full-AllFeatures','FunctionalTests-NoVNET,No Purview, No Synapse, Includes SQL IAAS') -Prompt "Select deployment fast start template"
+    $templateName = Get-SelectionFromUser -Options ('Minimal-NoVNET,No Purview, No Synapse, SIF','Full-AllFeatures','FunctionalTests-NoVNET,No Purview, No Synapse, Includes SQL IAAS') -Prompt "Select deployment fast start template"
     if ($templateName -eq "Quit")
     {
         Exit
@@ -249,7 +249,7 @@ if ($PersistEnv -eq "Yes")
 
     } 
 
-    if ($templateName -eq "Minimal-NoVNET,No Purview, No Synapse")
+    if ($templateName -eq "Minimal-NoVNET,No Purview, No Synapse, SIF")
     {
         $environmentFileContents = $environmentFileContents.Replace("{deploy_sentinel}","false")
         $environmentFileContents = $environmentFileContents.Replace("{deploy_purview}","false")
@@ -258,6 +258,7 @@ if ($PersistEnv -eq "Yes")
         $environmentFileContents = $environmentFileContents.Replace("{publish_web_app}","true")
         $environmentFileContents = $environmentFileContents.Replace("{publish_function_app}","true")
         $environmentFileContents = $environmentFileContents.Replace("{publish_sample_files}","true")
+        $environmentFileContents = $environmentFileContents.Replace("{publish_sif}","true")
         $environmentFileContents = $environmentFileContents.Replace("{publish_database}","true")
         $environmentFileContents = $environmentFileContents.Replace("{configure_networking}","false")
         $environmentFileContents = $environmentFileContents.Replace("{publish_datafactory_pipelines}","true")
@@ -276,6 +277,7 @@ if ($PersistEnv -eq "Yes")
         $environmentFileContents = $environmentFileContents.Replace("{publish_web_app}","true")
         $environmentFileContents = $environmentFileContents.Replace("{publish_function_app}","true")
         $environmentFileContents = $environmentFileContents.Replace("{publish_sample_files}","true")
+        $environmentFileContents = $environmentFileContents.Replace("{publish_sif}","false")
         $environmentFileContents = $environmentFileContents.Replace("{publish_database}","true")
         $environmentFileContents = $environmentFileContents.Replace("{configure_networking}","false")
         $environmentFileContents = $environmentFileContents.Replace("{publish_datafactory_pipelines}","true")

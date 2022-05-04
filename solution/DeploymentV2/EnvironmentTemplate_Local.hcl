@@ -14,6 +14,7 @@ inputs = {
   is_vnet_isolated                      = {is_vnet_isolated}
   publish_web_app                       = {publish_web_app}
   publish_function_app                  = {publish_function_app}
+  publish_sif                           = {publish_sif}
   publish_sample_files                  = {publish_sample_files}
   publish_database                      = {publish_database}
   configure_networking                  = {configure_networking}

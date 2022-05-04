@@ -1,6 +1,7 @@
 locals {  
   data_factory_name            = (var.data_factory_name != "" ? var.data_factory_name : module.naming.data_factory.name_unique)
-  key_vault_name               = (var.key_vault_name != "" ? var.key_vault_name : module.naming.key_vault.name_unique)
+  key_vault_name               = (var.key_vault_name != "" ? var.key_vault_name : "${module.naming.key_vault.name_unique}random_integer.priority.result")
+  key_retention  = 1
   app_insights_name            = (var.app_insights_name != "" ? var.app_insights_name : module.naming.application_insights.name_unique)
   app_service_plan_name        = (var.app_service_plan_name != "" ? var.app_service_plan_name : module.naming.app_service_plan.name_unique)
   sql_server_name              = (var.sql_server_name != "" ? var.sql_server_name : module.naming.sql_server.name_unique)
@@ -22,7 +23,7 @@ locals {
   log_analytics_workspace_name = (var.log_analytics_workspace_name != "" ? var.log_analytics_workspace_name : module.naming.log_analytics_workspace.name_unique)
   metadata_database_name       = "MetadataDb"
   sample_database_name         = "Samples"
-  sif_database_name            = (var.sif_database_name != "" ? var.sif_database_name : "${module.naming.sql_server_name.name_unique}DM")
+  sif_database_name            = (var.sif_database_name != "" ? var.sif_database_name : "SIFDM")
   staging_database_name        = "Staging"
   adls_storage_account_name    = (var.adls_storage_account_name != "" ? var.adls_storage_account_name : "${module.naming.data_lake_store.name_unique}adsl")
   blob_storage_account_name    = (var.blob_storage_account_name != "" ? var.blob_storage_account_name : "${module.naming.data_lake_store.name_unique}blob")
@@ -41,7 +42,8 @@ locals {
   synapse_dwpool_name          = (var.synapse_dwpool_name != "" ? var.synapse_dwpool_name : "${var.prefix}${var.environment_tag}syndp${var.app_name}")
   synapse_sppool_name          = (var.synapse_sppool_name != "" ? var.synapse_sppool_name : "${var.prefix}${var.environment_tag}synsp${var.app_name}")
   synapse_resource_group_name  = "managed-${module.naming.resource_group.name_unique}-synapse"
-    selfhostedsqlvm_name         = "sqlvm${var.app_name}${element(split("-", module.naming.data_factory.name_unique),length(split("-", module.naming.data_factory.name_unique))-1)}"
+  selfhostedsqlvm_name         = "sqlvm${var.app_name}${element(split("-", module.naming.data_factory.name_unique),length(split("-", module.naming.data_factory.name_unique))-1)}"
+  
   tags = {
     Environment = var.environment_tag
     Owner       = var.owner_tag
@@ -64,4 +66,14 @@ locals {
       is_managed_vnet = false
     }
   ]
+
+  resource "random_integer" "priority" {
+  min = 1
+  max = 50000
+    keepers = {
+      # Generate a new integer each time we switch to a new listener ARN
+      listener_arn = "${var.listener_arn}"
+    }
+  }
+
 }

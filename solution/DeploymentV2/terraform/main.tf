@@ -49,3 +49,13 @@ module "naming" {
 resource "random_id" "rg_deployment_unique" {
   byte_length = 4
 }
+
+
+resource "random_integer" "priority" {
+min = 1
+max = 50000
+  keepers = {
+    # Generate a new integer each time we switch to a new listener ARN
+    listener_arn = "${var.listener_arn}"
+  }
+}

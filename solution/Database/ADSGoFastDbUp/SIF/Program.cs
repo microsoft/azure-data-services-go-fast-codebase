@@ -32,37 +32,37 @@ namespace AdsGoFastDbUp
         public string LogAnalyticsWorkspaceId { get; set; }
         [Option("SubscriptionId", Required = true, HelpText = "Parameter for the scripts.")]
         public string SubscriptionId { get; set; }
-        [Option("SampleDatabaseName", Required = true, HelpText = "Parameter for the scripts.")]
+        [Option("SampleDatabaseName", Required = false, HelpText = "Parameter for the scripts.")]
         public string SampleDatabaseName { get; set; }
-        [Option("StagingDatabaseName", Required = true, HelpText = "Staging Parameter for the scripts.")]
+        [Option("StagingDatabaseName", Required = false, HelpText = "Staging Parameter for the scripts.")]
         public string StagingDatabaseName { get; set; }
         
-        [Option("MetadataDatabaseName", Required = true, HelpText = "Metadata Parameter for the scripts.")]
+        [Option("MetadataDatabaseName", Required = false, HelpText = "Metadata Parameter for the scripts.")]
         public string MetadataDatabaseName { get; set; }
 
         [Option("SIFDatabaseName", Required = true, HelpText = "SIF Parameter for scripts.")]
         public string SIFDatabaseName { get; set; }
 
 
-        [Option("BlobStorageName", Required = true, HelpText = "Parameter for the scripts.")]
+        [Option("BlobStorageName", Required = false, HelpText = "BlobStorageName Parameter for the scripts.")]
         public string BlobStorageName { get; set; }
-        [Option("AdlsStorageName", Required = true, HelpText = "Parameter for the scripts.")]
+        [Option("AdlsStorageName", Required = false, HelpText = "AdlsStorageName Parameter for the scripts.")]
         public string AdlsStorageName { get;set; }
-        [Option("DataFactoryName", Required = true, HelpText = "Parameter for the scripts.")]
+        [Option("DataFactoryName", Required = false, HelpText = "DataFactoryName Parameter for the scripts.")]
         public string DataFactoryName { get; set; }
-        [Option("WebAppName", Required = true, HelpText = "Parameter for the scripts.")]
+        [Option("WebAppName", Required = true, HelpText = "WebAppName Parameter for the scripts.")]
         public string WebAppName { get; set; }
-        [Option("FunctionAppName", Required = true, HelpText = "Parameter for the scripts.")]
+        [Option("FunctionAppName", Required = true, HelpText = "FunctionAppName Parameter for the scripts.")]
         public string FunctionAppName { get; set; }
-        [Option("SqlServerName", Required = true, HelpText = "Parameter for the scripts.")]
+        [Option("SqlServerName", Required = true, HelpText = "SqlServerName Parameter for the scripts.")]
         public string SqlServerName { get; set; }
-        [Option("SynapseWorkspaceName", Required = true, HelpText = "Parameter for the scripts.")]
+        [Option("SynapseWorkspaceName", Required = false, HelpText = "SynapseWorkspaceName Parameter for the scripts.")]
         public string SynapseWorkspaceName { get; set; }
-        [Option("SynapseDatabaseName", Required = true, HelpText = "Parameter for the scripts.")]
+        [Option("SynapseDatabaseName", Required = false, HelpText = "SynapseDatabaseName Parameter for the scripts.")]
         public string SynapseDatabaseName { get; set; }
-        [Option("SynapseSQLPoolName", Required = true, HelpText = "Parameter for the scripts.")]
+        [Option("SynapseSQLPoolName", Required = false, HelpText = "SynapseSQLPoolName Parameter for the scripts.")]
         public string SynapseSQLPoolName { get; set; }
-        [Option("PurviewAccountName", Required = true, HelpText = "Parameter for the scripts.")]
+        [Option("PurviewAccountName", Required = false, HelpText = "PurviewAccountName Parameter for the scripts.")]
         public string PurviewAccountName { get; set; }
 
     }

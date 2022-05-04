@@ -19,7 +19,7 @@
 # - Run this script
 # 
 # You can run this script multiple times if needed.
-#----------------------------------------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------------------------
 
 Import-Module .\pwshmodules\GetSelectionFromUser.psm1 -force
 $environmentName = Get-SelectionFromUser -Options ('local','staging') -Prompt "Select deployment environment"
@@ -55,9 +55,9 @@ else {
     terragrunt apply -auto-approve --terragrunt-config vars/$environmentName/terragrunt.hcl
 }
 
-#------------------------------------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------
 # Get all the outputs from terraform so we can use them in subsequent steps
-#------------------------------------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------
 Write-Host "Reading Terraform Outputs"
 Import-Module .\..\GatherOutputsFromTerraform.psm1 -force
 $tout = GatherOutputsFromTerraform
@@ -75,7 +75,9 @@ $adlsstorage_name=$outputs.adlsstorage_name.value
 $datafactory_name=$outputs.datafactory_name.value
 $keyvault_name=$outputs.keyvault_name.value
 
-$sif_database_name  = $outputs.$sif_database_name
+
+
+$sif_database_name  = $outputs.sif_database_name.value
 
 $stagingdb_name=$outputs.stagingdb_name.value
 $sampledb_name=$outputs.sampledb_name.value
@@ -89,7 +91,7 @@ $skipWebApp = if($tout.publish_web_app) {$false} else {$true}
 $skipFunctionApp = if($tout.publish_function_app) {$false} else {$true}
 $skipDatabase = if($tout.publish_database) {$false} else {$true}
 $skipSampleFiles = if($tout.publish_sample_files){$false} else {$true}
-$skipSif= if($tout.publish_sif){$false} else {$true}
+$skipSIF= if($tout.publish_sif){$false} else {$true}
 $skipNetworking = if($tout.configure_networking){$false} else {$true}
 $skipDataFactoryPipelines = if($tout.publish_datafactory_pipelines) {$false} else {$true}
 $AddCurrentUserAsWebAppAdmin = if($tout.publish_web_app_addcurrentuserasadmin) {$true} else {$false}
@@ -136,9 +138,9 @@ else {
     }
 }
 
-#----------------------------------------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------
 #   Building & Deploy Web App
-#----------------------------------------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------
 if ($skipWebApp) {
     Write-Host "Skipping Building & Deploying Web Application"    
 }
@@ -177,9 +179,9 @@ else {
     }
 }
 
-#----------------------------------------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------
 #   Building & Deploy Function App
-#----------------------------------------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------
 if ($skipFunctionApp) {
     Write-Host "Skipping Building & Deploying Function Application"    
 }
@@ -200,33 +202,37 @@ else {
     $result = az functionapp deployment source config-zip --resource-group $resource_group_name --name $functionapp_name --src $Path
 }
 
-#----------------------------------------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------
 #   Populate the Metadata Database
-#----------------------------------------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------
 if($skipDatabase) {
     Write-Host "Skipping Populating Metadata Database"    
 }
 else {
     
-    Write-Host "Populating Metadata Database"
+
+    Write-Host "SQL Firewall"
+
+        #Add Ip to SQL Firewall
+        $result = az sql server update -n $sqlserver_name -g $resource_group_name  --set publicNetworkAccess="Enabled"
+        $result = az sql server firewall-rule create -g $resource_group_name -s $sqlserver_name -n "Deploy.ps1" --start-ip-address $myIp --end-ip-address $myIp
+        #Allow Azure services and resources to access this server
+        $result = az sql server firewall-rule create -g $resource_group_name -s $sqlserver_name -n "Azure" --start-ip-address 0.0.0.0 --end-ip-address 0.0.0.0
 
     Set-Location $deploymentFolderPath
-    Set-Location "..\Database\ADSGoFastDbUp\AdsGoFastDbUp"
-    dotnet restore
-    dotnet publish --no-restore --configuration Release --output '..\..\..\DeploymentV2\bin\publish\unzipped\database\'
+    Set-Location "..\Database\ADSGoFastDbUp\"
+    dotnet restore "ADSGoFastDbUp"
+    dotnet publish "ADSGoFastDbUp" --no-restore --configuration Release --output '..\..\DeploymentV2\bin\publish\unzipped\database\'
     
-    #Add Ip to SQL Firewall
-    $result = az sql server update -n $sqlserver_name -g $resource_group_name  --set publicNetworkAccess="Enabled"
-    $result = az sql server firewall-rule create -g $resource_group_name -s $sqlserver_name -n "Deploy.ps1" --start-ip-address $myIp --end-ip-address $myIp
-    #Allow Azure services and resources to access this server
-    $result = az sql server firewall-rule create -g $resource_group_name -s $sqlserver_name -n "Azure" --start-ip-address 0.0.0.0 --end-ip-address 0.0.0.0
-
     Set-Location $deploymentFolderPath
-    Set-Location ".\bin\publish\unzipped\database\"
+    #Set-Location ".\bin\publish\unzipped\database\"
 
     # This has been updated to use the Azure CLI cred
-    dotnet AdsGoFastDbUp.dll -a True -c "Data Source=tcp:${sqlserver_name}.database.windows.net;Initial Catalog=${metadatadb_name};" -v True --DataFactoryName $datafactory_name --ResourceGroupName $resource_group_name --KeyVaultName $keyvault_name --LogAnalyticsWorkspaceId $loganalyticsworkspace_id --SubscriptionId $subscription_id --SampleDatabaseName $sampledb_name --StagingDatabaseName $stagingdb_name --MetadataDatabaseName $metadatadb_name --BlobStorageName $blobstorage_name --AdlsStorageName $adlsstorage_name --WebAppName $webapp_name --FunctionAppName $functionapp_name --SqlServerName $sqlserver_name --SynapseWorkspaceName $synapse_workspace_name --SynapseDatabaseName $synapse_sql_pool_name --SynapseSQLPoolName $synapse_sql_pool_name --PurviewAccountName $purview_name
+    Write-Host "Populating Metadata Database"
 
+    dotnet bin\publish\unzipped\database\AdsGoFastDbUp.dll -a True -c "Data Source=tcp:${sqlserver_name}.database.windows.net;Initial Catalog=${metadatadb_name};" -v True --DataFactoryName $datafactory_name --ResourceGroupName $resource_group_name --KeyVaultName $keyvault_name --LogAnalyticsWorkspaceId $loganalyticsworkspace_id --SubscriptionId $subscription_id --SampleDatabaseName $sampledb_name  --StagingDatabaseName $stagingdb_name --MetadataDatabaseName $metadatadb_name --BlobStorageName $blobstorage_name --AdlsStorageName $adlsstorage_name --WebAppName $webapp_name --FunctionAppName $functionapp_name --SqlServerName $sqlserver_name --SynapseWorkspaceName $synapse_workspace_name --SynapseDatabaseName $synapse_sql_pool_name --SynapseSQLPoolName $synapse_sql_pool_name --PurviewAccountName $purview_name
+
+   
     # Fix the MSI registrations on the other databases. I'd like a better way of doing this in the future
     $SqlInstalled = Get-InstalledModule SqlServer
     if($null -eq $SqlInstalled)
@@ -235,8 +241,18 @@ else {
         Install-Module -Name SqlServer -Scope CurrentUser -Force
     }
 
-    $databases = @($stagingdb_name, $sampledb_name, $metadatadb_name)
-    $aadUsers =  @($datafactory_name)
+    if (!$skipSIF){
+        $databases = @($stagingdb_name, $sampledb_name, $sif_database_name ,$metadatadb_name)
+        Set-Location $deploymentFolderPath
+        Set-Location "..\Database\ADSGoFastDbUp\"
+        dotnet restore "SIF"
+        dotnet publish "SIF" --no-restore --configuration Release --output '..\..\DeploymentV2\bin\publish\unzipped\database\'
+
+        dotnet "./bin/publish/unzipped/database/SIF.dll" -a True -c "Data Source=tcp:${sqlserver_name}.database.windows.net;Initial Catalog=${metadatadb_name};" -v True --DataFactoryName $datafactory_name --ResourceGroupName $resource_group_name --KeyVaultName $keyvault_name --LogAnalyticsWorkspaceId $loganalyticsworkspace_id --SubscriptionId $subscription_id --SIFDatabaseName $sif_database_name  --BlobStorageName $blobstorage_name --AdlsStorageName $adlsstorage_name --WebAppName $webapp_name --FunctionAppName $functionapp_name --SqlServerName $sqlserver_name
+    } else {
+        $databases = @($stagingdb_name, $sampledb_name ,$metadatadb_name)
+    }
+     $aadUsers =  @($datafactory_name)
 
     if(!$purview_sp_id -eq 0)
     {
@@ -275,9 +291,9 @@ else {
     }
 }
 
-#----------------------------------------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------
 #   Configure Synapse Logins
-#----------------------------------------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------
 if([string]::IsNullOrEmpty($tout.synapse_workspace_name)) {
     Write-Host "Skipping Synapse SQL Users"    
 }
@@ -307,8 +323,6 @@ else {
             Install-Module -Name SqlServer -Scope CurrentUser -Force
         }
 
-
-
         $token=$(az account get-access-token --resource=https://sql.azuresynapse.net --query accessToken --output tsv)
         if ((![string]::IsNullOrEmpty($datafactory_name)) -and ($synapse_sql_pool_name -ne 'Dummy') -and (![string]::IsNullOrEmpty($synapse_sql_pool_name)))
         {
@@ -323,9 +337,9 @@ else {
 
 }
 
-#----------------------------------------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------------------------
 #   Deploy Data Factory Pipelines
-#----------------------------------------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------------------------
 if ($skipDataFactoryPipelines) {
     Write-Host "Skipping DataFactory Pipelines"    
 }
@@ -345,17 +359,15 @@ else {
     }
 
     Invoke-Expression ./GenerateAndUploadADFPipelines.ps1
-    Set-Location ./terraform
-
-    
+    Set-Location ./terraform 
 }
 
 
-#----------------------------------------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------------------------
 #   Deploy Sample Files
-#----------------------------------------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------------------------
 
-#----------------------------------------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------------------------
 if($skipSampleFiles) {
     Write-Host "Skipping Sample Files"    
 }
@@ -383,10 +395,10 @@ else
     #    $result = az storage blob upload --file $file --container-name "datalakeraw" --name samples/$file --account-name $blobstorage_name --auth-mode login
     #}
 
-#----------------------------------------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------------------------
 #   Deploy SIF 
-#----------------------------------------------------------------------------------------------------------------
-if ($skipSif) {
+#-----------------------------------------------------------------------------------------------------------
+if ($skipSIF) {
     Write-Host "Skipping Deploying SIF"    
 }
 else {

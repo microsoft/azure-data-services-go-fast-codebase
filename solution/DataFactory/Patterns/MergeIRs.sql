@@ -1,19 +1,6 @@
             Merge dbo.IntegrationRuntime Tgt
             using (
-            Select * from OPENJSON('[
-  {
-    "is_azure": true,
-    "is_managed_vnet": true,
-    "name": "Azure-Integration-Runtime",
-    "short_name": "Azure"
-  },
-  {
-    "is_azure": false,
-    "is_managed_vnet": false,
-    "name": "Onprem-Integration-Runtime",
-    "short_name": "OnPrem"
-  }
-]') WITH 
+            Select * from OPENJSON('null') WITH 
             (
                 name varchar(200), 
                 short_name varchar(20), 

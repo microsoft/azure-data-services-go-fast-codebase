@@ -3,7 +3,7 @@ resource "azurerm_key_vault" "app_vault" {
   location                    = var.resource_location
   resource_group_name         = var.resource_group_name
   enabled_for_disk_encryption = true
-  soft_delete_retention_days  = 7
+  soft_delete_retention_days  = local.key_retention
   purge_protection_enabled    = false
   tenant_id                   = var.tenant_id
   sku_name                    = "standard"
