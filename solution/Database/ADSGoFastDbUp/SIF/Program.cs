@@ -24,13 +24,13 @@ namespace AdsGoFastDbUp
         public string connectionString { get; set; }
         [Option('a', "azure", Required = true, HelpText = "Should azure integrated auth be used.")]
         public bool azure { get; set; }
-        [Option("ResourceGroupName", Required = true, HelpText = "Parameter for the scripts.")]
+        [Option("ResourceGroupName", Required = false, HelpText = "Parameter for the scripts.")]
         public string ResourceGroupName { get; set; }
-        [Option("KeyVaultName", Required = true, HelpText = "Parameter for the scripts.")]
+        [Option("KeyVaultName", Required = false, HelpText = "Parameter for the scripts.")]
         public string KeyVaultName { get; set; }
-        [Option("LogAnalyticsWorkspaceId", Required = true, HelpText = "Parameter for the scripts.")]
+        [Option("LogAnalyticsWorkspaceId", Required = false, HelpText = "Parameter for the scripts.")]
         public string LogAnalyticsWorkspaceId { get; set; }
-        [Option("SubscriptionId", Required = true, HelpText = "Parameter for the scripts.")]
+        [Option("SubscriptionId", Required = false, HelpText = "Parameter for the scripts.")]
         public string SubscriptionId { get; set; }
         [Option("SampleDatabaseName", Required = false, HelpText = "Parameter for the scripts.")]
         public string SampleDatabaseName { get; set; }
@@ -50,9 +50,9 @@ namespace AdsGoFastDbUp
         public string AdlsStorageName { get;set; }
         [Option("DataFactoryName", Required = false, HelpText = "DataFactoryName Parameter for the scripts.")]
         public string DataFactoryName { get; set; }
-        [Option("WebAppName", Required = true, HelpText = "WebAppName Parameter for the scripts.")]
+        [Option("WebAppName", Required = false, HelpText = "WebAppName Parameter for the scripts.")]
         public string WebAppName { get; set; }
-        [Option("FunctionAppName", Required = true, HelpText = "FunctionAppName Parameter for the scripts.")]
+        [Option("FunctionAppName", Required = false, HelpText = "FunctionAppName Parameter for the scripts.")]
         public string FunctionAppName { get; set; }
         [Option("SqlServerName", Required = true, HelpText = "SqlServerName Parameter for the scripts.")]
         public string SqlServerName { get; set; }

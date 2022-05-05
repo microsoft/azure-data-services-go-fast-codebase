@@ -1,0 +1,27 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31424.327
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "SIFDM", "SIFDM.sqlproj", "{AD4DEE29-C01D-4445-967A-0270063F1627}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AD4DEE29-C01D-4445-967A-0270063F1627}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD4DEE29-C01D-4445-967A-0270063F1627}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AD4DEE29-C01D-4445-967A-0270063F1627}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{AD4DEE29-C01D-4445-967A-0270063F1627}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AD4DEE29-C01D-4445-967A-0270063F1627}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AD4DEE29-C01D-4445-967A-0270063F1627}.Release|Any CPU.Deploy.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4B3FA138-CF8F-4010-B165-8EACDEF3A13E}
+	EndGlobalSection
+EndGlobal

@@ -1,3 +1,43 @@
+CREATE TABLE [dm].[DimDate] (
+    [DATEKEY]                   INT          NOT NULL,
+    [CALENDAR_DATE]             DATE         NOT NULL,
+    [CALENDAR_DAY_OF_MONTH]     TINYINT      NOT NULL,
+    [CALENDAR_DAY_SUFFIX]       CHAR (2)     NOT NULL,
+    [CALENDAR_DAY_OF_WEEK]      TINYINT      NOT NULL,
+    [CALENDAR_DAY_OF_WEEK_NAME] VARCHAR (10) NOT NULL,
+    [WEEKEND_IND]               BIT          NOT NULL,
+    [HOLIDAY_IND]               BIT          NOT NULL,
+    [DOW_IN_MONTH]              TINYINT      NOT NULL,
+    [CALENDAR_DAY_OF_YEAR]      SMALLINT     NOT NULL,
+    [CALENDAR_WEEK_OF_MONTH]    TINYINT      NOT NULL,
+    [CALENDAR_WEEK_OF_YEAR]     TINYINT      NOT NULL,
+    [CALENDAR_MONTH_NUMBER]     TINYINT      NOT NULL,
+    [CALENDAR_MONTH_NAME]       VARCHAR (10) NOT NULL,
+    [CALENDAR_QUARTER]          VARCHAR (2)  NOT NULL,
+    [CALENDAR_QUARTER_NAME]     VARCHAR (6)  NOT NULL,
+    [CALENDAR_YEAR]             INT          NOT NULL,
+    [CALENDAR_YYYYMM]           CHAR (6)     NOT NULL,
+    [CALENDAR_MONYYYY]          CHAR (7)     NOT NULL,
+    [CALENDAR_YEAR_START_DATE]  DATE         NOT NULL,
+    [CALENDAR_YEAR_END_DATE]    DATE         NOT NULL,
+    [MONTH_START_DATE]          DATE         NOT NULL,
+    [MONTH_END_DATE]            DATE         NOT NULL,
+    [NEXT_MONTH_START_DATE]     DATE         NOT NULL,
+    [CALENDAR_DAYS_IN_MONTH]    TINYINT      NOT NULL,
+    [BUSINESS_DAYS_IN_MONTH]    TINYINT      NOT NULL,
+    [FINANCIAL_DAY_OF_YEAR]     SMALLINT     NOT NULL,
+    [FINANCIAL_WEEK_OF_YEAR]    TINYINT      NOT NULL,
+    [FINANCIAL_MONTH_NUMBER]    TINYINT      NOT NULL,
+    [FINANCIAL_YYYYMM]          CHAR (6)     NOT NULL,
+    [FINANCIAL_QUARTER]         VARCHAR (2)  NOT NULL,
+    [FINANCIAL_QUARTER_NAME]    VARCHAR (6)  NOT NULL,
+    [FINANCIAL_YEAR]            INT          NOT NULL,
+    [FINANCIAL_YEAR_YYYY_YY]    VARCHAR (7)  NOT NULL,
+    [FINANCIAL_YEAR_START_DATE] DATE         NOT NULL,
+    [FINANCIAL_YEAR_END_DATE]   DATE         NOT NULL
+);
+
+
 GO
 PRINT N'Creating Table [dm].[DimAbsent]...';
 
@@ -22,11 +62,11 @@ CREATE TABLE [dm].[DimAbsent] (
 
 
 GO
-PRINT N'Creating Table [dm].[DimAddress]...';
+PRINT N'Creating Table [dm].[NONKimballAddress]...';
 
 
 GO
-CREATE TABLE [dm].[Address-NonKimball] (
+CREATE TABLE [dm].[NONKimballAddress] (
     [AddressKey]  BIGINT         IDENTITY (1, 1) NOT NULL,
     [StudentID]   VARCHAR (50)   NOT NULL,
     [City]        VARCHAR (50)   NOT NULL,
@@ -136,6 +176,108 @@ CREATE TABLE [dm].[DimNaplanNationalAverage] (
 
 
 GO
+PRINT N'Creating Table [dm].[DimStudent]...';
+
+
+GO
+CREATE TABLE [dm].[DimStudent] (
+    [StudentKey]                      BIGINT         IDENTITY (1, 1) NOT NULL,
+    [StudentID]                       VARCHAR (20)   NULL,
+    [StateProvinceId]                 VARCHAR (20)   NULL,
+    [NationalUniqueStudentIdentifier] VARCHAR (20)   NULL,
+    [FirstName]                       VARCHAR (255)  NULL,
+    [LastName]                        VARCHAR (255)  NULL,
+    [MiddleName]                      VARCHAR (255)  NULL,
+    [OtherNames]                      VARCHAR (255)  NULL,
+    [ProjectedGraduationYear]         NUMERIC (4)    NULL,
+    [OnTimeGraduationYear]            NUMERIC (4)    NULL,
+    [GraduationDate]                  DATE           NULL,
+    [AcceptableUsePolicy]             VARCHAR (2)    NULL,
+    [GiftedTalented]                  VARCHAR (2)    NULL,
+    [EconomicDisadvantage]            VARCHAR (2)    NULL,
+    [ESL]                             VARCHAR (2)    NULL,
+    [ESLDateAssessed]                 DATE           NULL,
+    [YoungCarersRole]                 VARCHAR (2)    NULL,
+    [Disability]                      VARCHAR (2)    NULL,
+    [IntegrationAide]                 VARCHAR (2)    NULL,
+    [EducationSupport]                VARCHAR (2)    NULL,
+    [HomeSchooledStudent]             VARCHAR (2)    NULL,
+    [IndependentStudent]              VARCHAR (2)    NULL,
+    [Sensitive]                       VARCHAR (2)    NULL,
+    [OfflineDelivery]                 VARCHAR (2)    NULL,
+    [ESLSupport]                      VARCHAR (2)    NULL,
+    [PrePrimaryEducation]             VARCHAR (50)   NULL,
+    [PrePrimaryEducationHours]        VARCHAR (2)    NULL,
+    [FirstAUSchoolEnrollment]         DATE           NULL,
+    [Typeemail1description]           VARCHAR (20)   NULL,
+    [Email1]                          VARCHAR (50)   NULL,
+    [typeemail2description]           VARCHAR (20)   NULL,
+    [Email2]                          VARCHAR (50)   NULL,
+    [Telephone1]                      VARCHAR (50)   NULL,
+    [Telephone1TypeDescription]       VARCHAR (20)   NULL,
+    [Mobilephone]                     VARCHAR (50)   NULL,
+    [OtherPhone]                      VARCHAR (50)   NULL,
+    [IndigenousStatus]                SMALLINT       NULL,
+    [Sex]                             VARCHAR (10)   NULL,
+    [BirthDate]                       DATE           NULL,
+    [DateOfDeath]                     DATE           NULL,
+    [Deceased]                        VARCHAR (2)    NULL,
+    [BirthDateVerification]           VARCHAR (50)   NULL,
+    [PlaceOfBirth]                    VARCHAR (50)   NULL,
+    [StateOfBirth]                    VARCHAR (50)   NULL,
+    [CountryOfBirth]                  VARCHAR (50)   NULL,
+    [CountriesOfCitizenship]          VARCHAR (50)   NULL,
+    [CountriesOfResidency]            VARCHAR (50)   NULL,
+    [CountryArrivalDate]              DATE           NULL,
+    [AustralianCitizenshipStatus]     VARCHAR (2)    NULL,
+    [EnglishProficiency]              SMALLINT       NULL,
+    [MainLanguageSpokenAtHome]        VARCHAR (50)   NULL,
+    [SecondLanguage]                  VARCHAR (50)   NULL,
+    [OtherLanguage]                   VARCHAR (50)   NULL,
+    [DwellingArrangement]             VARCHAR (50)   NULL,
+    [Religion]                        VARCHAR (50)   NULL,
+    [ReligionEvent1]                  VARCHAR (50)   NULL,
+    [ReligionEvent1Date]              DATE           NULL,
+    [ReligionEvent2]                  VARCHAR (50)   NULL,
+    [ReligionEvent2Date]              DATE           NULL,
+    [ReligionEvent3]                  VARCHAR (50)   NULL,
+    [ReligionEvent3Date]              DATE           NULL,
+    [ReligiousRegion]                 VARCHAR (50)   NULL,
+    [PermanentResident]               VARCHAR (2)    NULL,
+    [VisaSubClass]                    VARCHAR (255)  NULL,
+    [VisaStatisticalCode]             VARCHAR (5)    NULL,
+    [VisaNumber]                      VARCHAR (50)   NULL,
+    [VisaGrantDate]                   DATE           NULL,
+    [VisaExpiryDate]                  DATE           NULL,
+    [VisaConditions]                  VARCHAR (255)  NULL,
+    [VisaStudyEntitlement]            VARCHAR (255)  NULL,
+    [ATEExpiryDate]                   DATE           NULL,
+    [ATEStartDate]                    DATE           NULL,
+    [PassportNumber]                  VARCHAR (20)   NULL,
+    [PassportExpiryDate]              DATE           NULL,
+    [PassportCountry]                 VARCHAR (20)   NULL,
+    [LBOTE]                           VARCHAR (2)    NULL,
+    [InterpreterRequired]             VARCHAR (2)    NULL,
+    [ImmunisationCertificateStatus]   VARCHAR (50)   NULL,
+    [CulturalBackground]              VARCHAR (50)   NULL,
+    [MaritalStatus]                   VARCHAR (50)   NULL,
+    [MedicareNumber]                  NUMERIC (12)   NULL,
+    [MedicarePositionNumber]          NUMERIC (1)    NULL,
+    [MedicareCardHolderName]          VARCHAR (50)   NULL,
+    [PrivateHealthInsurance]          VARCHAR (50)   NULL,
+    [Status]                          VARCHAR (50)   NOT NULL,
+    [ValidFrom]                       DATETIME2 (7)  NOT NULL,
+    [ValidTo]                         DATETIME2 (7)  NULL,
+    [IsActive]                        BIT            NOT NULL,
+    [CreatedOn]                       DATETIME2 (7)  NOT NULL,
+    [CreatedBy]                       VARCHAR (256)  NOT NULL,
+    [UpdatedOn]                       DATETIME2 (7)  NULL,
+    [UpdatedBy]                       VARCHAR (256)  NOT NULL,
+    [HashKey]                         VARBINARY (32) NOT NULL
+);
+
+
+GO
 PRINT N'Creating Table [dm].[DimSubject]...';
 
 
@@ -233,108 +375,6 @@ CREATE TABLE [dm].[FactTermResults] (
 
 
 GO
-PRINT N'Creating Table [dm].[DimStudent]...';
-
-
-GO
-CREATE TABLE [dm].[DimStudent] (
-    [StudentKey]                      BIGINT         IDENTITY (1, 1) NOT NULL,
-    [StudentID]                       VARCHAR (50)   NULL,
-    [StateProvinceId]                 VARCHAR (20)   NULL,
-    [NationalUniqueStudentIdentifier] VARCHAR (50)   NULL,
-    [FirstName]                       VARCHAR (255)  NULL,
-    [LastName]                        VARCHAR (255)  NULL,
-    [MiddleName]                      VARCHAR (255)  NULL,
-    [OtherNames]                      VARCHAR (255)  NULL,
-    [ProjectedGraduationYear]         NUMERIC (4)    NULL,
-    [OnTimeGraduationYear]            NUMERIC (4)    NULL,
-    [GraduationDate]                  DATE           NULL,
-    [AcceptableUsePolicy]             VARCHAR (2)    NULL,
-    [GiftedTalented]                  VARCHAR (2)    NULL,
-    [EconomicDisadvantage]            VARCHAR (2)    NULL,
-    [ESL]                             VARCHAR (2)    NULL,
-    [ESLDateAssessed]                 DATE           NULL,
-    [YoungCarersRole]                 VARCHAR (2)    NULL,
-    [Disability]                      VARCHAR (2)    NULL,
-    [IntegrationAide]                 VARCHAR (2)    NULL,
-    [EducationSupport]                VARCHAR (2)    NULL,
-    [HomeSchooledStudent]             VARCHAR (2)    NULL,
-    [IndependentStudent]              VARCHAR (2)    NULL,
-    [Sensitive]                       VARCHAR (2)    NULL,
-    [OfflineDelivery]                 VARCHAR (2)    NULL,
-    [ESLSupport]                      VARCHAR (2)    NULL,
-    [PrePrimaryEducation]             VARCHAR (50)   NULL,
-    [PrePrimaryEducationHours]        VARCHAR (2)    NULL,
-    [FirstAUSchoolEnrollment]         DATE           NULL,
-    [Typeemail1description]           VARCHAR (20)   NULL,
-    [Email1]                          VARCHAR (50)   NULL,
-    [typeemail2description]           VARCHAR (20)   NULL,
-    [Email2]                          VARCHAR (50)   NULL,
-    [Telephone1]                      VARCHAR (50)   NULL,
-    [Telephone1TypeDescription]       VARCHAR (20)   NULL,
-    [Mobilephone]                     VARCHAR (50)   NULL,
-    [OtherPhone]                      VARCHAR (50)   NULL,
-    [IndigenousStatus]                SMALLINT       NULL,
-    [Sex]                             VARCHAR (10)   NULL,
-    [BirthDate]                       DATE           NULL,
-    [DateOfDeath]                     DATE           NULL,
-    [Deceased]                        VARCHAR (2)    NULL,
-    [BirthDateVerification]           VARCHAR (50)   NULL,
-    [PlaceOfBirth]                    VARCHAR (50)   NULL,
-    [StateOfBirth]                    VARCHAR (50)   NULL,
-    [CountryOfBirth]                  VARCHAR (50)   NULL,
-    [CountriesOfCitizenship]          VARCHAR (50)   NULL,
-    [CountriesOfResidency]            VARCHAR (50)   NULL,
-    [CountryArrivalDate]              DATE           NULL,
-    [AustralianCitizenshipStatus]     VARCHAR (2)    NULL,
-    [EnglishProficiency]              SMALLINT       NULL,
-    [MainLanguageSpokenAtHome]        VARCHAR (50)   NULL,
-    [SecondLanguage]                  VARCHAR (50)   NULL,
-    [OtherLanguage]                   VARCHAR (50)   NULL,
-    [DwellingArrangement]             VARCHAR (50)   NULL,
-    [Religion]                        VARCHAR (50)   NULL,
-    [ReligionEvent1]                  VARCHAR (50)   NULL,
-    [ReligionEvent1Date]              DATE           NULL,
-    [ReligionEvent2]                  VARCHAR (50)   NULL,
-    [ReligionEvent2Date]              DATE           NULL,
-    [ReligionEvent3]                  VARCHAR (50)   NULL,
-    [ReligionEvent3Date]              DATE           NULL,
-    [ReligiousRegion]                 VARCHAR (50)   NULL,
-    [PermanentResident]               VARCHAR (2)    NULL,
-    [VisaSubClass]                    VARCHAR (255)  NULL,
-    [VisaStatisticalCode]             VARCHAR (5)    NULL,
-    [VisaNumber]                      VARCHAR (50)   NULL,
-    [VisaGrantDate]                   DATE           NULL,
-    [VisaExpiryDate]                  DATE           NULL,
-    [VisaConditions]                  VARCHAR (255)  NULL,
-    [VisaStudyEntitlement]            VARCHAR (255)  NULL,
-    [ATEExpiryDate]                   DATE           NULL,
-    [ATEStartDate]                    DATE           NULL,
-    [PassportNumber]                  VARCHAR (20)   NULL,
-    [PassportExpiryDate]              DATE           NULL,
-    [PassportCountry]                 VARCHAR (20)   NULL,
-    [LBOTE]                           VARCHAR (2)    NULL,
-    [InterpreterRequired]             VARCHAR (2)    NULL,
-    [ImmunisationCertificateStatus]   VARCHAR (50)   NULL,
-    [CulturalBackground]              VARCHAR (50)   NULL,
-    [MaritalStatus]                   VARCHAR (50)   NULL,
-    [MedicareNumber]                  NUMERIC (12)   NULL,
-    [MedicarePositionNumber]          NUMERIC (1)    NULL,
-    [MedicareCardHolderName]          VARCHAR (50)   NULL,
-    [PrivateHealthInsurance]          VARCHAR (50)   NULL,
-    [Status]                          VARCHAR (50)   NOT NULL,
-    [ValidFrom]                       DATETIME2 (7)  NOT NULL,
-    [ValidTo]                         DATETIME2 (7)  NULL,
-    [IsActive]                        BIT            NOT NULL,
-    [CreatedOn]                       DATETIME2 (7)  NOT NULL,
-    [CreatedBy]                       VARCHAR (256)  NOT NULL,
-    [UpdatedOn]                       DATETIME2 (7)  NULL,
-    [UpdatedBy]                       VARCHAR (256)  NOT NULL,
-    [HashKey]                         VARBINARY (32) NOT NULL
-);
-
-
-GO
 PRINT N'Creating Default Constraint unnamed constraint on [dm].[DimAbsent]...';
 
 
@@ -392,6 +432,115 @@ GO
 PRINT N'Creating Default Constraint [dm].[DF__DimAddres__Valid__4959E263]...';
 
 
+GO
+ALTER TABLE [dm].[NONKimballAddress]
+    ADD CONSTRAINT [DF__DimAddres__Valid__4959E263] DEFAULT (getdate()) FOR [ValidFrom];
+
+
+GO
+PRINT N'Creating Default Constraint [dm].[DF__DimAddres__IsAct__4A4E069C]...';
+
+
+GO
+ALTER TABLE [dm].[NONKimballAddress]
+    ADD CONSTRAINT [DF__DimAddres__IsAct__4A4E069C] DEFAULT ((1)) FOR [IsActive];
+
+
+GO
+PRINT N'Creating Default Constraint [dm].[DF__DimAddres__Creat__4B422AD5]...';
+
+
+GO
+ALTER TABLE [dm].[NONKimballAddress]
+    ADD CONSTRAINT [DF__DimAddres__Creat__4B422AD5] DEFAULT (getdate()) FOR [CreatedOn];
+
+
+GO
+PRINT N'Creating Default Constraint [dm].[DF__DimAddres__Creat__4C364F0E]...';
+
+
+GO
+ALTER TABLE [dm].[NONKimballAddress]
+    ADD CONSTRAINT [DF__DimAddres__Creat__4C364F0E] DEFAULT (suser_sname()) FOR [CreatedBy];
+
+
+GO
+PRINT N'Creating Default Constraint [dm].[DF__DimAddres__Updat__4D2A7347]...';
+
+
+GO
+ALTER TABLE [dm].[NONKimballAddress]
+    ADD CONSTRAINT [DF__DimAddres__Updat__4D2A7347] DEFAULT (suser_sname()) FOR [UpdatedOn];
+
+
+GO
+PRINT N'Creating Default Constraint [dm].[DF__DimAddres__Updat__4E1E9780]...';
+
+
+GO
+ALTER TABLE [dm].[NONKimballAddress]
+    ADD CONSTRAINT [DF__DimAddres__Updat__4E1E9780] DEFAULT (getdate()) FOR [UpdatedBy];
+
+
+GO
+PRINT N'Creating Default Constraint [dm].[DF__DimConduc__Valid__4F12BBB9]...';
+
+
+GO
+ALTER TABLE [dm].[DimConduct]
+    ADD CONSTRAINT [DF__DimConduc__Valid__4F12BBB9] DEFAULT (getdate()) FOR [ValidFrom];
+
+
+GO
+PRINT N'Creating Default Constraint [dm].[DF__DimConduc__IsAct__5006DFF2]...';
+
+
+GO
+ALTER TABLE [dm].[DimConduct]
+    ADD CONSTRAINT [DF__DimConduc__IsAct__5006DFF2] DEFAULT ((1)) FOR [IsActive];
+
+
+GO
+PRINT N'Creating Default Constraint [dm].[DF__DimConduc__Creat__50FB042B]...';
+
+
+GO
+ALTER TABLE [dm].[DimConduct]
+    ADD CONSTRAINT [DF__DimConduc__Creat__50FB042B] DEFAULT (getdate()) FOR [CreatedOn];
+
+
+GO
+PRINT N'Creating Default Constraint [dm].[DF__DimConduc__Creat__51EF2864]...';
+
+
+GO
+ALTER TABLE [dm].[DimConduct]
+    ADD CONSTRAINT [DF__DimConduc__Creat__51EF2864] DEFAULT (suser_sname()) FOR [CreatedBy];
+
+
+GO
+PRINT N'Creating Default Constraint [dm].[DF__DimConduc__Updat__52E34C9D]...';
+
+
+GO
+ALTER TABLE [dm].[DimConduct]
+    ADD CONSTRAINT [DF__DimConduc__Updat__52E34C9D] DEFAULT (suser_sname()) FOR [UpdatedOn];
+
+
+GO
+PRINT N'Creating Default Constraint [dm].[DF__DimConduc__Updat__53D770D6]...';
+
+
+GO
+ALTER TABLE [dm].[DimConduct]
+    ADD CONSTRAINT [DF__DimConduc__Updat__53D770D6] DEFAULT (getdate()) FOR [UpdatedBy];
+
+
+GO
+PRINT N'Creating Default Constraint [dm].[DF__DimEnrolm__Valid__54CB950F]...';
+
+
+GO
 ALTER TABLE [dm].[FactEnrollment]
     ADD CONSTRAINT [DF__DimEnrolm__Valid__54CB950F] DEFAULT (getdate()) FOR [ValidFrom];
 
@@ -502,6 +651,60 @@ PRINT N'Creating Default Constraint unnamed constraint on [dm].[DimNaplanNationa
 GO
 ALTER TABLE [dm].[DimNaplanNationalAverage]
     ADD DEFAULT ('National Average') FOR [NAPLANCategory];
+
+
+GO
+PRINT N'Creating Default Constraint [dm].[DF__DimStuden__Valid__370627FE]...';
+
+
+GO
+ALTER TABLE [dm].[DimStudent]
+    ADD CONSTRAINT [DF__DimStuden__Valid__370627FE] DEFAULT (getdate()) FOR [ValidFrom];
+
+
+GO
+PRINT N'Creating Default Constraint [dm].[DF__DimStuden__IsAct__37FA4C37]...';
+
+
+GO
+ALTER TABLE [dm].[DimStudent]
+    ADD CONSTRAINT [DF__DimStuden__IsAct__37FA4C37] DEFAULT ((1)) FOR [IsActive];
+
+
+GO
+PRINT N'Creating Default Constraint [dm].[DF__DimStuden__Creat__38EE7070]...';
+
+
+GO
+ALTER TABLE [dm].[DimStudent]
+    ADD CONSTRAINT [DF__DimStuden__Creat__38EE7070] DEFAULT (getdate()) FOR [CreatedOn];
+
+
+GO
+PRINT N'Creating Default Constraint [dm].[DF__DimStuden__Creat__39E294A9]...';
+
+
+GO
+ALTER TABLE [dm].[DimStudent]
+    ADD CONSTRAINT [DF__DimStuden__Creat__39E294A9] DEFAULT (suser_sname()) FOR [CreatedBy];
+
+
+GO
+PRINT N'Creating Default Constraint [dm].[DF__DimStuden__Updat__3AD6B8E2]...';
+
+
+GO
+ALTER TABLE [dm].[DimStudent]
+    ADD CONSTRAINT [DF__DimStuden__Updat__3AD6B8E2] DEFAULT (suser_sname()) FOR [UpdatedOn];
+
+
+GO
+PRINT N'Creating Default Constraint [dm].[DF__DimStuden__Updat__3BCADD1B]...';
+
+
+GO
+ALTER TABLE [dm].[DimStudent]
+    ADD CONSTRAINT [DF__DimStuden__Updat__3BCADD1B] DEFAULT (getdate()) FOR [UpdatedBy];
 
 
 GO
@@ -721,63 +924,10 @@ ALTER TABLE [dm].[FactTermResults]
 
 
 GO
-PRINT N'Creating Default Constraint [dm].[DF__DimStuden__Valid__370627FE]...';
-
-
-GO
-ALTER TABLE [dm].[DimStudent]
-    ADD CONSTRAINT [DF__DimStuden__Valid__370627FE] DEFAULT (getdate()) FOR [ValidFrom];
-
-
-GO
-PRINT N'Creating Default Constraint [dm].[DF__DimStuden__IsAct__37FA4C37]...';
-
-
-GO
-ALTER TABLE [dm].[DimStudent]
-    ADD CONSTRAINT [DF__DimStuden__IsAct__37FA4C37] DEFAULT ((1)) FOR [IsActive];
-
-
-GO
-PRINT N'Creating Default Constraint [dm].[DF__DimStuden__Creat__38EE7070]...';
-
-
-GO
-ALTER TABLE [dm].[DimStudent]
-    ADD CONSTRAINT [DF__DimStuden__Creat__38EE7070] DEFAULT (getdate()) FOR [CreatedOn];
-
-
-GO
-PRINT N'Creating Default Constraint [dm].[DF__DimStuden__Creat__39E294A9]...';
-
-
-GO
-ALTER TABLE [dm].[DimStudent]
-    ADD CONSTRAINT [DF__DimStuden__Creat__39E294A9] DEFAULT (suser_sname()) FOR [CreatedBy];
-
-
-GO
-PRINT N'Creating Default Constraint [dm].[DF__DimStuden__Updat__3AD6B8E2]...';
-
-
-GO
-ALTER TABLE [dm].[DimStudent]
-    ADD CONSTRAINT [DF__DimStuden__Updat__3AD6B8E2] DEFAULT (suser_sname()) FOR [UpdatedOn];
-
-
-GO
-PRINT N'Creating Default Constraint [dm].[DF__DimStuden__Updat__3BCADD1B]...';
-
-
-GO
-ALTER TABLE [dm].[DimStudent]
-    ADD CONSTRAINT [DF__DimStuden__Updat__3BCADD1B] DEFAULT (getdate()) FOR [UpdatedBy];
-
-
-GO
 PRINT N'Creating Procedure [dm].[usp_Generate_DimDate]...';
 
 
 GO
+
 
 
