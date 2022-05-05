@@ -1,6 +1,6 @@
-#----------------------------------------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------------------------
 # You must be logged into the Azure CLI to run this script
-#----------------------------------------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------------------------
 # This script will:
 # - Deploy all infra resources using terra
 # - Approve all private link requests
@@ -34,15 +34,15 @@ $myIp = (Invoke-WebRequest ifconfig.me/ip).Content
 $skipTerraformDeployment = $false
 $deploymentFolderPath = (Get-Location).Path
 
-#----------------------------------------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------------------------
 #   Deploy Infrastructure
-#----------------------------------------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------------------------
 # DEBUGGING HINTS:
 # - If you don't have an access policy for the KeyVault to set the secret values, run this
 #           az keyvault set-policy -n {keyVaultName} --secret-permissions all --object-id <<object-id-for-your-user>>
 # - If the firewall is blocking you, add your IP as firewall rule / exemption to the appropriate resource
 # - If you havn't run prepare but want to run this script on its own, set the TF_VAR_jumphost_password and TF_VAR_domain env vars
-#------------------------------------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------------------------
 Set-Location "./terraform"
 $env:TF_VAR_ip_address = $myIp
 
@@ -52,6 +52,7 @@ if ($skipTerraformDeployment) {
 else {
     Write-Host "Starting Terraform Deployment"
     terragrunt init --terragrunt-config vars/$environmentName/terragrunt.hcl -reconfigure
+    #will recreate resources in AZ
     terragrunt apply -auto-approve --terragrunt-config vars/$environmentName/terragrunt.hcl
 }
 
@@ -61,7 +62,7 @@ else {
 Write-Host "Reading Terraform Outputs"
 Import-Module .\..\GatherOutputsFromTerraform.psm1 -force
 $tout = GatherOutputsFromTerraform
-
+#this reads from terraform.tfstate which is populated/updated with terragrunt init
 $outputs = terragrunt output -json --terragrunt-config ./vars/$environmentName/terragrunt.hcl | ConvertFrom-Json
 
 $subscription_id =$outputs.subscription_id.value
@@ -74,9 +75,7 @@ $blobstorage_name=$outputs.blobstorage_name.value
 $adlsstorage_name=$outputs.adlsstorage_name.value
 $datafactory_name=$outputs.datafactory_name.value
 $keyvault_name=$outputs.keyvault_name.value
-
-
-
+#sif database name
 $sif_database_name  = $outputs.sif_database_name.value
 
 $stagingdb_name=$outputs.stagingdb_name.value
@@ -230,7 +229,7 @@ else {
     # This has been updated to use the Azure CLI cred
     Write-Host "Populating Metadata Database"
 
-    dotnet bin\publish\unzipped\database\AdsGoFastDbUp.dll -a True -c "Data Source=tcp:${sqlserver_name}.database.windows.net;Initial Catalog=${metadatadb_name};" -v True --DataFactoryName $datafactory_name --ResourceGroupName $resource_group_name --KeyVaultName $keyvault_name --LogAnalyticsWorkspaceId $loganalyticsworkspace_id --SubscriptionId $subscription_id --SampleDatabaseName $sampledb_name  --StagingDatabaseName $stagingdb_name --MetadataDatabaseName $metadatadb_name --BlobStorageName $blobstorage_name --AdlsStorageName $adlsstorage_name --WebAppName $webapp_name --FunctionAppName $functionapp_name --SqlServerName $sqlserver_name --SynapseWorkspaceName $synapse_workspace_name --SynapseDatabaseName $synapse_sql_pool_name --SynapseSQLPoolName $synapse_sql_pool_name --PurviewAccountName $purview_name
+    dotnet "./bin/publish/unzipped/database/AdsGoFastDbUp.dll" -a True -c "Data Source=tcp:${sqlserver_name}.database.windows.net;Initial Catalog=${metadatadb_name};" -v True --DataFactoryName $datafactory_name --ResourceGroupName $resource_group_name --KeyVaultName $keyvault_name --LogAnalyticsWorkspaceId $loganalyticsworkspace_id --SubscriptionId $subscription_id --SampleDatabaseName $sampledb_name  --StagingDatabaseName $stagingdb_name --MetadataDatabaseName $metadatadb_name --BlobStorageName $blobstorage_name --AdlsStorageName $adlsstorage_name --WebAppName $webapp_name --FunctionAppName $functionapp_name --SqlServerName $sqlserver_name --SynapseWorkspaceName $synapse_workspace_name --SynapseDatabaseName $synapse_sql_pool_name --SynapseSQLPoolName $synapse_sql_pool_name --PurviewAccountName $purview_name
 
    
     # Fix the MSI registrations on the other databases. I'd like a better way of doing this in the future
@@ -359,7 +358,7 @@ else {
     }
 
     Invoke-Expression ./GenerateAndUploadADFPipelines.ps1
-    Set-Location ./terraform 
+   
 }
 
 

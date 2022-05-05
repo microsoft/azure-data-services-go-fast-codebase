@@ -7,7 +7,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectVersion>4.1</ProjectVersion>
     <ProjectGuid>{ad4dee29-c01d-4445-967a-0270063f1627}</ProjectGuid>
-    <DSP>Microsoft.Data.Tools.Schema.Sql.Sql130DatabaseSchemaProvider</DSP>
+    <DSP>Microsoft.Data.Tools.Schema.Sql.SqlDwDatabaseSchemaProvider</DSP>
     <OutputType>Database</OutputType>
     <RootPath />
     <RootNamespace>MetadataDB</RootNamespace>
@@ -76,5 +76,6 @@
     <Build Include="dm\Tables\DimAbsent.sql" />
     <Build Include="dm\Stored Procedures\usp_Generate_DimDate.sql" />
     <Build Include="Security\001-Schemas.sql" />
+    <Build Include="dm\Tables\DimDate.sql" />
   </ItemGroup>
 </Project>

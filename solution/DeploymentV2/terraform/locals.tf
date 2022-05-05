@@ -1,7 +1,8 @@
 locals {  
   data_factory_name            = (var.data_factory_name != "" ? var.data_factory_name : module.naming.data_factory.name_unique)
-  key_vault_name               = (var.key_vault_name != "" ? var.key_vault_name : "${module.naming.key_vault.name_unique}random_integer.priority.result")
-  key_retention  = 1
+  key_vault_name               = (var.key_vault_name != "" ? var.key_vault_name : "${module.naming.key_vault.name_unique}${random_integer.integer_unique.result}")
+  #has to be between 7-90!
+  key_retention  = 7
   app_insights_name            = (var.app_insights_name != "" ? var.app_insights_name : module.naming.application_insights.name_unique)
   app_service_plan_name        = (var.app_service_plan_name != "" ? var.app_service_plan_name : module.naming.app_service_plan.name_unique)
   sql_server_name              = (var.sql_server_name != "" ? var.sql_server_name : module.naming.sql_server.name_unique)
@@ -67,13 +68,6 @@ locals {
     }
   ]
 
-  resource "random_integer" "priority" {
-  min = 1
-  max = 50000
-    keepers = {
-      # Generate a new integer each time we switch to a new listener ARN
-      listener_arn = "${var.listener_arn}"
-    }
-  }
+
 
 }

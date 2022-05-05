@@ -505,6 +505,7 @@ variable "synapse_spark_max_node_count" {
   type        = number
 }
 
+ 
 
 
 
