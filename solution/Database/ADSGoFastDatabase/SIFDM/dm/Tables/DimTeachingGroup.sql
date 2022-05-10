@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dm].[TeachingGroup] (
+﻿CREATE TABLE [dm].[DimTeachingGroup] (
 	[TeachingGroupKey] bigint identity(1, 1) not null,
 	[SchoolYear] numeric(4,0) null,
 	[TeachingGroupId] varchar(50) null,

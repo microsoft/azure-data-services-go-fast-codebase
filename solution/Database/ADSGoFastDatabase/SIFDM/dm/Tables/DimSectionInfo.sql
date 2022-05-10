@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dm].[SectionInfo] (
+﻿CREATE TABLE [dm].[DimSectionInfo] (
 	[SectionInfoKey] bigint identity(1, 1) not null,
 	[SchoolCourseInfoKey] bigint null,
 	[SectionInfoId] varchar(50) null,

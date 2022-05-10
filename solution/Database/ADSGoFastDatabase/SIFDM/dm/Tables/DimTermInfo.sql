@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dm].[TermInfo] (
+﻿CREATE TABLE [dm].[DimTermInfo] (
 	[TermInfoKey] bigint identity(1, 1) not null,
 	[SchoolInfoKey] bigint null, 
 	[SchoolYearType] numeric(4,0) null, 

@@ -82,5 +82,6 @@
     <Build Include="dm\Tables\DimSectionInfo.sql" />
     <Build Include="dm\Tables\DimStudentSectionEnrollment.sql" />
     <Build Include="dm\Tables\TermInfo.sql" />
+    <Build Include="dm\Tables\DimTermInfo.sql" />
   </ItemGroup>
 </Project>

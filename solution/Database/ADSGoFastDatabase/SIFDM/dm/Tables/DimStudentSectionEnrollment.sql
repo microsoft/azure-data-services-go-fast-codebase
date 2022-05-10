@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dm].[StudentSectionEnrollment] (
+﻿CREATE TABLE [dm].[DimStudentSectionEnrollment] (
 	[StudentSectionEnrollmentKey] bigint identity(1, 1) not null,
 	[StudentKey] bigint null,
 	[SectionInfoKey] bigint null,
