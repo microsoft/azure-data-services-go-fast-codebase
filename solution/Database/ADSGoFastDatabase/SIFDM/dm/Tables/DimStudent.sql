@@ -1,10 +1,8 @@
 ﻿CREATE TABLE [dm].[DimStudent] (
     [StudentKey]        BIGINT         IDENTITY (1, 1) NOT NULL,
-    
     [StudentID]       	VARCHAR (20)                ,
     StateProvinceId	    Varchar(20)                 ,
     NationalUniqueStudentIdentifier	VARCHAR (20)    ,
-
     [FirstName]       	VARCHAR (255)               ,
     [LastName]        	VARCHAR (255)               ,
     [MiddleName]        VARCHAR (255)               NULL,
@@ -29,9 +27,9 @@
     PrePrimaryEducation	VARCHAR (50)                NULL,
     PrePrimaryEducationHours	VARCHAR (2)         NULL,
     FirstAUSchoolEnrollment	Date                    NULL,                                 
-    Typeemail1description	VARCHAR (20)            Null ,
+    TypeEmail1Description	VARCHAR (20)            Null ,
     Email1	                Varchar(50)             Null ,
-    typeemail2description	VARCHAR (20)            Null ,
+    TypeEmail2Description	VARCHAR (20)            Null ,
     Email2	                Varchar(50)             Null     ,
     Telephone1	            Varchar(50)             Null ,
     Telephone1TypeDescription	VARCHAR (20)        Null ,
@@ -85,8 +83,6 @@
     MedicarePositionNumber	Numeric(1,0)           NULL ,
     MedicareCardHolderName	VARCHAR (50)           NULL ,
     PrivateHealthInsurance	VARCHAR (50)           NULL ,
-
-
     [Status]          VARCHAR (50)   NOT NULL,
     [ValidFrom]       DATETIME2 (7)  CONSTRAINT [DF__DimStuden__Valid__370627FE] DEFAULT (getdate()) NOT NULL,
     [ValidTo]         DATETIME2 (7)  NULL,

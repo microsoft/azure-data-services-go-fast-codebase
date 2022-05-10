@@ -77,5 +77,10 @@
     <Build Include="dm\Stored Procedures\usp_Generate_DimDate.sql" />
     <Build Include="Security\001-Schemas.sql" />
     <Build Include="dm\Tables\DimDate.sql" />
+    <Build Include="dm\Tables\DimStaff.sql" />
+    <Build Include="dm\Tables\DimTeachingGroup.sql" />
+    <Build Include="dm\Tables\DimSectionInfo.sql" />
+    <Build Include="dm\Tables\DimStudentSectionEnrollment.sql" />
+    <Build Include="dm\Tables\TermInfo.sql" />
   </ItemGroup>
 </Project>
