@@ -294,3 +294,5 @@ solution/FunctionApp/Patterns/pipeline/*/output/
 /.vscode/extensions.json
 /.vscode/launch.json
 /.vscode/tasks.json
+/solution/Synapse/Patterns/pipeline/GPL_AzureBlobFS_DelimitedText_AzureSqlDWTable_NA_Primary_Azure.zip
+/solution/Synapse/Patterns/pipeline/Execute-Notebook.zip

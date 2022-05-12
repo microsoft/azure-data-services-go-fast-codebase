@@ -3,6 +3,7 @@ $tout = GatherOutputsFromTerraform
 $sqlserver_name=$tout.sqlserver_name
 $stagingdb_name=$tout.stagingdb_name
 $metadatadb_name=$tout.metadatadb_name
+$sifdb_name=$tout.sifdb_name
 
 
 $SqlInstalled = Get-InstalledModule SqlServer
@@ -19,7 +20,7 @@ Invoke-Sqlcmd -ServerInstance "$sqlserver_name.database.windows.net,1433" -Datab
 #Insert any missing CDC watermarks"
 $sqlcommand = @"
 insert into [dbo].[TaskMasterWaterMark]
-Select a.TaskMasterId, 'lsn', 'lsn', null, null, '', null, 1, getdate() 
+Select a.	, 'lsn', 'lsn', null, null, '', null, 1, getdate() 
 from [dbo].[TaskMaster] a left outer join [dbo].[TaskMasterWaterMark] b on a.TaskMasterID=  b.TaskMasterId
 where a.[TaskTypeId] = -4 and b.TaskMasterId is null
 "@
