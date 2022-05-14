@@ -7,7 +7,7 @@
 
 SynapseIntegrationActivityRuns
         | where TimeGenerated >  datetime("2022-03-05") and Status in ("Succeeded", "Failed", "Cancelled")  
-            and ResourceId  == "/SUBSCRIPTIONS/{SubscriptionId}/RESOURCEGROUPS/{ResourceGroupName}/PROVIDERS/MICROSOFT.SYNAPSE/WORKSPACES/{EngineName}"
+            and _ResourceId  == "/SUBSCRIPTIONS/{SubscriptionId}/RESOURCEGROUPS/{ResourceGroupName}/PROVIDERS/MICROSOFT.SYNAPSE/WORKSPACES/{EngineName}"
                     | extend        MeterType = "",  
                         MeterDuration = 0,
                         MeterUnit = 0,

@@ -5,6 +5,6 @@
 //
 //-----------------------------------------------------------------------*/
 
-SynapseIntegrationActivityRun
+SynapseIntegrationActivityRuns
         | where TimeGenerated >  datetime({MaxActivityTimeGenerated}) and Status in ("Failed")  
-            and ResourceId  == "/SUBSCRIPTIONS/{SubscriptionId}/RESOURCEGROUPS/{ResourceGroupName}/PROVIDERS/MICROSOFT.SYNAPSE/WORKSPACES/{EngineName}"
+            and _ResourceId  == "/SUBSCRIPTIONS/{SubscriptionId}/RESOURCEGROUPS/{ResourceGroupName}/PROVIDERS/MICROSOFT.SYNAPSE/WORKSPACES/{EngineName}"

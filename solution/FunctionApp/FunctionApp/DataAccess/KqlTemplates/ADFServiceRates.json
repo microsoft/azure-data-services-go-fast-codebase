@@ -1,7 +1,7 @@
 ﻿{
   "SelfHostedOrchestrationCostRate" : 0.0010500000000000002,
   "SelfHostedDataMovementCostRate": 0.0011666666666666668, 
-  "CloudOrchestrationFeeRate" :        ,
+  "CloudOrchestrationFeeRate" : 0.0007,
   "CloudDataMovementCostRate": 0.0029166666666666664,
   "SelfHostedPipelineActivityCostRate": 0.0020000000,
   "CloudPipelineActivityCostRate" : 0.00500000000
