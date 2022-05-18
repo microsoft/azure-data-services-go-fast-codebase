@@ -20,6 +20,15 @@
 	[ManagedPathwayLocalCode] varchar(255) NULL,
 	[SchoolInfoRefId] varchar(255) NULL,
 	[SchoolLocalId] varchar(255) NULL,
-	[SchoolCommonwealthId] varchar(255) NULL
+	[SchoolCommonwealthId] varchar(255) NULL,
+	[Status] varchar(50) null,
+	[ValidFrom] datetime2(7) constraint [DF_DimStSJAS_Valid_A85628A1] default (getdate()) not null,
+    [ValidTo] datetime2(7) null,
+    [IsActive] bit constraint [DF__DimStSJAS__IsAct__37FA4C37] default ((1)) not null,
+    [CreatedOn] datetime2(7) constraint [DF__DimStSJAS__Creat__38EE7070] default (getdate()) not null,
+    [CreatedBy] varchar(256) constraint [DF__DimStSJAS__Creat__39E294A9] default (suser_sname()) not null,
+    [UpdatedOn] datetime2(7) constraint [DF__DimStSJAS__Updat__3AD6B8E2] default (suser_sname()) null,
+    [UpdatedBy] varchar(256) constraint [DF__DimStSJAS__Updat__3BCADD1B] default (getdate()) not null,
+    [HashKey] varbinary(32) null
 
 )

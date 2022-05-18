@@ -43,5 +43,14 @@
 	[BoardingSchoolStatus] varchar(1) NULL,
 	[EntityOpen] date NULL,
 	[EntityClose] date NULL,
-	[SchoolTimeZone] varchar(10) NULL
+	[SchoolTimeZone] varchar(10) NULL,
+	[Status] varchar(50) null,
+	[ValidFrom] datetime2(7) constraint [DF_DimSchool_Valid_A85628A1] default (getdate()) not null,
+    [ValidTo] datetime2(7) null,
+    [IsActive] bit constraint [DF__DimSchool__IsAct__37FA4C37] default ((1)) not null,
+    [CreatedOn] datetime2(7) constraint [DF__DimSchool__Creat__38EE7070] default (getdate()) not null,
+    [CreatedBy] varchar(256) constraint [DF__DimSchool__Creat__39E294A9] default (suser_sname()) not null,
+    [UpdatedOn] datetime2(7) constraint [DF__DimSchool__Updat__3AD6B8E2] default (suser_sname()) null,
+    [UpdatedBy] varchar(256) constraint [DF__DimSchool__Updat__3BCADD1B] default (getdate()) not null,
+    [HashKey] varbinary(32) null
 )

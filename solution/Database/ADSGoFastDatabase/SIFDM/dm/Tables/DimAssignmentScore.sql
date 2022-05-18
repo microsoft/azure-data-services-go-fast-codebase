@@ -15,5 +15,14 @@
 	[ScoreDescription] varchar(255) NULL,
 	[TeacherJudgement] varchar(255) NULL,
 	[MarkInfoKey] bigint NULL,
-	[AssignmentScoreIteration] varchar(255) NULL
+	[AssignmentScoreIteration] varchar(255) NULL,
+	[Status] varchar(50) null,
+	[ValidFrom] datetime2(7) constraint [DF_DimAsgnSc_Valid_A85628A1] default (getdate()) not null,
+    [ValidTo] datetime2(7) null,
+    [IsActive] bit constraint [DF__DimAsgnSc__IsAct__37FA4C37] default ((1)) not null,
+    [CreatedOn] datetime2(7) constraint [DF__DimAsgnSc__Creat__38EE7070] default (getdate()) not null,
+    [CreatedBy] varchar(256) constraint [DF__DimAsgnSc__Creat__39E294A9] default (suser_sname()) not null,
+    [UpdatedOn] datetime2(7) constraint [DF__DimAsgnSc__Updat__3AD6B8E2] default (suser_sname()) null,
+    [UpdatedBy] varchar(256) constraint [DF__DimAsgnSc__Updat__3BCADD1B] default (getdate()) not null,
+    [HashKey] varbinary(32) null
 )
