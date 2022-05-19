@@ -1,0 +1,28 @@
+﻿CREATE TABLE [dm].[DimGradingInfo]
+(
+	[GradingAssignmentKey] bigint NOT NULL,
+	[TeachingGroupKey] bigint NULL,
+	[StudentKey] bigint NULL,
+	[SchoolInfoKey] bigint NULL,
+	[GradingCategory] varchar(255) NULL,
+	[Description] varchar(1000) NOT NULL,
+	[PointsPossible] int NULL,
+	[CreateDate] datetime NULL,
+	[DueDate] datetime NULL,
+	[Weight] numeric(5,2) NULL,
+	[MaxAttemptsAllowed] int NULL,
+	[DetailedDescriptionURL] varchar(1000) NULL,
+	[DetailedDescriptionBinary] varchar(max) NULL,
+	[AssessmentType] varchar(255) NULL,
+	[LevelAssessed] varchar(255) NULL,
+	[AssignmentPurpose] varchar(255) NULL,
+	[Status] varchar(50) null,
+	[ValidFrom] datetime2(7) constraint [DF_DimGrade_Valid_A85628A1] default (getdate()) not null,
+    [ValidTo] datetime2(7) null,
+    [IsActive] bit constraint [DF__DimGrade__IsAct__37FA4C37] default ((1)) not null,
+    [CreatedOn] datetime2(7) constraint [DF__DimGrade__Creat__38EE7070] default (getdate()) not null,
+    [CreatedBy] varchar(256) constraint [DF__DimGrade__Creat__39E294A9] default (suser_sname()) not null,
+    [UpdatedOn] datetime2(7) constraint [DF__DimGrade__Updat__3AD6B8E2] default (suser_sname()) null,
+    [UpdatedBy] varchar(256) constraint [DF__DimGrade__Updat__3BCADD1B] default (getdate()) not null,
+    [HashKey] varbinary(32) null
+)

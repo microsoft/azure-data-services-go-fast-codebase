@@ -1,0 +1,25 @@
+﻿CREATE TABLE [dm].[DimMarkInfo]
+(
+	[MarkInfoKey] bigint NOT NULL,
+	[SchoolInfoKey] bigint NOT NULL,
+	[ValueName] varchar(255) NULL,
+	[PercentageMinimum] numeric(5,2) NULL,
+	[PercentageMaximum] numeric(5,2) NULL,
+	[PercentagePassingGrade] numeric(5,2) NULL,
+	[NumericPrecision] int NULL,
+	[NumericScale] int NULL,
+	[NumericLow] numeric(5,2) NULL,
+	[NumericHigh] numeric(5,2) NULL,
+	[NumericPassingGrade] numeric(5,2) NULL,
+	[Narrative] varchar(255) NULL,
+	[NarrativeMaximumSize] int NULL,
+	[Status] varchar(50) null,
+	[ValidFrom] datetime2(7) constraint [DF_DimMark_Valid_A85628A1] default (getdate()) not null,
+    [ValidTo] datetime2(7) null,
+    [IsActive] bit constraint [DF__DimMark__IsAct__37FA4C37] default ((1)) not null,
+    [CreatedOn] datetime2(7) constraint [DF__DimMark__Creat__38EE7070] default (getdate()) not null,
+    [CreatedBy] varchar(256) constraint [DF__DimMark__Creat__39E294A9] default (suser_sname()) not null,
+    [UpdatedOn] datetime2(7) constraint [DF__DimMark__Updat__3AD6B8E2] default (suser_sname()) null,
+    [UpdatedBy] varchar(256) constraint [DF__DimMark__Updat__3BCADD1B] default (getdate()) not null,
+    [HashKey] varbinary(32) null
+)

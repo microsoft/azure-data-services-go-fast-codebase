@@ -1,3 +1,319 @@
+PRINT N'Creating Table [dm].[DimCalendarDate]...';
+
+CREATE TABLE [dm].[DimCalendarDate]
+(
+	[CalendarDateKey] bigint NOT NULL,
+	[CalendarDate] date NULL,
+	[CalendarSummaryKey] bigint NOT NULL,
+	[SchoolInfoKey] bigint NOT NULL,
+	[SchoolYear] varchar(4) NULL,
+	[CalendarDateType] varchar(4) NULL,
+	[CalendarDateNumber] int NULL,
+	[StudentCountsTowardAttendance] varchar(3) NULL,
+	[StudentAttendanceValue] numeric(4,1) NULL,
+	[TeacherCountsTowardAttendance] numeric(4,1) NULL,
+	[TeacherAttendanceValue] numeric(4,1) NULL,
+	[AdministratorCountsTowardAttendance] numeric(4,1) NULL,
+	[AdministratorAttendanceValue] numeric(4,1) NULL,
+	[ValidFrom] datetime2(7) constraint [DF_DimCalDate_Valid_A85628A1] default (getdate()) not null,
+    [ValidTo] datetime2(7) null,
+    [IsActive] bit constraint [DF__DimCalDate__IsAct__37FA4C37] default ((1)) not null,
+    [CreatedOn] datetime2(7) constraint [DF__DimCalDate__Creat__38EE7070] default (getdate()) not null,
+    [CreatedBy] varchar(256) constraint [DF__DimCalDate__Creat__39E294A9] default (suser_sname()) not null,
+    [UpdatedOn] datetime2(7) constraint [DF__DimCalDate__Updat__3AD6B8E2] default (suser_sname()) null,
+    [UpdatedBy] varchar(256) constraint [DF__DimCalDate__Updat__3BCADD1B] default (getdate()) not null,
+    [HashKey] varbinary(32) null
+);
+GO
+
+PRINT N'Creating Table [dm].[DimStudentAttendance]...';
+
+
+CREATE TABLE [dm].[DimStudentAttendance]
+(
+	[StudentDailyAttendanceKey] bigint NOT NULL,
+	[StudentKey] bigint NOT NULL,
+	[SchoolInfoKey] bigint NOT NULL,
+	[CalendarDate] date NULL,
+	[SchoolYear] varchar(4) NULL,
+	[DayValue] varchar(10) NULL,
+	[AttendanceCode] varchar(3) NULL,
+	[AttendanceStatus] varchar(2) NULL,
+	[TimeIn] datetime NULL,
+	[TimeOut] datetime NULL,
+	[AbsenceValue] float NULL,
+	[AttendanceNote] varchar(8000) NULL,
+	[Status] varchar(50) null,
+	[ValidFrom] datetime2(7) constraint [DF_DimStAttd_Valid_A85628A1] default (getdate()) not null,
+    [ValidTo] datetime2(7) null,
+    [IsActive] bit constraint [DF__DimStAttd__IsAct__37FA4C37] default ((1)) not null,
+    [CreatedOn] datetime2(7) constraint [DF__DimStAttd__Creat__38EE7070] default (getdate()) not null,
+    [CreatedBy] varchar(256) constraint [DF__DimStAttd__Creat__39E294A9] default (suser_sname()) not null,
+    [UpdatedOn] datetime2(7) constraint [DF__DimStAttd__Updat__3AD6B8E2] default (suser_sname()) null,
+    [UpdatedBy] varchar(256) constraint [DF__DimStAttd__Updat__3BCADD1B] default (getdate()) not null,
+    [HashKey] varbinary(32) null
+);
+GO
+
+PRINT N'Creating Table [dm].[DimSchoolInfo]...';
+
+CREATE TABLE [dm].[DimSchoolInfo]
+(
+	[SchoolInfoKey] bigint NOT NULL,
+	[SchooldInfoId] varchar(50) NULL,
+	[StateProvinceId] varchar(50) NULL,
+	[CommonwealthId] varchar(50) NULL,
+	[ParentCommonwealthId] varchar(50) NULL,
+	[ACARAId] varchar(50) NULL,
+	[SchoolName] varchar(255) NOT NULL,
+	[LEAInfoRefId] varchar(50) NULL,
+	[OtherLEAId] varchar(50) NULL,
+	[SIF_RefObject] varchar(7) NOT NULL,
+	[SchoolDistrict] varchar(255) NULL,
+	[SchoolDistrictId] varchar(50) NULL,
+	[SchoolType] varchar(255) NULL,
+	[SchoolURL] varchar(1000) NULL,
+	[PrincipalInfoType] varchar(50) NULL,
+	[PrincipalInfoTitle] varchar(50) NULL,
+	[PrincipalInfoFamilyName] varchar(255) NULL,
+	[PrincipalInfoGivenName] varchar(255) NULL,
+	[PrincipalInfoMiddleName] varchar(255) NULL,
+	[PrincipalInfoSuffix] varchar(50) NULL,
+	[PrincipalInfoFullName] varchar(255) NULL,
+	[PrincipalInfoContactTitle] varchar(255) NULL,
+	[Telephone1] varchar(50) NULL,
+	[Telephone1TypeDescription] varchar (2)   NULL,
+	[Telephone2] varchar(50) NULL,
+	[Telephone2TypeDescription] varchar (2)   NULL,
+	[SessionType] varchar(4) NULL,
+	[ARIA] float NULL,
+	[OperationalStatus] varchar(1) NULL,
+	[FederalElectorate] varchar(3) NULL,
+	[SchoolSector] varchar(3) NULL,
+	[IndependentSchool] varchar(1) NULL,
+	[NonGovSystemicStatus] varchar(1) NULL,
+	[SchoolSystemType] varchar(4) NULL,
+	[ReligiousAfiliationGroup] varchar(4) NULL,
+	[SchoolGeographicLocation] varchar(10) NULL,
+	[LocalGovernmentArea] varchar(255) NULL,
+	[JurisdictionLowerHouse] varchar(255) NULL,
+	[SLA] varchar(10) NULL,
+	[SchoolCoEdStatus] varchar(1) NULL,
+	[BoardingSchoolStatus] varchar(1) NULL,
+	[EntityOpen] date NULL,
+	[EntityClose] date NULL,
+	[SchoolTimeZone] varchar(10) NULL,
+	[Status] varchar(50) null,
+	[ValidFrom] datetime2(7) constraint [DF_DimSchool_Valid_A85628A1] default (getdate()) not null,
+    [ValidTo] datetime2(7) null,
+    [IsActive] bit constraint [DF__DimSchool__IsAct__37FA4C37] default ((1)) not null,
+    [CreatedOn] datetime2(7) constraint [DF__DimSchool__Creat__38EE7070] default (getdate()) not null,
+    [CreatedBy] varchar(256) constraint [DF__DimSchool__Creat__39E294A9] default (suser_sname()) not null,
+    [UpdatedOn] datetime2(7) constraint [DF__DimSchool__Updat__3AD6B8E2] default (suser_sname()) null,
+    [UpdatedBy] varchar(256) constraint [DF__DimSchool__Updat__3BCADD1B] default (getdate()) not null,
+    [HashKey] varbinary(32) null
+);
+GO
+
+
+PRINT N'Creating Table [dm].[DimStudentScoreJAS]...';
+
+CREATE TABLE [dm].[DimStudentScoreJAS]
+(
+	[StudentScoreJASKey] bigint NOT NULL,
+	[SchoolYear] numeric(4,0) NOT NULL,
+	[TermInfoKey] bigint NOT NULL,
+	[LocalTermCode] varchar(255) NULL,
+	[StudentKey] bigint NOT NULL,
+	[StudentStateProvinceId] varchar(255) NULL,
+	[StudentLocalId] varchar(255) NULL,
+	[YearLevel] varchar(10) NULL,
+	[TeachingGroupKey] bigint NOT NULL,
+	[ClassLocalId] varchar(255) NULL,
+	[StaffKey] bigint NULL,
+	[StaffLocalId] varchar(255) NULL,
+	[LearningStandardList] varchar(1000) NULL,
+	[CurriculumCode] varchar(255) NULL,
+	[CurriculumNodeCode] varchar(255) NULL,
+	[Score] varchar(255) NULL,
+	[SpecialCircumstanceLocalCode] varchar(255) NULL,
+	[ManagedPathwayLocalCode] varchar(255) NULL,
+	[SchoolInfoRefId] varchar(255) NULL,
+	[SchoolLocalId] varchar(255) NULL,
+	[SchoolCommonwealthId] varchar(255) NULL,
+	[Status] varchar(50) null,
+	[ValidFrom] datetime2(7) constraint [DF_DimStSJAS_Valid_A85628A1] default (getdate()) not null,
+    [ValidTo] datetime2(7) null,
+    [IsActive] bit constraint [DF__DimStSJAS__IsAct__37FA4C37] default ((1)) not null,
+    [CreatedOn] datetime2(7) constraint [DF__DimStSJAS__Creat__38EE7070] default (getdate()) not null,
+    [CreatedBy] varchar(256) constraint [DF__DimStSJAS__Creat__39E294A9] default (suser_sname()) not null,
+    [UpdatedOn] datetime2(7) constraint [DF__DimStSJAS__Updat__3AD6B8E2] default (suser_sname()) null,
+    [UpdatedBy] varchar(256) constraint [DF__DimStSJAS__Updat__3BCADD1B] default (getdate()) not null,
+    [HashKey] varbinary(32) null
+
+);
+GO
+
+
+PRINT N'Creating Table [dm].[DimStudentGrade]...';
+
+CREATE TABLE [dm].[DimStudentGrade]
+(
+	[StudentGradePK] bigint NOT NULL,
+	[StudentKey] bigint NOT NULL,
+	[HomeGroup] varchar(255) NULL,
+	[YearLevel] varchar(10) NULL,
+	[TeachingGroupShortName] varchar(255) NULL,
+	[TeachingGroupKey] bigint NULL,
+	[StaffKey] bigint NOT NULL,
+	[SchoolInfoKey] bigint NOT NULL,
+	[TermInfoKey] bigint NOT NULL,
+	[Description] varchar(255) NULL,
+	[GradePercentage] numeric(5,2) NULL,
+	[GradeNumeric] numeric(5,2) NULL,
+	[GradeLetter] varchar(10) NULL,
+	[GradeNarrative] varchar(255) NULL,
+	[MarkInfoKey] bigint NOT NULL,
+	[TeacherJudgement] varchar(255) NULL,
+	[TermSpan] varchar(4) NULL,
+	[SchoolYear] varchar(4) NULL,
+	[Status] varchar(50) null,
+	[ValidFrom] datetime2(7) constraint [DF_DimStGrade_Valid_A85628A1] default (getdate()) not null,
+    [ValidTo] datetime2(7) null,
+    [IsActive] bit constraint [DF__DimStGrade__IsAct__37FA4C37] default ((1)) not null,
+    [CreatedOn] datetime2(7) constraint [DF__DimStGrade__Creat__38EE7070] default (getdate()) not null,
+    [CreatedBy] varchar(256) constraint [DF__DimStGrade__Creat__39E294A9] default (suser_sname()) not null,
+    [UpdatedOn] datetime2(7) constraint [DF__DimStGrade__Updat__3AD6B8E2] default (suser_sname()) null,
+    [UpdatedBy] varchar(256) constraint [DF__DimStGrade__Updat__3BCADD1B] default (getdate()) not null,
+    [HashKey] varbinary(32) null
+);
+GO
+
+PRINT N'Creating Table [dm].[DimMarkInfo]...';
+
+
+CREATE TABLE [dm].[DimMarkInfo]
+(
+	[MarkInfoKey] bigint NOT NULL,
+	[SchoolInfoKey] bigint NOT NULL,
+	[ValueName] varchar(255) NULL,
+	[PercentageMinimum] numeric(5,2) NULL,
+	[PercentageMaximum] numeric(5,2) NULL,
+	[PercentagePassingGrade] numeric(5,2) NULL,
+	[NumericPrecision] int NULL,
+	[NumericScale] int NULL,
+	[NumericLow] numeric(5,2) NULL,
+	[NumericHigh] numeric(5,2) NULL,
+	[NumericPassingGrade] numeric(5,2) NULL,
+	[Narrative] varchar(255) NULL,
+	[NarrativeMaximumSize] int NULL,
+	[Status] varchar(50) null,
+	[ValidFrom] datetime2(7) constraint [DF_DimMark_Valid_A85628A1] default (getdate()) not null,
+    [ValidTo] datetime2(7) null,
+    [IsActive] bit constraint [DF__DimMark__IsAct__37FA4C37] default ((1)) not null,
+    [CreatedOn] datetime2(7) constraint [DF__DimMark__Creat__38EE7070] default (getdate()) not null,
+    [CreatedBy] varchar(256) constraint [DF__DimMark__Creat__39E294A9] default (suser_sname()) not null,
+    [UpdatedOn] datetime2(7) constraint [DF__DimMark__Updat__3AD6B8E2] default (suser_sname()) null,
+    [UpdatedBy] varchar(256) constraint [DF__DimMark__Updat__3BCADD1B] default (getdate()) not null,
+    [HashKey] varbinary(32) null
+);
+GO
+
+PRINT N'Creating Table [dm].[DimAssignmentScore]...';
+
+CREATE TABLE [dm].[DimAssignmentScore]
+(
+	[GradingAssignmentScoreKey] bigint NOT NULL,
+	[StudentKey] bigint NOT NULL,
+	[StudentId] varchar(50) NULL,
+	[TeachingGroupKey] bigint NULL,
+	[SchoolInfoKey] bigint NULL,
+	[GradingAssignmentKey] bigint NOT NULL,
+	[StaffKey] bigint NOT NULL,
+	[DateGraded] datetime NULL,
+	[ExpectedScore] bit NULL,
+	[ScorePoints] int NULL,
+	[ScorePercent] numeric(5,2) NULL,
+	[ScoreLetter] varchar(5) NULL,
+	[ScoreDescription] varchar(255) NULL,
+	[TeacherJudgement] varchar(255) NULL,
+	[MarkInfoKey] bigint NULL,
+	[AssignmentScoreIteration] varchar(255) NULL,
+	[Status] varchar(50) null,
+	[ValidFrom] datetime2(7) constraint [DF_DimAsgnSc_Valid_A85628A1] default (getdate()) not null,
+    [ValidTo] datetime2(7) null,
+    [IsActive] bit constraint [DF__DimAsgnSc__IsAct__37FA4C37] default ((1)) not null,
+    [CreatedOn] datetime2(7) constraint [DF__DimAsgnSc__Creat__38EE7070] default (getdate()) not null,
+    [CreatedBy] varchar(256) constraint [DF__DimAsgnSc__Creat__39E294A9] default (suser_sname()) not null,
+    [UpdatedOn] datetime2(7) constraint [DF__DimAsgnSc__Updat__3AD6B8E2] default (suser_sname()) null,
+    [UpdatedBy] varchar(256) constraint [DF__DimAsgnSc__Updat__3BCADD1B] default (getdate()) not null,
+    [HashKey] varbinary(32) null
+);
+GO
+
+
+PRINT N'Creating Table [dm].[DimGradingInfo]...';
+
+CREATE TABLE [dm].[DimGradingInfo]
+(
+	[GradingAssignmentKey] bigint NOT NULL,
+	[TeachingGroupKey] bigint NULL,
+	[StudentKey] bigint NULL,
+	[SchoolInfoKey] bigint NULL,
+	[GradingCategory] varchar(255) NULL,
+	[Description] varchar(1000) NOT NULL,
+	[PointsPossible] int NULL,
+	[CreateDate] datetime NULL,
+	[DueDate] datetime NULL,
+	[Weight] numeric(5,2) NULL,
+	[MaxAttemptsAllowed] int NULL,
+	[DetailedDescriptionURL] varchar(1000) NULL,
+	[DetailedDescriptionBinary] varchar(max) NULL,
+	[AssessmentType] varchar(255) NULL,
+	[LevelAssessed] varchar(255) NULL,
+	[AssignmentPurpose] varchar(255) NULL,
+	[Status] varchar(50) null,
+	[ValidFrom] datetime2(7) constraint [DF_DimGrade_Valid_A85628A1] default (getdate()) not null,
+    [ValidTo] datetime2(7) null,
+    [IsActive] bit constraint [DF__DimGrade__IsAct__37FA4C37] default ((1)) not null,
+    [CreatedOn] datetime2(7) constraint [DF__DimGrade__Creat__38EE7070] default (getdate()) not null,
+    [CreatedBy] varchar(256) constraint [DF__DimGrade__Creat__39E294A9] default (suser_sname()) not null,
+    [UpdatedOn] datetime2(7) constraint [DF__DimGrade__Updat__3AD6B8E2] default (suser_sname()) null,
+    [UpdatedBy] varchar(256) constraint [DF__DimGrade__Updat__3BCADD1B] default (getdate()) not null,
+    [HashKey] varbinary(32) null
+);
+GO
+
+
+PRINT N'Creating Table [dm].[DimLearningInfo]...';
+
+CREATE TABLE [dm].[DimLearningInfo]
+(
+	[LearningStandardKey] bigint NOT NULL,
+	[StandardSettingBodyCountryCode] varchar(10) NULL,
+	[StandardSettingBodyStateProvince] varchar(3) NULL,
+	[StandardSettingBodyBodyName] varchar(255) NULL,
+	[StandardHierarchyLevelNumber] int NOT NULL,
+	[StandardHierarchyLevelDescription] varchar(255) NOT NULL,
+	[PredecessorItemKey] bigint NULL,
+	[StatementCode] varchar(255) NULL,
+	[Statement] varchar(1000) NULL,
+	[LearningStandardDocumentKey] bigint NULL,
+	[Level4] varchar(255) NULL,
+	[Level5] varchar(255) NULL,
+	[Status] varchar(50) null,
+	[ValidFrom] datetime2(7) constraint [DF_DimLearn_Valid_A85628A1] default (getdate()) not null,
+    [ValidTo] datetime2(7) null,
+    [IsActive] bit constraint [DF__DimLearn__IsAct__37FA4C37] default ((1)) not null,
+    [CreatedOn] datetime2(7) constraint [DF__DimLearn__Creat__38EE7070] default (getdate()) not null,
+    [CreatedBy] varchar(256) constraint [DF__DimLearn__Creat__39E294A9] default (suser_sname()) not null,
+    [UpdatedOn] datetime2(7) constraint [DF__DimLearn__Updat__3AD6B8E2] default (suser_sname()) null,
+    [UpdatedBy] varchar(256) constraint [DF__DimLearn__Updat__3BCADD1B] default (getdate()) not null,
+    [HashKey] varbinary(32) null
+);
+GO
+
+
 PRINT N'Creating Table [dm].[DimSectionInfo]...';
 
 CREATE TABLE [dm].[DimSectionInfo] (

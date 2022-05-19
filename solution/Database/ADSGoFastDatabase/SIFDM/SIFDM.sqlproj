@@ -81,7 +81,15 @@
     <Build Include="dm\Tables\DimTeachingGroup.sql" />
     <Build Include="dm\Tables\DimSectionInfo.sql" />
     <Build Include="dm\Tables\DimStudentSectionEnrollment.sql" />
-    <Build Include="dm\Tables\TermInfo.sql" />
     <Build Include="dm\Tables\DimTermInfo.sql" />
+    <Build Include="dm\Tables\DimLearningInfo.sql" />
+    <Build Include="dm\Tables\DimGradingInfo.sql" />
+    <Build Include="dm\Tables\DimAssignmentScore.sql" />
+    <Build Include="dm\Tables\DimMarkInfo.sql" />
+    <Build Include="dm\Tables\DimStudentGrade.sql" />
+    <Build Include="dm\Tables\DimStudentScoreJAS.sql" />
+    <Build Include="dm\Tables\DimSchoolInfo.sql" />
+    <Build Include="dm\Tables\DimStudentAttendance.sql" />
+    <Build Include="dm\Tables\DimCalendarDate.sql" />
   </ItemGroup>
 </Project>
