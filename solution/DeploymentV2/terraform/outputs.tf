@@ -33,6 +33,7 @@ output "keyvault_name" {
 output "stagingdb_name" {
   value = local.staging_database_name
 }
+
 output "sifdb_name" {
   value = local.sif_database_name
 }

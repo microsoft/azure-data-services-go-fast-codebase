@@ -78,7 +78,7 @@ $adlsstorage_name=$outputs.adlsstorage_name.value
 $datafactory_name=$outputs.datafactory_name.value
 $keyvault_name=$outputs.keyvault_name.value
 #sif database name
-$sifdb_name  = $outputs.sifdb_name.value
+$sifdb_name  = if([string]::IsNullOrEmpty($outputs.sifdb_name.value)){"SIFDM"}
 
 $stagingdb_name=$outputs.stagingdb_name.value
 $sampledb_name=$outputs.sampledb_name.value
@@ -248,7 +248,7 @@ else {
         dotnet restore "..\Database\ADSGoFastDbUp\SIF"
         dotnet publish "..\Database\ADSGoFastDbUp\SIF" --no-restore --configuration Release --output '..\..\DeploymentV2\bin\publish\unzipped\database\'
        
-        dotnet "./bin/publish/unzipped/database/SIF.dll" -a True -c "Data Source=tcp:${sqlserver_name}.database.windows.net;Initial Catalog=${sifdb_name};" -v True  --ResourceGroupName $resource_group_name --KeyVaultName $keyvault_name --LogAnalyticsWorkspaceId $loganalyticsworkspace_id --SubscriptionId $subscription_id --SIFDatabaseName $sifdb_name       --WebAppName $webapp_name --FunctionAppName $functionapp_name --SqlServerName $sqlserver_name
+        dotnet "./bin/publish/unzipped/database/SIF.dll" -a True -c "Data Source=tcp:${sqlserver_name}.database.windows.net;Initial Catalog=${sifdb_name};" -v True  --ResourceGroupName $resource_group_name --KeyVaultName $keyvault_name --LogAnalyticsWorkspaceId $loganalyticsworkspace_id --SubscriptionId $subscription_id --SIFDatabaseName $sifdb_name   --WebAppName $webapp_name --FunctionAppName $functionapp_name --SqlServerName $sqlserver_name
     } else {
         $databases = @($stagingdb_name, $sampledb_name ,$metadatadb_name)
     }
