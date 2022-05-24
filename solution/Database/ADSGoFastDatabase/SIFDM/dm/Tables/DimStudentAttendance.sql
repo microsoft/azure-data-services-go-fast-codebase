@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dm].[DimStudentAttendance]
 (
-	[StudentDailyAttendanceKey] bigint NOT NULL,
+	[StudentDailyAttendanceKey] bigint identity(1, 1) not null,
 	[StudentKey] bigint NOT NULL,
 	[SchoolInfoKey] bigint NOT NULL,
 	[CalendarDate] date NULL,
@@ -13,12 +13,12 @@
 	[AbsenceValue] float NULL,
 	[AttendanceNote] varchar(8000) NULL,
 	[Status] varchar(50) null,
-	[ValidFrom] datetime2(7) constraint [DF_DimStAttd_Valid_A85628A1] default (getdate()) not null,
-    [ValidTo] datetime2(7) null,
-    [IsActive] bit constraint [DF__DimStAttd__IsAct__37FA4C37] default ((1)) not null,
-    [CreatedOn] datetime2(7) constraint [DF__DimStAttd__Creat__38EE7070] default (getdate()) not null,
-    [CreatedBy] varchar(256) constraint [DF__DimStAttd__Creat__39E294A9] default (suser_sname()) not null,
-    [UpdatedOn] datetime2(7) constraint [DF__DimStAttd__Updat__3AD6B8E2] default (suser_sname()) null,
-    [UpdatedBy] varchar(256) constraint [DF__DimStAttd__Updat__3BCADD1B] default (getdate()) not null,
+	[ValidFrom]       DATETIME2 (7)  NOT NULL,
+    [ValidTo]         DATETIME2 (7)  NULL,
+    [IsActive]        BIT NOT NULL,
+    [CreatedOn]       DATETIME2 (7)  NOT NULL,
+    [CreatedBy]       VARCHAR (256)  NOT NULL,
+    [UpdatedOn]       DATETIME2 (7)  NULL,
+    [UpdatedBy]       VARCHAR (256)   NOT NULL,
     [HashKey] varbinary(32) null
 )

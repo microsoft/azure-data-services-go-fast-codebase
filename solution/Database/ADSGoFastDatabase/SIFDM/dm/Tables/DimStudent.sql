@@ -84,13 +84,13 @@
     MedicareCardHolderName	VARCHAR (50)           NULL ,
     PrivateHealthInsurance	VARCHAR (50)           NULL ,
     [Status]          VARCHAR (50)   NOT NULL,
-    [ValidFrom]       DATETIME2 (7)  CONSTRAINT [DF__DimStuden__Valid__370627FE] DEFAULT (getdate()) NOT NULL,
+    [ValidFrom]       DATETIME2 (7)  NOT NULL,
     [ValidTo]         DATETIME2 (7)  NULL,
-    [IsActive]        BIT            CONSTRAINT [DF__DimStuden__IsAct__37FA4C37] DEFAULT ((1)) NOT NULL,
-    [CreatedOn]       DATETIME2 (7)  CONSTRAINT [DF__DimStuden__Creat__38EE7070] DEFAULT (getdate()) NOT NULL,
-    [CreatedBy]       VARCHAR (256)  CONSTRAINT [DF__DimStuden__Creat__39E294A9] DEFAULT (suser_sname()) NOT NULL,
-    [UpdatedOn]       DATETIME2 (7)  CONSTRAINT [DF__DimStuden__Updat__3AD6B8E2] DEFAULT (suser_sname()) NULL,
-    [UpdatedBy]       VARCHAR (256)  CONSTRAINT [DF__DimStuden__Updat__3BCADD1B] DEFAULT (getdate()) NOT NULL,
+    [IsActive]        BIT NOT NULL,
+    [CreatedOn]       DATETIME2 (7)  NOT NULL,
+    [CreatedBy]       VARCHAR (256)  NOT NULL,
+    [UpdatedOn]       DATETIME2 (7)  NULL,
+    [UpdatedBy]       VARCHAR (256)   NOT NULL,
     [HashKey]         VARBINARY (32) NOT NULL
 );
 

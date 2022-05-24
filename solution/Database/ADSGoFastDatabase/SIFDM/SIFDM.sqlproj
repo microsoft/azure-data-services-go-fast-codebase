@@ -92,4 +92,7 @@
     <Build Include="dm\Tables\DimStudentAttendance.sql" />
     <Build Include="dm\Tables\DimCalendarDate.sql" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="dm\Stored Procedures\Default_Constraints.sql" />
+  </ItemGroup>
 </Project>

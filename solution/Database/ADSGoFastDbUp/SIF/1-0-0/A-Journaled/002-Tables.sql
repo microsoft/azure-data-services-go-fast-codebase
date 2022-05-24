@@ -2,7 +2,7 @@ PRINT N'Creating Table [dm].[DimCalendarDate]...';
 
 CREATE TABLE [dm].[DimCalendarDate]
 (
-	[CalendarDateKey] bigint NOT NULL,
+	[CalendarDateKey] bigint identity(1, 1) not null,
 	[CalendarDate] date NULL,
 	[CalendarSummaryKey] bigint NOT NULL,
 	[SchoolInfoKey] bigint NOT NULL,
@@ -15,13 +15,14 @@ CREATE TABLE [dm].[DimCalendarDate]
 	[TeacherAttendanceValue] numeric(4,1) NULL,
 	[AdministratorCountsTowardAttendance] numeric(4,1) NULL,
 	[AdministratorAttendanceValue] numeric(4,1) NULL,
-	[ValidFrom] datetime2(7) constraint [DF_DimCalDate_Valid_A85628A1] default (getdate()) not null,
-    [ValidTo] datetime2(7) null,
-    [IsActive] bit constraint [DF__DimCalDate__IsAct__37FA4C37] default ((1)) not null,
-    [CreatedOn] datetime2(7) constraint [DF__DimCalDate__Creat__38EE7070] default (getdate()) not null,
-    [CreatedBy] varchar(256) constraint [DF__DimCalDate__Creat__39E294A9] default (suser_sname()) not null,
-    [UpdatedOn] datetime2(7) constraint [DF__DimCalDate__Updat__3AD6B8E2] default (suser_sname()) null,
-    [UpdatedBy] varchar(256) constraint [DF__DimCalDate__Updat__3BCADD1B] default (getdate()) not null,
+	[Status] varchar(50) null,
+	[ValidFrom]       DATETIME2 (7)  NOT NULL,
+    [ValidTo]         DATETIME2 (7)  NULL,
+    [IsActive]        BIT NOT NULL,
+    [CreatedOn]       DATETIME2 (7)  NOT NULL,
+    [CreatedBy]       VARCHAR (256)  NOT NULL,
+    [UpdatedOn]       DATETIME2 (7)  NULL,
+    [UpdatedBy]       VARCHAR (256)   NOT NULL,
     [HashKey] varbinary(32) null
 );
 GO
@@ -31,7 +32,7 @@ PRINT N'Creating Table [dm].[DimStudentAttendance]...';
 
 CREATE TABLE [dm].[DimStudentAttendance]
 (
-	[StudentDailyAttendanceKey] bigint NOT NULL,
+	[StudentDailyAttendanceKey] bigint identity(1, 1) not null,
 	[StudentKey] bigint NOT NULL,
 	[SchoolInfoKey] bigint NOT NULL,
 	[CalendarDate] date NULL,
@@ -44,13 +45,13 @@ CREATE TABLE [dm].[DimStudentAttendance]
 	[AbsenceValue] float NULL,
 	[AttendanceNote] varchar(8000) NULL,
 	[Status] varchar(50) null,
-	[ValidFrom] datetime2(7) constraint [DF_DimStAttd_Valid_A85628A1] default (getdate()) not null,
-    [ValidTo] datetime2(7) null,
-    [IsActive] bit constraint [DF__DimStAttd__IsAct__37FA4C37] default ((1)) not null,
-    [CreatedOn] datetime2(7) constraint [DF__DimStAttd__Creat__38EE7070] default (getdate()) not null,
-    [CreatedBy] varchar(256) constraint [DF__DimStAttd__Creat__39E294A9] default (suser_sname()) not null,
-    [UpdatedOn] datetime2(7) constraint [DF__DimStAttd__Updat__3AD6B8E2] default (suser_sname()) null,
-    [UpdatedBy] varchar(256) constraint [DF__DimStAttd__Updat__3BCADD1B] default (getdate()) not null,
+	[ValidFrom]       DATETIME2 (7)  NOT NULL,
+    [ValidTo]         DATETIME2 (7)  NULL,
+    [IsActive]        BIT NOT NULL,
+    [CreatedOn]       DATETIME2 (7)  NOT NULL,
+    [CreatedBy]       VARCHAR (256)  NOT NULL,
+    [UpdatedOn]       DATETIME2 (7)  NULL,
+    [UpdatedBy]       VARCHAR (256)   NOT NULL,
     [HashKey] varbinary(32) null
 );
 GO
@@ -59,7 +60,7 @@ PRINT N'Creating Table [dm].[DimSchoolInfo]...';
 
 CREATE TABLE [dm].[DimSchoolInfo]
 (
-	[SchoolInfoKey] bigint NOT NULL,
+	[SchoolInfoKey] bigint identity(1, 1) not null,
 	[SchooldInfoId] varchar(50) NULL,
 	[StateProvinceId] varchar(50) NULL,
 	[CommonwealthId] varchar(50) NULL,
@@ -104,13 +105,13 @@ CREATE TABLE [dm].[DimSchoolInfo]
 	[EntityClose] date NULL,
 	[SchoolTimeZone] varchar(10) NULL,
 	[Status] varchar(50) null,
-	[ValidFrom] datetime2(7) constraint [DF_DimSchool_Valid_A85628A1] default (getdate()) not null,
-    [ValidTo] datetime2(7) null,
-    [IsActive] bit constraint [DF__DimSchool__IsAct__37FA4C37] default ((1)) not null,
-    [CreatedOn] datetime2(7) constraint [DF__DimSchool__Creat__38EE7070] default (getdate()) not null,
-    [CreatedBy] varchar(256) constraint [DF__DimSchool__Creat__39E294A9] default (suser_sname()) not null,
-    [UpdatedOn] datetime2(7) constraint [DF__DimSchool__Updat__3AD6B8E2] default (suser_sname()) null,
-    [UpdatedBy] varchar(256) constraint [DF__DimSchool__Updat__3BCADD1B] default (getdate()) not null,
+	[ValidFrom]       DATETIME2 (7)  NOT NULL,
+    [ValidTo]         DATETIME2 (7)  NULL,
+    [IsActive]        BIT NOT NULL,
+    [CreatedOn]       DATETIME2 (7)  NOT NULL,
+    [CreatedBy]       VARCHAR (256)  NOT NULL,
+    [UpdatedOn]       DATETIME2 (7)  NULL,
+    [UpdatedBy]       VARCHAR (256)   NOT NULL,
     [HashKey] varbinary(32) null
 );
 GO
@@ -120,7 +121,7 @@ PRINT N'Creating Table [dm].[DimStudentScoreJAS]...';
 
 CREATE TABLE [dm].[DimStudentScoreJAS]
 (
-	[StudentScoreJASKey] bigint NOT NULL,
+	[StudentScoreJASKey] bigint identity(1, 1) not null,
 	[SchoolYear] numeric(4,0) NOT NULL,
 	[TermInfoKey] bigint NOT NULL,
 	[LocalTermCode] varchar(255) NULL,
@@ -142,13 +143,13 @@ CREATE TABLE [dm].[DimStudentScoreJAS]
 	[SchoolLocalId] varchar(255) NULL,
 	[SchoolCommonwealthId] varchar(255) NULL,
 	[Status] varchar(50) null,
-	[ValidFrom] datetime2(7) constraint [DF_DimStSJAS_Valid_A85628A1] default (getdate()) not null,
-    [ValidTo] datetime2(7) null,
-    [IsActive] bit constraint [DF__DimStSJAS__IsAct__37FA4C37] default ((1)) not null,
-    [CreatedOn] datetime2(7) constraint [DF__DimStSJAS__Creat__38EE7070] default (getdate()) not null,
-    [CreatedBy] varchar(256) constraint [DF__DimStSJAS__Creat__39E294A9] default (suser_sname()) not null,
-    [UpdatedOn] datetime2(7) constraint [DF__DimStSJAS__Updat__3AD6B8E2] default (suser_sname()) null,
-    [UpdatedBy] varchar(256) constraint [DF__DimStSJAS__Updat__3BCADD1B] default (getdate()) not null,
+	[ValidFrom]       DATETIME2 (7)  NOT NULL,
+    [ValidTo]         DATETIME2 (7)  NULL,
+    [IsActive]        BIT NOT NULL,
+    [CreatedOn]       DATETIME2 (7)  NOT NULL,
+    [CreatedBy]       VARCHAR (256)  NOT NULL,
+    [UpdatedOn]       DATETIME2 (7)  NULL,
+    [UpdatedBy]       VARCHAR (256)   NOT NULL,
     [HashKey] varbinary(32) null
 
 );
@@ -159,7 +160,7 @@ PRINT N'Creating Table [dm].[DimStudentGrade]...';
 
 CREATE TABLE [dm].[DimStudentGrade]
 (
-	[StudentGradePK] bigint NOT NULL,
+	[StudentGradePK] bigint identity(1, 1) not null,
 	[StudentKey] bigint NOT NULL,
 	[HomeGroup] varchar(255) NULL,
 	[YearLevel] varchar(10) NULL,
@@ -178,13 +179,13 @@ CREATE TABLE [dm].[DimStudentGrade]
 	[TermSpan] varchar(4) NULL,
 	[SchoolYear] varchar(4) NULL,
 	[Status] varchar(50) null,
-	[ValidFrom] datetime2(7) constraint [DF_DimStGrade_Valid_A85628A1] default (getdate()) not null,
-    [ValidTo] datetime2(7) null,
-    [IsActive] bit constraint [DF__DimStGrade__IsAct__37FA4C37] default ((1)) not null,
-    [CreatedOn] datetime2(7) constraint [DF__DimStGrade__Creat__38EE7070] default (getdate()) not null,
-    [CreatedBy] varchar(256) constraint [DF__DimStGrade__Creat__39E294A9] default (suser_sname()) not null,
-    [UpdatedOn] datetime2(7) constraint [DF__DimStGrade__Updat__3AD6B8E2] default (suser_sname()) null,
-    [UpdatedBy] varchar(256) constraint [DF__DimStGrade__Updat__3BCADD1B] default (getdate()) not null,
+	[ValidFrom]       DATETIME2 (7)  NOT NULL,
+    [ValidTo]         DATETIME2 (7)  NULL,
+    [IsActive]        BIT NOT NULL,
+    [CreatedOn]       DATETIME2 (7)  NOT NULL,
+    [CreatedBy]       VARCHAR (256)  NOT NULL,
+    [UpdatedOn]       DATETIME2 (7)  NULL,
+    [UpdatedBy]       VARCHAR (256)   NOT NULL,
     [HashKey] varbinary(32) null
 );
 GO
@@ -194,7 +195,7 @@ PRINT N'Creating Table [dm].[DimMarkInfo]...';
 
 CREATE TABLE [dm].[DimMarkInfo]
 (
-	[MarkInfoKey] bigint NOT NULL,
+	[MarkInfoKey] bigint identity(1, 1) not null,
 	[SchoolInfoKey] bigint NOT NULL,
 	[ValueName] varchar(255) NULL,
 	[PercentageMinimum] numeric(5,2) NULL,
@@ -208,13 +209,13 @@ CREATE TABLE [dm].[DimMarkInfo]
 	[Narrative] varchar(255) NULL,
 	[NarrativeMaximumSize] int NULL,
 	[Status] varchar(50) null,
-	[ValidFrom] datetime2(7) constraint [DF_DimMark_Valid_A85628A1] default (getdate()) not null,
-    [ValidTo] datetime2(7) null,
-    [IsActive] bit constraint [DF__DimMark__IsAct__37FA4C37] default ((1)) not null,
-    [CreatedOn] datetime2(7) constraint [DF__DimMark__Creat__38EE7070] default (getdate()) not null,
-    [CreatedBy] varchar(256) constraint [DF__DimMark__Creat__39E294A9] default (suser_sname()) not null,
-    [UpdatedOn] datetime2(7) constraint [DF__DimMark__Updat__3AD6B8E2] default (suser_sname()) null,
-    [UpdatedBy] varchar(256) constraint [DF__DimMark__Updat__3BCADD1B] default (getdate()) not null,
+	[ValidFrom]       DATETIME2 (7)  NOT NULL,
+    [ValidTo]         DATETIME2 (7)  NULL,
+    [IsActive]        BIT NOT NULL,
+    [CreatedOn]       DATETIME2 (7)  NOT NULL,
+    [CreatedBy]       VARCHAR (256)  NOT NULL,
+    [UpdatedOn]       DATETIME2 (7)  NULL,
+    [UpdatedBy]       VARCHAR (256)   NOT NULL,
     [HashKey] varbinary(32) null
 );
 GO
@@ -223,7 +224,7 @@ PRINT N'Creating Table [dm].[DimAssignmentScore]...';
 
 CREATE TABLE [dm].[DimAssignmentScore]
 (
-	[GradingAssignmentScoreKey] bigint NOT NULL,
+	[GradingAssignmentScoreKey] bigint identity(1, 1) not null,
 	[StudentKey] bigint NOT NULL,
 	[StudentId] varchar(50) NULL,
 	[TeachingGroupKey] bigint NULL,
@@ -240,13 +241,13 @@ CREATE TABLE [dm].[DimAssignmentScore]
 	[MarkInfoKey] bigint NULL,
 	[AssignmentScoreIteration] varchar(255) NULL,
 	[Status] varchar(50) null,
-	[ValidFrom] datetime2(7) constraint [DF_DimAsgnSc_Valid_A85628A1] default (getdate()) not null,
-    [ValidTo] datetime2(7) null,
-    [IsActive] bit constraint [DF__DimAsgnSc__IsAct__37FA4C37] default ((1)) not null,
-    [CreatedOn] datetime2(7) constraint [DF__DimAsgnSc__Creat__38EE7070] default (getdate()) not null,
-    [CreatedBy] varchar(256) constraint [DF__DimAsgnSc__Creat__39E294A9] default (suser_sname()) not null,
-    [UpdatedOn] datetime2(7) constraint [DF__DimAsgnSc__Updat__3AD6B8E2] default (suser_sname()) null,
-    [UpdatedBy] varchar(256) constraint [DF__DimAsgnSc__Updat__3BCADD1B] default (getdate()) not null,
+	[ValidFrom]       DATETIME2 (7)  NOT NULL,
+    [ValidTo]         DATETIME2 (7)  NULL,
+    [IsActive]        BIT NOT NULL,
+    [CreatedOn]       DATETIME2 (7)  NOT NULL,
+    [CreatedBy]       VARCHAR (256)  NOT NULL,
+    [UpdatedOn]       DATETIME2 (7)  NULL,
+    [UpdatedBy]       VARCHAR (256)   NOT NULL,
     [HashKey] varbinary(32) null
 );
 GO
@@ -256,7 +257,7 @@ PRINT N'Creating Table [dm].[DimGradingInfo]...';
 
 CREATE TABLE [dm].[DimGradingInfo]
 (
-	[GradingAssignmentKey] bigint NOT NULL,
+	[GradingAssignmentKey] bigint identity(1, 1) not null,
 	[TeachingGroupKey] bigint NULL,
 	[StudentKey] bigint NULL,
 	[SchoolInfoKey] bigint NULL,
@@ -268,18 +269,18 @@ CREATE TABLE [dm].[DimGradingInfo]
 	[Weight] numeric(5,2) NULL,
 	[MaxAttemptsAllowed] int NULL,
 	[DetailedDescriptionURL] varchar(1000) NULL,
-	[DetailedDescriptionBinary] varchar(max) NULL,
+	[DetailedDescriptionBinary] varchar(8000) NULL,
 	[AssessmentType] varchar(255) NULL,
 	[LevelAssessed] varchar(255) NULL,
 	[AssignmentPurpose] varchar(255) NULL,
 	[Status] varchar(50) null,
-	[ValidFrom] datetime2(7) constraint [DF_DimGrade_Valid_A85628A1] default (getdate()) not null,
-    [ValidTo] datetime2(7) null,
-    [IsActive] bit constraint [DF__DimGrade__IsAct__37FA4C37] default ((1)) not null,
-    [CreatedOn] datetime2(7) constraint [DF__DimGrade__Creat__38EE7070] default (getdate()) not null,
-    [CreatedBy] varchar(256) constraint [DF__DimGrade__Creat__39E294A9] default (suser_sname()) not null,
-    [UpdatedOn] datetime2(7) constraint [DF__DimGrade__Updat__3AD6B8E2] default (suser_sname()) null,
-    [UpdatedBy] varchar(256) constraint [DF__DimGrade__Updat__3BCADD1B] default (getdate()) not null,
+	[ValidFrom]       DATETIME2 (7)  NOT NULL,
+    [ValidTo]         DATETIME2 (7)  NULL,
+    [IsActive]        BIT NOT NULL,
+    [CreatedOn]       DATETIME2 (7)  NOT NULL,
+    [CreatedBy]       VARCHAR (256)  NOT NULL,
+    [UpdatedOn]       DATETIME2 (7)  NULL,
+    [UpdatedBy]       VARCHAR (256)   NOT NULL,
     [HashKey] varbinary(32) null
 );
 GO
@@ -289,7 +290,7 @@ PRINT N'Creating Table [dm].[DimLearningInfo]...';
 
 CREATE TABLE [dm].[DimLearningInfo]
 (
-	[LearningStandardKey] bigint NOT NULL,
+	[LearningStandardKey] bigint identity(1, 1) not null,
 	[StandardSettingBodyCountryCode] varchar(10) NULL,
 	[StandardSettingBodyStateProvince] varchar(3) NULL,
 	[StandardSettingBodyBodyName] varchar(255) NULL,
@@ -302,13 +303,13 @@ CREATE TABLE [dm].[DimLearningInfo]
 	[Level4] varchar(255) NULL,
 	[Level5] varchar(255) NULL,
 	[Status] varchar(50) null,
-	[ValidFrom] datetime2(7) constraint [DF_DimLearn_Valid_A85628A1] default (getdate()) not null,
-    [ValidTo] datetime2(7) null,
-    [IsActive] bit constraint [DF__DimLearn__IsAct__37FA4C37] default ((1)) not null,
-    [CreatedOn] datetime2(7) constraint [DF__DimLearn__Creat__38EE7070] default (getdate()) not null,
-    [CreatedBy] varchar(256) constraint [DF__DimLearn__Creat__39E294A9] default (suser_sname()) not null,
-    [UpdatedOn] datetime2(7) constraint [DF__DimLearn__Updat__3AD6B8E2] default (suser_sname()) null,
-    [UpdatedBy] varchar(256) constraint [DF__DimLearn__Updat__3BCADD1B] default (getdate()) not null,
+	[ValidFrom]       DATETIME2 (7)  NOT NULL,
+    [ValidTo]         DATETIME2 (7)  NULL,
+    [IsActive]        BIT NOT NULL,
+    [CreatedOn]       DATETIME2 (7)  NOT NULL,
+    [CreatedBy]       VARCHAR (256)  NOT NULL,
+    [UpdatedOn]       DATETIME2 (7)  NULL,
+    [UpdatedBy]       VARCHAR (256)   NOT NULL,
     [HashKey] varbinary(32) null
 );
 GO
@@ -334,13 +335,13 @@ CREATE TABLE [dm].[DimSectionInfo] (
 	[SectionCode] varchar(255) null,
 	[IsCountForAttendance] varchar(3) null,
 	[Status] varchar(50) null,
-	[ValidFrom] datetime2(7) constraint [DF_DimSecInfo_Valid_A85628A1] default (getdate()) not null,
-    [ValidTo] datetime2(7) null,
-    [IsActive] bit constraint [DF__DimSecInfo__IsAct__37FA4C37] default ((1)) not null,
-    [CreatedOn] datetime2(7) constraint [DF__DimSecInfo__Creat__38EE7070] default (getdate()) not null,
-    [CreatedBy] varchar(256) constraint [DF__DimSecInfo__Creat__39E294A9] default (suser_sname()) not null,
-    [UpdatedOn] datetime2(7) constraint [DF__DimSecInfo__Updat__3AD6B8E2] default (suser_sname()) null,
-    [UpdatedBy] varchar(256) constraint [DF__DimSecInfo__Updat__3BCADD1B] default (getdate()) not null,
+	[ValidFrom]       DATETIME2 (7)  NOT NULL,
+    [ValidTo]         DATETIME2 (7)  NULL,
+    [IsActive]        BIT NOT NULL,
+    [CreatedOn]       DATETIME2 (7)  NOT NULL,
+    [CreatedBy]       VARCHAR (256)  NOT NULL,
+    [UpdatedOn]       DATETIME2 (7)  NULL,
+    [UpdatedBy]       VARCHAR (256)   NOT NULL,
     [HashKey] varbinary(32) null
 );
 GO
@@ -396,14 +397,14 @@ CREATE TABLE [dm].[DimStaff] (
     [Telephone1] varchar(50) null,
     [Telephone2TypeDescription] varchar(2) null,
     [Telephone2] varchar(50) null,
-    [Status] varchar(50) null,
-    [ValidFrom] datetime2(7) constraint [DF_DimStaff_Valid_A85628A1] default (getdate()) not null,
-    [ValidTo] datetime2(7) null,
-    [IsActive] bit constraint [DF__DimStaff__IsAct__37FA4C37] default ((1)) not null,
-    [CreatedOn] datetime2(7) constraint [DF__DimStaff__Creat__38EE7070] default (getdate()) not null,
-    [CreatedBy] varchar(256) constraint [DF__DimStaff__Creat__39E294A9] default (suser_sname()) not null,
-    [UpdatedOn] datetime2(7) constraint [DF__DimStaff__Updat__3AD6B8E2] default (suser_sname()) null,
-    [UpdatedBy] varchar(256) constraint [DF__DimStaff__Updat__3BCADD1B] default (getdate()) not null,
+    [Status]          VARCHAR (50)   NOT NULL,
+    [ValidFrom]       DATETIME2 (7)  NOT NULL,
+    [ValidTo]         DATETIME2 (7)  NULL,
+    [IsActive]        BIT NOT NULL,
+    [CreatedOn]       DATETIME2 (7)  NOT NULL,
+    [CreatedBy]       VARCHAR (256)  NOT NULL,
+    [UpdatedOn]       DATETIME2 (7)  NULL,
+    [UpdatedBy]       VARCHAR (256)   NOT NULL,
     [HashKey] varbinary(32) null
 );
 GO
@@ -418,13 +419,13 @@ CREATE TABLE [dm].[DimStudentSectionEnrollment] (
 	[EntryDate] datetime null,
 	[ExitDate] datetime null,
 	[Status] varchar(50) null,
-	[ValidFrom] datetime2(7) constraint [DF_DimStuEnr_Valid_A85628A1] default (getdate()) not null,
-    [ValidTo] datetime2(7) null,
-    [IsActive] bit constraint [DF__DimStuEnr__IsAct__37FA4C37] default ((1)) not null,
-    [CreatedOn] datetime2(7) constraint [DF__DimStuEnr__Creat__38EE7070] default (getdate()) not null,
-    [CreatedBy] varchar(256) constraint [DF__DimStuEnr__Creat__39E294A9] default (suser_sname()) not null,
-    [UpdatedOn] datetime2(7) constraint [DF__DimStuEnr__Updat__3AD6B8E2] default (suser_sname()) null,
-    [UpdatedBy] varchar(256) constraint [DF__DimStuEnr__Updat__3BCADD1B] default (getdate()) not null,
+	[ValidFrom]       DATETIME2 (7)  NOT NULL,
+    [ValidTo]         DATETIME2 (7)  NULL,
+    [IsActive]        BIT NOT NULL,
+    [CreatedOn]       DATETIME2 (7)  NOT NULL,
+    [CreatedBy]       VARCHAR (256)  NOT NULL,
+    [UpdatedOn]       DATETIME2 (7)  NULL,
+    [UpdatedBy]       VARCHAR (256)   NOT NULL,
     [HashKey] varbinary(32) null
 );
 GO
@@ -449,14 +450,14 @@ CREATE TABLE [dm].[DimTeachingGroup] (
 	[Semester] varchar(50) null,
 	[MinClassSize] int null,
 	[MaxClassSize] int null,
-	[Status] varchar(50) null,
-	[ValidFrom] datetime2(7) constraint [DF_DimTGroup_Valid_A85628A1] default (getdate()) not null,
-    [ValidTo] datetime2(7) null,
-    [IsActive] bit constraint [DF__DimTGroup__IsAct__37FA4C37] default ((1)) not null,
-    [CreatedOn] datetime2(7) constraint [DF__DimTGroup__Creat__38EE7070] default (getdate()) not null,
-    [CreatedBy] varchar(256) constraint [DF__DimTGroup__Creat__39E294A9] default (suser_sname()) not null,
-    [UpdatedOn] datetime2(7) constraint [DF__DimTGroup__Updat__3AD6B8E2] default (suser_sname()) null,
-    [UpdatedBy] varchar(256) constraint [DF__DimTGroup__Updat__3BCADD1B] default (getdate()) not null,
+	[Status]          VARCHAR (50)   NOT NULL,
+    [ValidFrom]       DATETIME2 (7)  NOT NULL,
+    [ValidTo]         DATETIME2 (7)  NULL,
+    [IsActive]        BIT NOT NULL,
+    [CreatedOn]       DATETIME2 (7)  NOT NULL,
+    [CreatedBy]       VARCHAR (256)  NOT NULL,
+    [UpdatedOn]       DATETIME2 (7)  NULL,
+    [UpdatedBy]       VARCHAR (256)   NOT NULL,
     [HashKey] varbinary(32) null
 );
 GO
@@ -478,13 +479,13 @@ CREATE TABLE [dm].[DimTermInfo] (
 	[SchedulingTerm] varchar(2) null, 
 	[AttendanceTerm] varchar(2) null, 
 	[Status] varchar(50) null,
-	[ValidFrom] datetime2(7) constraint [DF_DimTermInfo_Valid_A85628A1] default (getdate()) not null,
-    [ValidTo] datetime2(7) null,
-    [IsActive] bit constraint [DF__DimTermInfo__IsAct__37FA4C37] default ((1)) not null,
-    [CreatedOn] datetime2(7) constraint [DF__DimTermInfo__Creat__38EE7070] default (getdate()) not null,
-    [CreatedBy] varchar(256) constraint [DF__DimTermInfo__Creat__39E294A9] default (suser_sname()) not null,
-    [UpdatedOn] datetime2(7) constraint [DF__DimTermInfo__Updat__3AD6B8E2] default (suser_sname()) null,
-    [UpdatedBy] varchar(256) constraint [DF__DimTermInfo__Updat__3BCADD1B] default (getdate()) not null,
+	[ValidFrom]       DATETIME2 (7)  NOT NULL,
+    [ValidTo]         DATETIME2 (7)  NULL,
+    [IsActive]        BIT NOT NULL,
+    [CreatedOn]       DATETIME2 (7)  NOT NULL,
+    [CreatedBy]       VARCHAR (256)  NOT NULL,
+    [UpdatedOn]       DATETIME2 (7)  NULL,
+    [UpdatedBy]       VARCHAR (256)   NOT NULL,
     [HashKey] varbinary(32) null
 );
 
@@ -1420,6 +1421,279 @@ PRINT N'Creating Procedure [dm].[usp_Generate_DimDate]...';
 
 
 GO
+
+-- DimStudent
+ALTER TABLE [dm].[DimStudent] ADD  CONSTRAINT [DF__DimStuden__IsAct__37FA4C37]  DEFAULT ((1)) FOR [IsActive]
+GO
+
+ALTER TABLE [dm].[DimStudent] ADD CONSTRAINT [DF__DimStuden__Valid__370627FE] DEFAULT (getdate()) FOR [ValidFrom]
+GO
+
+ALTER TABLE [dm].[DimStudent] ADD CONSTRAINT [DF__DimStuden__Creat__38EE7070] DEFAULT (getdate()) FOR [CreatedOn]       
+GO
+
+ALTER TABLE [dm].[DimStudent] ADD CONSTRAINT [DF__DimStuden__Creat__39E294A9] DEFAULT (suser_sname()) FOR [CreatedBy] 
+GO
+
+ALTER TABLE [dm].[DimStudent] ADD CONSTRAINT [DF__DimStuden__Updat__3AD6B8E2] DEFAULT (suser_sname()) FOR [UpdatedOn]
+GO
+
+ALTER TABLE [dm].[DimStudent] ADD CONSTRAINT [DF__DimStuden__Updat__3BCADD1B] DEFAULT (getdate()) FOR [UpdatedBy]
+GO
+
+-- DimStaff
+ALTER TABLE [dm].[DimStaff] ADD  CONSTRAINT [DF__DimStaff__IsAct__37FA4C37]  DEFAULT ((1)) FOR [IsActive]
+GO
+
+ALTER TABLE [dm].[DimStaff] ADD CONSTRAINT [DF__DimStaff__Valid__370627FE] DEFAULT (getdate()) FOR [ValidFrom]
+GO
+
+ALTER TABLE [dm].[DimStaff] ADD CONSTRAINT [DF__DimStaff__Creat__38EE7070] DEFAULT (getdate()) FOR [CreatedOn]       
+GO
+
+ALTER TABLE [dm].[DimStaff] ADD CONSTRAINT [DF__DimStaff__Creat__39E294A9] DEFAULT (suser_sname()) FOR [CreatedBy] 
+GO
+
+ALTER TABLE [dm].[DimStaff] ADD CONSTRAINT [DF__DimStaff__Updat__3AD6B8E2] DEFAULT (suser_sname()) FOR [UpdatedOn]
+GO
+
+ALTER TABLE [dm].[DimStaff] ADD CONSTRAINT [DF__DimStaff__Updat__3BCADD1B] DEFAULT (getdate()) FOR [UpdatedBy]
+GO
+
+-- DimTeachingGroup
+ALTER TABLE [dm].[DimTeachingGroup] ADD  CONSTRAINT [DF__DimTeachingGroup__IsAct__37FA4C37]  DEFAULT ((1)) FOR [IsActive]
+GO
+
+ALTER TABLE [dm].[DimTeachingGroup] ADD CONSTRAINT [DF__DimTeachingGroup__Valid__370627FE] DEFAULT (getdate()) FOR [ValidFrom]
+GO
+
+ALTER TABLE [dm].[DimTeachingGroup] ADD CONSTRAINT [DF__DimTeachingGroup__Creat__38EE7070] DEFAULT (getdate()) FOR [CreatedOn]       
+GO
+
+ALTER TABLE [dm].[DimTeachingGroup] ADD CONSTRAINT [DF__DimTeachingGroup__Creat__39E294A9] DEFAULT (suser_sname()) FOR [CreatedBy] 
+GO
+
+ALTER TABLE [dm].[DimTeachingGroup] ADD CONSTRAINT [DF__DimTeachingGroup__Updat__3AD6B8E2] DEFAULT (suser_sname()) FOR [UpdatedOn]
+GO
+
+ALTER TABLE [dm].[DimTeachingGroup] ADD CONSTRAINT [DF__DimTeachingGroup__Updat__3BCADD1B] DEFAULT (getdate()) FOR [UpdatedBy]
+GO
+
+-- DimSectionInfo
+ALTER TABLE [dm].[DimSectionInfo] ADD  CONSTRAINT [DF__DimSectionInfo__IsAct__37FA4C37]  DEFAULT ((1)) FOR [IsActive]
+GO
+
+ALTER TABLE [dm].[DimSectionInfo] ADD CONSTRAINT [DF__DimSectionInfo__Valid__370627FE] DEFAULT (getdate()) FOR [ValidFrom]
+GO
+
+ALTER TABLE [dm].[DimSectionInfo] ADD CONSTRAINT [DF__DimSectionInfo__Creat__38EE7070] DEFAULT (getdate()) FOR [CreatedOn]       
+GO
+
+ALTER TABLE [dm].[DimSectionInfo] ADD CONSTRAINT [DF__DimSectionInfo__Creat__39E294A9] DEFAULT (suser_sname()) FOR [CreatedBy] 
+GO
+
+ALTER TABLE [dm].[DimSectionInfo] ADD CONSTRAINT [DF__DimSectionInfo__Updat__3AD6B8E2] DEFAULT (suser_sname()) FOR [UpdatedOn]
+GO
+
+ALTER TABLE [dm].[DimSectionInfo] ADD CONSTRAINT [DF__DimSectionInfo__Updat__3BCADD1B] DEFAULT (getdate()) FOR [UpdatedBy]
+GO
+
+-- DimStudentSectionEnrollment
+ALTER TABLE [dm].[DimStudentSectionEnrollment] ADD  CONSTRAINT [DF__DimSSEnroll__IsAct__37FA4C37]  DEFAULT ((1)) FOR [IsActive]
+GO
+
+ALTER TABLE [dm].[DimStudentSectionEnrollment] ADD CONSTRAINT [DF__DimSSEnroll__Valid__370627FE] DEFAULT (getdate()) FOR [ValidFrom]
+GO
+
+ALTER TABLE [dm].[DimStudentSectionEnrollment] ADD CONSTRAINT [DF__DimSSEnroll__Creat__38EE7070] DEFAULT (getdate()) FOR [CreatedOn]       
+GO
+
+ALTER TABLE [dm].[DimStudentSectionEnrollment] ADD CONSTRAINT [DF__DimSSEnroll__Creat__39E294A9] DEFAULT (suser_sname()) FOR [CreatedBy] 
+GO
+
+ALTER TABLE [dm].[DimStudentSectionEnrollment] ADD CONSTRAINT [DF__DimSSEnroll__Updat__3AD6B8E2] DEFAULT (suser_sname()) FOR [UpdatedOn]
+GO
+
+ALTER TABLE [dm].[DimStudentSectionEnrollment] ADD CONSTRAINT [DF__DimSSEnroll__Updat__3BCADD1B] DEFAULT (getdate()) FOR [UpdatedBy]
+GO
+
+
+-- DimTermInfo
+ALTER TABLE [dm].[DimTermInfo] ADD  CONSTRAINT [DF__DimTermInfo__IsAct__37FA4C37]  DEFAULT ((1)) FOR [IsActive]
+GO
+
+ALTER TABLE [dm].[DimTermInfo] ADD CONSTRAINT [DF__DimTermInfo__Valid__370627FE] DEFAULT (getdate()) FOR [ValidFrom]
+GO
+
+ALTER TABLE [dm].[DimTermInfo] ADD CONSTRAINT [DF__DimTermInfo__Creat__38EE7070] DEFAULT (getdate()) FOR [CreatedOn]       
+GO
+
+ALTER TABLE [dm].[DimTermInfo] ADD CONSTRAINT [DF__DimTermInfo__Creat__39E294A9] DEFAULT (suser_sname()) FOR [CreatedBy] 
+GO
+
+ALTER TABLE [dm].[DimTermInfo] ADD CONSTRAINT [DF__DimTermInfo__Updat__3AD6B8E2] DEFAULT (suser_sname()) FOR [UpdatedOn]
+GO
+
+ALTER TABLE [dm].[DimTermInfo] ADD CONSTRAINT [DF__DimTermInfo__Updat__3BCADD1B] DEFAULT (getdate()) FOR [UpdatedBy]
+GO
+
+
+-- DimLearningInfo
+ALTER TABLE [dm].[DimLearningInfo] ADD  CONSTRAINT [DF__DimLearningInfo__IsAct__37FA4C37]  DEFAULT ((1)) FOR [IsActive]
+GO
+
+ALTER TABLE [dm].[DimLearningInfo] ADD CONSTRAINT [DF__DimLearningInfo__Valid__370627FE] DEFAULT (getdate()) FOR [ValidFrom]
+GO
+
+ALTER TABLE [dm].[DimLearningInfo] ADD CONSTRAINT [DF__DimLearningInfo__Creat__38EE7070] DEFAULT (getdate()) FOR [CreatedOn]       
+GO
+
+ALTER TABLE [dm].[DimLearningInfo] ADD CONSTRAINT [DF__DimLearningInfo__Creat__39E294A9] DEFAULT (suser_sname()) FOR [CreatedBy] 
+GO
+
+ALTER TABLE [dm].[DimLearningInfo] ADD CONSTRAINT [DF__DimLearningInfo__Updat__3AD6B8E2] DEFAULT (suser_sname()) FOR [UpdatedOn]
+GO
+
+ALTER TABLE [dm].[DimLearningInfo] ADD CONSTRAINT [DF__DimLearningInfo__Updat__3BCADD1B] DEFAULT (getdate()) FOR [UpdatedBy]
+GO
+
+-- DimGradingInfo
+ALTER TABLE [dm].[DimGradingInfo] ADD  CONSTRAINT [DF__DimGradingInfo__IsAct__37FA4C37]  DEFAULT ((1)) FOR [IsActive]
+GO
+
+ALTER TABLE [dm].[DimGradingInfo] ADD CONSTRAINT [DF__DimGradingInfo__Valid__370627FE] DEFAULT (getdate()) FOR [ValidFrom]
+GO
+
+ALTER TABLE [dm].[DimGradingInfo] ADD CONSTRAINT [DF__DimGradingInfo__Creat__38EE7070] DEFAULT (getdate()) FOR [CreatedOn]       
+GO
+
+ALTER TABLE [dm].[DimGradingInfo] ADD CONSTRAINT [DF__DimGradingInfo__Creat__39E294A9] DEFAULT (suser_sname()) FOR [CreatedBy] 
+GO
+
+ALTER TABLE [dm].[DimGradingInfo] ADD CONSTRAINT [DF__DimGradingInfo__Updat__3AD6B8E2] DEFAULT (suser_sname()) FOR [UpdatedOn]
+GO
+
+ALTER TABLE [dm].[DimGradingInfo] ADD CONSTRAINT [DF__DimGradingInfo__Updat__3BCADD1B] DEFAULT (getdate()) FOR [UpdatedBy]
+GO
+
+
+-- DimAssignmentScore
+ALTER TABLE [dm].[DimAssignmentScore] ADD  CONSTRAINT [DF__DimAssignScore__IsAct__37FA4C37]  DEFAULT ((1)) FOR [IsActive]
+GO
+
+ALTER TABLE [dm].[DimAssignmentScore] ADD CONSTRAINT [DF__DimAssignScore__Valid__370627FE] DEFAULT (getdate()) FOR [ValidFrom]
+GO
+
+ALTER TABLE [dm].[DimAssignmentScore] ADD CONSTRAINT [DF__DimAssignScore__Creat__38EE7070] DEFAULT (getdate()) FOR [CreatedOn]       
+GO
+
+ALTER TABLE [dm].[DimAssignmentScore] ADD CONSTRAINT [DF__DimAssignScore__Creat__39E294A9] DEFAULT (suser_sname()) FOR [CreatedBy] 
+GO
+
+ALTER TABLE [dm].[DimAssignmentScore] ADD CONSTRAINT [DF__DimAssignScore__Updat__3AD6B8E2] DEFAULT (suser_sname()) FOR [UpdatedOn]
+GO
+
+ALTER TABLE [dm].[DimAssignmentScore] ADD CONSTRAINT [DF__DimAssignScore__Updat__3BCADD1B] DEFAULT (getdate()) FOR [UpdatedBy]
+GO
+
+-- DimMarkInfo
+ALTER TABLE [dm].[DimMarkInfo] ADD  CONSTRAINT [DF__DimMarkInfo__IsAct__37FA4C37]  DEFAULT ((1)) FOR [IsActive]
+GO
+
+ALTER TABLE [dm].[DimMarkInfo] ADD CONSTRAINT [DF__DimMarkInfo__Valid__370627FE] DEFAULT (getdate()) FOR [ValidFrom]
+GO
+
+ALTER TABLE [dm].[DimMarkInfo] ADD CONSTRAINT [DF__DimMarkInfo__Creat__38EE7070] DEFAULT (getdate()) FOR [CreatedOn]       
+GO
+
+ALTER TABLE [dm].[DimMarkInfo] ADD CONSTRAINT [DF__DimMarkInfo__Creat__39E294A9] DEFAULT (suser_sname()) FOR [CreatedBy] 
+GO
+
+ALTER TABLE [dm].[DimMarkInfo] ADD CONSTRAINT [DF__DimMarkInfo__Updat__3AD6B8E2] DEFAULT (suser_sname()) FOR [UpdatedOn]
+GO
+
+ALTER TABLE [dm].[DimMarkInfo] ADD CONSTRAINT [DF__DimMarkInfo__Updat__3BCADD1B] DEFAULT (getdate()) FOR [UpdatedBy]
+GO
+
+--DimStudentGrade
+ALTER TABLE [dm].[DimStudentGrade] ADD  CONSTRAINT [DF__DimStudentGrade__IsAct__37FA4C37]  DEFAULT ((1)) FOR [IsActive]
+GO
+
+ALTER TABLE [dm].[DimStudentGrade] ADD CONSTRAINT [DF__DimStudentGrade__Valid__370627FE] DEFAULT (getdate()) FOR [ValidFrom]
+GO
+
+ALTER TABLE [dm].[DimStudentGrade] ADD CONSTRAINT [DF__DimStudentGrade__Creat__38EE7070] DEFAULT (getdate()) FOR [CreatedOn]       
+GO
+
+ALTER TABLE [dm].[DimStudentGrade] ADD CONSTRAINT [DF__DimStudentGrade__Creat__39E294A9] DEFAULT (suser_sname()) FOR [CreatedBy] 
+GO
+
+ALTER TABLE [dm].[DimStudentGrade] ADD CONSTRAINT [DF__DimStudentGrade__Updat__3AD6B8E2] DEFAULT (suser_sname()) FOR [UpdatedOn]
+GO
+
+ALTER TABLE [dm].[DimStudentGrade] ADD CONSTRAINT [DF__DimStudentGrade__Updat__3BCADD1B] DEFAULT (getdate()) FOR [UpdatedBy]
+GO
+
+
+
+-- DimStudentScoreJAS
+ALTER TABLE [dm].[DimStudentScoreJAS] ADD  CONSTRAINT [DF__DimStudentScoreJAS__IsAct__37FA4C37]  DEFAULT ((1)) FOR [IsActive]
+GO
+
+ALTER TABLE [dm].[DimStudentScoreJAS] ADD CONSTRAINT [DF__DimStudentScoreJAS__Valid__370627FE] DEFAULT (getdate()) FOR [ValidFrom]
+GO
+
+ALTER TABLE [dm].[DimStudentScoreJAS] ADD CONSTRAINT [DF__DimStudentScoreJAS__Creat__38EE7070] DEFAULT (getdate()) FOR [CreatedOn]       
+GO
+
+ALTER TABLE [dm].[DimStudentScoreJAS] ADD CONSTRAINT [DF__DimStudentScoreJAS__Creat__39E294A9] DEFAULT (suser_sname()) FOR [CreatedBy] 
+GO
+
+ALTER TABLE [dm].[DimStudentScoreJAS] ADD CONSTRAINT [DF__DimStudentScoreJAS__Updat__3AD6B8E2] DEFAULT (suser_sname()) FOR [UpdatedOn]
+GO
+
+ALTER TABLE [dm].[DimStudentScoreJAS] ADD CONSTRAINT [DF__DimStudentScoreJAS__Updat__3BCADD1B] DEFAULT (getdate()) FOR [UpdatedBy]
+GO
+
+-- DimSchoolInfo
+ALTER TABLE [dm].[DimSchoolInfo] ADD  CONSTRAINT [DF__DimSchoolInfo__IsAct__37FA4C37]  DEFAULT ((1)) FOR [IsActive]
+GO
+
+ALTER TABLE [dm].[DimSchoolInfo] ADD CONSTRAINT [DF__DimSchoolInfo__Valid__370627FE] DEFAULT (getdate()) FOR [ValidFrom]
+GO
+
+ALTER TABLE [dm].[DimSchoolInfo] ADD CONSTRAINT [DF__DimSchoolInfo__Creat__38EE7070] DEFAULT (getdate()) FOR [CreatedOn]       
+GO
+
+ALTER TABLE [dm].[DimSchoolInfo] ADD CONSTRAINT [DF__DimSchoolInfo__Creat__39E294A9] DEFAULT (suser_sname()) FOR [CreatedBy] 
+GO
+
+ALTER TABLE [dm].[DimSchoolInfo] ADD CONSTRAINT [DF__DimSchoolInfo__Updat__3AD6B8E2] DEFAULT (suser_sname()) FOR [UpdatedOn]
+GO
+
+ALTER TABLE [dm].[DimSchoolInfo] ADD CONSTRAINT [DF__DimSchoolInfo__Updat__3BCADD1B] DEFAULT (getdate()) FOR [UpdatedBy]
+GO
+
+-- DimStudentAttendance
+ALTER TABLE [dm].[DimStudentAttendance] ADD  CONSTRAINT [DF__DimStudentAttendance__IsAct__37FA4C37]  DEFAULT ((1)) FOR [IsActive]
+GO
+
+ALTER TABLE [dm].[DimStudentAttendance] ADD CONSTRAINT [DF__DimStudentAttendance__Valid__370627FE] DEFAULT (getdate()) FOR [ValidFrom]
+GO
+
+ALTER TABLE [dm].[DimStudentAttendance] ADD CONSTRAINT [DF__DimStudentAttendance__Creat__38EE7070] DEFAULT (getdate()) FOR [CreatedOn]       
+GO
+
+ALTER TABLE [dm].[DimStudentAttendance] ADD CONSTRAINT [DF__DimStudentAttendance__Creat__39E294A9] DEFAULT (suser_sname()) FOR [CreatedBy] 
+GO
+
+ALTER TABLE [dm].[DimStudentAttendance] ADD CONSTRAINT [DF__DimStudentAttendance__Updat__3AD6B8E2] DEFAULT (suser_sname()) FOR [UpdatedOn]
+GO
+
+ALTER TABLE [dm].[DimStudentAttendance] ADD CONSTRAINT [DF__DimStudentAttendance__Updat__3BCADD1B] DEFAULT (getdate()) FOR [UpdatedBy]
+GO
+
+-- DimCalendarDate
 
 
 
