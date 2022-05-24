@@ -119,6 +119,7 @@ jobs:
         echo keyvault_name=$(terragrunt output --raw --terragrunt-config ./vars/${{env.environmentName}}/terragrunt.hcl keyvault_name) >> $GITHUB_ENV
         echo stagingdb_name=$(terragrunt output --raw --terragrunt-config ./vars/${{env.environmentName}}/terragrunt.hcl stagingdb_name) >> $GITHUB_ENV
         echo sampledb_name=$(terragrunt output --raw --terragrunt-config ./vars/${{env.environmentName}}/terragrunt.hcl sampledb_name) >> $GITHUB_ENV
+        echo sifdb_name=$(terragrunt output --raw --terragrunt-config ./vars/${{env.environmentName}}/terragrunt.hcl sifdb_name) >> $GITHUB_ENV
         echo metadatadb_name=$(terragrunt output --raw --terragrunt-config ./vars/${{env.environmentName}}/terragrunt.hcl metadatadb_name) >> $GITHUB_ENV
         echo loganalyticsworkspace_id=$(terragrunt output --raw --terragrunt-config ./vars/${{env.environmentName}}/terragrunt.hcl loganalyticsworkspace_id) >> $GITHUB_ENV
 
@@ -217,6 +218,7 @@ jobs:
         echo datafactory_name=$(terragrunt output --raw --terragrunt-config ./vars/${{env.environmentName}}/terragrunt.hcl datafactory_name) >> $GITHUB_ENV
         echo keyvault_name=$(terragrunt output --raw --terragrunt-config ./vars/${{env.environmentName}}/terragrunt.hcl keyvault_name) >> $GITHUB_ENV
         echo stagingdb_name=$(terragrunt output --raw --terragrunt-config ./vars/${{env.environmentName}}/terragrunt.hcl stagingdb_name) >> $GITHUB_ENV
+        echo sifdb_name=$(terragrunt output --raw --terragrunt-config ./vars/${{env.environmentName}}/terragrunt.hcl sifdb_name) >> $GITHUB_ENV
         echo sampledb_name=$(terragrunt output --raw --terragrunt-config ./vars/${{env.environmentName}}/terragrunt.hcl sampledb_name) >> $GITHUB_ENV
         echo metadatadb_name=$(terragrunt output --raw --terragrunt-config ./vars/${{env.environmentName}}/terragrunt.hcl metadatadb_name) >> $GITHUB_ENV
         echo loganalyticsworkspace_id=$(terragrunt output --raw --terragrunt-config ./vars/${{env.environmentName}}/terragrunt.hcl loganalyticsworkspace_id) >> $GITHUB_ENV
@@ -242,3 +244,4 @@ jobs:
           dotnet AdsGoFastDbUp.dll -a True -c "Data Source=tcp:${{env.sqlserver_name}}.database.windows.net;Initial Catalog=${{env.metadatadb_name}};" -v True --DataFactoryName ${{env.datafactory_name}} --ResourceGroupName ${{env.TF_VAR_resource_group_name}} --KeyVaultName ${{env.keyvault_name}} --LogAnalyticsWorkspaceId ${{env.loganalyticsworkspace_id}} --SubscriptionId ${{secrets.ARM_SUBSCRIPTION_ID}} --SampleDatabaseName ${{env.sampledb_name}} --StagingDatabaseName ${{env.stagingdb_name}} --MetadataDatabaseName ${{env.metadatadb_name}} --BlobStorageName ${{env.blobstorage_name}} --AdlsStorageName ${{env.adlsstorage_name}} --WebAppName ${{env.webapp_name}} --FunctionAppName ${{env.functionapp_name}} --SqlServerName ${{env.sqlserver_name}}
           az sql server firewall-rule delete--name github --resource-group ${{env.TF_VAR_resource_group_name}} --server ${{env.sqlserver_name}}
           az sql server update --enable-public-network false --resource-group ${{env.TF_VAR_resource_group_name}} --name ${{env.sqlserver_name}}
+

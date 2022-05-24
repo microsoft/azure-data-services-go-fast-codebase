@@ -34,6 +34,11 @@ output "stagingdb_name" {
   value = local.staging_database_name
 }
 
+output "sifdb_name" {
+  value = local.sif_database_name
+}
+
+
 output "sampledb_name" {
   value = local.sample_database_name
 }
@@ -79,6 +84,9 @@ output "publish_function_app" {
 }
 output "publish_sample_files" {
   value = var.publish_sample_files
+}
+output "publish_sif_database" {
+  value = var.publish_sif_database
 }
 output "publish_database" {
   value = var.publish_database

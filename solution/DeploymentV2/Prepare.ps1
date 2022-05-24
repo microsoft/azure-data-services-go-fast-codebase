@@ -219,7 +219,6 @@ if ($PersistEnv -eq "Yes")
     $environmentFileContents = $environmentFileContents.Replace("{ip_address}","$env:TF_VAR_ip_address")
     $environmentFileContents = $environmentFileContents.Replace("{domain}","$env:TF_VAR_domain")
     
-    
     #------------------------------------------------------------------------------------------------------------
     # Templated Configurations
     #------------------------------------------------------------------------------------------------------------

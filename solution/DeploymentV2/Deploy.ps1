@@ -27,13 +27,6 @@ if ($environmentName -eq "Quit")
 {
     Exit
 }
-
-[System.Environment]::SetEnvironmentVariable('TFenvironmentName',$environmentName)
-
-$myIp = (Invoke-WebRequest ifconfig.me/ip).Content
-$skipTerraformDeployment = $false
-$deploymentFolderPath = (Get-Location).Path
-
 #-----------------------------------------------------------------------------------------------------------
 #   Deploy Infrastructure
 #-----------------------------------------------------------------------------------------------------------
@@ -43,6 +36,13 @@ $deploymentFolderPath = (Get-Location).Path
 # - If the firewall is blocking you, add your IP as firewall rule / exemption to the appropriate resource
 # - If you havn't run prepare but want to run this script on its own, set the TF_VAR_jumphost_password and TF_VAR_domain env vars
 #-----------------------------------------------------------------------------------------------------------
+
+[System.Environment]::SetEnvironmentVariable('TFenvironmentName',$environmentName)
+
+$myIp = (Invoke-WebRequest ifconfig.me/ip).Content
+$skipTerraformDeployment = $false
+$deploymentFolderPath = (Get-Location).Path
+
 Set-Location "./terraform"
 $env:TF_VAR_ip_address = $myIp
 
@@ -65,6 +65,8 @@ $tout = GatherOutputsFromTerraform
 #this reads from terraform.tfstate which is populated/updated with terragrunt init
 $outputs = terragrunt output -json --terragrunt-config ./vars/$environmentName/terragrunt.hcl | ConvertFrom-Json
 
+pause
+
 $subscription_id =$outputs.subscription_id.value
 $resource_group_name =$outputs.resource_group_name.value
 $webapp_name =$outputs.webapp_name.value
@@ -76,7 +78,7 @@ $adlsstorage_name=$outputs.adlsstorage_name.value
 $datafactory_name=$outputs.datafactory_name.value
 $keyvault_name=$outputs.keyvault_name.value
 #sif database name
-$sif_database_name  = $outputs.sif_database_name.value
+$sifdb_name  = if([string]::IsNullOrEmpty($outputs.sifdb_name.value)){"SIFDM"}
 
 $stagingdb_name=$outputs.stagingdb_name.value
 $sampledb_name=$outputs.sampledb_name.value
@@ -90,7 +92,7 @@ $skipWebApp = if($tout.publish_web_app) {$false} else {$true}
 $skipFunctionApp = if($tout.publish_function_app) {$false} else {$true}
 $skipDatabase = if($tout.publish_database) {$false} else {$true}
 $skipSampleFiles = if($tout.publish_sample_files){$false} else {$true}
-$skipSIF= if($tout.publish_sif){$false} else {$true}
+$skipSIF= if($tout.publish_sif_database){$false} else {$true}
 $skipNetworking = if($tout.configure_networking){$false} else {$true}
 $skipDataFactoryPipelines = if($tout.publish_datafactory_pipelines) {$false} else {$true}
 $AddCurrentUserAsWebAppAdmin = if($tout.publish_web_app_addcurrentuserasadmin) {$true} else {$false}
@@ -219,9 +221,8 @@ else {
         $result = az sql server firewall-rule create -g $resource_group_name -s $sqlserver_name -n "Azure" --start-ip-address 0.0.0.0 --end-ip-address 0.0.0.0
 
     Set-Location $deploymentFolderPath
-    Set-Location "..\Database\ADSGoFastDbUp\"
-    dotnet restore "ADSGoFastDbUp"
-    dotnet publish "ADSGoFastDbUp" --no-restore --configuration Release --output '..\..\DeploymentV2\bin\publish\unzipped\database\'
+    dotnet restore "..\Database\ADSGoFastDbUp\ADSGoFastDbUp"
+    dotnet publish "..\Database\ADSGoFastDbUp\ADSGoFastDbUp" --no-restore --configuration Release --output '..\..\DeploymentV2\bin\publish\unzipped\database\'
     
     Set-Location $deploymentFolderPath
     #Set-Location ".\bin\publish\unzipped\database\"
@@ -241,13 +242,13 @@ else {
     }
 
     if (!$skipSIF){
-        $databases = @($stagingdb_name, $sampledb_name, $sif_database_name ,$metadatadb_name)
+        $databases = @($stagingdb_name, $sampledb_name, $sifdb_name ,$metadatadb_name)
         Set-Location $deploymentFolderPath
-        Set-Location "..\Database\ADSGoFastDbUp\"
-        dotnet restore "SIF"
-        dotnet publish "SIF" --no-restore --configuration Release --output '..\..\DeploymentV2\bin\publish\unzipped\database\'
-
-        dotnet "./bin/publish/unzipped/database/SIF.dll" -a True -c "Data Source=tcp:${sqlserver_name}.database.windows.net;Initial Catalog=${metadatadb_name};" -v True --DataFactoryName $datafactory_name --ResourceGroupName $resource_group_name --KeyVaultName $keyvault_name --LogAnalyticsWorkspaceId $loganalyticsworkspace_id --SubscriptionId $subscription_id --SIFDatabaseName $sif_database_name  --BlobStorageName $blobstorage_name --AdlsStorageName $adlsstorage_name --WebAppName $webapp_name --FunctionAppName $functionapp_name --SqlServerName $sqlserver_name
+       
+        dotnet restore "..\Database\ADSGoFastDbUp\SIF"
+        dotnet publish "..\Database\ADSGoFastDbUp\SIF" --no-restore --configuration Release --output '..\..\DeploymentV2\bin\publish\unzipped\database\'
+       
+        dotnet "./bin/publish/unzipped/database/SIF.dll" -a True -c "Data Source=tcp:${sqlserver_name}.database.windows.net;Initial Catalog=${sifdb_name};" -v True  --ResourceGroupName $resource_group_name --KeyVaultName $keyvault_name --LogAnalyticsWorkspaceId $loganalyticsworkspace_id --SubscriptionId $subscription_id --SIFDatabaseName $sifdb_name   --WebAppName $webapp_name --FunctionAppName $functionapp_name --SqlServerName $sqlserver_name
     } else {
         $databases = @($stagingdb_name, $sampledb_name ,$metadatadb_name)
     }
@@ -398,7 +399,7 @@ else
 #   Deploy SIF 
 #-----------------------------------------------------------------------------------------------------------
 if ($skipSIF) {
-    Write-Host "Skipping Deploying SIF"    
+    Write-Host "Skipping Deploying SIF files"    
 }
 else {
     Set-Location $deploymentFolderPath
