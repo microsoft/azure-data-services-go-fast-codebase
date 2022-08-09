@@ -44,6 +44,8 @@ locals {
   selfhostedsqlvm_name         = replace(module.naming.virtual_machine.name,"-vm-ads","-vm-sql")
   h2o-ai_name                  = replace(module.naming.virtual_machine.name,"-vm-ads","-vm-h2o")
   custom_vm_name               = replace(module.naming.virtual_machine.name,"-vm-ads","-vm-custom")
+  ixup_egw_vm_name            = "ixup-egw"
+  ixup_egw_password           = ((var.is_vnet_isolated && var.ixup_egw_password == null) ? "" : var.ixup_egw_password)
 
 
   tags = {

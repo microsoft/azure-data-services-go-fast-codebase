@@ -246,6 +246,12 @@ variable "deploy_selfhostedsql" {
   type        = bool
 }
 
+variable "deploy_ixup_encryption_gw" {
+  description = "Feature toggle for deploying IXUP Encrption Gateway"
+  default     = false
+  type        = bool
+}
+
 variable "deploy_h2o-ai" {
   description = "Feature toggle for deploying H2O-AI VM"
   default     = false
@@ -833,4 +839,14 @@ variable "custom_vm_image_version" {
   description = "An Azure custom image marketplace image version to be referenced for a custom vm image."
   default     = "latest"
   type        = string
+}
+# IXUP Encryption gateway VM
+variable "ixup_egw_password" {
+  description = "Password for the Encryption Gateway box"
+  type        = string
+}
+
+variable "ixup_egw_vm_size" {
+  description = "Size for Encryption Gateway Virtual Machine"
+  default     = "Standard_B2s"
 }

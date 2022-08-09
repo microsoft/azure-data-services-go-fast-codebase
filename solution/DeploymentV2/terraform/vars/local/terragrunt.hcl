@@ -28,4 +28,5 @@ inputs = {
   publish_web_app_addcurrentuserasadmin = true
   deploy_selfhostedsql                  = false
   is_onprem_datafactory_ir_registered   = false
+  deploy_ixup_encryption_gw             = true
 }
