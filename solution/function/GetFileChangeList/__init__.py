@@ -19,9 +19,9 @@ from azure.storage.blob.aio import ContainerClient
 from azure.identity.aio import DefaultAzureCredential
 
 async def main(payload: dict) -> dict:
-   #dataApi = CanvasDataApi.CanvasDataApi(os.environ["CANVAS_API_KEY"], os.environ["CANVAS_API_SECRET"])
+    dataApi = CanvasDataApi.CanvasDataApi(os.environ["CANVAS_API_KEY"], os.environ["CANVAS_API_SECRET"])
     
-    dataApi = CanvasDataApiToken.CanvasDataApiToken(os.environ["CANVAS_TOKEN"])
+    #dataApi = CanvasDataApiToken.CanvasDataApiToken(os.environ["CANVAS_TOKEN"])
     async with dataApi:
         # Get synchronisation list from data API
         syncList = await dataApi.get_sync_list()

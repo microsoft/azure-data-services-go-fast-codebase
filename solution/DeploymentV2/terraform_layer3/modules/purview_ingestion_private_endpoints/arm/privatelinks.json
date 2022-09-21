@@ -1,0 +1,355 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "subscriptionId" : {
+            "type" : "string"
+        },
+        "purviewAccountName": {
+            "type": "String"
+        },
+        "location": {
+            "type": "String"
+        },
+        "queuePrivateLinkName": {
+            "type": "String"
+        },
+        "storagePrivateLinkName": {
+            "type": "String"
+        },
+        "eventHubPrivateLinkName": {
+            "type": "String"
+        },
+        "resourceGroupName" : {
+            "type" : "string"
+        },
+        "managedResourceGroupName": {
+            "type": "String"
+        },
+        "subnetId": {
+            "type": "String"
+        },
+        "queueDnsId": {
+            "type": "String"
+        },
+        "storageDnsId": {
+            "type": "String"
+        },
+        "serviceBusDnsId": {
+            "type": "String"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Purview/accounts",
+            "apiVersion": "2021-07-01",
+            "name": "[parameters('purviewAccountName')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [],
+            "tags": {},
+            "sku": {
+                "name": "Standard",
+                "capacity": 1
+            },
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "properties": {
+                "managedResourceGroupName": "[parameters('managedResourceGroupName')]"
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2017-05-10",
+            "name": "blob_1df2c831-46e3-41fd-831f-9c8ede5a9040",
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "parameters": {},
+                "template": {
+                    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "variables": {},
+                    "resources": [
+                        {
+                            "apiVersion": "2020-03-01",
+                            "name": "purview-blob",
+                            "type": "Microsoft.Network/privateEndpoints",
+                            "location": "[parameters('location')]",
+                            "properties": {
+                                "privateLinkServiceConnections": [
+                                    {
+                                        "name": "purview-blob",
+                                        "properties": {
+                                            "privateLinkServiceId": "[reference(parameters('purviewAccountName')).managedResources.storageAccount]",
+                                            "groupIds": [
+                                                "blob"
+                                            ]
+                                        }
+                                    }
+                                ],
+                                "subnet": {
+                                    "id": "[parameters('subnetId')]"
+                                }
+                            },
+                            "tags": {}
+                        }
+                    ],
+                    "outputs": {}
+                }
+            },
+            "resources": [],
+            "subscriptionId": "[parameters('subscriptionId')]",
+            "resourceGroup": "[parameters('resourceGroupName')]"
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2017-05-10",
+            "name": "queue_1df2c831-46e3-41fd-831f-9c8ede5a9043",
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "parameters": {},
+                "template": {
+                    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "variables": {},
+                    "resources": [
+                        {
+                            "apiVersion": "2020-03-01",
+                            "name": "purview-queue",
+                            "type": "Microsoft.Network/privateEndpoints",
+                            "location": "[parameters('location')]",
+                            "properties": {
+                                "privateLinkServiceConnections": [
+                                    {
+                                        "name": "purview-queue",
+                                        "properties": {
+                                            "privateLinkServiceId": "[reference(parameters('purviewAccountName')).managedResources.storageAccount]",
+                                            "groupIds": [
+                                                "queue"
+                                            ]
+                                        }
+                                    }
+                                ],
+                                "subnet": {
+                                    "id": "[parameters('subnetId')]"
+                                }
+                            },
+                            "tags": {}
+                        }
+                    ],
+                    "outputs": {}
+                }
+            },
+            "resources": [],
+            "subscriptionId": "[parameters('subscriptionId')]",
+            "resourceGroup": "[parameters('resourceGroupName')]"
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2017-05-10",
+            "name": "namespace_1df2c831-46e3-41fd-831f-9c8ede5a9046",
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "parameters": {},
+                "template": {
+                    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "variables": {},
+                    "resources": [
+                        {
+                            "apiVersion": "2020-03-01",
+                            "name": "purview-namespace",
+                            "type": "Microsoft.Network/privateEndpoints",
+                            "location": "[parameters('location')]",
+                            "properties": {
+                                "privateLinkServiceConnections": [
+                                    {
+                                        "name": "purview-namespace",
+                                        "properties": {
+                                            "privateLinkServiceId": "[reference(parameters('purviewAccountName')).managedResources.eventHubNamespace]",
+                                            "groupIds": [
+                                                "namespace"
+                                            ]
+                                        }
+                                    }
+                                ],
+                                "subnet": {
+                                    "id": "[parameters('subnetId')]"
+                                }
+                            },
+                            "tags": {}
+                        }
+                    ],
+                    "outputs": {}
+                }
+            },
+            "resources": [],
+            "subscriptionId": "[parameters('subscriptionId')]",
+            "resourceGroup": "[parameters('resourceGroupName')]"
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2017-05-10",
+            "name": "PrivateDns-blob-1df2c83146e341fd831f9c8ede5a9041",
+            "dependsOn": [
+                "blob_1df2c831-46e3-41fd-831f-9c8ede5a9040"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "resources": [
+                        {
+                            "apiVersion": "2017-05-10",
+                            "name": "DnsZoneGroup-1df2c83146e341fd831f9c8ede5a9041",
+                            "type": "Microsoft.Resources/deployments",
+                            "resourceGroup": "[parameters('resourceGroupName')]",
+                            "subscriptionId": "[parameters('subscriptionId')]",
+                            "dependsOn": [],
+                            "properties": {
+                                "mode": "Incremental",
+                                "template": {
+                                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                                    "contentVersion": "1.0.0.0",
+                                    "resources": [
+                                        {
+                                            "type": "Microsoft.Network/privateEndpoints/privateDnsZoneGroups",
+                                            "apiVersion": "2020-03-01",
+                                            "name": "[concat('purview-blob', '/', 'default')]",
+                                            "location": "[parameters('location')]",
+                                            "properties": {
+                                                "privateDnsZoneConfigs": [
+                                                    {
+                                                        "name": "privatelink-blob-core-windows-net",
+                                                        "properties": {
+                                                            "privateDnsZoneId": "[parameters('storageDnsId')]"
+                                                        }
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    ]
+                }
+            },
+            "subscriptionId": "[parameters('subscriptionId')]",
+            "resourceGroup": "[parameters('resourceGroupName')]"
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2017-05-10",
+            "name": "PrivateDns-queue-1df2c83146e341fd831f9c8ede5a9044",
+            "dependsOn": [
+                "queue_1df2c831-46e3-41fd-831f-9c8ede5a9043"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "resources": [
+                        {
+                            "apiVersion": "2017-05-10",
+                            "name": "DnsZoneGroup-1df2c83146e341fd831f9c8ede5a9044",
+                            "type": "Microsoft.Resources/deployments",
+                            "resourceGroup": "[parameters('resourceGroupName')]",
+                            "subscriptionId": "[parameters('subscriptionId')]",
+                            "dependsOn": [],
+                            "properties": {
+                                "mode": "Incremental",
+                                "template": {
+                                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                                    "contentVersion": "1.0.0.0",
+                                    "resources": [
+                                        {
+                                            "type": "Microsoft.Network/privateEndpoints/privateDnsZoneGroups",
+                                            "apiVersion": "2020-03-01",
+                                            "name": "[concat('purview-queue', '/', 'default')]",
+                                            "location": "[parameters('location')]",
+                                            "properties": {
+                                                "privateDnsZoneConfigs": [
+                                                    {
+                                                        "name": "privatelink-queue-core-windows-net",
+                                                        "properties": {
+                                                            "privateDnsZoneId": "[parameters('queueDnsId')]"
+                                                        }
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    ]
+                }
+            },
+            "subscriptionId": "[parameters('subscriptionId')]",
+            "resourceGroup": "[parameters('resourceGroupName')]"
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2017-05-10",
+            "name": "PrivateDns-servicebus-1df2c83146e341fd831f9c8ede5a9047",
+            "dependsOn": [
+                "namespace_1df2c831-46e3-41fd-831f-9c8ede5a9046"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "resources": [
+                        {
+                            "apiVersion": "2017-05-10",
+                            "name": "DnsZoneGroup-1df2c83146e341fd831f9c8ede5a9047",
+                            "type": "Microsoft.Resources/deployments",
+                            "resourceGroup": "[parameters('resourceGroupName')]",
+                            "subscriptionId": "[parameters('subscriptionId')]",
+                            "dependsOn": [],
+                            "properties": {
+                                "mode": "Incremental",
+                                "template": {
+                                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                                    "contentVersion": "1.0.0.0",
+                                    "resources": [
+                                        {
+                                            "type": "Microsoft.Network/privateEndpoints/privateDnsZoneGroups",
+                                            "apiVersion": "2020-03-01",
+                                            "name": "[concat('purview-namespace', '/', 'default')]",
+                                            "location": "[parameters('location')]",
+                                            "properties": {
+                                                "privateDnsZoneConfigs": [
+                                                    {
+                                                        "name": "privatelink-servicebus-windows-net",
+                                                        "properties": {
+                                                            "privateDnsZoneId": "[parameters('serviceBusDnsId')]"
+                                                        }
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    ]
+                }
+            },
+            "subscriptionId": "[parameters('subscriptionId')]",
+            "resourceGroup": "[parameters('resourceGroupName')]"
+        }
+    ],
+    "outputs": {}
+}

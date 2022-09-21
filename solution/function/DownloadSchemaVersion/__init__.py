@@ -9,15 +9,16 @@
 import logging
 import os
 from azure.storage.blob.aio import BlobClient
+from azure.identity.aio import DefaultAzureCredential
 
 from CanvasApi import CanvasDataApi
 from CanvasApi import CanvasDataApiToken
 
-from azure.identity.aio import DefaultAzureCredential
+
 
 async def main(version: str) -> str:
-    #dataApi = CanvasDataApi.CanvasDataApi(os.environ["CANVAS_API_KEY"], os.environ["CANVAS_API_SECRET"])
-     dataApi = CanvasDataApi.CanvasDataApiToken(os.environ["CANVAS_TOKEN"])
+    dataApi = CanvasDataApi.CanvasDataApi(os.environ["CANVAS_API_KEY"], os.environ["CANVAS_API_SECRET"])
+    #dataApi = CanvasDataApi.CanvasDataApiToken(os.environ["CANVAS_TOKEN"])
 
     # Get Schema information & store in blob store.
     logging.info(f"Querying Canvas Data for Schema version: {version}")

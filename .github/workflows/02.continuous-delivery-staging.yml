@@ -1,0 +1,184 @@
+name: Continuous Delivery - Staging
+
+on:
+  workflow_dispatch:
+  push:
+    branches: main #feature-1.0.4
+
+jobs:
+    deploy-to-env-one:
+      name: Deploy to Environment One
+      concurrency: terraform
+      environment: 
+        name: development
+      env:
+        # Runner Installs
+        installTerragrunt: false
+        # This determines the location of the .hcl file that will be used
+        environmentName: staging 
+        gitDeploy : true
+        skipTerraformDeployment: false
+        featureTemplate: ${{ secrets.ARM_FEATURE_TEMPLATE }}  
+        WEB_APP_ADMIN_USER:  ${{ secrets.WEB_APP_ADMIN_USER }}
+        keyVaultName: ${{ secrets.ARM_KEYVAULT_NAME }}
+        ARM_SYNAPSE_WORKSPACE_NAME: ${{ secrets.ARM_SYNAPSE_WORKSPACE_NAME }}
+        datalakeName: ${{ secrets.ARM_DATALAKE_NAME }}
+        # Required for Terraform
+        ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+        ARM_PAL_PARTNER_ID: ${{ secrets.ARM_PAL_PARTNER_ID }}
+        ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+        ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+        ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}      
+        # Customizing Terraform vars
+        TF_VAR_ip_address2 : ${{ secrets.ARM_IP_ADDRESS2 }}   
+        TF_VAR_domain : ${{ secrets.ARM_DOMAIN }}
+        TF_VAR_subscription_id : ${{ secrets.ARM_SUBSCRIPTION_ID }}
+        TF_VAR_tenant_id : ${{ secrets.ARM_TENANT_ID }}
+        TF_VAR_environment_tag : ${{ secrets.ENVIRONMENT_TAG }}
+        TF_VAR_resource_group_name  : ${{ secrets.ARM_RESOURCE_GROUP_NAME }}     
+        TF_VAR_state_storage_account_name  : ${{ secrets.ARM_STORAGE_NAME }}     
+        TF_VAR_jumphost_password : ${{secrets.ARM_JUMPHOST_PASSWORD}}
+        TF_VAR_synapse_sql_password : ${{secrets.ARM_SYNAPSE_PASSWORD}}
+        TF_VAR_web_app_admin_security_group : ${{secrets.WEB_APP_ADMIN_SECURITY_GROUP}}
+        # GIT Integration set up
+        TF_VAR_synapse_git_repository_name : ${{secrets.GIT_REPOSITORY_NAME}}
+        TF_VAR_synapse_git_repository_branch_name : ${{secrets.GIT_SYNAPSE_REPOSITORY_BRANCH_NAME}}
+        TF_VAR_synapse_git_pat : ${{secrets.GIT_PAT}}
+        TF_VAR_synapse_git_user_name : ${{secrets.GIT_USER_NAME}}
+        TF_VAR_synapse_git_email_address : ${{secrets.GIT_EMAIL_ADDRESS}}
+        TF_VAR_adf_git_repository_name : ${{secrets.GIT_REPOSITORY_NAME}}
+        TF_VAR_adf_git_repository_branch_name : ${{secrets.GIT_ADF_REPOSITORY_BRANCH_NAME}}
+        TF_VAR_adf_git_pat : ${{secrets.GIT_PAT}}
+        TF_VAR_adf_git_user_name : ${{secrets.GIT_USER_NAME}}
+        TF_VAR_adf_git_email_address : ${{secrets.GIT_EMAIL_ADDRESS}}
+
+        #TF_LOG : TRACE
+      
+      runs-on: self-hosted
+      steps:      
+      - name: PrintInfo
+        run: |
+          echo "Deploying to Resource Group:  ${{ env.TF_VAR_resource_group_name }} "
+          echo  "echo Hcl file name:  ${{ env.environmentName}} "
+
+      - name: Checkout
+        uses: actions/checkout@v3.0.0
+
+      - name: Get public IP
+        id: ip
+        uses: haythem/public-ip@v1.2
+
+      - name: Login via Az module
+        uses: azure/login@v1
+        with:
+          creds: '{"clientId":"${{ secrets.ARM_CLIENT_ID }}","clientSecret":"${{ secrets.ARM_CLIENT_SECRET }}","subscriptionId":"${{ secrets.ARM_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.ARM_TENANT_ID }}"}'
+          enable-AzPSSession: false 
+
+      - name: Open Firewalls for Agent
+        id: open_firewalls
+        continue-on-error: true
+        working-directory: ./solution/DeploymentV2/terraform
+        run: |  
+          az keyvault network-rule add -g ${{ env.TF_VAR_resource_group_name }} --name ${{ env.keyVaultName }} --ip-address ${{ steps.ip.outputs.ipv4 }}/32
+          az synapse workspace firewall-rule create --name CICDAgent --resource-group ${{ env.TF_VAR_resource_group_name }} --start-ip-address ${{ steps.ip.outputs.ipv4 }} --end-ip-address ${{ steps.ip.outputs.ipv4 }} --workspace-name ${{ env.ARM_SYNAPSE_WORKSPACE_NAME }} 
+          az storage account network-rule add --resource-group ${{ env.TF_VAR_resource_group_name }} --account-name ${{ env.datalakeName }} --ip-address ${{ steps.ip.outputs.ipv4 }}
+
+      - name: Set PAL
+        id: set_pal
+        continue-on-error: true
+        run: |
+          az extension add --name managementpartner
+          az managementpartner update --partner-id ${{ secrets.ARM_PAL_PARTNER_ID }} || az managementpartner create --partner-id ${{ secrets.ARM_PAL_PARTNER_ID }}
+
+      - name: Terragrunt Install
+        id: terragrunt_install
+        working-directory: ./solution/DeploymentV2/terraform_layer2        
+        run: |
+          tgcheck=$(command -v terragrunt) 
+          if [ -z "$tgcheck" ]; then tgcheck="NotInstalled";fi
+          if [ $tgcheck == "NotInstalled" ];then echo "Terragrunt Not Installed. Installing"; brew install terragrunt; else  echo "Terragrunt Installed"; fi    
+          
+      - name: Install Jsonnet
+        id: jsonnet-install
+        working-directory: ./solution/DeploymentV2/
+        env:
+          TF_VAR_ip_address : ${{steps.ip.outputs.ipv4}}
+        run: |
+          wget https://github.com/google/go-jsonnet/releases/download/v0.17.0/jsonnet-go_0.17.0_linux_amd64.deb   
+          sudo dpkg -i jsonnet-go_0.17.0_linux_amd64.deb 
+          
+      - name: Deploy Solution IAC
+        id: solution-deployment-iac
+        working-directory: ./solution/DeploymentV2/terraform_layer2
+        shell: pwsh
+        env:
+          TF_VAR_ip_address : ${{steps.ip.outputs.ipv4}}
+        run: |
+          git update-index --chmod=+x ./02-deploy.ps1          
+          ./02-deploy.ps1 -FeatureTemplate $env:featureTemplate
+
+      - name: Build and Publish Code Artefacts
+        id: solution-deployment-code
+        working-directory: ./solution/DeploymentV2/terraform_layer2
+        shell: pwsh
+        env:
+          TF_VAR_ip_address : ${{steps.ip.outputs.ipv4}}
+        run: |
+          git update-index --chmod=+x ./02-publish.ps1          
+          ./02-publish.ps1 -FeatureTemplate $env:featureTemplate
+    
+    #PROD ENVIRONMENT
+    deploy-to-env-two:
+      name: Deploy to Environment Two
+      concurrency: terraform
+      needs: [deploy-to-env-one]
+      environment: 
+        name: Prod
+      env:
+        environmentName: production
+        gitDeploy : true
+        skipTerraformDeployment: false
+        WEB_APP_ADMIN_USER:  ${{ secrets.WEB_APP_ADMIN_USER }}
+        keyVaultName: ${{ secrets.ARM_KEYVAULT_NAME }}
+        ARM_SYNAPSE_WORKSPACE_NAME: ${{ secrets.ARM_SYNAPSE_WORKSPACE_NAME }}
+        datalakeName: ${{ secrets.ARM_DATALAKE_NAME }}
+        # Required for Terraform
+        ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+        ARM_PAL_PARTNER_ID: ${{ secrets.ARM_PAL_PARTNER_ID }}
+        ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+        ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+        ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}      
+        # Customizing Terraform vars
+        TF_VAR_domain : ${{ secrets.ARM_DOMAIN }}
+        TF_VAR_subscription_id : ${{ secrets.ARM_SUBSCRIPTION_ID }}
+        TF_VAR_tenant_id : ${{ secrets.ARM_TENANT_ID }}
+        TF_VAR_environment_tag : ${{ secrets.ENVIRONMENT_TAG }}
+        TF_VAR_resource_group_name  : ${{ secrets.ARM_RESOURCE_GROUP_NAME }}     
+        TF_VAR_state_storage_account_name  : ${{ secrets.ARM_STORAGE_NAME }}     
+        TF_VAR_jumphost_password : ${{secrets.ARM_JUMPHOST_PASSWORD}}
+        TF_VAR_synapse_sql_password : ${{secrets.ARM_SYNAPSE_PASSWORD}}
+        TF_VAR_web_app_admin_security_group : ${{secrets.WEB_APP_ADMIN_SECURITY_GROUP}}
+        # GIT Integration set up
+        TF_VAR_synapse_git_repository_name : ${{secrets.GIT_REPOSITORY_NAME}}
+        TF_VAR_synapse_git_repository_branch_name : ${{secrets.GIT_SYNAPSE_REPOSITORY_BRANCH_NAME}}
+        TF_VAR_synapse_git_pat : ${{secrets.GIT_PAT}}
+        TF_VAR_synapse_git_user_name : ${{secrets.GIT_USER_NAME}}
+        TF_VAR_synapse_git_email_address : ${{secrets.GIT_EMAIL_ADDRESS}}
+        TF_VAR_adf_git_repository_name : ${{secrets.GIT_REPOSITORY_NAME}}
+        TF_VAR_adf_git_repository_branch_name : ${{secrets.GIT_ADF_REPOSITORY_BRANCH_NAME}}
+        TF_VAR_adf_git_pat : ${{secrets.GIT_PAT}}
+        TF_VAR_adf_git_user_name : ${{secrets.GIT_USER_NAME}}
+        TF_VAR_adf_git_email_address : ${{secrets.GIT_EMAIL_ADDRESS}}
+
+      #PROD ENVIRONMENT
+      #TF_LOG : TRACE
+      
+      runs-on: self-hosted
+      steps:
+      
+      - name: Checkout
+        uses: actions/checkout@v3.0.0
+
+      - name: Get public IP
+        id: ip
+        uses: haythem/public-ip@v1.2

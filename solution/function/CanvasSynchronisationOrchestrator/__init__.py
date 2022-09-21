@@ -7,10 +7,14 @@ import os
 
 import azure.durable_functions as df
 
+
+
 def orchestrator_function(context: df.DurableOrchestrationContext):
     retryPolicy = df.RetryOptions(int(os.environ["RETRY_INTERVAL_MS"]), int(os.environ["RETRY_MAX_ATTEMPTS"]))
 
     changeList = yield context.call_activity_with_retry("GetFileChangeList", retryPolicy)
+    
+    
     schema = yield context.call_activity_with_retry("DownloadSchemaVersion", retryPolicy, changeList['schemaVersion'])
 
     containerUrl = os.environ['STORAGE_CONTAINER_URL'].rstrip('/') + "/" # The rstrip and + just prevents double slash ...

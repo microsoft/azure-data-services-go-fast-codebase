@@ -1,13 +1,19 @@
 # Implements components of the v1 Canvas Data API (as v2 isn't out yet)
 # Brodie Hicks, 2021.
+# https://community.canvaslms.com/t5/Canvas-Data-Users/Canvas-Data-API-Authentication/td-p/244163
+# HOST is indeed portal.inshosteddata.com
 
-from . import JsonHmacApi
+import sys
+sys.path.append(".")
+
+import JsonHmacApi
 
 import hashlib
 
-class CanvasDataApi(JsonHmacApi.JsonHmacApi):
+class CanvasDataApi(JsonHmacApi):
     def __init__(self, apiKey, apiSecret, encoding="utf-8", hmacDigest=hashlib.sha256):
-        self.Host = "api.inshosteddata.com"
+        self.Host = "portal.inshosteddata.com"
+
         self.ApiKey = apiKey
         self.ApiSecret = apiSecret
         self.Encoding = encoding

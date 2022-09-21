@@ -9,7 +9,7 @@ import aiohttp
 
 from abc import abstractmethod
 
-from . import HttpApi
+import HttpApi
 
 class JsonHmacApi(HttpApi.HttpApi):
     Encoding: str = "utf-8" # Encoding for HMAC

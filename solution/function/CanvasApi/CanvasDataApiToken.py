@@ -24,11 +24,8 @@ class CanvasDataApiToken(JsonHmacApi.JsonHmacApi):
         return "\n".join([
             method.upper(),
             headers["Host"],
-            headers["Content-Type"] if "Content-Type" in headers else "",
-            hashlib.md5(content).digest().decode(self.Encoding) if content else "",
-            path,
+                      path,
             query,
-            headers["Date"],
              '-H ',"'Authorization: Bearer '",
             self.token
         ])

@@ -2,7 +2,7 @@
   "scriptFile": "__init__.py",
   "bindings": [
     {
-      "authLevel": "function",
+      "authLevel": "anonymous",
       "route": "TriggerOrchestrator/{orchestratorName:alpha}",
       "type": "httpTrigger",
       "direction": "in",
