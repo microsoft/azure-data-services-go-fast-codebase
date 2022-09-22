@@ -4,13 +4,14 @@
 # HOST is indeed portal.inshosteddata.com
 
 import sys
-sys.path.append(".")
+import os
+sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)))
 
 import JsonHmacApi
 
 import hashlib
 
-class CanvasDataApi(JsonHmacApi):
+class CanvasDataApi(JsonHmacApi.JsonHmacApi):
     def __init__(self, apiKey, apiSecret, encoding="utf-8", hmacDigest=hashlib.sha256):
         self.Host = "portal.inshosteddata.com"
 
