@@ -1,6 +1,7 @@
 # 'JsonHmacAPI' implements the HttpApi Protocol and includes helpers for authenticating using a HMAC token
 # Using Asynchronous I/O via aiohttp
 # Brodie Hicks, 2021.
+# Leo Bravo 2022 workaround the finding of super class in a single
 
 import hmac
 import base64
@@ -14,16 +15,25 @@ import os
 sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)))
 sys.path.append(__file__)
 
-import HttpApi
+import hashlib
 
-class JsonHmacApi(HttpApi.HttpApi):
+class SuperCanvasApi():
     Encoding: str = "utf-8" # Encoding for HMAC
 
     ApiKey: str
     ApiSecret: str
     HmacDigest: any # Any to allow for strings, constructors or modules (e.g. 'sha256' vs hashlib.sha256)
-
+    Scheme: str = "https"
+    Host: str
     Session: aiohttp.ClientSession
+
+    def __init__(self, apiKey, apiSecret, encoding="utf-8", hmacDigest=hashlib.sha256):
+        self.Host = "portal.inshosteddata.com"
+
+        self.ApiKey = apiKey
+        self.ApiSecret = apiSecret
+        self.Encoding = encoding
+        self.HmacDigest = hmacDigest
 
     async def __aenter__(self):
         self.Session = aiohttp.ClientSession()
@@ -31,13 +41,28 @@ class JsonHmacApi(HttpApi.HttpApi):
     async def __aexit__(self, exc_type, exc, tb):
         await self.Session.close()
 
-    @abstractmethod
+ 
     def _get_hash_message(self, method, path, headers, content) -> str:
         """
-        Generates a unique signature for a given request.
-        The result is HMAC'd with the secret to build the authorization token
+        Generates a HMAC token for Canvas Data as per:
+        https://portal.inshosteddata.com/docs/api
         """
-        raise NotImplementedError
+        query = ""
+        if "?" in path:
+            [path, query] = path.split("?", 1)
+            # Query args needed to be sorted
+            query = "&".join(sorted(query.split("&")))
+
+        return "\n".join([
+            method.upper(),
+            headers["Host"],
+            headers["Content-Type"] if "Content-Type" in headers else "",
+            hashlib.md5(content).digest().decode(self.Encoding) if content else "",
+            path,
+            query,
+            headers["Date"],
+            self.ApiSecret
+        ])
 
     def _get_auth_token(self, method, path, headers, content) -> str:
         """
@@ -74,4 +99,21 @@ class JsonHmacApi(HttpApi.HttpApi):
         """
         async with await self.get_response(path) as response:
             return await response.json()
+
+
+
+    async def get_schema_version_response(self, version: str):
+        """
+        Helper to get schema version.
+        We create a separate method for this to decouple query path from the output in our activity functions
+        (e.g. - if the API endpoint changes we only have to update this func.)
+        """
+        return await self.get_response(f"/api/schema/{version}")
+
+    async def get_sync_list(self):
+        """
+        Helper to get synchronisation list from Canvas
+        As above - we create a separate method for this to de-couple the API endpoint from our activity function logic.
+        """
+        return await self.get("/api/account/self/file/sync")
     

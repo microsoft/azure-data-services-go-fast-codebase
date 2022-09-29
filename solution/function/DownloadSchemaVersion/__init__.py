@@ -5,19 +5,18 @@
 #  - Return the schema.
 # This is primarily used to dynamically generate tabular translators for ADF
 # Brodie Hicks, 2021.
+# LBravo 2022  plain class hierarchy
 
 import logging
 import os
 from azure.storage.blob.aio import BlobClient
 from azure.identity.aio import DefaultAzureCredential
 
-from CanvasApi import CanvasDataApi
-from CanvasApi import CanvasDataApiToken
-
+from CanvasApi import SuperCanvasApi
 
 
 async def main(version: str) -> str:
-    dataApi = CanvasDataApi.CanvasDataApi(os.environ["CANVAS_API_KEY"], os.environ["CANVAS_API_SECRET"])
+    dataApi = SuperCanvasApi.SuperCanvasApi(os.environ["CANVAS_API_KEY"], os.environ["CANVAS_API_SECRET"])
     #dataApi = CanvasDataApi.CanvasDataApiToken(os.environ["CANVAS_TOKEN"])
 
     # Get Schema information & store in blob store.

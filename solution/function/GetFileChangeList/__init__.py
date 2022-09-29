@@ -7,19 +7,18 @@
 #       - delete: List of local files to delete (as they are no longer required)
 #       - schemaVersion: Version of the schema reported by the Canvas Data API. This should be retrieved for type/schema mapping activites.
 # Brodie Hicks, 2021.
+# LBravo 2022  plain class hierarchy
 
 import os # for Environ
 import logging
 
-from CanvasApi import CanvasDataApi
-
-from CanvasApi import CanvasDataApiToken
+from CanvasApi import SuperCanvasApi
 
 from azure.storage.blob.aio import ContainerClient
 from azure.identity.aio import DefaultAzureCredential
 
 async def main(payload: dict) -> dict:
-    dataApi = CanvasDataApi.CanvasDataApi(os.environ["CANVAS_API_KEY"], os.environ["CANVAS_API_SECRET"])
+    dataApi = SuperCanvasApi.SuperCanvasApi(os.environ["CANVAS_API_KEY"], os.environ["CANVAS_API_SECRET"])
     
     #dataApi = CanvasDataApiToken.CanvasDataApiToken(os.environ["CANVAS_TOKEN"])
     async with dataApi:

@@ -9,6 +9,7 @@ from typing import Protocol
 import sys
 import os
 sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)))
+sys.path.append(__file__) 
 
 class HttpApi(Protocol):
     Scheme: str = "https"
