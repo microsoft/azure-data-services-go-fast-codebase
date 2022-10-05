@@ -1,0 +1,21 @@
+{
+    "name": "ListClusters_MI",
+    "properties": {
+        "linkedServiceName": {
+            "referenceName": "Databricks_REST_MI",
+            "type": "LinkedServiceReference"
+        },
+        "parameters": {
+            "WorkspaceURL": {
+                "type": "String",
+                "defaultValue": "https://adb-7073202429053763.3.azuredatabricks.net"
+            }
+        },
+        "annotations": [],
+        "type": "RestResource",
+        "typeProperties": {
+            "relativeUrl": "2.0/clusters/list"
+        },
+        "schema": []
+    }
+}

@@ -1,0 +1,34 @@
+{
+    "name": "Databricks_Interactive_ADSGF_Paramatised",
+    "properties": {
+        "parameters": {
+            "WorkspaceURL": {
+                "type": "string"
+            },
+            "ResourceGroup": {
+                "type": "string"
+            },
+            "WorkspaceName": {
+                "type": "string"
+            },
+            "ClusterID": {
+                "type": "string"
+            },
+            "SubscriptionID": {
+                "type": "string"
+            }
+        },
+        "annotations": [],
+        "type": "AzureDatabricks",
+        "typeProperties": {
+            "domain": "@linkedService().WorkspaceURL",
+            "authentication": "MSI",
+            "workspaceResourceId": "/subscriptions/@{linkedService().SubscriptionID}/resourceGroups/@{linkedService().ResourceGroup}/providers/Microsoft.Databricks/workspaces/@{linkedService().WorkspaceName}",
+            "credential": {
+                "referenceName": "JOK-SCRATCH-ADB-UMI",
+                "type": "CredentialReference"
+            },
+            "existingClusterId": "@linkedService().ClusterID"
+        }
+    }
+}

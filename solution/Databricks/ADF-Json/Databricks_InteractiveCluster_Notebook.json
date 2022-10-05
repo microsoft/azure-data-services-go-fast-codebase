@@ -1,0 +1,170 @@
+{
+    "name": "Databricks_ClusterName2ClusterID_Interactive_Submit_Pipeline",
+    "properties": {
+        "description": "Take a Databricks cluster name and first determine the ClusterID, and then use that as the target for an interactive cluster job.",
+        "activities": [
+            {
+                "name": "LookupClusters",
+                "type": "Lookup",
+                "dependsOn": [],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "source": {
+                        "type": "DelimitedTextSource",
+                        "storeSettings": {
+                            "type": "AzureBlobFSReadSettings",
+                            "recursive": true,
+                            "enablePartitionDiscovery": false
+                        },
+                        "formatSettings": {
+                            "type": "DelimitedTextReadSettings"
+                        }
+                    },
+                    "dataset": {
+                        "referenceName": "cluster_list",
+                        "type": "DatasetReference"
+                    },
+                    "firstRowOnly": false
+                }
+            },
+            {
+                "name": "For Each Cluster",
+                "type": "ForEach",
+                "dependsOn": [
+                    {
+                        "activity": "LookupClusters",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "userProperties": [],
+                "typeProperties": {
+                    "items": {
+                        "value": "@activity('LookupClusters').output.value",
+                        "type": "Expression"
+                    },
+                    "activities": [
+                        {
+                            "name": "If ClusterName matches",
+                            "type": "IfCondition",
+                            "dependsOn": [],
+                            "userProperties": [],
+                            "typeProperties": {
+                                "expression": {
+                                    "value": "@equals(item().cluster_name, pipeline().parameters.ClusterName)",
+                                    "type": "Expression"
+                                },
+                                "ifTrueActivities": [
+                                    {
+                                        "name": "Initialise ClusterID",
+                                        "type": "SetVariable",
+                                        "dependsOn": [],
+                                        "userProperties": [],
+                                        "typeProperties": {
+                                            "variableName": "ClusterID",
+                                            "value": {
+                                                "value": "@item().cluster_id",
+                                                "type": "Expression"
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            },
+            {
+                "name": "Delta Notebook - Python",
+                "type": "DatabricksNotebook",
+                "dependsOn": [
+                    {
+                        "activity": "For Each Cluster",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "notebookPath": {
+                        "value": "@pipeline().parameters.NotebookPath",
+                        "type": "Expression"
+                    }
+                },
+                "linkedServiceName": {
+                    "referenceName": "Databricks_Interactive_ADSGF_Paramatised",
+                    "type": "LinkedServiceReference",
+                    "parameters": {
+                        "WorkspaceURL": {
+                            "value": "@pipeline().parameters.WorkspaceURL",
+                            "type": "Expression"
+                        },
+                        "ResourceGroup": {
+                            "value": "@pipeline().parameters.ResourceGroup",
+                            "type": "Expression"
+                        },
+                        "WorkspaceName": {
+                            "value": "@pipeline().parameters.WorkspaceName",
+                            "type": "Expression"
+                        },
+                        "ClusterID": {
+                            "value": "@variables('ClusterID')",
+                            "type": "Expression"
+                        },
+                        "SubscriptionID": {
+                            "value": "@pipeline().globalParameters.SubscriptionID",
+                            "type": "Expression"
+                        }
+                    }
+                }
+            }
+        ],
+        "parameters": {
+            "ClusterName": {
+                "type": "string",
+                "defaultValue": "AZURE-104LTS-1N-SMALL-SPOT"
+            },
+            "WorkspaceURL": {
+                "type": "string",
+                "defaultValue": "https://adb-7073202429053763.3.azuredatabricks.net/"
+            },
+            "ResourceGroup": {
+                "type": "string",
+                "defaultValue": "jok-scratch"
+            },
+            "WorkspaceName": {
+                "type": "string",
+                "defaultValue": "ANZ-JOK-DB"
+            },
+            "NotebookPath": {
+                "type": "string",
+                "defaultValue": "/Users/james.okeeffe@databricks.com/Custom Workshops/Common/Delta Lake/SQL with Delta Lake ADB"
+            }
+        },
+        "variables": {
+            "ClusterID": {
+                "type": "String"
+            }
+        },
+        "folder": {
+            "name": "ADSGF/Working"
+        },
+        "annotations": []
+    }
+}

@@ -1,0 +1,50 @@
+{
+    "name": "cluster_list",
+    "properties": {
+        "linkedServiceName": {
+            "referenceName": "ADLgen2",
+            "type": "LinkedServiceReference"
+        },
+        "parameters": {
+            "container": {
+                "type": "string",
+                "defaultValue": "temp"
+            },
+            "folder": {
+                "type": "string",
+                "defaultValue": "adsgf_list1"
+            }
+        },
+        "annotations": [],
+        "type": "DelimitedText",
+        "typeProperties": {
+            "location": {
+                "type": "AzureBlobFSLocation",
+                "fileName": "cluster_list",
+                "folderPath": {
+                    "value": "@dataset().folder",
+                    "type": "Expression"
+                },
+                "fileSystem": {
+                    "value": "@dataset().container",
+                    "type": "Expression"
+                }
+            },
+            "columnDelimiter": ",",
+            "escapeChar": "\\",
+            "firstRowAsHeader": true,
+            "quoteChar": ""
+        },
+        "schema": [
+            {
+                "type": "String"
+            },
+            {
+                "type": "String"
+            },
+            {
+                "type": "String"
+            }
+        ]
+    }
+}

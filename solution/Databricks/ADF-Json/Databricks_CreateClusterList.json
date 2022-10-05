@@ -1,0 +1,113 @@
+{
+    "name": "Databricks_Cluster_List_MI",
+    "properties": {
+        "activities": [
+            {
+                "name": "JSON2CSV",
+                "type": "Copy",
+                "dependsOn": [],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "source": {
+                        "type": "RestSource",
+                        "httpRequestTimeout": "00:01:40",
+                        "requestInterval": "00.00:00:00.010",
+                        "requestMethod": "GET",
+                        "paginationRules": {
+                            "supportRFC5988": "true"
+                        }
+                    },
+                    "sink": {
+                        "type": "DelimitedTextSink",
+                        "storeSettings": {
+                            "type": "AzureBlobFSWriteSettings"
+                        },
+                        "formatSettings": {
+                            "type": "DelimitedTextWriteSettings",
+                            "quoteAllText": true,
+                            "fileExtension": ".csv"
+                        }
+                    },
+                    "enableStaging": false,
+                    "translator": {
+                        "type": "TabularTranslator",
+                        "mappings": [
+                            {
+                                "source": {
+                                    "path": "['cluster_id']"
+                                },
+                                "sink": {
+                                    "name": "cluster_id",
+                                    "type": "String"
+                                }
+                            },
+                            {
+                                "source": {
+                                    "path": "['cluster_name']"
+                                },
+                                "sink": {
+                                    "name": "cluster_name",
+                                    "type": "String"
+                                }
+                            },
+                            {
+                                "source": {
+                                    "path": "['spark_version']"
+                                },
+                                "sink": {
+                                    "name": "spark_version",
+                                    "type": "String"
+                                }
+                            },
+                            {
+                                "source": {
+                                    "path": "['data_security_mode']"
+                                },
+                                "sink": {
+                                    "name": "security_mode",
+                                    "type": "String"
+                                }
+                            }
+                        ],
+                        "collectionReference": "$['clusters']",
+                        "mapComplexValuesToString": false
+                    }
+                },
+                "inputs": [
+                    {
+                        "referenceName": "ListClusters_MI",
+                        "type": "DatasetReference",
+                        "parameters": {
+                            "WorkspaceURL": {
+                                "value": "@pipeline().parameters.WorkspaceURL",
+                                "type": "Expression"
+                            }
+                        }
+                    }
+                ],
+                "outputs": [
+                    {
+                        "referenceName": "cluster_list",
+                        "type": "DatasetReference"
+                    }
+                ]
+            }
+        ],
+        "parameters": {
+            "WorkspaceURL": {
+                "type": "string"
+            }
+        },
+        "folder": {
+            "name": "ADSGF"
+        },
+        "annotations": []
+    }
+}

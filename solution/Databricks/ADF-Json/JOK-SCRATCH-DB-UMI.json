@@ -1,0 +1,10 @@
+{
+    "name": "JOK-SCRATCH-ADB-UMI",
+    "properties": {
+        "description": "User assigned managed identity with ownership over ADB workspaces in jok-scratch RG",
+        "type": "ManagedIdentity",
+        "typeProperties": {
+            "resourceId": "/subscriptions/3f2e4d32-8e8d-46d6-82bc-5bb8d962328b/resourceGroups/jok-scratch/providers/Microsoft.ManagedIdentity/userAssignedIdentities/jok-scratch-adb-umi"
+        }
+    }
+}
