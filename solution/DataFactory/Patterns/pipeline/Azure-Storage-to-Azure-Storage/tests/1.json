@@ -1,50 +1,50 @@
 {
-  "Active": true,
-  "Description": "GPL_AzureBlobFS_Excel_AzureBlobFS_DelimitedText",
-  "JsonSchema": "GPL_AzureBlobFS_Excel_AzureBlobFS_DelimitedText",
-  "TaskObject": {
-    "TaskInstanceId": 75,
-    "TaskMasterId": 12,
-    "TaskStatus": "Untried",
-    "TaskType": "Azure Blob Storage Delimited to Azure Blob Storage Excel",
-    "Enabled": 1,
-    "ExecutionUid": "2c5924ee-b855-4d2b-bb7e-4f5dde4c4dd3",
-    "NumberOfRetries": 111,
-    "DegreeOfCopyParallelism": 1,
-    "KeyVaultBaseUrl": "https://ark-stg-adf-ads-lluv.vault.azure.net/",
-    "ScheduleMasterId": 2,
-    "TaskGroupConcurrency": 10,
-    "TaskGroupPriority": 0,
-    "Source": {
-      "Type": "Azure Blob",
-      "StorageAccountName": "https://arkstgdlsadslluvadsl.dfs.core.windows.net",
-      "StorageAccountContainer": "datalakeraw",
-      "StorageAccountAccessMethod": "MSI",
-      "RelativePath": "/samples",
-      "DataFileName": "yellow_tripdata_2017-03.xlsx",
-      "FirstRowAsHeader": true,
-      "MaxConcurrentConnections": 1,
-      "SheetName": "yellow_tripdata_2017-03",
-      "SkipLineCount": 0
-    },
-    "Target": {
-      "Type": "Azure Data Lake",
-      "StorageAccountName": "https://arkstgdlsadslluvadsl.dfs.core.windows.net",
-      "StorageAccountContainer": "datalakeraw",
-      "StorageAccountAccessMethod": "MSI",
-      "RelativePath": "/samples",
-      "DataFileName": "yellow_tripdata_2017-03_csv_output.csv",
-      "FirstRowAsHeader": true,
-      "MaxConcurrentConnections": 1,
-      "Recursively": false,
-      "SkipLineCount": 0
-    },
-    "DataFactory": {
-      "Id": 1,
-      "Name": "",
-      "ResourceGroup": "",
-      "SubscriptionId": "",
-      "ADFPipeline": "GPL_AzureBlobFS_Excel_AzureBlobFS_DelimitedText_Azure"
-    }
-  }
+    "Active":  true,
+    "Description":  "GPL_AzureBlobFS_Excel_AzureBlobFS_DelimitedText",
+    "JsonSchema":  "GPL_AzureBlobFS_Excel_AzureBlobFS_DelimitedText",
+    "TaskObject":  {
+                       "TaskInstanceId":  75,
+                       "TaskMasterId":  12,
+                       "TaskStatus":  "Untried",
+                       "TaskType":  "Azure Blob Storage Delimited to Azure Blob Storage Excel",
+                       "Enabled":  1,
+                       "ExecutionUid":  "2c5924ee-b855-4d2b-bb7e-4f5dde4c4dd3",
+                       "NumberOfRetries":  111,
+                       "DegreeOfCopyParallelism":  1,
+                       "KeyVaultBaseUrl":  "https://ark-stg-adf-ads-lluv.vault.azure.net/",
+                       "ScheduleMasterId":  2,
+                       "TaskGroupConcurrency":  10,
+                       "TaskGroupPriority":  0,
+                       "Source":  {
+                                      "Type":  "Azure Blob",
+                                      "StorageAccountName":  "https://arkstgdlsadslluvadsl.dfs.core.windows.net",
+                                      "StorageAccountContainer":  "datalakeraw",
+                                      "StorageAccountAccessMethod":  "MSI",
+                                      "RelativePath":  "/samples",
+                                      "DataFileName":  "yellow_tripdata_2017-03.xlsx",
+                                      "FirstRowAsHeader":  true,
+                                      "MaxConcurrentConnections":  1,
+                                      "SheetName":  "yellow_tripdata_2017-03",
+                                      "SkipLineCount":  0
+                                  },
+                       "Target":  {
+                                      "Type":  "Azure Data Lake",
+                                      "StorageAccountName":  "https://arkstgdlsadslluvadsl.dfs.core.windows.net",
+                                      "StorageAccountContainer":  "datalakeraw",
+                                      "StorageAccountAccessMethod":  "MSI",
+                                      "RelativePath":  "/samples",
+                                      "DataFileName":  "yellow_tripdata_2017-03_csv_output.csv",
+                                      "FirstRowAsHeader":  true,
+                                      "MaxConcurrentConnections":  1,
+                                      "Recursively":  false,
+                                      "SkipLineCount":  0
+                                  },
+                       "DataFactory":  {
+                                           "Id":  1,
+                                           "Name":  "",
+                                           "ResourceGroup":  "",
+                                           "SubscriptionId":  "",
+                                           "ADFPipeline":  "GPL_AzureBlobFS_Excel_AzureBlobFS_DelimitedText_Azure"
+                                       }
+                   }
 }
