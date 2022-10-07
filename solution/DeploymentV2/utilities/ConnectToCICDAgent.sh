@@ -1,0 +1,1 @@
+az network bastion tunnel --name ads-stg-snap-ads-gjsg  --resource-group gft6 --target-resource-id "/subscriptions/035a1364-f00d-48e2-b582-4fe125905ee3/resourceGroups/gft6/providers/Microsoft.Compute/virtualMachines/CICDAgent" --resource-port "22" --port "22"

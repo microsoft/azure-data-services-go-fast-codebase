@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "Fun_Canvas_oea": {
+      "commandName": "Project",
+      "commandLineArgs": "--port 7047",
+      "launchBrowser": false
+    }
+  }
+}

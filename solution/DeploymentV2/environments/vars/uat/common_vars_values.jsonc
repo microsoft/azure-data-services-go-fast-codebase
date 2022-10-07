@@ -1,0 +1,51 @@
+{
+  "$schema": "./../common_vars_schema.json",
+  "owner_tag": "Contoso",
+  "resource_location": "australiaeast",
+  "environment_tag": "stg",
+  "domain": "microsoft.com",
+  "subscription_id": "035a1364-f00d-48e2-b582-4fe125905ee3",
+  "prefix": "ads",
+  "resource_group_name": "gfuat",
+  "state_storage_account_name": "lockboxftteststate",
+  "ip_address": "144.138.148.220",
+  "ip_address2": "144.138.148.220",
+  "tenant_id": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+  "deployment_principal_layers1and3": "",
+  "resource_owners": [
+    "4c732d19-4076-4a76-87f3-6fbfd77f007d",
+    "ccbdbba4-669c-48d6-86b8-75c9ab2ee578"
+  ],
+  "synapse_administrators": {
+    "jorampon@microsoft.com": "ccbdbba4-669c-48d6-86b8-75c9ab2ee578"
+  },
+  "azure_sql_aad_administrators": {
+    "sql_aad_admin": "6f467924-4d92-40e3-b348-b3154d5cd437",
+    "AdsGoFastDeployerjkcgkaibkungm": "4c732d19-4076-4a76-87f3-6fbfd77f007d",
+    "jorampon@microsoft.com": "ccbdbba4-669c-48d6-86b8-75c9ab2ee578"
+  },
+  "synapse_publishers": {},
+  "synapse_contributors": {},
+  "WEB_APP_ADMIN_USER": "ccbdbba4-669c-48d6-86b8-75c9ab2ee578",
+  "WEB_APP_ADMIN_SECURITY_GROUP": "#####",
+  "ARM_SYNAPSE_WORKSPACE_NAME": "adsstgsynwadsnvmz",
+  "ARM_KEYVAULT_NAME": "ads-stg-kv-ads-nvmz",
+  "ARM_DATALAKE_NAME": "adsstgdlsadsnvmzadsl",
+  "ARM_PAL_PARTNER_ID": "0",
+  "GIT_REPOSITORY_NAME": "#####",
+  "GIT_SYNAPSE_REPOSITORY_BRANCH_NAME": "#####",
+  "GIT_USER_NAME": "#####",
+  "GIT_EMAIL_ADDRESS": "#####",
+  "GIT_ADF_REPOSITORY_NAME": "#####",
+  "GIT_ADF_REPOSITORY_BRANCH_NAME": "#####",
+  "GIT_ADF_USER_NAME": "#####",
+  "GIT_ADF_EMAIL_ADDRESS": "#####",
+  "deploy_state_storage_account": false,
+  "deploy_cicd_vm": false,
+  "FeatureTemplateOverrides": {
+    "is_onprem_datafactory_ir_registered": false,
+    "deployment_layer3_complete": true,
+    "layer0_state": "remote",
+    "delay_private_access": true
+  }
+}

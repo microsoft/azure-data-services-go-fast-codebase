@@ -1,0 +1,16 @@
+{
+    "name": "ads_gofast_configuration_app",
+    "version": "1.0.0",
+    "description": "ads_gofast_configuration_app",
+    "author": "john.rampono@microsoft.com",
+    "main": "server.js",
+    "scripts": {
+      "start": "node server.js"
+    },
+    "dependencies": {
+      "express": "^4.16.1",
+      "node-static": "0.7.11",
+      "fs": "0.0.2",
+      "path": "0.12.7"
+    }
+  }
