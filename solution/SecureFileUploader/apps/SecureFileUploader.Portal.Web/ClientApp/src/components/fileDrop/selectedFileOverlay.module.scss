@@ -1,0 +1,107 @@
+$primaryColour: #003e6a;
+$primaryColourHover: #002e5a;
+$primaryGrey: #555555;
+
+.selectedFileOverlay {
+  width: 100%;
+  flex-direction: column;
+  flex-wrap: row;
+  padding: 0 3rem;
+  position: absolute;
+  background: rgba(247, 248, 250, 0.98);
+  width: 100%;
+  height: 100%;
+  border-radius: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  img.placeholderImage {
+    height: 170px;
+    margin: 0 0 1rem;
+    opacity: 0.5;
+  }
+  p {
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+    color: $primaryGrey;
+  }
+  span {
+    font-weight: 600;
+  }
+}
+
+.progressContainer {
+  width: 100%;
+  height: 35px;
+  border-radius: 1rem;
+  overflow: hidden;
+  .innerBar {
+    background: #222;
+    height: 100%;
+  }
+}
+
+button.heroButton {
+  background: $primaryColour;
+  border-radius: 100px;
+  border: 0;
+  color: #fff;
+  font-size: 1.5rem;
+  padding: 0.8rem 4rem;
+  margin-bottom: 1rem;
+  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
+  &:hover {
+    cursor: pointer;
+    background: $primaryColourHover;
+  }
+}
+
+button.cancelUploadButton {
+    background: #ddd;
+    border-radius: 100px;
+    border: 0;
+    color: #000;
+    font-size: 1.2rem;
+    padding: 0.8rem 4rem;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
+    &:hover {
+        cursor: pointer;
+    }
+}
+
+svg.uploadingProgress {
+  pointer-events: none;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0px;
+  left: 0px;
+  rect {
+    stroke-width: 20;
+    width: 100%;
+    height: 100%;
+    stroke-dasharray: 3031; // this is 100%
+    stroke-dashoffset: 0;
+  }
+}
+
+.percentText {
+  font-size: 1.2rem;
+  color: $primaryGrey;
+}
+
+.uploadSuccess {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  img {
+    width: 1.5rem;
+    height: 1.5rem;
+    margin-top: 0.5rem;
+    margin-right: 0.7rem;
+  }
+  p {
+    margin-bottom: 0;
+    font-size: 1.6rem;
+  }
+}

@@ -1,0 +1,86 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32328.378
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "apps", "apps", "{067BA953-DB8D-482B-91F4-BC966D52B107}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "libs", "libs", "{F302F2CA-CD6F-49A2-9D5A-112FACE56A50}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SecureFileUploader.Functions", "apps\SecureFileUploader.Functions\SecureFileUploader.Functions.csproj", "{AE7B48AD-0416-42E6-9E0E-AAEA590EE7FE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SecureFileUploader.Common.Tests", "libs\SecureFileUploader.Common.Tests\SecureFileUploader.Common.Tests.csproj", "{32641972-F756-412A-A42E-FD3FC8ADD7A0}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SecureFileUploader.Portal.Web", "apps\SecureFileUploader.Portal.Web\SecureFileUploader.Portal.Web.csproj", "{532053B3-2293-42CF-83D9-3DF3D987A4F1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SecureFileUploader.Data.Tests", "libs\SecureFileUploader.Data.Tests\SecureFileUploader.Data.Tests.csproj", "{3F1482C1-B66D-4EA3-BF98-226837C76CD8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F3EFE4EB-27C3-4ABC-AF51-CA4A10F05557}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SecureFileUploader.Data", "libs\SecureFileUploader.Data\SecureFileUploader.Data.csproj", "{7F5356AC-C823-4FA1-8D29-C0EBB6946EA9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SecureFileUploader.Common", "libs\SecureFileUploader.Common\SecureFileUploader.Common.csproj", "{9EEB49F3-8DA0-4833-A4E8-8A5F78DDD1F0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SecureFileUploader.Portal.Web.Tests", "apps\SecureFileUploader.Portal.Web.Tests\SecureFileUploader.Portal.Web.Tests.csproj", "{30A1F616-DC86-4B3F-AA84-7D885829F0F3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SecureFileUploader.CommonZone.Web", "apps\SecureFileUploader.CommonZone.Web\SecureFileUploader.CommonZone.Web.csproj", "{2A20D86D-6234-4369-8B11-8974838FFAF9}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AE7B48AD-0416-42E6-9E0E-AAEA590EE7FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AE7B48AD-0416-42E6-9E0E-AAEA590EE7FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AE7B48AD-0416-42E6-9E0E-AAEA590EE7FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AE7B48AD-0416-42E6-9E0E-AAEA590EE7FE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{32641972-F756-412A-A42E-FD3FC8ADD7A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{32641972-F756-412A-A42E-FD3FC8ADD7A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{32641972-F756-412A-A42E-FD3FC8ADD7A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{32641972-F756-412A-A42E-FD3FC8ADD7A0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{532053B3-2293-42CF-83D9-3DF3D987A4F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{532053B3-2293-42CF-83D9-3DF3D987A4F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{532053B3-2293-42CF-83D9-3DF3D987A4F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{532053B3-2293-42CF-83D9-3DF3D987A4F1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3F1482C1-B66D-4EA3-BF98-226837C76CD8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3F1482C1-B66D-4EA3-BF98-226837C76CD8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3F1482C1-B66D-4EA3-BF98-226837C76CD8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3F1482C1-B66D-4EA3-BF98-226837C76CD8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7F5356AC-C823-4FA1-8D29-C0EBB6946EA9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F5356AC-C823-4FA1-8D29-C0EBB6946EA9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F5356AC-C823-4FA1-8D29-C0EBB6946EA9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F5356AC-C823-4FA1-8D29-C0EBB6946EA9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9EEB49F3-8DA0-4833-A4E8-8A5F78DDD1F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9EEB49F3-8DA0-4833-A4E8-8A5F78DDD1F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9EEB49F3-8DA0-4833-A4E8-8A5F78DDD1F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9EEB49F3-8DA0-4833-A4E8-8A5F78DDD1F0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{30A1F616-DC86-4B3F-AA84-7D885829F0F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{30A1F616-DC86-4B3F-AA84-7D885829F0F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{30A1F616-DC86-4B3F-AA84-7D885829F0F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{30A1F616-DC86-4B3F-AA84-7D885829F0F3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2A20D86D-6234-4369-8B11-8974838FFAF9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2A20D86D-6234-4369-8B11-8974838FFAF9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2A20D86D-6234-4369-8B11-8974838FFAF9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2A20D86D-6234-4369-8B11-8974838FFAF9}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{AE7B48AD-0416-42E6-9E0E-AAEA590EE7FE} = {067BA953-DB8D-482B-91F4-BC966D52B107}
+		{32641972-F756-412A-A42E-FD3FC8ADD7A0} = {F302F2CA-CD6F-49A2-9D5A-112FACE56A50}
+		{532053B3-2293-42CF-83D9-3DF3D987A4F1} = {067BA953-DB8D-482B-91F4-BC966D52B107}
+		{3F1482C1-B66D-4EA3-BF98-226837C76CD8} = {F302F2CA-CD6F-49A2-9D5A-112FACE56A50}
+		{7F5356AC-C823-4FA1-8D29-C0EBB6946EA9} = {F302F2CA-CD6F-49A2-9D5A-112FACE56A50}
+		{9EEB49F3-8DA0-4833-A4E8-8A5F78DDD1F0} = {F302F2CA-CD6F-49A2-9D5A-112FACE56A50}
+		{30A1F616-DC86-4B3F-AA84-7D885829F0F3} = {067BA953-DB8D-482B-91F4-BC966D52B107}
+		{2A20D86D-6234-4369-8B11-8974838FFAF9} = {067BA953-DB8D-482B-91F4-BC966D52B107}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {79C2AFD6-FF18-44A0-B0C5-35695EE811B8}
+	EndGlobalSection
+EndGlobal

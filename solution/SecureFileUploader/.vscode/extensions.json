@@ -1,0 +1,8 @@
+{
+  "recommendations": [
+    "nrwl.angular-console",
+    "esbenp.prettier-vscode",
+    "ms-dotnettools.csharp",
+    "fernandoescolar.vscode-solution-explorer"
+  ]
+}

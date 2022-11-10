@@ -1,0 +1,34 @@
+.pageContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+.contentContainer {
+  max-width: 800px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  // pad container slightly higher - fixes optical illusion where center vert alignment seems lower than it actually is
+  margin-bottom: 2rem;
+
+  h1.hero {
+    margin: 50px 0 0;
+    line-height: 1.35;
+    font-size: 3rem;
+    font-weight: normal;
+    padding-bottom: 2.7rem;
+    color: #222;
+    width: 100%;
+  }
+
+  img.logo {
+    height: 90px;
+    display: block;
+  }
+
+  p {
+    font-size: 20px;
+  }
+}

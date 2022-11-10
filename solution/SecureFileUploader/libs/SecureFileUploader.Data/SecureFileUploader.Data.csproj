@@ -1,0 +1,52 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+
+        <TargetFramework>net6.0</TargetFramework>
+
+        <ImplicitUsings>enable</ImplicitUsings>
+
+        <Nullable>enable</Nullable>
+
+        <OutputPath>../../dist/libs/SecureFileUploader.data</OutputPath>
+
+        <RootNamespace>SecureFileUploader.Data</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.8" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.8">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.8" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer.Design" Version="1.1.6" />
+        <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="6.0.0" />
+        <PackageReference Include="NodaTime" Version="3.1.2" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Folder Include="Migrations" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Update="Resources\LogMessages.resx">
+        <Generator>PublicResXFileCodeGenerator</Generator>
+        <LastGenOutput>LogMessages.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="Resources\LogMessages.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>LogMessages.resx</DependentUpon>
+      </Compile>
+    </ItemGroup>
+
+    <Target Name="CheckNxModuleBoundaries" BeforeTargets="Build">
+
+<!--        This normall gives errors-->
+<!--        <Exec Command="node ../../node_modules/.pnpm/@nx-dotnet+core@1.13.1_44p6he7rwmo5ykmwgvsfrxfl4u/node_modules/@nx-dotnet/core/src/tasks/check-module-boundaries.js -p SecureFileUploader.data" />-->
+    </Target>
+</Project>

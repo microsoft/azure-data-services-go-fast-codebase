@@ -1,0 +1,14 @@
+{
+    "version": "2.0",
+    "logging": {
+        "logLevel": {
+            "SecureFileUploader": "Information"
+        },
+        "applicationInsights": {
+            "samplingSettings": {
+                "isEnabled": true,
+                "excludedTypes": "Request"
+            }
+        }
+    }
+}
