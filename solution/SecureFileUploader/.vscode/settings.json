@@ -1,0 +1,15 @@
+{
+  "omnisharp.useModernNet": true,
+  "omnisharp.useGlobalMono": "never",
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "[csharp]": {
+    "editor.defaultFormatter": "ms-dotnettools.csharp"
+  },
+  "[terraform]": {
+    "editor.defaultFormatter": "hashicorp.terraform"
+    },
+    "[terraform-vars]": {
+        "editor.defaultFormatter": "hashicorp.terraform"
+    },
+    "typescript.preferences.importModuleSpecifier": "project-relative",
+}

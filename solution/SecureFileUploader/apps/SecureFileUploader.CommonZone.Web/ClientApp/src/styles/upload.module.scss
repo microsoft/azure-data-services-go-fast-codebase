@@ -1,0 +1,35 @@
+.pageContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+.contentContainer {
+  padding: 40px 0;
+  max-width: 600px;
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+  flex-wrap: wrap;
+  // pad container slightly higher - fixes optical illusion where center vert alignment seems lower than it actually is
+  margin-bottom: 2rem;
+  img.logo {
+    height: 90px;
+    display: block;
+  }
+  h1.title {
+    margin: 50px 0 0;
+    line-height: 1.15;
+    font-size: 1.6rem;
+    font-weight: normal;
+    padding-bottom: 1rem;
+    color: #222;
+    width: 100%;
+  }
+  > p {
+    font-size: 20px;
+    margin: 0 0 30px;
+    color: #222;
+  }
+}
