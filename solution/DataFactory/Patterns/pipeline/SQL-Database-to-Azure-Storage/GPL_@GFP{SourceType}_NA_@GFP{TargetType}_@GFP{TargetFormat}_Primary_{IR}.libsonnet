@@ -126,7 +126,7 @@ local pipeline = {
                 "typeProperties": {
                     "variableName": "CaseCheck",
                     "value": {
-                        "value": "@if(equals(pipeline().parameters.TaskObject.Source.IncrementalType, 'Full'),'Full', concat(pipeline().parameters.TaskObject.Source.IncrementalType, pipeline().parameters.TaskObject.Source.AuthenticationType))",
+                        "value": "@if(equals(pipeline().parameters.TaskObject.Source.IncrementalType, 'Full'),'Full', concat(pipeline().parameters.TaskObject.Source.IncrementalType, pipeline().parameters.TaskObject.Source.System.AuthenticationType))",
                         "type": "Expression"
                     }
                 }
