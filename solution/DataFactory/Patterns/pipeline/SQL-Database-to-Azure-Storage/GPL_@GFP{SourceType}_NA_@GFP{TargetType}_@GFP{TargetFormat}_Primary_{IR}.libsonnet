@@ -37,25 +37,18 @@ local pipeline = {
 					"type": "LinkedServiceReference"
 				}
 			},
-			{
-				"name": "Lookup Get SQL Metadata",
-				"type": "Lookup",
-				"dependsOn": [
-					{
-						"activity": "AF Get Information Schema SQL",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
-				"policy": {
-					"timeout": "7.00:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [],
+            {
+                "name": "Switch Auth Type",
+                "type": "Switch",
+                "dependsOn": [
+                    {
+                        "activity": "AF Get Information Schema SQL",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "userProperties": [],
 				"typeProperties": infoschemasource(GenerateArm,GFPIR, SourceType)
 			},			
 			{
@@ -63,7 +56,7 @@ local pipeline = {
 				"type": "ExecutePipeline",
 				"dependsOn": [
 					{
-						"activity": "Lookup Get SQL Metadata",
+                        "activity": "Switch Auth Type",
 						"dependencyConditions": [
 							"Failed"
 						]
@@ -78,7 +71,7 @@ local pipeline = {
 					"waitOnCompletion": false,
 					"parameters": {
 						"Body": {
-							"value": "@json(concat('{\"TaskInstanceId\":\"', string(pipeline().parameters.TaskObject.TaskInstanceId), '\",\"ExecutionUid\":\"', string(pipeline().parameters.TaskObject.ExecutionUid), '\",\"RunId\":\"', string(pipeline().RunId), '\",\"LogTypeId\":1,\"LogSource\":\"ADF\",\"ActivityType\":\"Get Metadata\",\"StartDateTimeOffSet\":\"', string(pipeline().TriggerTime), '\",\"EndDateTimeOffSet\":\"', string(utcnow()), '\",\"Comment\":\"', encodeUriComponent(string(activity('Lookup Get SQL Metadata').error.message)), '\",\"Status\":\"Failed\"}'))",
+                            "value": "@json(concat('{\"TaskInstanceId\":\"', string(pipeline().parameters.TaskObject.TaskInstanceId), '\",\"ExecutionUid\":\"', string(pipeline().parameters.TaskObject.ExecutionUid), '\",\"RunId\":\"', string(pipeline().RunId), '\",\"LogTypeId\":1,\"LogSource\":\"ADF\",\"ActivityType\":\"Get Metadata\",\"StartDateTimeOffSet\":\"', string(pipeline().TriggerTime), '\",\"EndDateTimeOffSet\":\"', string(utcnow()), '\",\"Comment\":\"', encodeUriComponent(string(variables('TempOutput'))), '\",\"Status\":\"Failed\"}'))",
 							"type": "Expression"
 						},
 						"FunctionName": "Log",
@@ -91,7 +84,7 @@ local pipeline = {
 				"type": "AzureFunctionActivity",
 				"dependsOn": [
 					{
-						"activity": "Lookup Get SQL Metadata",
+                        "activity": "Switch Auth Type",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -109,7 +102,7 @@ local pipeline = {
 					"functionName": "TaskExecutionSchemaFile",
 					"method": "POST",
 					"body": {
-						"value": "@json(\n concat('{\"TaskInstanceId\":\"',\n string(pipeline().parameters.TaskObject.TaskInstanceId), \n '\",\"ExecutionUid\":\"', \n string(pipeline().parameters.TaskObject.ExecutionUid), \n '\",\"RunId\":\"', string(pipeline().RunId), \n '\",\"StorageAccountName\":\"', \n string(pipeline().parameters.TaskObject.Target.System.SystemServer),\n  '\",\"StorageAccountContainer\":\"', \n  string(pipeline().parameters.TaskObject.Target.System.Container), \n  '\",\"RelativePath\":\"', \n  string(pipeline().parameters.TaskObject.Target.Instance.TargetRelativePath), \n  '\",\"SchemaFileName\":\"', \n  string(pipeline().parameters.TaskObject.Target.SchemaFileName), \n  '\",\"SourceType\":\"', \n  string(pipeline().parameters.TaskObject.Source.System.Type), \n  '\",\"TargetType\":\"', \n  if(\n    contains(\n    string(pipeline().parameters.TaskObject.Target.System.SystemServer),\n    '.dfs.core.windows.net'\n    ),\n   'ADLS',\n   'Azure Blob'), \n  '\",\"Data\":',\n  string(activity('Lookup Get SQL Metadata').output),\n  ',\"MetadataType\":\"SQL\"}')\n)",
+                        "value": "@json(\n concat('{\"TaskInstanceId\":\"',\n string(pipeline().parameters.TaskObject.TaskInstanceId), \n '\",\"ExecutionUid\":\"', \n string(pipeline().parameters.TaskObject.ExecutionUid), \n '\",\"RunId\":\"', string(pipeline().RunId), \n '\",\"StorageAccountName\":\"', \n string(pipeline().parameters.TaskObject.Target.System.SystemServer),\n  '\",\"StorageAccountContainer\":\"', \n  string(pipeline().parameters.TaskObject.Target.System.Container), \n  '\",\"RelativePath\":\"', \n  string(pipeline().parameters.TaskObject.Target.Instance.TargetRelativePath), \n  '\",\"SchemaFileName\":\"', \n  string(pipeline().parameters.TaskObject.Target.SchemaFileName), \n  '\",\"SourceType\":\"', \n  string(pipeline().parameters.TaskObject.Source.System.Type), \n  '\",\"TargetType\":\"', \n  if(\n    contains(\n    string(pipeline().parameters.TaskObject.Target.System.SystemServer),\n    '.dfs.core.windows.net'\n    ),\n   'ADLS',\n   'Azure Blob'), \n  '\",\"Data\":',\n  string(variables('TempOutput')),\n  ',\"MetadataType\":\"SQL\"}')\n)",
 						"type": "Expression"
 					}
 				},
@@ -119,230 +112,39 @@ local pipeline = {
 				}
 			},
 			{
+                "name": "Set CaseCheck",
+                "type": "SetVariable",
+                "dependsOn": [
+                    {
+                        "activity": "AF Persist Metadata and Get Mapping",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "userProperties": [],
+                "typeProperties": {
+                    "variableName": "CaseCheck",
+                    "value": {
+                        "value": "@if(equals(pipeline().parameters.TaskObject.Source.IncrementalType, 'Full'),'Full', concat(pipeline().parameters.TaskObject.Source.IncrementalType, pipeline().parameters.TaskObject.Source.AuthenticationType))",
+                        "type": "Expression"
+                    }
+                }
+            },
+			{
 				"name": "Switch Load Type",
 				"type": "Switch",
 				"dependsOn": [
 					{
-						"activity": "AF Persist Metadata and Get Mapping",
+						"activity": "Set CaseCheck",
 						"dependencyConditions": [
 							"Succeeded"
 						]
 					}
 				],
 				"userProperties": [],
-				"typeProperties": {
-					"on": {
-						"value": "@pipeline().parameters.TaskObject.Source.IncrementalType",
-						"type": "Expression"
-					},
-					"cases": [
-						{
-							"value": "Full",
-							"activities": [
-								{
-									"name": "Execute Full_Load Pipeline",
-									"type": "ExecutePipeline",
-									"dependsOn": [],
-									"userProperties": [],
-									"typeProperties": {
-										"pipeline": {
-											"referenceName": 	if(GenerateArm=="false") 
-																then "GPL_"+SourceType+"_"+"NA"+"_"+TargetType+"_"+TargetFormat+"_Full_Load_"+GFPIR 
-																else "[concat('GPL_"+SourceType+"_"+"NA"+"_"+TargetType+"_"+TargetFormat+"_Full_Load_" + "', parameters('integrationRuntimeShortName'))]",
-											"type": "PipelineReference"
-										},
-										"waitOnCompletion": true,
-										"parameters": {
-											"TaskObject": {
-												"value": "@pipeline().parameters.TaskObject",
-												"type": "Expression"
-											},
-											"Mapping": {
-												"value": "@activity('AF Persist Metadata and Get Mapping').output.value",
-												"type": "Expression"
-											},
-											"BatchCount": "1",
-											"Item": "1"
-										}
-									}
-								}
-							]
-						},
-						{
-							"value": "Watermark",
-							"activities": [
-								{
-									"name": "Execute Watermark Pipeline",
-									"type": "ExecutePipeline",
-									"dependsOn": [
-										{
-											"activity": "Lookup New Watermark",
-											"dependencyConditions": [
-												"Succeeded"
-											]
-										}
-									],
-									"userProperties": [],
-									"typeProperties": {
-										"pipeline": {										
-											"referenceName": if(GenerateArm=="false") 
-																then "GPL_"+SourceType+"_"+"NA"+"_"+TargetType+"_"+TargetFormat+"_Watermark_Chunk_"+GFPIR 
-																else "[concat('GPL_"+SourceType+"_"+"NA"+"_"+TargetType+"_"+TargetFormat+"_Watermark_Chunk_" + "', parameters('integrationRuntimeShortName'))]",
-											"type": "PipelineReference"
-										},
-										"waitOnCompletion": true,
-										"parameters": {
-                                            "BatchCount": {
-                                                "value": "@int('1')",
-                                                "type": "Expression"
-                                            },
-                                            "Mapping": {
-                                                "value": "@activity('AF Persist Metadata and Get Mapping').output.value",
-                                                "type": "Expression"
-                                            },
-                                            "NewWatermark": {
-                                                "value": "@activity('Lookup New Watermark').output.firstRow.newWatermark",
-                                                "type": "Expression"
-                                            },
-                                            "TaskObject": {
-                                                "value": "@pipeline().parameters.TaskObject",
-                                                "type": "Expression"
-                                            }
-                                        }
-									}
-								},
-								{
-									"name": "Lookup New Watermark",
-									"type": "Lookup",
-									"dependsOn": [],
-									"policy": {
-										"timeout": "0.00:30:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": Watermarksource(GenerateArm,GFPIR,  SourceType)
-								}
-							]
-						},
-						{
-							"value": "Full_Chunk",
-							"activities": [
-								{
-									"name": "Execute Full Load Chunk Pipeline",
-									"type": "ExecutePipeline",
-									"dependsOn": [
-										{
-											"activity": "Lookup Chunk",
-											"dependencyConditions": [
-												"Succeeded"
-											]
-										}
-									],
-									"userProperties": [],
-									"typeProperties": {
-										"pipeline": {											
-											"referenceName": if(GenerateArm=="false") 
-																then "GPL_"+SourceType+"_"+"NA"+"_"+TargetType+"_"+TargetFormat+"_Full_Load_Chunk_"+GFPIR 
-																else "[concat('GPL_"+SourceType+"_"+"NA"+"_"+TargetType+"_"+TargetFormat+"_Full_Load_Chunk_" + "', parameters('integrationRuntimeShortName'))]",
-											"type": "PipelineReference"
-										},
-										"waitOnCompletion": true,
-										"parameters": {
-											"TaskObject": {
-												"value": "@pipeline().parameters.TaskObject",
-												"type": "Expression"
-											},
-											"Mapping": {
-												"value": "@activity('AF Persist Metadata and Get Mapping').output.value",
-												"type": "Expression"
-											},
-											"BatchCount": {
-												"value": "@activity('Lookup Chunk').output.firstRow.batchcount",
-												"type": "Expression"
-											}
-										}
-									}
-								},
-								{
-									"name": "Lookup Chunk",
-									"type": "Lookup",
-									"dependsOn": [],
-									"policy": {
-										"timeout": "0.00:30:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": Watermarksource(GenerateArm,GFPIR,  SourceType)
-								}
-							]
-						},
-						{
-							"value": "Watermark_Chunk",
-							"activities": [
-								{
-									"name": "Execute Watermark Chunk Pipeline",
-									"type": "ExecutePipeline",
-									"dependsOn": [
-										{
-											"activity": "Lookup New Watermark and Chunk",
-											"dependencyConditions": [
-												"Succeeded"
-											]
-										}
-									],
-									"userProperties": [],
-									"typeProperties": {
-										"pipeline": {											
-											"referenceName": if(GenerateArm=="false") 
-																then "GPL_"+SourceType+"_"+"NA"+"_"+TargetType+"_"+TargetFormat+"_Watermark_Chunk_"+GFPIR 
-																else "[concat('GPL_"+SourceType+"_"+"NA"+"_"+TargetType+"_"+TargetFormat+"_Watermark_Chunk_" + "', parameters('integrationRuntimeShortName'))]",
-											"type": "PipelineReference"
-										},
-										"waitOnCompletion": true,
-										"parameters": {
-											"TaskObject": {
-												"value": "@pipeline().parameters.TaskObject",
-												"type": "Expression"
-											},
-											"Mapping": {
-												"value": "@activity('AF Persist Metadata and Get Mapping').output.value",
-												"type": "Expression"
-											},
-											"NewWatermark": {
-												"value": "@activity('Lookup New Watermark and Chunk').output.firstRow.newWatermark",
-												"type": "Expression"
-											},
-											"BatchCount": {
-												"value": "@activity('Lookup New Watermark and Chunk').output.firstRow.batchcount",
-												"type": "Expression"
-											}
-										}
-									}
-								},
-								{
-									"name": "Lookup New Watermark and Chunk",
-									"type": "Lookup",
-									"dependsOn": [],
-									"policy": {
-										"timeout": "0.00:30:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": Watermarksource(GenerateArm,GFPIR,  SourceType)
-								}
-							]
-						}
-					]
-				}
+				"typeProperties": 	Watermarksource(GenerateArm,GFPIR, SourceType,TargetType,TargetFormat)
+					
 			}
 		],
 		"parameters": {
@@ -402,7 +204,13 @@ local pipeline = {
 		"variables": {
 			"SQLStatement": {
 				"type": "String"
-			}
+			},
+            "TempOutput": {
+                "type": "String"
+            },
+            "CaseCheck": {
+                "type": "String"
+            }
 		},
 		"folder": {
 			"name": if(GenerateArm=="false") 

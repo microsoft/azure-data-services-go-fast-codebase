@@ -1,5 +1,4 @@
 function(GenerateArm="false",GFPIR="IRA") 
-{"inputs":
 [{
   local referenceName = "GDS_AzureSqlTable_NA_",
   "referenceName":if(GenerateArm=="false") 
@@ -25,4 +24,3 @@ function(GenerateArm="false",GFPIR="IRA")
     }
   }
 }]
-}

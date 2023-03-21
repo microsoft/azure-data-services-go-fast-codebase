@@ -30,32 +30,25 @@ local pipeline =  {
 				}
 			},
 			{
-				"name": "Copy SQL to Storage",
-				"type": "Copy",
-				"dependsOn": [
-					{
-						"activity": "Set SQLStatement",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
-				"policy": {
-					"timeout": "7.00:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": []
-			}
-				+CopyActivity_TypeProperties(GenerateArm,GFPIR,SourceType, TargetType, TargetFormat),											
+                "name": "Switch Auth Type",
+                "type": "Switch",
+                "dependsOn": [
+                    {
+                        "activity": "Set SQLStatement",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "userProperties": [],
+			} 
+				+CopyActivity_TypeProperties(GenerateArm,GFPIR,SourceType, TargetType, TargetFormat),										
 			{
 				"name": "Pipeline AF Log - Copy Failed",
 				"type": "ExecutePipeline",
 				"dependsOn": [
 					{
-						"activity": "Copy SQL to Storage",
+						"activity": "Switch Auth Type",
 						"dependencyConditions": [
 							"Failed"
 						]
@@ -70,7 +63,7 @@ local pipeline =  {
 					"waitOnCompletion": false,
 					"parameters": {
 						"Body": {
-							"value": "@json(concat('{\"TaskInstanceId\":\"', string(pipeline().parameters.TaskObject.TaskInstanceId), '\",\"ExecutionUid\":\"', string(pipeline().parameters.TaskObject.ExecutionUid), '\",\"RunId\":\"', string(pipeline().RunId), '\",\"LogTypeId\":1,\"LogSource\":\"ADF\",\"ActivityType\":\"Copy SQL to Storage\",\"StartDateTimeOffSet\":\"', string(pipeline().TriggerTime), '\",\"EndDateTimeOffSet\":\"', string(utcnow()), '\",\"Comment\":\"', encodeUriComponent(string(activity('Copy SQL to Storage').error.message)), '\",\"Status\":\"Failed\"}'))",
+							"value": "@json(concat('{\"TaskInstanceId\":\"', string(pipeline().parameters.TaskObject.TaskInstanceId), '\",\"ExecutionUid\":\"', string(pipeline().parameters.TaskObject.ExecutionUid), '\",\"RunId\":\"', string(pipeline().RunId), '\",\"LogTypeId\":1,\"LogSource\":\"ADF\",\"ActivityType\":\"Copy SQL to Storage\",\"StartDateTimeOffSet\":\"', string(pipeline().TriggerTime), '\",\"EndDateTimeOffSet\":\"', string(utcnow()), '\",\"Comment\":\"', encodeUriComponent(string(variables('TempOutput'))), '\",\"Status\":\"Failed\"}'))",
 							"type": "Expression"
 						},
 						"FunctionName": "Log",
@@ -115,7 +108,7 @@ local pipeline =  {
 				"type": "GetMetadata",
 				"dependsOn": [
 					{
-						"activity": "Copy SQL to Storage",
+						"activity": "Switch Auth Type",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -157,7 +150,7 @@ local pipeline =  {
 				"type": "ExecutePipeline",
 				"dependsOn": [
 					{
-						"activity": "Copy SQL to Storage",
+						"activity": "Switch Auth Type",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -172,7 +165,7 @@ local pipeline =  {
 					"waitOnCompletion": false,
 					"parameters": {
 						"Body": {
-							"value": "@json(concat('{\"TaskInstanceId\":\"', string(pipeline().parameters.TaskObject.TaskInstanceId), '\",\"ExecutionUid\":\"', string(pipeline().parameters.TaskObject.ExecutionUid), '\",\"RunId\":\"', string(pipeline().RunId), '\",\"LogTypeId\":1,\"LogSource\":\"ADF\",\"ActivityType\":\"Copy SQL to Storage\",\"StartDateTimeOffSet\":\"', string(pipeline().TriggerTime), '\",\"EndDateTimeOffSet\":\"', string(utcnow()), '\",\"RowsInserted\":\"', string(activity('Copy SQL to Storage').output.rowsCopied), '\",\"Comment\":\"\",\"Status\":\"Complete\"}'))",
+							"value": "@json(concat('{\"TaskInstanceId\":\"', string(pipeline().parameters.TaskObject.TaskInstanceId), '\",\"ExecutionUid\":\"', string(pipeline().parameters.TaskObject.ExecutionUid), '\",\"RunId\":\"', string(pipeline().RunId), '\",\"LogTypeId\":1,\"LogSource\":\"ADF\",\"ActivityType\":\"Copy SQL to Storage\",\"StartDateTimeOffSet\":\"', string(pipeline().TriggerTime), '\",\"EndDateTimeOffSet\":\"', string(utcnow()), '\",\"RowsInserted\":\"', string(json(variables('TempOutput')).rowsCopied), '\",\"Comment\":\"\",\"Status\":\"Complete\"}'))",
 							"type": "Expression"
 						},
 						"FunctionName": "Log",
@@ -250,7 +243,10 @@ local pipeline =  {
 		"variables": {
 			"SQLStatement": {
 				"type": "String"
-			}
+			},
+            "TempOutput": {
+                "type": "String"
+            }
 		},
 		"folder": {
 					"name": if(GenerateArm=="false") 

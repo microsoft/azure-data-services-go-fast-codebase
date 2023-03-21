@@ -1,7 +1,6 @@
 function(GenerateArm="false",GFPIR="IRA") 
- {
-   local referenceName = "GDS_OracleServerTable_NA_",
-   "inputs": [{    
+[{ 
+    local referenceName = "GDS_OracleServerTable_NA_",   
     "referenceName":if(GenerateArm=="false") 
                     then referenceName + GFPIR
                     else "[concat('"+referenceName+"', parameters('integrationRuntimeShortName'))]",   
@@ -40,5 +39,4 @@ function(GenerateArm="false",GFPIR="IRA")
             "type": "Expression"
         }
     }
-  }]
- }
+}]
