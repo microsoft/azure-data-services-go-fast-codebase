@@ -75,6 +75,7 @@ namespace FunctionApp.TestHarness
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly KeyVaultService _keyVaultService;
         private readonly PowerBIService _powerBIService;
+        private readonly AzureDataLakeService _azureDataLakeService;
         //private readonly TelemetryClient _telemetryClient;
         //private readonly TelemetryConfiguration _telemetryConfiguration;
 
@@ -85,15 +86,16 @@ namespace FunctionApp.TestHarness
             IOptions<ApplicationOptions> options,
             IAzureAuthenticationProvider authProvider,
             MicrosoftAzureServicesAppAuthenticationProvider microsoftAzureServicesAppAuthenticationProvider,
-            TaskMetaDataDatabase taskMetaDataDatabase, 
+            TaskMetaDataDatabase taskMetaDataDatabase,
             DataFactoryPipelineProvider dataFactoryPipelineProvider,
             DataFactoryClientFactory dataFactoryClientFactory,
             ISecurityAccessProvider sap,
-            AzureSynapseService azureSynapseService, 
+            AzureSynapseService azureSynapseService,
             PurviewService purviewService,
             IHttpClientFactory httpClientFactory,
             KeyVaultService keyVaultService,
-            PowerBIService powerBIService
+            PowerBIService powerBIService,
+            AzureDataLakeService azureDataLakeService
             //TelemetryConfiguration telemetryConfiguration
             )
         {
@@ -113,6 +115,7 @@ namespace FunctionApp.TestHarness
             _httpClientFactory = httpClientFactory;
             _keyVaultService = keyVaultService;
             _powerBIService = powerBIService;
+            _azureDataLakeService = azureDataLakeService;
            // _telemetryConfiguration = telemetryConfiguration;
            // _telemetryClient = new TelemetryClient(telemetryConfiguration);
         }
@@ -163,9 +166,11 @@ namespace FunctionApp.TestHarness
             //this._taskMetaDataDatabase.GenerateMergeSql("dbo", "Stg_Customer-10","dbo", "Customer-10",con,false, _funcAppLogger);
 
             //var body = JObject.Parse("{\"SourceHttpPath\": \"https://datalakeraw/arkstgdlsadsirudadsl.dfs.core.windows.net/samples/SalesLT.Customer.chunk_1.parquet\", \"TargetHttpPath\": \"https://datalakelanding/arkstgdlsadsirudadsl.dfs.core.windows.net/TesstDelta\", \"SourceColumns\": [{\"name\": \"CustomerID\", \"type\": \"int\"}, {\"name\": \"NameStyle\", \"type\": \"boolean\"}, {\"name\": \"Title\", \"type\": \"string\"}, {\"name\": \"FirstName\", \"type\": \"string\"}, {\"name\": \"MiddleName\", \"type\": \"string\"}, {\"name\": \"LastName\", \"type\": \"string\"}, {\"name\": \"Suffix\", \"type\": \"string\"}, {\"name\": \"CompanyName\", \"type\": \"string\"}, {\"name\": \"SalesPerson\", \"type\": \"string\"}, {\"name\": \"EmailAddress\", \"type\": \"string\"}, {\"name\": \"Phone\", \"type\": \"string\"}, {\"name\": \"PasswordHash\", \"type\": \"string\"}, {\"name\": \"PasswordSalt\", \"type\": \"string\"}, {\"name\": \"rowguid\", \"type\": \"string\"}, {\"name\": \"ModifiedDate\", \"type\": \"timestamp\"}], \"TargetColumns\": [{\"name\": \"CustomerID\", \"type\": \"int\"}, {\"name\": \"NameStyle\", \"type\": \"boolean\"}, {\"name\": \"Title\", \"type\": \"string\"}, {\"name\": \"FirstName\", \"type\": \"string\"}, {\"name\": \"MiddleName\", \"type\": \"string\"}, {\"name\": \"LastName\", \"type\": \"string\"}, {\"name\": \"Suffix\", \"type\": \"string\"}, {\"name\": \"CompanyName\", \"type\": \"string\"}, {\"name\": \"SalesPerson\", \"type\": \"string\"}, {\"name\": \"EmailAddress\", \"type\": \"string\"}, {\"name\": \"Phone\", \"type\": \"string\"}, {\"name\": \"PasswordHash\", \"type\": \"string\"}, {\"name\": \"PasswordSalt\", \"type\": \"string\"}, {\"name\": \"rowguid\", \"type\": \"string\"}, {\"name\": \"ModifiedDate\", \"type\": \"timestamp\"}], \"TaskObject\": {\"TaskInstanceId\": 5, \"TaskMasterId\": 4, \"TaskStatus\": \"InProgress\", \"TaskType\": \"Azure Storage to Azure Storage\", \"Enabled\": 1, \"ExecutionUid\": \"6b9769c0-cfd0-462a-aeda-c75b842f56db\", \"NumberOfRetries\": 0, \"DegreeOfCopyParallelism\": 1, \"KeyVaultBaseUrl\": \"https://ark-stg-kv-ads-irud.vault.azure.net/\", \"ScheduleMasterId\": \"-4\", \"TaskGroupConcurrency\": \"10\", \"TaskGroupPriority\": 0, \"TaskExecutionType\": \"ADF\", \"ExecutionEngine\": {\"EngineId\": -2, \"EngineName\": \"arkstgsynwadsirud\", \"SystemType\": \"Synapse\", \"ResourceGroup\": \"dlzdev04\", \"SubscriptionId\": \"ed1206e0-17c7-4bc2-ad4b-f8d4dab9284f\", \"ADFPipeline\": \"GPL_SparkNotebookExecution_Azure\", \"EngineJson\": \"{\\r\\n             \\\"endpoint\\\": \\\"https://arkstgsynwadsirud.dev.azuresynapse.net\\\", \\\"DeltaProcessingNotebook\\\": \\\"DeltaProcessingNotebook\\\", \\\"PurviewAccountNameName\\\": \\\"dlzdev04purv\\\"\\r\\n        }\", \"TaskDatafactoryIR\": \"Azure\", \"JsonProperties\": {\"endpoint\": \"https://arkstgsynwadsirud.dev.azuresynapse.net\", \"DeltaProcessingNotebook\": \"DeltaProcessingNotebook\", \"PurviewAccountNameName\": \"dlzdev04purv\"}}, \"Source\": {\"System\": {\"SystemId\": -4, \"SystemServer\": \"https://arkstgdlsadsirudadsl.dfs.core.windows.net\", \"AuthenticationType\": \"MSI\", \"Type\": \"ADLS\", \"Username\": null, \"Container\": \"datalakeraw\"}, \"Instance\": {\"SourceRelativePath\": \"samples/\", \"TargetRelativePath\": \"\"}, \"DataFileName\": \"yooyoyo.parquet\", \"MaxConcurrentConnections\": 100, \"RelativePath\": \"samples/\", \"SchemaFileName\": \"SalesLT.Customer.json\", \"Type\": \"Parquet\", \"WriteSchemaToPurview\": \"Enabled\"}, \"Target\": {\"System\": {\"SystemId\": -8, \"SystemServer\": \"https://arkstgdlsadsirudadsl.dfs.core.windows.net\", \"AuthenticationType\": \"MSI\", \"Type\": \"ADLS\", \"Username\": null, \"Container\": \"datalakelanding\"}, \"Instance\": {\"SourceRelativePath\": \"samples/\", \"TargetRelativePath\": \"\"}, \"DataFileName\": \"Iwork\", \"MaxConcurrentConnections\": 100, \"RelativePath\": \"\", \"SchemaFileName\": \"\", \"Type\": \"Delta\", \"WriteSchemaToPurview\": \"Enabled\"}, \"TMOptionals\": {\"Purview\": \"Enabled\", \"QualifiedIDAssociation\": \"TaskMasterID\"}}}");
-            var test = await _powerBIService.RefreshDataflow("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "testSecret", "", "refreshTest", "ea6e65c7-8840-425b-a957-8c72609ac812", "https://ark-stg-kv-ads-aqye.vault.azure.net/", _funcAppLogger);
+            //var test = await _powerBIService.RefreshDataflow("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "testSecret", "", "refreshTest", "ea6e65c7-8840-425b-a957-8c72609ac812", "https://ark-stg-kv-ads-aqye.vault.azure.net/", _funcAppLogger);
             //var test2 = await _powerBIService.CheckDataflowRefreshStatus("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "testSecret", "", "refreshTest", "ea6e65c7-8840-425b-a957-8c72609ac812", "https://ark-stg-kv-ads-aqye.vault.azure.net/", test, _funcAppLogger);
             //var test2 = await _powerBIService.CheckDataflowRefreshStatus("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "testSecret", "", "TaskMasterDF", "ea6e65c7-8840-425b-a957-8c72609ac812", "https://ark-stg-kv-ads-aqye.vault.azure.net/", "bla", _funcAppLogger);
+            //await _azureDataLakeService.InjectInput("adsuatdlsadszjhsadsl", "test", _funcAppLogger);
+            await _azureDataLakeService.DetectOutput("adsuatdlsadszjhsadsl", "test", "testoutput.txt", _funcAppLogger);
 
 
 

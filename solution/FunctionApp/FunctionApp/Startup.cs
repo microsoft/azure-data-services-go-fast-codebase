@@ -116,6 +116,7 @@ namespace FunctionApp
             services.AddSingleton<IntegrationRuntimeMappingProvider>();
             services.AddSingleton<KeyVaultService>();
             services.AddSingleton<PowerBIService>();
+            services.AddSingleton<AzureDataLakeService>();
             services.AddSingleton<DataFactoryPipelineProvider>();
             services.AddSingleton<MicrosoftAzureServicesAppAuthenticationProvider>(downstreamViaAppRegAuthenticationProvider);
             services.AddSingleton<IAzureAuthenticationProvider>(downstreamAuthenticationProvider);
