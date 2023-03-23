@@ -60,3 +60,6 @@ if($files.length -gt 0)
 
 
 #sudo service cron stop
+
+
+#location -> /var/spool/cron/crontabs/adminuser
