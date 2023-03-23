@@ -41,7 +41,7 @@ namespace FunctionApp.Services
             _taskMetaDataDatabase = taskMetaDataDatabase;
             _keyVaultService = keyVaultService;
         }
-        public async Task InjectInput(string StorageAccountName, string ContainerName, Logging.Logging logging)
+        public async Task InjectInput(string StorageAccountName, string ContainerName, string ExecutionUid, string TaskMasterId, string TaskInstanceId, string ExecutionInput, string ExecutionPath, Logging.Logging logging)
         {
             try
             {
@@ -59,16 +59,21 @@ namespace FunctionApp.Services
                 var fileSystems = dataLakeServiceClient.GetFileSystemsAsync(traits, states, ContainerName, default);
                 var containerFound = false;
                 //check storage account for our container
+                logging.LogInformation($"Checking containers within storage account: {dfsUri}");
+
                 await foreach (FileSystemItem fileSystemItem in fileSystems)
                 {
                     if (fileSystemItem.Name == ContainerName)
                     {
                         containerFound = true;
+                        logging.LogInformation($"Container found within storage account: {ContainerName}");
+
                     }
                 }
                 // if no container found, create one
                 if (!containerFound)
                 {
+                    logging.LogInformation($"Creating Container within storage account: {ContainerName}");
                     var container = await dataLakeServiceClient.CreateFileSystemAsync(ContainerName);
                 }
                 //
@@ -76,15 +81,36 @@ namespace FunctionApp.Services
                 DataLakeFileSystemClient fileSystemClient = dataLakeServiceClient.GetFileSystemClient(ContainerName);
                 
 
-                //create directory clients for input / outputs
+                //create directory clients for input / outputs / in progress
                 PathResourceType pathResourceType = PathResourceType.Directory;
-                DataLakeDirectoryClient inputDirectoryClient = fileSystemClient.GetDirectoryClient("inputs");
-                DataLakeDirectoryClient outputDirectoryClient = fileSystemClient.GetDirectoryClient("outputs");
+                DataLakeDirectoryClient inputDirectoryClient = fileSystemClient.GetDirectoryClient("input");
+                DataLakeDirectoryClient outputDirectoryClient = fileSystemClient.GetDirectoryClient("output");
+                DataLakeDirectoryClient inProgressDirectoryClient = fileSystemClient.GetDirectoryClient("in_progress");
+                logging.LogInformation($"Creating directories if they do not exist:");
 
                 var inputDirectory = await inputDirectoryClient.CreateIfNotExistsAsync(pathResourceType, default, default);
-                var outputDirectory = await outputDirectoryClient.CreateIfNotExistsAsync(pathResourceType, default, default);
+                logging.LogInformation($"inputDirectory: {inputDirectory}. Note: Null result = directory exists");
 
-                DataLakeFileClient fileClient = await inputDirectoryClient.CreateFileAsync("testinput.txt");
+                var outputDirectory = await outputDirectoryClient.CreateIfNotExistsAsync(pathResourceType, default, default);
+                logging.LogInformation($"ouputDirectory: {outputDirectory}. Note: Null result = directory exists");
+
+                var inProgressDirectory = await inProgressDirectoryClient.CreateIfNotExistsAsync(pathResourceType, default, default);
+                logging.LogInformation($"inProgressDirectory: {outputDirectory}. Note: Null result = directory exists");
+
+                string fileName = ExecutionUid + ".json";
+                JObject jsonContent = new JObject();
+                jsonContent["TaskMasterId"] = TaskMasterId;
+                jsonContent["TaskInstanceId"] = TaskInstanceId;
+                jsonContent["ExecutionUid"] = ExecutionUid;
+                jsonContent["InputCreatedUTC"] = DateTime.UtcNow.ToString();
+                jsonContent["InProgressCreatedUTC"] = "";
+                jsonContent["ExecutionPath"] = ExecutionPath;
+                jsonContent["ExecutionInput"] = ExecutionInput;
+                jsonContent["ExecutionOutput"] = new JObject();
+                jsonContent["OutputCreatedUTC"] = "";
+
+                string json = jsonContent.ToString();
+                DataLakeFileClient fileClient = await inputDirectoryClient.CreateFileAsync(fileName);
                 /* Using file stream / create -> likely delete this later
                 string path = @".\input.txt";
                 using (FileStream fs = File.Create(path))
@@ -108,9 +134,10 @@ namespace FunctionApp.Services
                 {
                     using (StreamWriter sw = new StreamWriter(ms))
                     {
-                        sw.Write("ayo22");
+                        sw.Write(json);
                         sw.Flush();
                         ms.Position = 0;
+                        logging.LogInformation($"Writing : {fileName} to input folder.");
                         await fileClient.UploadAsync(ms, true, default);
                     }
 
@@ -126,7 +153,7 @@ namespace FunctionApp.Services
         }
 
 
-        public async Task DetectOutput(string StorageAccountName, string ContainerName, string FileName, Logging.Logging logging)
+        public async Task DetectOutput(string StorageAccountName, string ContainerName, string ExecutionUid, Logging.Logging logging)
         {
             try
             {
@@ -143,13 +170,14 @@ namespace FunctionApp.Services
                 DataLakeFileSystemClient fileSystemClient = dataLakeServiceClient.GetFileSystemClient(ContainerName);
 
 
-                //create directory clients for input / outputs
+                //get directory clients for output
                 PathResourceType pathResourceType = PathResourceType.Directory;
-                DataLakeDirectoryClient outputDirectoryClient = fileSystemClient.GetDirectoryClient("outputs");
+                DataLakeDirectoryClient outputDirectoryClient = fileSystemClient.GetDirectoryClient("output");
 
                 var outputDirectory = await outputDirectoryClient.CreateIfNotExistsAsync(pathResourceType, default, default);
+                string fileName = ExecutionUid + ".json";
 
-                DataLakeFileClient fileClient = outputDirectoryClient.GetFileClient(FileName);
+                DataLakeFileClient fileClient = outputDirectoryClient.GetFileClient(fileName);
 
                 var fileExists = await fileClient.ExistsAsync(default);
                 if (fileExists)
@@ -160,10 +188,16 @@ namespace FunctionApp.Services
                     StreamReader sr = new StreamReader(stream);
                     var text = sr.ReadToEnd();
                     sr.Close();
+
+                    //archive file
+
                     //delete file as done
-                    await fileClient.DeleteAsync(default, default);
+                    //await fileClient.DeleteAsync(default, default);
+
 
                     // do logic for Completion / error on execution
+
+
                 }
                 else
                 {
