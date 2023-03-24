@@ -38,6 +38,10 @@ locals {
   jumphost_nic_name            = "${module.naming.virtual_machine.name}-jumphost_nic"
   jumphost_password            = ((var.is_vnet_isolated && var.jumphost_password == null) ? "" : var.jumphost_password)
   synapse_data_lake_name       = (var.synapse_data_lake_name != "" ? var.synapse_data_lake_name : module.naming.data_lake_store.name_unique)
+  cmd_executor_vm_nic_name     = "${module.naming.virtual_machine.name}-cmdexe_nic"
+  cmd_executor_vm_name         = replace(module.naming.virtual_machine.name,"-vm-ads","-vm-cmdexe")
+  adls_vm_cmd_executor_name    = (var.adls_vm_cmd_executor_name != "" ? var.adls_vm_cmd_executor_name : "${module.naming.data_lake_store.name_unique}cmdexe")
+
   synapse_workspace_name       = (var.synapse_workspace_name != "" ? var.synapse_workspace_name : "${var.prefix}${var.environment_tag}synw${var.app_name}${element(split("-", module.naming.data_factory.name_unique), length(split("-", module.naming.data_factory.name_unique)) - 1)}")
   synapse_dwpool_name          = (var.synapse_dwpool_name != "" ? var.synapse_dwpool_name : "${var.prefix}${var.environment_tag}syndp${var.app_name}")
   synapse_sppool_name          = (var.synapse_sppool_name != "" ? var.synapse_sppool_name : "${var.prefix}${var.environment_tag}synsp${var.app_name}")
@@ -157,6 +161,27 @@ synapse_integration_runtimes = [
       ]
     }
 ]
+
+virtual_machine_integration_runtimes = [
+    {
+      name                 = "Non-Applicable"
+      short_name           = "N/A"
+      is_azure             = false
+      is_managed_vnet      = false
+      valid_source_systems = []
+      valid_pipeline_patterns = [
+                {
+          Folder       = "Execute-VM-Command"
+          SourceFormat = "*"
+          SourceType   = "*"
+          TargetFormat = "*"
+          TargetType   = "*"
+          TaskTypeId   = "*"
+        }
+      ]
+    }
+]
+
 }
 
 

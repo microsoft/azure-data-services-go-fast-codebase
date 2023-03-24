@@ -236,4 +236,19 @@ resource "azurerm_key_vault_secret" "selfhostedsql_password" {
   }
 }
 
+resource "azurerm_key_vault_secret" "cmdexecutorvm_password" {
+  count        = var.deploy_cmd_executor_vm ? 1 : 0
+  name         = "cmdexecutorvmpw"
+  value        = random_password.cmd_executor_vm[0].result
+  key_vault_id = azurerm_key_vault.app_vault.id
+  depends_on = [
+    time_sleep.cicd_access,
+  ]
+  lifecycle {
+    ignore_changes = [
+      value
+    ]
+  }
+}
+
 

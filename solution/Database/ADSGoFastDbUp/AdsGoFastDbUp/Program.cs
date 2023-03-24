@@ -68,6 +68,10 @@ namespace AdsGoFastDbUp
         public string DatabricksWorkspaceResourceID { get; set; }
         [Option("DefaultInstancePoolID", Required = true, HelpText = "Parameter for the scripts.")]
         public string DefaultInstancePoolID { get; set; }
+        [Option("CmdExecutorVMName", Required = true, HelpText = "Parameter for the scripts.")]
+        public string DefaultInstancePoolID { get; set; }
+        [Option("CmdExecutorVMAdlsName", Required = true, HelpText = "Parameter for the scripts.")]
+        public string DefaultInstancePoolID { get; set; }
     }
 
     class Program
@@ -200,6 +204,8 @@ namespace AdsGoFastDbUp
             builder.WithVariable("DatabricksWorkspaceURL", o.DatabricksWorkspaceURL);
             builder.WithVariable("DatabricksWorkspaceResourceID", o.DatabricksWorkspaceResourceID);
             builder.WithVariable("DefaultInstancePoolID", o.DefaultInstancePoolID);
+            builder.WithVariable("CmdExecutorVMName", o.CmdExecutorVMName);
+            builder.WithVariable("CmdExecutorVMAdlsName", o.CmdExecutorVMAdlsName);
 
             return builder.Build();
         }

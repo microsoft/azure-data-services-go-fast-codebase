@@ -1,0 +1,12 @@
+[
+   {
+      "Folder": "Execute-VM-Command",
+      "GFPIR": "N/A",
+      "Pipeline": "GPL_Execute_VM_Command",
+      "SourceFormat": "Not-Applicable",
+      "SourceType": "N/A",
+      "TargetFormat": "dbt",
+      "TargetType": "Virtual Machine",
+      "TaskTypeId": -13
+   }
+]

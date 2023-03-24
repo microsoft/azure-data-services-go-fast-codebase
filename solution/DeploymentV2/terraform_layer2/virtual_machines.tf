@@ -46,6 +46,80 @@ resource "azurerm_windows_virtual_machine" "jumphost" {
 }
 
 #---------------------------------------------------------------
+# VM Executor
+#---------------------------------------------------------------
+
+resource "random_password" "cmd_executor_vm" {
+  count       = var.deploy_cmd_executor_vm ? 1 : 0
+  length      = 16
+  min_numeric = 1
+  min_upper   = 1
+  min_lower   = 1
+  min_special = 1
+  special     = true
+  lower       = true
+  numeric     = true
+  upper       = true
+}
+
+
+resource "azurerm_network_interface" "cmd_executor_vm_nic" {
+  count               = var.is_vnet_isolated && var.deploy_cmd_executor_vm ? 1 : 0
+  name                = local.cmd_executor_vm_nic_name
+  location            = var.resource_location
+  resource_group_name = var.resource_group_name
+
+  ip_configuration {
+    name                          = "internal"
+    subnet_id                     = local.vm_subnet_id
+    private_ip_address_allocation = "Dynamic"
+  }
+}
+
+
+resource "azurerm_linux_virtual_machine" "cmd_executor_vm_linux" {
+  count                           = var.deploy_cmd_executor_vm ? 1 : 0
+  name                            = local.cmd_executor_vm_name
+  location                        = var.resource_location
+  resource_group_name             = var.resource_group_name
+  size                         = var.cmd_executor_vm_size
+  admin_username                  = "adminuser"
+  admin_password                  = random_password.cmd_executor_vm
+  disable_password_authentication = false
+  computer_name                   = "CMDExecutor"
+
+  network_interface_ids = [
+    azurerm_network_interface.cmd_executor_vm_nic[0].id,
+  ]
+
+  source_image_reference    {
+    publisher = "Canonical"
+    offer     = "0001-com-ubuntu-server-jammy"
+    sku       = "22_04-lts-gen2"
+    version   = "latest"
+  }
+
+  os_disk   {
+    name              = "cmd_executor_vm_linux_disk"
+    caching           = "ReadWrite"
+    storage_account_type = "Premium_LRS"
+    disk_size_gb      = "30"    
+  }
+
+  identity {
+    type              = "SystemAssigned" 
+  }
+
+  lifecycle {
+    ignore_changes = [
+      os_disk
+    ]
+  }
+}
+
+##TODO: Add vm extension for executing set up sh file (pwsh etc)
+
+#---------------------------------------------------------------
 # Self Hosted Sql Server
 #---------------------------------------------------------------
 

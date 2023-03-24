@@ -332,6 +332,12 @@ variable "update_execution_engine_jsons" {
   type        = bool
 }
 
+variable "deploy_cmd_executor_vm" {
+  description = "Feature toggle for deploying the vm execution engine for command execution. Will also deploy a dedicated storage account."
+  default     = false
+  type        = bool
+}
+
 #---------------------------------------------------------------
 # Post IAC - Feature Toggles 
 #---------------------------------------------------------------
@@ -705,6 +711,20 @@ variable "adf_git_email_address" {
   default     = ""
   type        = string
 }
+
+variable "cmd_executor_vm_name" {
+  description = "The name of the command executor virtual machine."
+  default     = ""
+  type        = string
+}
+
+variable "adls_vm_cmd_executor_name" {
+  description = "The name of the command executor virtual machine's dedicated data lake."
+  default     = ""
+  type        = string
+}
+
+
 #---------------------------------------------------------------
 # Scale settings
 #---------------------------------------------------------------
@@ -747,6 +767,12 @@ variable "synapse_spark_max_node_count" {
 variable "vm_size" {
   description = "The size of the VM being deployed"
   default     = "Standard_B1s"
+  type        = string
+}
+
+variable "cmd_executor_vm_size" {
+  description = "The size of the dedicated command executor VM being deployed"
+  default     = "B2s"
   type        = string
 }
 

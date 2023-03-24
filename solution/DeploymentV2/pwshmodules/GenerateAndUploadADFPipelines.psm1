@@ -68,4 +68,18 @@ function GenerateAndUploadDataFactoryAndSynapseArtefacts (
         else {
             Write-Debug "Path to return to is null"
     }
+
+    if ($tout.deploy_cmd_executor_vm) {
+        Write-Host "Starting Virtual Machines Parts" -ForegroundColor Yellow
+        Set-Location ../../VirtualMachine/Patterns/ 
+        Invoke-Expression  ./Jsonnet_GeneratePatterns.ps1
+        Invoke-Expression  ./UploadTaskTypeMappings.ps1
+
+        if ($tout.update_execution_engine_jsons) {
+            Invoke-Expression  ./UpdateExecutionEngine.ps1
+        }
+    }
+
+
+
 }

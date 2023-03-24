@@ -95,6 +95,12 @@ output "purview_sp_id" {
 output "integration_runtimes" {
   value = local.integration_runtimes
 }
+output "synapse_integration_runtimes" {
+  value = local.synapse_integration_runtimes
+}
+output "virtual_machine_integration_runtimes" {
+  value = local.virtual_machine_integration_runtimes
+}
 output "is_onprem_datafactory_ir_registered" {
   value = var.is_onprem_datafactory_ir_registered
 }
@@ -353,4 +359,14 @@ output "plink_subnet_id" {
 
 output "azurerm_virtual_network_vnet_name" {
   value = data.terraform_remote_state.layer0.outputs.azurerm_virtual_network_vnet_name 
+}
+
+output "adls_vm_cmd_executor_name" {
+  value = local.adls_vm_cmd_executor_name
+}
+output "cmd_executor_vm_name" {
+  value = local.cmd_executor_vm_name
+}
+output "deploy_cmd_executor_vm" {
+  value = var.deploy_cmd_executor_vm
 }

@@ -50,7 +50,7 @@
     "deploy_databricks_resources": true,
     "deploy_vpn": false,
     "deploy_bastion": true,
-    "deploy_cicd_vm": true,
+    "deploy_cicd_vm": false,
     "databricks_admins": []
   }
 }

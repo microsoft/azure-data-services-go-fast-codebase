@@ -1,0 +1,76 @@
+{
+   "$schema": "http://json-schema.org/draft-04/schema#",
+   "properties": {
+      "ExecutionPath": {
+         "options": {
+            "infoText": "(required) Use this field to define the FULL path where you wish to execute the command.",
+            "inputAttributes": {
+               "placeholder": "/home/testuser"
+            }
+         },
+         "type": "string"
+      },
+      "Source": {
+         "options": {
+            "hidden": true
+         },
+         "properties": {
+            "Type": {
+               "default": "Not-Applicable",
+               "enum": [
+                  "Not-Applicable"
+               ],
+               "options": {
+                  "hidden": true
+               },
+               "type": "string"
+            }
+         },
+         "required": [ ],
+         "type": "object"
+      },
+      "Target": {
+         "options": {
+            "hidden": true
+         },
+         "properties": {
+            "ExecutionCommand": {
+               "enum": [
+                  "dbt build",
+                  "Test enum"
+               ],
+               "options": {
+                  "infoText": "(required) Use this field to select the command you wish to execute."
+               },
+               "type": "string"
+            },
+            "ExecutionParameters": {
+               "options": {
+                  "infoText": "(optional) Use this field to define any parameters / flags that go along with your command. NOTE: Certain characters not expected will be stripped from this string",
+                  "inputAttributes": {
+                     "placeholder": "TestPool"
+                  }
+               },
+               "type": "string"
+            },
+            "Type": {
+               "default": "dbt",
+               "enum": [
+                  "dbt"
+               ],
+               "options": {
+                  "hidden": true
+               },
+               "type": "string"
+            }
+         },
+         "required": [ ],
+         "type": "object"
+      }
+   },
+   "required": [
+      "ExecutionPath"
+   ],
+   "title": "TaskMasterJson",
+   "type": "object"
+}

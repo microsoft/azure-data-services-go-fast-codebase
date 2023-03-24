@@ -32,6 +32,7 @@ if($files.length -gt 0)
     Remove-Item $localDest
     #start execution (dbt command)
     cd $object.ExecutionPath
+    #Invoke-Expression $command #$possible parameters
     $command = '{"object": "' + $object.ExecutionInput + '"}' | ConvertFrom-Json #temp command until dbt part in
     $object.OutputCreatedUTC = [DateTime]::UtcNow.ToString('dd/MM/yyyy HH:mm:ss tt')
     $object.ExecutionOutput = $command
