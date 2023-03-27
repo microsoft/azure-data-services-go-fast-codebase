@@ -243,14 +243,19 @@ resource "azurerm_role_assignment" "adls_vm_cmd_executor_deployment_agents" {
   principal_id         = each.value
 }
 
-resource "azurerm_role_assignment" "adls_vm_cmd_executor_vm" {
+resource "azurerm_role_assignment" "adls_vm_cmd_executor_vm_c" {
   count                = var.deploy_cmd_executor_vm && var.deploy_rbac_roles ? 1 : 0
   scope                = azurerm_storage_account.adls_vm_cmd_executor[0].id
   role_definition_name = "Contributor"
   principal_id         = azurerm_linux_virtual_machine.cmd_executor_vm_linux[0].identity[0].principal_id
 }
 
-
+resource "azurerm_role_assignment" "adls_vm_cmd_executor_vm_sbc" {
+  count                = var.deploy_cmd_executor_vm && var.deploy_rbac_roles ? 1 : 0
+  scope                = azurerm_storage_account.adls_vm_cmd_executor[0].id
+  role_definition_name = "Storage Blob Data Contributor"
+  principal_id         = azurerm_linux_virtual_machine.cmd_executor_vm_linux[0].identity[0].principal_id
+}
 
 resource "azurerm_private_endpoint" "adls_vm_cmd_executor_storage_private_endpoint_with_dns" {
   count               = var.deploy_cmd_executor_vm && var.is_vnet_isolated ? 1 : 0

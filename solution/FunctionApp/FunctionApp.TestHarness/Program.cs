@@ -150,7 +150,7 @@ namespace FunctionApp.TestHarness
 
             //await DebugPrepareFrameworkTasks();            
 
-            //await DebugRunFrameworkTasks();
+            await DebugRunFrameworkTasks();
 
 
             //await PurviewCreateEntitiesTest();
@@ -169,7 +169,7 @@ namespace FunctionApp.TestHarness
             //var test = await _powerBIService.RefreshDataflow("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "testSecret", "", "refreshTest", "ea6e65c7-8840-425b-a957-8c72609ac812", "https://ark-stg-kv-ads-aqye.vault.azure.net/", _funcAppLogger);
             //var test2 = await _powerBIService.CheckDataflowRefreshStatus("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "testSecret", "", "refreshTest", "ea6e65c7-8840-425b-a957-8c72609ac812", "https://ark-stg-kv-ads-aqye.vault.azure.net/", test, _funcAppLogger);
             //var test2 = await _powerBIService.CheckDataflowRefreshStatus("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "testSecret", "", "TaskMasterDF", "ea6e65c7-8840-425b-a957-8c72609ac812", "https://ark-stg-kv-ads-aqye.vault.azure.net/", "bla", _funcAppLogger);
-            await _azureDataLakeService.InjectInput("adsuatdlsadszjhsadsl", "dbt", "1001", "1", "2", "Command String", "/home/adminuser", _funcAppLogger);
+            //await _azureDataLakeService.InjectInput("adsuatdlsadszjhsadsl", "dbt", "1001", "1", "2", "Command String", "/home/adminuser", _funcAppLogger);
             //await _azureDataLakeService.DetectOutput("adsuatdlsadszjhsadsl", "dbt", "1001", _funcAppLogger);
 
 
@@ -488,7 +488,7 @@ namespace FunctionApp.TestHarness
         public async Task DebugRunFrameworkTasks()
         {
             
-            FunctionApp.Functions.AdfRunFrameworkTasksHttpTrigger c = new FunctionApp.Functions.AdfRunFrameworkTasksHttpTrigger(_sap,_taskMetaDataDatabase, _options, _authProvider, _dataFactoryClientFactory, _azureSynapseService, _microsoftAzureServicesAppAuthenticationProvider, _keyVaultService, _powerBIService);
+            FunctionApp.Functions.AdfRunFrameworkTasksHttpTrigger c = new FunctionApp.Functions.AdfRunFrameworkTasksHttpTrigger(_sap,_taskMetaDataDatabase, _options, _authProvider, _dataFactoryClientFactory, _azureSynapseService, _microsoftAzureServicesAppAuthenticationProvider, _keyVaultService, _powerBIService, _azureDataLakeService);
             c.HeartBeatFolder = "./";
             await c.RunFrameworkTasksCore(1, _funcAppLogger);            
             _funcAppLogger.DefaultActivityLogItem.ExecutionUid = Guid.NewGuid();

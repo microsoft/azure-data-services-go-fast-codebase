@@ -30,21 +30,27 @@ if($files.length -gt 0)
     #delete from inputs
     $delete = az storage fs file delete -p $filePath -f $container --account-name $accountName --auth-mode login --yes
     Remove-Item $localDest
-    #start execution (dbt command)
+    #start execution (dbt command) - if statements to work out command - ensure it is a specific string
     cd $object.ExecutionPath
-    #Invoke-Expression $command #$possible parameters
-    $command = '{"object": "' + $object.ExecutionInput + '"}' | ConvertFrom-Json #temp command until dbt part in
+    if($object.ExecutionCommand -eq 'dbt build') 
+    {
+        #below is a placeholder that i am using for now - will replace with proper commands soon
+        #Invoke-Expression $command #$possible parameters
+        $command = '{"object": "' + $object.ExecutionInput + '"}' | ConvertFrom-Json #temp command until dbt part in
+        $object.ExecutionOutput = $command
+
+    }
     $object.OutputCreatedUTC = [DateTime]::UtcNow.ToString('dd/MM/yyyy HH:mm:ss tt')
-    $object.ExecutionOutput = $command
-    $object
     #cd back to root
     cd /home/adminuser
+    Remove-Item $localDest
     $json = $object | ConvertTo-Json -depth 100 | Out-File $localDest
     #delete from in_progress
     $delete = az storage fs file delete -p $pathTemp -f $container --account-name $accountName --auth-mode login --yes
     #upload to output
     $pathTemp = $outputPath + $object.ExecutionUid + ".json"
     $output = az storage fs file upload --source $localDest -p $pathTemp -f $container --account-name $accountName --overwrite --auth-mode login
+    
 }
 
 #may want mail service 

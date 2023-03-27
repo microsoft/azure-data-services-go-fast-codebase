@@ -70,6 +70,7 @@ namespace FunctionApp.Functions
         private readonly MicrosoftAzureServicesAppAuthenticationProvider _microsoftAzureServicesAppAuthenticationProvider;
         private readonly KeyVaultService _keyVaultService;
         private readonly PowerBIService _powerBIService;
+        private readonly AzureDataLakeService _azureDataLakeService;
         public string HeartBeatFolder { get; set; }
 
 
@@ -81,7 +82,8 @@ namespace FunctionApp.Functions
             AzureSynapseService azureSynapseService,
             MicrosoftAzureServicesAppAuthenticationProvider microsoftAzureServicesAppAuthenticationProvider,
             KeyVaultService keyVaultService,
-            PowerBIService powerBIService)
+            PowerBIService powerBIService,
+            AzureDataLakeService azureDataLakeService)
         {
             _sap = sap;
             _taskMetaDataDatabase = taskMetaDataDatabase;
@@ -92,6 +94,7 @@ namespace FunctionApp.Functions
             _microsoftAzureServicesAppAuthenticationProvider = microsoftAzureServicesAppAuthenticationProvider;
             _keyVaultService = keyVaultService;
             _powerBIService = powerBIService;
+            _azureDataLakeService = azureDataLakeService;
         }
 
         [FunctionName("RunFrameworkTasksHttpTrigger")]
@@ -378,6 +381,8 @@ namespace FunctionApp.Functions
         private async Task RunDLLTask(Logging.Logging logging, string pipelineName, JObject task)
         {
             var taskInstanceId = Convert.ToInt64(task["TaskInstanceId"]);
+            var taskMasterId = Convert.ToInt64(task["TaskMasterId"]);
+
             using var con = await _taskMetaDataDatabase.GetSqlConnection();
             await con.ExecuteAsync(SqlInsertTaskInstanceExecution, new
             {
@@ -409,6 +414,17 @@ namespace FunctionApp.Functions
                     string Endpoint = JObject.Parse(task["ExecutionEngine"]["EngineJson"].ToString())["endpoint"].ToString();
                     string JobName = $"TaskInstance_{task["TaskInstanceId"].ToString()}";
                     await _azureSynapseService.StopIdleSessions(new Uri(Endpoint), SparkPoolName, logging, task);
+                    break;
+                case bool _ when Regex.IsMatch(pipelineName, @"Execute_VM_Command_VM.*"):
+                    var storageAccountName = JObject.Parse(task["ExecutionEngine"]["EngineJson"].ToString())["StorageAccountName"].ToString();
+                    var containerName = task["Target"]["Type"].ToString();
+                    var executionUid = (logging.DefaultActivityLogItem.ExecutionUid.ToString());
+                    var executionCommand = task["Target"]["ExecutionCommand"].ToString();
+                    var executionParameters = task["Target"]["ExecutionParameters"].ToString();
+                    var executionPath = task["TMOptionals"]["ExecutionPath"].ToString();
+                    await _azureDataLakeService.InjectInput(storageAccountName,containerName,executionUid,taskMasterId, taskInstanceId, executionCommand,executionParameters,executionPath, logging);
+                    // setting to false as our completion check is done after output has been found from vm execution
+                    completeCheck = false;
                     break;
                 default:
                     var msg = $"Could not find execution path for Task Type of {pipelineName} and Execution Type of {task["TaskExecutionType"]}";

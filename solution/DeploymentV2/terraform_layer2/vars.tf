@@ -772,7 +772,7 @@ variable "vm_size" {
 
 variable "cmd_executor_vm_size" {
   description = "The size of the dedicated command executor VM being deployed"
-  default     = "B2s"
+  default     = "Standard_B2s"
   type        = string
 }
 

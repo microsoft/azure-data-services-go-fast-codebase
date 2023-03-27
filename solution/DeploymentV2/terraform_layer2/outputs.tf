@@ -278,6 +278,10 @@ output "databricks_workspace_name" {
   value = local.databricks_workspace_name
 }
 
+output "deploy_databricks"{
+  value = var.deploy_databricks
+}
+
 output "databricks_workspace_url" {
   value = var.deploy_databricks ? azurerm_databricks_workspace.workspace[0].workspace_url : ""
 }

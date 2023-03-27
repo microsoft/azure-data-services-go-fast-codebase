@@ -41,7 +41,7 @@ namespace FunctionApp.Services
             _taskMetaDataDatabase = taskMetaDataDatabase;
             _keyVaultService = keyVaultService;
         }
-        public async Task InjectInput(string StorageAccountName, string ContainerName, string ExecutionUid, string TaskMasterId, string TaskInstanceId, string ExecutionInput, string ExecutionPath, Logging.Logging logging)
+        public async Task InjectInput(string StorageAccountName, string ContainerName, string ExecutionUid, long TaskMasterId, long TaskInstanceId, string ExecutionCommand, string ExecutionParameters, string ExecutionPath, Logging.Logging logging)
         {
             try
             {
@@ -99,13 +99,25 @@ namespace FunctionApp.Services
 
                 string fileName = ExecutionUid + ".json";
                 JObject jsonContent = new JObject();
+
+                // logic for cleansing parameter input -> convert to quoted / remove characters as required - likely to change as placeholder implementation
+                // THis will need proper modification to reduce injection probability
+                // alternative approach -> make each possible parameter on a command a flag (checkbox) - if true, allow a string entry to match parameter then manually build the command string
+                // This logic would be done in the ADFrunFramework switch statement for VM_Execution (add another switch for each target type (i.e dbt build)).
+
+                var executionParameters = string.Concat(ExecutionParameters.Select(c => "*!',&#^@?{}()[];+=|\\/".Contains(c) ? "" : c.ToString()));
+                var executionInput = ExecutionCommand + " " + executionParameters;
+
+                //
                 jsonContent["TaskMasterId"] = TaskMasterId;
                 jsonContent["TaskInstanceId"] = TaskInstanceId;
                 jsonContent["ExecutionUid"] = ExecutionUid;
                 jsonContent["InputCreatedUTC"] = DateTime.UtcNow.ToString();
                 jsonContent["InProgressCreatedUTC"] = "";
                 jsonContent["ExecutionPath"] = ExecutionPath;
-                jsonContent["ExecutionInput"] = ExecutionInput;
+                jsonContent["ExecutionCommand"] = ExecutionCommand;
+                jsonContent["ExecutionParameters"] = executionParameters;
+                jsonContent["ExecutionInput"] = executionInput;
                 jsonContent["ExecutionOutput"] = new JObject();
                 jsonContent["OutputCreatedUTC"] = "";
 

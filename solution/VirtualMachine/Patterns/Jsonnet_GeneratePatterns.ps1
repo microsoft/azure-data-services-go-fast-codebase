@@ -28,7 +28,7 @@ $irsjson = ($tout.virtual_machine_integration_runtimes | ConvertTo-Json -Depth 1
 $irsql = @"
             Merge dbo.IntegrationRuntime Tgt
             using (
-            Select * from OPENJSON('$irsjson') WITH 
+            Select * from OPENJSON('[$irsjson]') WITH 
             (
                 name varchar(200), 
                 short_name varchar(20), 
@@ -46,7 +46,7 @@ $irsql = @"
             into #tempIntegrationRuntimeMapping
             from 
             (
-            Select IR.*, Patterns.[Value] from OPENJSON('$irsjson') A 
+            Select IR.*, Patterns.[Value] from OPENJSON('[$irsjson]') A 
            CROSS APPLY OPENJSON(A.[value]) Patterns 
            CROSS APPLY OPENJSON(A.[value]) with (short_name varchar(max)) IR 
            where Patterns.[key] = 'valid_source_systems'

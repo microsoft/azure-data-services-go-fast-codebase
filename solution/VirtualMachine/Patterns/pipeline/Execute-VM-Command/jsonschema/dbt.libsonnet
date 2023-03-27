@@ -9,8 +9,7 @@ function()
             ],
             "options": {
                 "hidden": true
-            },
-            "default": "dbt",
+            }
         },
         "ExecutionCommand": {
             "type": "string",
@@ -31,9 +30,6 @@ function()
                 "infoText": "(optional) Use this field to define any parameters / flags that go along with your command. NOTE: Certain characters not expected will be stripped from this string"
             }
         }
-    },
-    "options": {
-        "hidden": true
     },
     "required": [
     ]

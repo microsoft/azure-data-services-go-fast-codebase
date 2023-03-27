@@ -69,9 +69,9 @@ namespace AdsGoFastDbUp
         [Option("DefaultInstancePoolID", Required = true, HelpText = "Parameter for the scripts.")]
         public string DefaultInstancePoolID { get; set; }
         [Option("CmdExecutorVMName", Required = true, HelpText = "Parameter for the scripts.")]
-        public string DefaultInstancePoolID { get; set; }
+        public string CmdExecutorVMName { get; set; }
         [Option("CmdExecutorVMAdlsName", Required = true, HelpText = "Parameter for the scripts.")]
-        public string DefaultInstancePoolID { get; set; }
+        public string CmdExecutorVMAdlsName { get; set; }
     }
 
     class Program

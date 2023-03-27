@@ -1,5 +1,5 @@
     BEGIN 
-    Select * into #TempTTM from ( VALUES(-13, N'VM', N'GPL_Execute_VM_Command', N'N/A', N'Not-Applicable', N'Virtual Machine', N'dbt', NULL, 1,N'{
+    Select * into #TempTTM from ( VALUES(-13, N'DLL', N'Execute_VM_Command', N'VM-N/A', N'Not-Applicable', N'VM-N/A', N'dbt', NULL, 1,N'{
    "$schema": "http://json-schema.org/draft-04/schema#",
    "properties": {
       "ExecutionPath": {
@@ -31,9 +31,6 @@
          "type": "object"
       },
       "Target": {
-         "options": {
-            "hidden": true
-         },
          "properties": {
             "ExecutionCommand": {
                "enum": [
@@ -55,7 +52,6 @@
                "type": "string"
             },
             "Type": {
-               "default": "dbt",
                "enum": [
                   "dbt"
                ],

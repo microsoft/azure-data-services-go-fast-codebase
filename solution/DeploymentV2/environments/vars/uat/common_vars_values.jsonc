@@ -26,9 +26,9 @@
   "synapse_contributors": [],
   "WEB_APP_ADMIN_USER": "0973f190-d0ba-40a0-a384-24797db7e628",
   "WEB_APP_ADMIN_SECURITY_GROUP": "#####",
-  "ARM_SYNAPSE_WORKSPACE_NAME": "adsuatsynwadszjhs",
-  "ARM_KEYVAULT_NAME": "ads-uat-kv-ads-zjhs",
-  "ARM_DATALAKE_NAME": "adsuatdlsadszjhsadsl",
+  "ARM_SYNAPSE_WORKSPACE_NAME": "adsuatsynwadsanv6",
+  "ARM_KEYVAULT_NAME": "ads-uat-kv-ads-anv6",
+  "ARM_DATALAKE_NAME": "adsuatdlsadsanv6adsl",
   "ARM_PAL_PARTNER_ID": "0",
   "GIT_REPOSITORY_NAME": "#####",
   "GIT_SYNAPSE_REPOSITORY_BRANCH_NAME": "#####",
@@ -46,11 +46,12 @@
     "deployment_layer3_complete": true,
     "layer0_state": "remote",
     "delay_private_access": true,
-    "deploy_databricks": true,
-    "deploy_databricks_resources": true,
+    "deploy_databricks": false,
+    "deploy_databricks_resources": false,
     "deploy_vpn": false,
     "deploy_bastion": true,
     "deploy_cicd_vm": false,
+    "deploy_cmd_executor_vm": false,
     "databricks_admins": []
   }
 }

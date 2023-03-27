@@ -82,9 +82,9 @@ resource "azurerm_linux_virtual_machine" "cmd_executor_vm_linux" {
   name                            = local.cmd_executor_vm_name
   location                        = var.resource_location
   resource_group_name             = var.resource_group_name
-  size                         = var.cmd_executor_vm_size
+  size                            = var.cmd_executor_vm_size
   admin_username                  = "adminuser"
-  admin_password                  = random_password.cmd_executor_vm
+  admin_password                  = random_password.cmd_executor_vm[0].result
   disable_password_authentication = false
   computer_name                   = "CMDExecutor"
 
@@ -117,7 +117,23 @@ resource "azurerm_linux_virtual_machine" "cmd_executor_vm_linux" {
   }
 }
 
-##TODO: Add vm extension for executing set up sh file (pwsh etc)
+resource "azurerm_virtual_machine_extension" "cmd_executor_setup_vmext" {
+    count                   = var.deploy_cmd_executor_vm ? 1 : 0
+    name                    = "${local.cmd_executor_vm_name}-setup-vmext"
+    virtual_machine_id      = azurerm_linux_virtual_machine.cmd_executor_vm_linux[0].id
+    publisher               = "Microsoft.Azure.Extensions"
+    type                    = "CustomScript"
+    type_handler_version    = "2.1"
+    settings = jsonencode({
+        "script" = base64encode(file("../utilities/VM_Executor_Scripts/LinuxInstalls_Executor.sh"))
+      }
+    )
+    #protected_settings = <<PROT
+    #{
+    #    "commandToExecute": base64encode(file("../utilities/VM_Executor_Scripts/LinuxInstalls_Executor.sh"))
+    #}
+    #PROT
+}
 
 #---------------------------------------------------------------
 # Self Hosted Sql Server

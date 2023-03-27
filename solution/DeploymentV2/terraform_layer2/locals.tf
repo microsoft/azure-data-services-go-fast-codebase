@@ -164,11 +164,11 @@ synapse_integration_runtimes = [
 
 virtual_machine_integration_runtimes = [
     {
-      name                 = "Non-Applicable"
-      short_name           = "N/A"
+      name                 = "VM-Non-Applicable"
+      short_name           = "VM-N/A"
       is_azure             = false
       is_managed_vnet      = false
-      valid_source_systems = []
+      valid_source_systems = ["-22"]
       valid_pipeline_patterns = [
                 {
           Folder       = "Execute-VM-Command"
@@ -179,7 +179,7 @@ virtual_machine_integration_runtimes = [
           TaskTypeId   = "*"
         }
       ]
-    }
+    },
 ]
 
 }
