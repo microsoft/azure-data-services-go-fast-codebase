@@ -34,66 +34,102 @@ namespace FunctionApp.Functions
     {
         private readonly IOptions<ApplicationOptions> _appOptions;
         private readonly TaskMetaDataDatabase _taskMetaDataDatabase;
-        private readonly DataFactoryPipelineProvider _dataFactoryPipelineProvider;
-        private readonly TaskTypeMappingProvider _taskTypeMappingProvider;
-        private readonly IntegrationRuntimeMappingProvider _integrationRuntimeMappingProvider;
-        private readonly IHttpClientFactory _httpClientFactory;    
+        private readonly AzureDataLakeService _azureDataLakeService;
 
-        public string HeartBeatFolder { get; set; }
         public ILogger Log { get; set; }
 
 
-        public VMExecutionOutputCheckTimerTrigger(IOptions<ApplicationOptions> appOptions, TaskMetaDataDatabase taskMetaDataDatabase, DataFactoryPipelineProvider dataFactoryPipelineProvider, TaskTypeMappingProvider taskTypeMappingProvider, IHttpClientFactory httpClientFactory, IntegrationRuntimeMappingProvider integrationRuntimeMappingProvider)
+        public VMExecutionOutputCheckTimerTrigger(IOptions<ApplicationOptions> appOptions, TaskMetaDataDatabase taskMetaDataDatabase, AzureDataLakeService azureDataLakeService)
         {
             _appOptions = appOptions;
             _taskMetaDataDatabase = taskMetaDataDatabase;
-            _dataFactoryPipelineProvider = dataFactoryPipelineProvider;
-            _taskTypeMappingProvider = taskTypeMappingProvider;
-            _httpClientFactory = httpClientFactory;
-            _integrationRuntimeMappingProvider = integrationRuntimeMappingProvider;            
+            _azureDataLakeService = azureDataLakeService;     
         }
 
         [FunctionName("VMExecutionOutputCheckTimerTrigger")]
         public async Task Run([TimerTrigger("0 */2 * * * *")] TimerInfo myTimer, ILogger log, ExecutionContext context)
         {
             this.Log = log;
-            log.LogInformation(context.FunctionAppDirectory);
-            //await VMExecutionOutputCheckCore(log);
+            Guid executionId = context.InvocationId;
+            FrameworkRunner fr = new FrameworkRunner(log, executionId);
+            FrameworkRunnerWorker worker = VMExecutionOutputCheckCore;
+            FrameworkRunnerResult result = await fr.Invoke("VMExecutionOutputCheckCore", worker);
+
 
         }
-        /*
-        public async Task<dynamic> VMExecutionOutputCheckCore(ILogger log)
+
+        public async Task<dynamic> VMExecutionOutputCheckCore(Logging.Logging logging)
         {
             try
             {
-                await _taskMetaDataDatabase.ExecuteSql(
-                    $"Insert into Execution values ('{logging.DefaultActivityLogItem.ExecutionUid}', '{DateTimeOffset.Now:u}', '{DateTimeOffset.Now.AddYears(999):u}')");
-                short frameworkWideMaxConcurrency = _appOptions.Value.FrameworkWideMaxConcurrency;
-                //Generate new task instances based on task master and schedules
-                await CreateScheduleAndTaskInstances(logging);
-                await _taskMetaDataDatabase.ExecuteSql("exec dbo.DistributeTasksToRunnners " + frameworkWideMaxConcurrency.ToString());
-            }
-            catch (Exception ex)
-            {
-                logging.LogErrors(new Exception("Prepare Framework Task Failed"));
-                logging.LogErrors(ex);
-            }
-            //Chain Straight into RunFramework Tasks
-            try
-            {
-                AdfRunFrameworkTasksTimerTrigger rfttt = new AdfRunFrameworkTasksTimerTrigger(_appOptions, _taskMetaDataDatabase, _httpClientFactory);
-                rfttt.HeartBeatFolder = this.HeartBeatFolder;                
-                await rfttt.Core(Log);
+                using var con = await _taskMetaDataDatabase.GetSqlConnection();
+
+                var activeTasks = con.QueryWithRetry(@"SELECT
+                TI.TaskMasterId, TI.TaskInstanceId, TI.LastExecutionUid, TI.LastExecutionStatus, TM.EngineId, TM.TaskTypeId, EE.EngineJson, TM.TaskMasterJSON, TI.NumberOfRetries
+            FROM
+                [dbo].[TaskInstance] TI
+                INNER JOIN TaskMaster TM
+                    on TI.TaskMasterId = TM.TaskMasterId
+
+                INNER JOIN[dbo].[ExecutionEngine] EE
+
+                    on TM.EngineId = EE.EngineId
+            WHERE
+                TI.LastExecutionStatus = 'InProgress' AND TM.TaskTypeId = -13
+            ");
+                foreach (var task in activeTasks)
+                {
+                    string executionUid = (((dynamic)task).LastExecutionUid).ToString();
+                    string engineJsonString = ((dynamic)task).EngineJson;
+                    JObject engineJson = JObject.Parse(engineJsonString);
+                    string taskMasterJsonString = ((dynamic)task).TaskMasterJSON;
+                    JObject taskMasterJson = JObject.Parse(taskMasterJsonString);
+                    string instanceId = (((dynamic)task).TaskInstanceId).ToString();
+                    var retries = (((dynamic)task).NumberOfRetries);
+                    logging.LogInformation($"Active VM Execution Task found with TaskInstanceId: {instanceId}");
+                    var storageAccountName = engineJson["StorageAccountName"].ToString();
+                    var containerName = taskMasterJson["Target"]["Type"].ToString();
+                    var directory = "output/";
+                    var fileName = executionUid + ".json";
+                    var fileExists = await _azureDataLakeService.FileExists(storageAccountName, containerName, directory, fileName, logging);
+                    logging.LogInformation($"Relevant Output file exists: {fileExists}");
+                    var archiveDirectory = DateTime.UtcNow.ToString("yyyy/MM/dd/");
+                    archiveDirectory = "archive/" + archiveDirectory;
+                    if (fileExists)
+                    {
+                        var json = await _azureDataLakeService.GetJsonFile(storageAccountName, containerName, directory, fileName, logging);
+                        var success = true;
+                        if (json.ContainsKey("ErrorOutput"))
+                        {
+                            logging.LogInformation($"Error has been found in output json: {json["ErrorOutput"]}");
+                            success = false;
+                        }
+                        await _azureDataLakeService.DeleteFile(storageAccountName, containerName, directory, fileName, logging);
+                        json["ArchiveCreatedUTC"] = DateTime.UtcNow.ToString("dd/MM/yyyy HH:mm:ss tt");
+                        await _azureDataLakeService.UploadFile(storageAccountName, containerName, archiveDirectory, fileName, json, logging);
+                        if (success)
+                        {
+                            var msg = $"Sucessfully completed VM Execution. Archive file created. Storage Account: {storageAccountName}. Container: {containerName}. File path: {archiveDirectory}{fileName}.";
+                            await _taskMetaDataDatabase.LogTaskInstanceCompletion(System.Convert.ToInt64(instanceId), logging.DefaultActivityLogItem.ExecutionUid.Value, TaskInstance.TaskStatus.Complete, System.Guid.Empty, msg);
+                        }
+                        else
+                        {
+                            var msg = $"Failed VM Execution Task - refer to archive file for error output. Archive file created. Storage Account: {storageAccountName}. Container: {containerName}. File path: {archiveDirectory}{fileName}.";
+                            await _taskMetaDataDatabase.LogTaskInstanceCompletion(System.Convert.ToInt64(instanceId), logging.DefaultActivityLogItem.ExecutionUid.Value, TaskInstance.TaskStatus.FailedNoRetry, System.Guid.Empty, msg);
+                            logging.LogErrors(new Exception(msg));
+                        }
+                    }
+                }
             }
             catch (Exception ex1)
             {
-                logging.LogErrors(new Exception("Run Framework Task Failed"));
+                logging.LogErrors(new Exception("VM Execution Output Failed"));
                 logging.LogErrors(ex1);
             }
             return new { };
         }
  
-        */
+        
 
 
 

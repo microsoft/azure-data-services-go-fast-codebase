@@ -118,7 +118,7 @@ namespace FunctionApp.Services
                 jsonContent["TaskMasterId"] = TaskMasterId;
                 jsonContent["TaskInstanceId"] = TaskInstanceId;
                 jsonContent["ExecutionUid"] = ExecutionUid;
-                jsonContent["InputCreatedUTC"] = DateTime.UtcNow.ToString();
+                jsonContent["InputCreatedUTC"] = DateTime.UtcNow.ToString("dd/MM/yyyy HH:mm:ss tt");
                 jsonContent["InProgressCreatedUTC"] = "";
                 jsonContent["ExecutionPath"] = ExecutionPath;
                 jsonContent["ExecutionCommand"] = ExecutionCommand;
