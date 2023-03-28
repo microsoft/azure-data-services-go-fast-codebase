@@ -34,7 +34,7 @@ namespace FunctionApp.Services
             _options = options;
             _taskMetaDataDatabase = taskMetaDataDatabase;
         }
-        public async Task<string> RetriveSecret(string SecretName, string KeyVaultURL, Logging.Logging logging)
+        public async Task<string> RetrieveSecret(string SecretName, string KeyVaultURL, Logging.Logging logging)
         {
             try
             {
@@ -69,5 +69,84 @@ namespace FunctionApp.Services
 
             }
         }
+
+        public async Task<bool> CheckSecretExists(string SecretName, string KeyVaultURL, Logging.Logging logging)
+        {
+            try
+            {
+                // get secret from keyvault using secretName
+                var cred = _authProvider.GetAzureRestApiTokenCredential("https://management.azure.com/");
+
+                //var authenticationResult = await _authProvider.GetPowerBIRestApiToken(ClientId, secret);
+                var client = new SecretClient(vaultUri: new Uri(KeyVaultURL), cred);
+                //var client = new SecretClient(vaultUri: new Uri(KeyVaultURL), credential: cred);
+                var secrets =  client.GetPropertiesOfSecretsAsync();
+                //https://learn.microsoft.com/en-us/dotnet/api/azure.security.keyvault.secrets.secretproperties?view=azure-dotnet
+                var secretFound = false;
+                await foreach (SecretProperties secretProperty in secrets)
+                {
+                    if (secretProperty.Name == SecretName)
+                    {
+                        secretFound = true;
+                        logging.LogInformation($"Secret found within key vault: {SecretName}");
+                    }
+                }
+
+
+                try
+                {
+                    logging.LogInformation($"Secret Exists within KV? {secretFound}.");
+                    return secretFound;
+                }
+                catch (Exception e)
+                {
+                    Exception error = new Exception($"Error has occured finding secret: {SecretName} ");
+                    logging.LogErrors(error);
+                    throw error;
+                }
+
+            }
+            catch (Exception e)
+            {
+                logging.LogErrors(e);
+                logging.LogErrors(new Exception($"Initiation of Check Secret command failed for Secretname: {SecretName} "));
+                throw;
+
+            }
+        }
+
+        public async Task<bool> CreateSecret(string SecretName, string SecretValue, string KeyVaultURL, Logging.Logging logging)
+        {
+            try
+            {
+                // get secret from keyvault using secretName
+                var cred = _authProvider.GetAzureRestApiTokenCredential("https://management.azure.com/");
+
+                var client = new SecretClient(vaultUri: new Uri(KeyVaultURL), cred);
+                var secret = await client.SetSecretAsync(SecretName, SecretValue);
+
+
+                try
+                {
+                    logging.LogInformation($"Secret has been created.");
+                    return true;
+                }
+                catch (Exception e)
+                {
+                    Exception error = new Exception($"Error has occured creating secret: {SecretName} ");
+                    logging.LogErrors(error);
+                    throw error;
+                }
+
+            }
+            catch (Exception e)
+            {
+                logging.LogErrors(e);
+                logging.LogErrors(new Exception($"Initiation of Create Secret command failed for Secretname: {SecretName} "));
+                throw;
+
+            }
+        }
+
     }
 }

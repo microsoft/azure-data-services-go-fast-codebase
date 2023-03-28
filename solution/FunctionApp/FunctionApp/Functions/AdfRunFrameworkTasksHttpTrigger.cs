@@ -422,7 +422,8 @@ namespace FunctionApp.Functions
                     var executionCommand = task["Target"]["ExecutionCommand"].ToString();
                     var executionParameters = task["Target"]["ExecutionParameters"].ToString();
                     var executionPath = task["TMOptionals"]["ExecutionPath"].ToString();
-                    await _azureDataLakeService.InjectInput(storageAccountName,containerName,executionUid,taskMasterId, taskInstanceId, executionCommand,executionParameters,executionPath, logging);
+                    var keyVaultUrl = JObject.Parse(task["ExecutionEngine"]["EngineJson"].ToString())["KeyVaultURL"].ToString();
+                    await _azureDataLakeService.InjectInput(storageAccountName,containerName,executionUid,taskMasterId, taskInstanceId, executionCommand,executionParameters,executionPath, keyVaultUrl,logging);
                     // setting to false as our completion check is done after output has been found from vm execution
                     completeCheck = false;
                     break;

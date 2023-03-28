@@ -126,6 +126,27 @@ resource "azurerm_key_vault_access_policy" "synapse_access" {
   ]
 }
 
+// Allows the executor vm to retrieve relevant encryption keys
+resource "azurerm_key_vault_access_policy" "cmd_executor_vm_access" {
+  count        = var.deploy_cmd_executor_vm ? 1 : 0
+  key_vault_id = azurerm_key_vault.app_vault.id
+  tenant_id    = var.tenant_id
+  object_id    = azurerm_linux_virtual_machine.cmd_executor_vm_linux[0].identity[0].principal_id
+
+  key_permissions = [
+    "Get", "List"
+  ]
+
+  secret_permissions = [
+    "List", "Get"
+  ]
+  depends_on = [
+    azurerm_key_vault.app_vault,
+    azurerm_linux_virtual_machine.cmd_executor_vm_linux[0].identity[0].principal_id
+  ]
+}
+
+
 
 // private endpoints --------------------------
 resource "azurerm_private_endpoint" "app_vault_private_endpoint_with_dns" {

@@ -4,11 +4,13 @@ $tout = GatherOutputsFromTerraform_SynapseFolder
 $sqlserver_name=$tout.sqlserver_name
 $metadatadb_name=$tout.metadatadb_name
 $adls_vm_cmd_executor_name = $tout.adls_vm_cmd_executor_name
+$keyVaultURL = "https://" + $tout.keyvault_name + ".vault.azure.net/"
 
 #$execution_engine_json = '{"endpoint": "' + $synapse_workspace_endpoint + '", "DeltaProcessingNotebook": "' + $delta_processing_notebook + '", "PurviewAccountName": "' + $purview_account_name + '", "DefaultSparkPoolName": "' + $synapse_spark_pool_name + '"}'
 $execution_engine_json = @"
 {
-    "StorageAccountName:" "$($adls_vm_cmd_executor_name)"
+    "StorageAccountName": "$($adls_vm_cmd_executor_name)",
+    "KeyVaultURL": "$($keyVaultURL)"
 }
 "@
 $SqlInstalled = Get-InstalledModule SqlServer

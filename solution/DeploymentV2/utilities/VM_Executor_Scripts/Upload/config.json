@@ -1,0 +1,5 @@
+{
+  "KeyVaultName": "ads-uat-kv-ads-anv6",
+  "KeySecretName": "vmexecutorkey",
+  "SaltSecretName": "vmexecutorsalt"
+}

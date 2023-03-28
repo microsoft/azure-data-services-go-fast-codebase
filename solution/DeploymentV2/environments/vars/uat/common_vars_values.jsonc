@@ -51,7 +51,7 @@
     "deploy_vpn": false,
     "deploy_bastion": true,
     "deploy_cicd_vm": false,
-    "deploy_cmd_executor_vm": false,
+    "deploy_cmd_executor_vm": true,
     "databricks_admins": []
   }
 }

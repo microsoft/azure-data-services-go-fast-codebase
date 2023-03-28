@@ -22,6 +22,7 @@ using Microsoft.AspNetCore.Http;
 using System.Net.Http;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.ApplicationInsights;
+using System.Security.Cryptography;
 
 namespace FunctionApp.TestHarness
 {
@@ -150,9 +151,59 @@ namespace FunctionApp.TestHarness
 
             //await DebugPrepareFrameworkTasks();            
 
-            await DebugRunFrameworkTasks();
+            //await DebugRunFrameworkTasks();
+            using var con = await _taskMetaDataDatabase.GetSqlConnection();
+
+            var activeTasks = con.QueryWithRetry(@"SELECT
+                TI.TaskMasterId, TI.TaskInstanceId, TI.LastExecutionUid, TI.LastExecutionStatus, TM.EngineId, TM.TaskTypeId, EE.EngineJson, TM.TaskMasterJSON
+            FROM
+                [dbo].[TaskInstance] TI
+                INNER JOIN TaskMaster TM
+                    on TI.TaskMasterId = TM.TaskMasterId
+
+                INNER JOIN[dbo].[ExecutionEngine] EE
+
+                    on TM.EngineId = EE.EngineId
+            WHERE
+                TI.LastExecutionStatus = 'InProgress' AND TM.TaskTypeId = -13
+            ");
+            foreach (var task in activeTasks)
+            {
+                string executionUid = (((dynamic)task).LastExecutionUid).ToString();
+                string engineJsonString = ((dynamic)task).EngineJson;
+                JObject engineJson = JObject.Parse(engineJsonString);
+                string taskMasterJsonString = ((dynamic)task).TaskMasterJSON;
+                JObject taskMasterJson = JObject.Parse(taskMasterJsonString);
+                string instanceId = (((dynamic)task).TaskInstanceId).ToString();
+                var storageAccountName = engineJson["StorageAccountName"].ToString();
+                var containerName = taskMasterJson["Target"]["Type"].ToString();
+                var directory = "output/";
+                var fileName = executionUid + ".json";
+                var fileExists = await _azureDataLakeService.FileExists(storageAccountName, containerName, directory, fileName, _funcAppLogger);
+                var archiveDirectory = DateTime.UtcNow.ToString("yyyy/MM/dd/");
+                archiveDirectory = "archive/" + archiveDirectory;
+                if (fileExists)
+                {
+                    var json = await _azureDataLakeService.GetJsonFile(storageAccountName, containerName, directory, fileName, _funcAppLogger);
+                    var success = true;
+                    if (json.ContainsKey("ErrorOutput")) {
+                        success = false;
+                    }
+                    //await _azureDataLakeService.DeleteFile(storageAccountName, containerName, directory, fileName, _funcAppLogger);
+                    await _azureDataLakeService.UploadFile(storageAccountName, containerName, archiveDirectory, fileName, json, _funcAppLogger);
+                    if (success)
+                    {
+                        //var msg = $"Sucessfully completed VM Execution (archive path: {archivePath} and Execution Type of {task["TaskExecutionType"]}";
+                        //await _taskMetaDataDatabase.LogTaskInstanceCompletion(System.Convert.ToInt64(taskInstanceId), logging.DefaultActivityLogItem.ExecutionUid.Value, TaskInstance.TaskStatus.Complete, System.Guid.Empty, completemsg);
 
 
+                    }
+                    else
+                    {
+
+                    }
+                }
+            }
             //await PurviewCreateEntitiesTest();
             //DebugSynapsePipeline();
             //await DebugStartSynapseSessions();

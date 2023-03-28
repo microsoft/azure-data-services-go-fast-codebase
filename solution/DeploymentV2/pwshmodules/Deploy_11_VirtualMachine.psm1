@@ -19,6 +19,9 @@ function ConfigureVirtualMachine (
         $localDest = "./Upload/"
         $container = "util"
         $accountName = $tout.adls_vm_cmd_executor_name
+        $keyVaultName = $tout.keyvault_name
+        $keySecretName = "vmexecutorkey"
+        $saltSecretName = "vmexecutorsalt"
         $path = "/Scripts/"
 
         
@@ -28,9 +31,30 @@ function ConfigureVirtualMachine (
             $result = az storage account update --resource-group $tout.resource_group_name --name $accountName --default-action Allow --only-show-errors
         }
 
+        #create config json
+        $config = [PSCustomObject]@{
+            KeyVaultName = $keyVaultName
+            KeySecretName = $keySecretName
+            SaltSecretName = $saltSecretName
+        }
+        $config | ConvertTo-Json | Out-File "$($localDest)config.json"
+
         $result = az storage container create --name $container --account-name $accountName --auth-mode login --only-show-errors
 
         $result = az storage blob upload-batch --overwrite --destination $container --account-name $accountName --source $localDest --destination-path $path --auth-mode login --only-show-errors
+#download for static file -> used for script references (i.e keyvault name)
+$bashCommandString = @"
+az login --identity
+local_path="/home/adminuser/util/config.json"
+remote_path="/Scripts/config.json"
+container=$($container)
+account_name=$($accountName)
+az storage fs file download -p `$remote_path -d `$local_path -f `$container --account-name `$account_name --auth-mode login
+az storage fs file delete -p `$remote_path -f `$container --account-name `$account_name --auth-mode login -y
+"@
+
+        $result = az vm run-command invoke -g $tout.resource_group_name -n ads-uat-vm-cmdexe --command-id RunShellScript --scripts $bashCommandString
+
 
 
 #at the moment this is only doing 1 file download -> may need to iterate or do batch download later on if more files are required
@@ -47,6 +71,7 @@ az storage fs file download -p `$remote_path -d `$local_path -f `$container --ac
 #crontab output will likely be 'no crontab for user' as this is first cron job being added (from the crontab -l)
 #we are setting the crontab up for adminuser -> as the default run-command runs off root
 $bashCommandString = @"
+crontab -u adminuser -r
 crontab -u adminuser -l | { cat; echo '*/5 * * * * pwsh -executionpolicy bypass -File "/home/adminuser/scripts/Linux_DBT_crontab.ps1"'; } | crontab -u adminuser -
 "@
 

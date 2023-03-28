@@ -24,6 +24,7 @@ using Azure.Storage.Files.DataLake;
 using Azure.Storage.Files.DataLake.Models;
 using Azure.Identity;
 using System.Text;
+using System.Security.Cryptography;
 
 namespace FunctionApp.Services
 {
@@ -41,7 +42,7 @@ namespace FunctionApp.Services
             _taskMetaDataDatabase = taskMetaDataDatabase;
             _keyVaultService = keyVaultService;
         }
-        public async Task InjectInput(string StorageAccountName, string ContainerName, string ExecutionUid, long TaskMasterId, long TaskInstanceId, string ExecutionCommand, string ExecutionParameters, string ExecutionPath, Logging.Logging logging)
+        public async Task InjectInput(string StorageAccountName, string ContainerName, string ExecutionUid, long TaskMasterId, long TaskInstanceId, string ExecutionCommand, string ExecutionParameters, string ExecutionPath, string keyVaultUrl, Logging.Logging logging)
         {
             try
             {
@@ -86,6 +87,8 @@ namespace FunctionApp.Services
                 DataLakeDirectoryClient inputDirectoryClient = fileSystemClient.GetDirectoryClient("input");
                 DataLakeDirectoryClient outputDirectoryClient = fileSystemClient.GetDirectoryClient("output");
                 DataLakeDirectoryClient inProgressDirectoryClient = fileSystemClient.GetDirectoryClient("in_progress");
+                DataLakeDirectoryClient archiveDirectoryClient = fileSystemClient.GetDirectoryClient("archive");
+
                 logging.LogInformation($"Creating directories if they do not exist:");
 
                 var inputDirectory = await inputDirectoryClient.CreateIfNotExistsAsync(pathResourceType, default, default);
@@ -95,9 +98,12 @@ namespace FunctionApp.Services
                 logging.LogInformation($"ouputDirectory: {outputDirectory}. Note: Null result = directory exists");
 
                 var inProgressDirectory = await inProgressDirectoryClient.CreateIfNotExistsAsync(pathResourceType, default, default);
-                logging.LogInformation($"inProgressDirectory: {outputDirectory}. Note: Null result = directory exists");
+                logging.LogInformation($"inProgressDirectory: {inProgressDirectory}. Note: Null result = directory exists");
 
-                string fileName = ExecutionUid + ".json";
+                var archiveDirectory = await archiveDirectoryClient.CreateIfNotExistsAsync(pathResourceType, default, default);
+                logging.LogInformation($"archiveDirrctory: {archiveDirectory}. Note: Null result = directory exists");
+
+                string fileName = ExecutionUid + ".txt";
                 JObject jsonContent = new JObject();
 
                 // logic for cleansing parameter input -> convert to quoted / remove characters as required - likely to change as placeholder implementation
@@ -108,7 +114,7 @@ namespace FunctionApp.Services
                 var executionParameters = string.Concat(ExecutionParameters.Select(c => "*!',&#^@?{}()[];+=|\\/".Contains(c) ? "" : c.ToString()));
                 var executionInput = ExecutionCommand + " " + executionParameters;
 
-                //
+                //create object
                 jsonContent["TaskMasterId"] = TaskMasterId;
                 jsonContent["TaskInstanceId"] = TaskInstanceId;
                 jsonContent["ExecutionUid"] = ExecutionUid;
@@ -120,8 +126,51 @@ namespace FunctionApp.Services
                 jsonContent["ExecutionInput"] = executionInput;
                 jsonContent["ExecutionOutput"] = new JObject();
                 jsonContent["OutputCreatedUTC"] = "";
+                //convert json to plaintext for encryption
+                var plainText = jsonContent.ToString(Formatting.None);
 
-                string json = jsonContent.ToString();
+                //aes encryption (cbc / PKCS7)
+                Aes aesAlgorithm = Aes.Create();
+                string keySecretName = "vmexecutorkey";
+                string saltSecretName = "vmexecutorsalt";
+                var secretExists = await _keyVaultService.CheckSecretExists(keySecretName, keyVaultUrl, logging);
+                string vectorBase64;
+                string keyBase64;
+                if (secretExists)
+                {
+                    keyBase64 = await _keyVaultService.RetrieveSecret(keySecretName, keyVaultUrl, logging);
+                    vectorBase64 = await _keyVaultService.RetrieveSecret(saltSecretName, keyVaultUrl, logging);
+                    aesAlgorithm.Key = Convert.FromBase64String(keyBase64);
+                    aesAlgorithm.IV = Convert.FromBase64String(vectorBase64);
+                }
+                else
+                {
+                    keyBase64 = Convert.ToBase64String(aesAlgorithm.Key);
+                    vectorBase64 = Convert.ToBase64String(aesAlgorithm.IV);
+                    var keyCreate = await _keyVaultService.CreateSecret(keySecretName, keyBase64, keyVaultUrl, logging);
+                    var ivCreate = await _keyVaultService.CreateSecret(saltSecretName, vectorBase64, keyVaultUrl, logging);
+                }
+
+                // Create encryptor object
+                ICryptoTransform encryptor = aesAlgorithm.CreateEncryptor();
+
+                byte[] encryptedData;
+
+                //Encryption will be done in a memory stream through a CryptoStream object
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    using (CryptoStream cs = new CryptoStream(ms, encryptor, CryptoStreamMode.Write))
+                    {
+                        using (StreamWriter sw = new StreamWriter(cs))
+                        {
+                            sw.Write(plainText);
+                        }
+                        encryptedData = ms.ToArray();
+                    }
+                }
+
+                var finalString = Convert.ToBase64String(encryptedData);
+                //string json = jsonContent.ToString();
                 DataLakeFileClient fileClient = await inputDirectoryClient.CreateFileAsync(fileName);
                 /* Using file stream / create -> likely delete this later
                 string path = @".\input.txt";
@@ -146,7 +195,7 @@ namespace FunctionApp.Services
                 {
                     using (StreamWriter sw = new StreamWriter(ms))
                     {
-                        sw.Write(json);
+                        sw.Write(finalString);
                         sw.Flush();
                         ms.Position = 0;
                         logging.LogInformation($"Writing : {fileName} to input folder.");
@@ -154,6 +203,9 @@ namespace FunctionApp.Services
                     }
 
                 }
+
+              
+
             }
             catch (Exception e)
             {
@@ -164,7 +216,181 @@ namespace FunctionApp.Services
             }
         }
 
+        public async Task<bool> FileExists(string StorageAccountName, string ContainerName, string Directory, string FileName, Logging.Logging logging)
+        {
+            try
+            {
+                // create dfs uri for storage account
+                // create auth for storage account
 
+                string dfsUri = "https://" + StorageAccountName + ".dfs.core.windows.net";
+                var cred = _authProvider.GetAzureRestApiTokenCredential("https://management.azure.com/");
+
+                DataLakeServiceClient dataLakeServiceClient = new DataLakeServiceClient(new Uri(dfsUri),
+                                        cred);
+
+                // create our file system client
+                DataLakeFileSystemClient fileSystemClient = dataLakeServiceClient.GetFileSystemClient(ContainerName);
+
+
+                //get directory client
+                var filePath = Directory + FileName;
+                DataLakeFileClient fileClient = fileSystemClient.GetFileClient(filePath);
+
+                var fileExists = await fileClient.ExistsAsync(default);
+                logging.LogInformation($"Storage Account: {StorageAccountName}");
+                logging.LogInformation($"Container: {ContainerName}");
+                logging.LogInformation($"Directory: {Directory}");
+                logging.LogInformation($"{FileName} status: {fileExists}");
+
+                if (fileExists)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (Exception e)
+            {
+                logging.LogErrors(e);
+                logging.LogErrors(new Exception($"Failure in finding the file: {FileName} within the directory: {Directory} within the container: {ContainerName} within the storage account: {StorageAccountName}"));
+                throw;
+
+            }
+        }
+
+        public async Task<JObject> GetJsonFile(string StorageAccountName, string ContainerName, string Directory, string FileName, Logging.Logging logging)
+        {
+            try
+            {
+                // create dfs uri for storage account
+                // create auth for storage account
+
+                string dfsUri = "https://" + StorageAccountName + ".dfs.core.windows.net";
+                var cred = _authProvider.GetAzureRestApiTokenCredential("https://management.azure.com/");
+
+                DataLakeServiceClient dataLakeServiceClient = new DataLakeServiceClient(new Uri(dfsUri),
+                                        cred);
+
+                // create our file system client
+                DataLakeFileSystemClient fileSystemClient = dataLakeServiceClient.GetFileSystemClient(ContainerName);
+
+
+                //get directory client
+                var filePath = Directory + FileName;
+                DataLakeFileClient fileClient = fileSystemClient.GetFileClient(filePath);
+
+                logging.LogInformation($"Storage Account: {StorageAccountName}");
+                logging.LogInformation($"Container: {ContainerName}");
+                logging.LogInformation($"Directory: {Directory}");
+                logging.LogInformation($"File Name: {FileName}");
+                logging.LogInformation($"Reading");
+                var fileRead = await fileClient.ReadAsync(); //not async
+                var stream = fileRead.Value.Content;
+                StreamReader sr = new StreamReader(stream);
+                var text = sr.ReadToEnd();
+                sr.Close();
+                logging.LogInformation($"read");
+                JObject json = JObject.Parse(text);
+                return json;
+            }
+            catch (Exception e)
+            {
+                logging.LogErrors(e);
+                logging.LogErrors(new Exception($"Failure in opening the file: {FileName} within the directory: {Directory} within the container: {ContainerName} within the storage account: {StorageAccountName}"));
+                throw;
+
+            }
+        }
+        public async Task DeleteFile(string StorageAccountName, string ContainerName, string Directory, string FileName, Logging.Logging logging)
+        {
+            try
+            {
+                // create dfs uri for storage account
+                // create auth for storage account
+
+                string dfsUri = "https://" + StorageAccountName + ".dfs.core.windows.net";
+                var cred = _authProvider.GetAzureRestApiTokenCredential("https://management.azure.com/");
+
+                DataLakeServiceClient dataLakeServiceClient = new DataLakeServiceClient(new Uri(dfsUri),
+                                        cred);
+
+                // create our file system client
+                DataLakeFileSystemClient fileSystemClient = dataLakeServiceClient.GetFileSystemClient(ContainerName);
+
+
+                //get directory client
+                var filePath = Directory + FileName;
+                DataLakeFileClient fileClient = fileSystemClient.GetFileClient(filePath);
+                logging.LogInformation($"Storage Account: {StorageAccountName}");
+                logging.LogInformation($"Container: {ContainerName}");
+                logging.LogInformation($"Directory: {Directory}");
+                logging.LogInformation($"File Name: {FileName}");
+                logging.LogInformation($"Deleting");
+                var fileRead = await fileClient.DeleteAsync(); 
+            }
+            catch (Exception e)
+            {
+                logging.LogErrors(e);
+                logging.LogErrors(new Exception($"Failure in deleting the file: {FileName} within the directory: {Directory} within the container: {ContainerName} within the storage account: {StorageAccountName}"));
+                throw;
+
+            }
+        }
+
+        public async Task UploadFile(string StorageAccountName, string ContainerName, string Directory, string FileName, JObject content, Logging.Logging logging)
+        {
+            try
+            {
+                    // create dfs uri for storage account
+                    // create auth for storage account
+
+                string dfsUri = "https://" + StorageAccountName + ".dfs.core.windows.net";
+                var cred = _authProvider.GetAzureRestApiTokenCredential("https://management.azure.com/");
+
+                DataLakeServiceClient dataLakeServiceClient = new DataLakeServiceClient(new Uri(dfsUri),
+                                        cred);
+
+                // create our file system client
+                DataLakeFileSystemClient fileSystemClient = dataLakeServiceClient.GetFileSystemClient(ContainerName);
+
+
+                //get directory client
+                var filePath = Directory + FileName;
+                DataLakeFileClient fileClient = fileSystemClient.GetFileClient(filePath);
+                string fileContent = content.ToString();
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    using (StreamWriter sw = new StreamWriter(ms))
+                    {
+                        sw.Write(fileContent);
+                        sw.Flush();
+                        ms.Position = 0;
+                        logging.LogInformation($"Storage Account: {StorageAccountName}");
+                        logging.LogInformation($"Container: {ContainerName}");
+                        logging.LogInformation($"Writing : {filePath}");
+                        await fileClient.UploadAsync(ms, true, default);
+                    }
+
+                }
+            }
+            catch (Exception e)
+            {
+                logging.LogErrors(e);
+                logging.LogErrors(new Exception($"Failure in writing the file: {FileName} within the directory: {Directory} within the container: {ContainerName} within the storage account: {StorageAccountName}"));
+                throw;
+
+            }
+        }
+        /*
+        public async Task UploadFile(string StorageAccountName, string ContainerName, string Directory, string FileName, string content, Logging.Logging logging)
+        {
+
+        }
+        */
+        //currently unused func
         public async Task DetectOutput(string StorageAccountName, string ContainerName, string ExecutionUid, Logging.Logging logging)
         {
             try

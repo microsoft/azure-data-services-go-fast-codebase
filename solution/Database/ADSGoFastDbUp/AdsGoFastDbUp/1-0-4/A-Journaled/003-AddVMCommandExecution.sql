@@ -10,7 +10,8 @@ SET IDENTITY_INSERT [dbo].[ExecutionEngine] ON
 GO
 INSERT [dbo].[ExecutionEngine] ([EngineId], [EngineName], [SystemType], [ResourceGroup], [SubscriptionUid], [DefaultKeyVaultURL], [EngineJson], [LogAnalyticsWorkspaceId]) VALUES (-3, N'$CmdExecutorVMName$', 'Virtual Machine', N'$ResourceGroupName$', N'$SubscriptionId$', N'https://$KeyVaultName$.vault.azure.net/', N'
 {
-    "StorageAccountName": "$CmdExecutorVMAdlsName$"
+    "StorageAccountName": "$CmdExecutorVMAdlsName$",
+    "KeyVaultURL": "https://$KeyVaultName$.vault.azure.net/"
 }
 ', N'$LogAnalyticsWorkspaceId$')
 GO
@@ -21,8 +22,8 @@ INSERT [dbo].[ExecutionEngine_JsonSchema] ([SystemType], [JsonSchema]) VALUES (N
 {
     "$schema": "http://json-schema.org/draft-04/schema#",
     "type": "object",
-    "properties": {"StorageAccountName": { "type": "string" } },
-    "required": ["StorageAccountName"]
+    "properties": {"StorageAccountName": { "type": "string" } }, {"KeyVaultURL": { "type": "string" } },
+    "required": ["StorageAccountName", "KeyVaultURL"]
 }')
 GO
 

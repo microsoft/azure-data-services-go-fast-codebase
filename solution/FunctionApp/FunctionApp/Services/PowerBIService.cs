@@ -42,7 +42,7 @@ namespace FunctionApp.Services
             try
             {
                 // get secret from keyvault using secretName
-                var secret = await _keyVaultService.RetriveSecret(SecretName, KeyVaultURL, logging);
+                var secret = await _keyVaultService.RetrieveSecret(SecretName, KeyVaultURL, logging);
                 // Make a client call if Access token is not available in cache
                 var authenticationResult = await _authProvider.GetPowerBIRestApiToken(ClientId, secret, TenantId);
 
@@ -136,7 +136,7 @@ namespace FunctionApp.Services
             try
             {
                 // get secret from keyvault using secretName
-                var secret = await _keyVaultService.RetriveSecret(SecretName, KeyVaultURL, logging);
+                var secret = await _keyVaultService.RetrieveSecret(SecretName, KeyVaultURL, logging);
                 // Make a client call if Access token is not available in cache
                 var authenticationResult = await _authProvider.GetPowerBIRestApiToken(ClientId, secret, TenantId);
 
