@@ -142,7 +142,7 @@ resource "azurerm_key_vault_access_policy" "cmd_executor_vm_access" {
   ]
   depends_on = [
     azurerm_key_vault.app_vault,
-    azurerm_linux_virtual_machine.cmd_executor_vm_linux[0].identity[0].principal_id
+    azurerm_linux_virtual_machine.cmd_executor_vm_linux[0]
   ]
 }
 

@@ -49,9 +49,9 @@
     "deploy_databricks": false,
     "deploy_databricks_resources": false,
     "deploy_vpn": false,
-    "deploy_bastion": true,
+    "deploy_bastion": false,
     "deploy_cicd_vm": false,
-    "deploy_cmd_executor_vm": true,
+    "deploy_cmd_executor_vm": false,
     "databricks_admins": []
   }
 }

@@ -1,0 +1,7 @@
+{
+  "profiles": {
+    "MetadataCICD": {
+      "commandName": "Project"
+    }
+  }
+}

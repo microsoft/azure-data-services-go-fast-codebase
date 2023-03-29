@@ -36,3 +36,27 @@ GO
 
 INSERT [dbo].[SourceAndTargetSystems_JsonSchema] ([SystemType], [JsonSchema]) VALUES (N'VM-N/A', N'{  "$schema": "http://json-schema.org/draft-04/schema#",  "type": "object",  "properties": {},  "required": []}')
 GO
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[MetadataExtractionVersion](
+	[ExtractionVersionId] [bigint] IDENTITY(1,1) NOT NULL,
+	[ExtractedDateTime] [datetime] NULL,
+ CONSTRAINT [PK_MetadataExtractionVersion] PRIMARY KEY CLUSTERED 
+(
+	[ExtractionVersionId] ASC
+)WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
+ALTER TABLE [dbo].[TaskMaster]
+ADD [ExtractionVersionId] bigint NULL; 
+
+SET IDENTITY_INSERT [dbo].[MetadataExtractionVersion] ON 
+GO
+INSERT [dbo].[MetadataExtractionVersion] ([ExtractionVersionId], [ExtractedDateTime]) VALUES (0, GETDATE())
+GO
+SET IDENTITY_INSERT [dbo].[MetadataExtractionVersion] OFF
+GO
