@@ -77,7 +77,7 @@ namespace MetadataCICD
     class Program
     {
         public static string JournalTableSchema = "dbo";
-        public static string JournalTableName = "dbupschemaversions";
+        public static string JournalTableName = "metadatacicdschemaversions";
 
         static int Main(string[] args)
         {

@@ -66,7 +66,7 @@ import-Module ./../pwshmodules/Deploy_6_FuncApp.psm1 -force
 DeployFuncApp -tout $tout  -deploymentFolderPath $deploymentFolderPath -PathToReturnTo $PathToReturnTo
 
 #import-Module ./../pwshmodules/Deploy_7_MetadataDB.psm1 -force
-#DeployMataDataDB -publish_metadata_database $true -tout $tout  -deploymentFolderPath $deploymentFolderPath -PathToReturnTo $PathToReturnTo
+#DeployMetaDataDB -publish_metadata_database $true -tout $tout  -deploymentFolderPath $deploymentFolderPath -PathToReturnTo $PathToReturnTo
 
 #import-Module ./../pwshmodules/Deploy_9_DataFactory.psm1 -force
 #DeployDataFactoryAndSynapseArtefacts -tout $tout  -deploymentFolderPath $deploymentFolderPath -PathToReturnTo $PathToReturnTo
@@ -76,6 +76,9 @@ DeployFuncApp -tout $tout  -deploymentFolderPath $deploymentFolderPath -PathToRe
 
 import-Module ./../pwshmodules/Deploy_11_VirtualMachine.psm1 -force
 ConfigureVirtualMachine -tout $tout  -deploymentFolderPath $deploymentFolderPath -PathToReturnTo $PathToReturnTo
+
+import-Module ./../pwshmodules/Deploy_12_MetadataCICD_DbUp.psm1 -force
+DeployMetadataCICDDbUp -tout $tout -deploymentFolderPath $deploymentFolderPath -PathToReturnTo $PathToReturnTo
 
 #import-Module ./../pwshmodules/ConfigureAzurePurview.psm1 -force
 #ConfigureAzurePurview -tout $tout  

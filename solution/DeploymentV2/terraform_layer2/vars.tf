@@ -1069,3 +1069,37 @@ variable "terraform_plan" {
     error_message = "Valid values for var: terraform_plan are (#####, layer0, layer1, layer2, layer3)."
   }
 }
+
+#---------------------------------------------------------------
+# Metadata extraction variables
+#---------------------------------------------------------------
+
+variable "metadata_extraction_repo_link " {
+  description = "The HTTPS link of the repository to clone. E.G - https://github.com/microsoft/azure-data-services-go-fast-codebase.git"
+  type        = string
+  default     = ""
+}
+
+variable "metadata_extraction_publish_branch " {
+  description = "The branch name of the repository you wish to upsert the metadata database extracted tables to."
+  type        = string
+  default     = ""
+}
+
+variable "metadata_extraction_user_name " {
+  description = "The username you wish to associate the metadata database extraction commit with."
+  type        = string
+  default     = "MetadataExtraction"
+}
+
+variable "metadata_extraction_email_address " {
+  description = "The email address you wish to associate the metadata database extraction commit with."
+  type        = string
+  default     = ""
+}
+
+variable "publish_metadata_cicd_dbup" {
+  description = "This will enable the publishing of the metadata CICD db up project. This should only be enabled on the branch with the extracted metadata db rows."
+  default     = false
+  type        = bool
+}

@@ -1,7 +1,10 @@
-## For this script to execute we will require the github clone address of the repo + the branch name
-## Required:
-## Clone Address
-## Branch Name
+## This script will use the extra parameters. These will include:
+## metadata_extraction_repo_link 
+## metadata_extraction_publish_branch
+## metadata_extraction_user_name
+## metadata_extraction_email_address
+
+
 
 
 #------------------------------------------------------------------------------------------------------------
@@ -20,6 +23,20 @@ $gitDeploy = ([System.Environment]::GetEnvironmentVariable('gitDeploy')  -eq 'tr
 PrepareDeployment -gitDeploy $gitDeploy -deploymentFolderPath $deploymentFolderPath -FeatureTemplate $FeatureTemplate -PathToReturnTo $PathToReturnTo
 $terraformFolderPath = $PathToReturnTo + "/terraform_layer2"
 $tout = GatherOutputsFromTerraform -TerraformFolderPath $terraformFolderPath
+
+
+
+$repo_clone_url = "https://github.com/hugosharpe-insight/devgofast.git"
+$publish_branch = "testbranch"
+$user_name = "testuser"
+$email_address = "testuser@test.com"
+
+#$repo_clone_url = $tout.metadata_extraction_repo_link 
+#$publish_branch = $tout.metadata_extraction_publish_branch 
+#$user_name = $tout.metadata_extraction_user_name 
+#$email_address = $tout.metadata_extraction_email_address 
+
+
 
 #------------------------------------------------------------------------------------------------------------
 # tout to DBUP Mapping Object
@@ -47,7 +64,7 @@ $map = @"
     "$($tout.databricks_workspace_id)": "`$DatabricksWorkspaceResourceID`$",
     "$($tout.databricks_instance_pool_id)": "`$DefaultInstancePoolID`$",
     "$($tout.cmd_executor_vm_name)": "`$CmdExecutorVMName`$",
-    "$($tout.CmdExecutorVMAdlsName)": "`$adls_vm_cmd_executor_name`$"
+    "$($tout.adls_vm_cmd_executor_name)": "`$CmdExecutorVMAdlsName`$"
 }
 "@
 
@@ -66,7 +83,6 @@ $json = $map | ConvertFrom-Json -AsHashtable
 
 
 #------------------------------------------------------------------------------------------------------------
-
 
 #------------------------------------------------------------------------------------------------------------
 # SQL Connection
@@ -94,7 +110,15 @@ $output = Invoke-Sqlcmd -ServerInstance "$sqlserver_name.database.windows.net,14
 
 if ($output.count -gt 0) {
     $versionId = $output.ExtractionVersionId
-    Set-Location "..\Database\ADSGoFastDbUp\MetadataCICD"
+
+
+    #------------------------------------------------------------------------------------------------------------
+    # Git Repo set up
+    #------------------------------------------------------------------------------------------------------------
+    $temporaryRepoName = "tempRepo"
+    $temporaryRepoDirectory = "../../$($temporaryRepoName)"
+    git clone -b "$($publish_branch)" "$($repo_clone_url)" "$($temporaryRepoDirectory)"
+    Set-Location "$($temporaryRepoDirectory)/solution/Database/AdsGoFastDbUp/MetadataCICD"
     New-Item -ItemType Directory -Force -Path "./Version-$($versionId)/A-Journaled"
 
     #------------------------------------------------------------------------------------------------------------
@@ -645,11 +669,14 @@ if ($output.count -gt 0) {
             [void]$parentNode.AppendChild($childNode)
 
             #------------------------------------------------------------------------------------------------------------
-            # Update Relevant table versionId
+            # Set ExtractionVersionId on Table
             #------------------------------------------------------------------------------------------------------------
 
         }
 
+        #------------------------------------------------------------------------------------------------------------
+        # XML element for csproj version folder
+        #------------------------------------------------------------------------------------------------------------
         #append folder element
         $childNode = $csproj.CreateElement("Folder")
 
@@ -661,7 +688,7 @@ if ($output.count -gt 0) {
         [void]$parentNode.AppendChild($childNode)
 
         ##check for init -> First time running, delete placeholder init nodes
-
+        ##these init's exist as if there is no element on a node they are treated as strings by powershell
         if($csproj.project.itemgroup[0].None[0].Remove -eq 'Init')
         {
             $childNode = $csproj.project.itemgroup[0].None[0]
@@ -686,6 +713,33 @@ if ($output.count -gt 0) {
         ## create new version without datetime?
         $path = (Get-Location).Path
         $csproj.save("$($path)/MetadataCICD.csproj")
+
+
+
+
+        #------------------------------------------------------------------------------------------------------------
+        # Git push updated repo to branch / delete temporary repo
+        #------------------------------------------------------------------------------------------------------------
+
+        if ($user_name -ne "") {
+            git config user.name "$($user_name)"
+        }
+        if ($email_address -ne "") {
+            git config user.email "$($email_address)"
+        }
+
+        Set-Location "../../../../"
+        git add .
+        Write-Information ("Pushing to " + $repo_link + "against the branch " + $publish_branch)
+        git commit -m "Metadata Extraction Version-$($versionId) commit" --quiet
+
+        git push origin $($publish_branch)
+
+        Set-Location $PathToReturnTo
+        Write-Information "Deleting Temporary Repo"
+        Remove-Item $temporaryRepoDirectory -Recurse -Force
+        Write-Information "Complete!"
+
     }
     Set-Location $PathToReturnTo
 
