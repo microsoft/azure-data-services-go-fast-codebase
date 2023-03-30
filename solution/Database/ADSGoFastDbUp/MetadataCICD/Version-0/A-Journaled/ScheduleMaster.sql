@@ -1,5 +1,6 @@
         SET IDENTITY_INSERT [dbo].[ScheduleMaster] ON
-        GO                MERGE 
+        GO
+                MERGE 
                     [dbo].[ScheduleMaster] AS [Target]
                 USING 
                     (SELECT  
@@ -25,5 +26,7 @@
                         [Source].ScheduleCronExpression,
                         [Source].ScheduleDesciption,
                         [Source].ActiveYN);
-                GO        SET IDENTITY_INSERT [dbo].[ScheduleMaster] OFF
+                GO
+        SET IDENTITY_INSERT [dbo].[ScheduleMaster] OFF
         GO
+

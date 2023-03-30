@@ -71,7 +71,7 @@ ADD [ExtractionVersionId] bigint NULL;
 
 SET IDENTITY_INSERT [dbo].[MetadataExtractionVersion] ON 
 GO
-INSERT [dbo].[MetadataExtractionVersion] ([ExtractionVersionId], [ExtractedDateTime]) VALUES (0, GETDATE())
+INSERT [dbo].[MetadataExtractionVersion] ([ExtractionVersionId], [ExtractedDateTime]) VALUES (0, NULL)
 GO
 SET IDENTITY_INSERT [dbo].[MetadataExtractionVersion] OFF
 GO

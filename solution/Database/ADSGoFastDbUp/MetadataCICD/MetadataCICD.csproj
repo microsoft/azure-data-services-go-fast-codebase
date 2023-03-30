@@ -7,10 +7,20 @@
     <DefineConstants>TRACE</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <None Remove="Init" />
+    <None Remove="Version-0\A-Journaled\ScheduleMaster.sql" />
+    <None Remove="Version-0\A-Journaled\SourceAndTargetSystems.sql" />
+    <None Remove="Version-0\A-Journaled\SubjectArea.sql" />
+    <None Remove="Version-0\A-Journaled\TaskGroup.sql" />
+    <None Remove="Version-0\A-Journaled\TaskGroupDependency.sql" />
+    <None Remove="Version-0\A-Journaled\TaskMaster.sql" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Init" />
+    <EmbeddedResource Include="Version-0\A-Journaled\ScheduleMaster.sql" />
+    <EmbeddedResource Include="Version-0\A-Journaled\SourceAndTargetSystems.sql" />
+    <EmbeddedResource Include="Version-0\A-Journaled\SubjectArea.sql" />
+    <EmbeddedResource Include="Version-0\A-Journaled\TaskGroup.sql" />
+    <EmbeddedResource Include="Version-0\A-Journaled\TaskGroupDependency.sql" />
+    <EmbeddedResource Include="Version-0\A-Journaled\TaskMaster.sql" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="2.8.0" />
@@ -18,7 +28,7 @@
     <PackageReference Include="Microsoft.Identity.Web" Version="1.21.1" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Init" />
+    <Folder Include="Version-0\" />
   </ItemGroup>
   <ItemGroup>
     <None Update="local.settings.json">

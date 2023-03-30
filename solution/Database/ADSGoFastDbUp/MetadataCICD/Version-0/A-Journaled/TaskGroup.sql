@@ -1,5 +1,6 @@
         SET IDENTITY_INSERT [dbo].[TaskGroup] ON
-        GO                MERGE 
+        GO
+                MERGE 
                     [dbo].[TaskGroup] AS [Target]
                 USING 
                     (SELECT  
@@ -41,5 +42,7 @@
                         [Source].TaskGroupJSON,
                         [Source].MaximumTaskRetries,
                         [Source].ActiveYN);
-                GO        SET IDENTITY_INSERT [dbo].[TaskGroup] OFF
+                GO
+        SET IDENTITY_INSERT [dbo].[TaskGroup] OFF
         GO
+        

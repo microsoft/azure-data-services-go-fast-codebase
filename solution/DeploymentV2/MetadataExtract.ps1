@@ -1,3 +1,9 @@
+## For this script to execute we will require the github clone address of the repo + the branch name
+## Required:
+## Clone Address
+## Branch Name
+
+
 #------------------------------------------------------------------------------------------------------------
 # Module Imports #Mandatory
 #------------------------------------------------------------------------------------------------------------
@@ -16,8 +22,57 @@ $terraformFolderPath = $PathToReturnTo + "/terraform_layer2"
 $tout = GatherOutputsFromTerraform -TerraformFolderPath $terraformFolderPath
 
 #------------------------------------------------------------------------------------------------------------
+# tout to DBUP Mapping Object
+#------------------------------------------------------------------------------------------------------------
+$map = @"
+{
+    "$($tout.datafactory_name)": "`$DataFactoryName`$",
+    "$($tout.resource_group_name)": "`$ResourceGroupName`$",
+    "$($tout.keyvault_name)": "`$KeyVaultName`$",
+    "$($tout.loganalyticsworkspace_id)": "`$LogAnalyticsWorkspaceId`$",
+    "$($tout.subscription_id)": "`$SubscriptionId`$",
+    "$($tout.sampledb_name)": "`$SampleDatabaseName`$",
+    "$($tout.stagingdb_name)": "`$StagingDatabaseName`$",
+    "$($tout.metadatadb_name)": "`$MetadataDatabaseName`$",
+    "$($tout.blobstorage_name)": "`$BlobStorageName`$",
+    "$($tout.adlsstorage_name)": "`$AdlsStorageName`$",
+    "$($tout.webapp_name)": "`$WebAppName`$",
+    "$($tout.sqlserver_name)": "`$SqlServerName`$",
+    "$($tout.synapse_workspace_name)": "`$SynapseWorkspaceName`$",
+    "$($tout.synapse_sql_pool_name)": "`$SynapseDatabaseName`$",
+    "$($tout.synapse_sql_pool_name)": "`$SynapseSQLPoolName`$",
+    "$($tout.synapse_spark_pool_name)": "`$SynapseSparkPoolName`$",
+    "$($tout.synapse_lakedatabase_container_name)": "`$SynapseLakeDatabaseContainerName`$",
+    "$($tout.databricks_workspace_url)": "`$DatabricksWorkspaceURL`$",
+    "$($tout.databricks_workspace_id)": "`$DatabricksWorkspaceResourceID`$",
+    "$($tout.databricks_instance_pool_id)": "`$DefaultInstancePoolID`$",
+    "$($tout.cmd_executor_vm_name)": "`$CmdExecutorVMName`$",
+    "$($tout.CmdExecutorVMAdlsName)": "`$adls_vm_cmd_executor_name`$"
+}
+"@
+
+$map = $map.replace('""','"EmptyProperty"')
+$json = $map | ConvertFrom-Json -AsHashtable
+# for use of mapping -> check source and target systems
+
+
+#was for converting custom object to hash, not needed due to -AsHashTable
+#$hash = @{}
+#foreach ($property in $json.PSObject.Properties) {
+#    $hash[$property.Name] = $property.Value
+#}
+
+
+
+
+#------------------------------------------------------------------------------------------------------------
+
+
+#------------------------------------------------------------------------------------------------------------
 # SQL Connection
 #------------------------------------------------------------------------------------------------------------
+
+
 $sqlserver_name=$tout.sqlserver_name
 $metadatadb_name=$tout.metadatadb_name
 
@@ -61,10 +116,12 @@ if ($output.count -gt 0) {
         $headerSQL = @"
         SET IDENTITY_INSERT [dbo].[TaskMaster] ON
         GO
+
 "@
         $footerSQL = @"
         SET IDENTITY_INSERT [dbo].[TaskMaster] OFF
         GO
+
 "@
         $tmSQLStatement = $headerSQL
         foreach ($tm in $taskMasters)
@@ -139,6 +196,7 @@ if ($output.count -gt 0) {
                         [Source].EngineId,
                         0);
                 GO
+
 "@
            $tmSQLStatement = $tmSQLStatement + "`r" + $tmSQLTemplate 
 
@@ -168,10 +226,12 @@ if ($output.count -gt 0) {
         $headerSQL = @"
         SET IDENTITY_INSERT [dbo].[TaskGroup] ON
         GO
+
 "@
         $footerSQL = @"
         SET IDENTITY_INSERT [dbo].[TaskGroup] OFF
         GO
+        
 "@
         $tgSQLStatement = $headerSQL
         foreach ($tg in $taskGroups)
@@ -220,6 +280,7 @@ if ($output.count -gt 0) {
                         [Source].MaximumTaskRetries,
                         [Source].ActiveYN);
                 GO
+
 "@
            $tgSQLStatement = $tgSQLStatement + "`r" + $tgSQLTemplate 
 
@@ -273,6 +334,7 @@ if ($output.count -gt 0) {
                         [Source].DescendantTaskGroupId,
                         [Source].DependencyType);
                 GO
+
 "@
            $tgdSQLStatement = $tgdSQLStatement + "`r" + $tgdSQLTemplate 
 
@@ -302,10 +364,12 @@ if ($output.count -gt 0) {
         $headerSQL = @"
         SET IDENTITY_INSERT [dbo].[ScheduleMaster] ON
         GO
+
 "@
         $footerSQL = @"
         SET IDENTITY_INSERT [dbo].[ScheduleMaster] OFF
         GO
+
 "@
         $smSQLStatement = $headerSQL
         foreach ($sm in $scheduleMasters)
@@ -338,6 +402,7 @@ if ($output.count -gt 0) {
                         [Source].ScheduleDesciption,
                         [Source].ActiveYN);
                 GO
+
 "@
            $smSQLStatement = $smSQLStatement + "`r" + $smSQLTemplate 
 
@@ -367,10 +432,12 @@ if ($output.count -gt 0) {
         $headerSQL = @"
         SET IDENTITY_INSERT [dbo].[SubjectArea] ON
         GO
+
 "@
         $footerSQL = @"
         SET IDENTITY_INSERT [dbo].[SubjectArea] OFF
         GO
+
 "@
         $saSQLStatement = $headerSQL
         foreach ($sa in $subjectAreas)
@@ -415,6 +482,7 @@ if ($output.count -gt 0) {
                         [Source].UpdatedBy,
                         [Source].ShortCode);
                 GO
+
 "@
            $saSQLStatement = $saSQLStatement + "`r" + $saSQLTemplate 
 
@@ -445,10 +513,12 @@ if ($output.count -gt 0) {
         $headerSQL = @"
         SET IDENTITY_INSERT [dbo].[SourceAndTargetSystems] ON
         GO
+
 "@
         $footerSQL = @"
         SET IDENTITY_INSERT [dbo].[SourceAndTargetSystems] OFF
         GO
+
 "@
         $stsSQLStatement = $headerSQL
         foreach ($sts in $sourceAndTargetSystems)
@@ -513,12 +583,28 @@ if ($output.count -gt 0) {
                         [Source].ActiveYN,
                         [Source].IsExternal);
                 GO
+
 "@
            $stsSQLStatement = $stsSQLStatement + "`r" + $stsSQLTemplate 
 
         }
         $stsSQLStatement = $stsSQLStatement + "`r" + $footerSQL
-        $stsSQLStatement | Set-Content "./Version-$($versionId)/A-Journaled/SourceAndTargetSystems.sql" -Force
+
+        #use our map to go line by line and replace our terraform outputs with the dbup variable representation
+        $stsSQLStatementCleaned = ""
+        foreach($line in $stsSQLStatement)
+        {
+            foreach ($h in $json.GetEnumerator())
+            {
+                if ($line -match $h.Key)
+                {
+                    $line = $line -replace $h.Key, $h.Value
+                }
+            }
+        $stsSQLStatementCleaned = $stsSQLStatementCleaned + $line
+        }
+
+        $stsSQLStatementCleaned | Set-Content "./Version-$($versionId)/A-Journaled/SourceAndTargetSystems.sql" -Force
 
     }      
     $fileCount = ( Get-ChildItem -Path "./Version-$($versionId)/A-Journaled/" -File | Measure-Object ).Count;

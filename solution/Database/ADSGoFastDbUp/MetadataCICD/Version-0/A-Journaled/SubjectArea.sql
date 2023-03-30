@@ -1,5 +1,6 @@
         SET IDENTITY_INSERT [dbo].[SubjectArea] ON
-        GO                MERGE 
+        GO
+                MERGE 
                     [dbo].[SubjectArea] AS [Target]
                 USING 
                     (SELECT  
@@ -37,5 +38,7 @@
                         [Source].DefaultTargetSchema,
                         [Source].UpdatedBy,
                         [Source].ShortCode);
-                GO        SET IDENTITY_INSERT [dbo].[SubjectArea] OFF
+                GO
+        SET IDENTITY_INSERT [dbo].[SubjectArea] OFF
         GO
+

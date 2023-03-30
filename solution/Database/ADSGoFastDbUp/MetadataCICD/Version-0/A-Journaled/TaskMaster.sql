@@ -1,5 +1,6 @@
         SET IDENTITY_INSERT [dbo].[TaskMaster] ON
-        GO                MERGE 
+        GO
+                MERGE 
                     [dbo].[TaskMaster] AS [Target]
                 USING 
                     (SELECT 
@@ -67,5 +68,7 @@
                         [Source].DependencyChainTag,
                         [Source].EngineId,
                         0);
-                GO        SET IDENTITY_INSERT [dbo].[TaskMaster] OFF
+                GO
+        SET IDENTITY_INSERT [dbo].[TaskMaster] OFF
         GO
+

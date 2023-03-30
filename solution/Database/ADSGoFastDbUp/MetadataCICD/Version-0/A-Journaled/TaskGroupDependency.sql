@@ -22,3 +22,4 @@
                         [Source].DescendantTaskGroupId,
                         [Source].DependencyType);
                 GO
+
