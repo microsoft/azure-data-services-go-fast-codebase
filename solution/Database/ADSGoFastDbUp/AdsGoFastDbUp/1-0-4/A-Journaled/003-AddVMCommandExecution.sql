@@ -54,6 +54,21 @@ GO
 ALTER TABLE [dbo].[TaskMaster]
 ADD [ExtractionVersionId] bigint NULL; 
 
+ALTER TABLE [dbo].[TaskGroup]
+ADD [ExtractionVersionId] bigint NULL; 
+
+ALTER TABLE [dbo].[TaskGroupDependency]
+ADD [ExtractionVersionId] bigint NULL; 
+
+ALTER TABLE [dbo].[SubjectArea]
+ADD [ExtractionVersionId] bigint NULL; 
+
+ALTER TABLE [dbo].[ScheduleMaster]
+ADD [ExtractionVersionId] bigint NULL; 
+
+ALTER TABLE [dbo].[SourceAndTargetSystems]
+ADD [ExtractionVersionId] bigint NULL; 
+
 SET IDENTITY_INSERT [dbo].[MetadataExtractionVersion] ON 
 GO
 INSERT [dbo].[MetadataExtractionVersion] ([ExtractionVersionId], [ExtractedDateTime]) VALUES (0, GETDATE())
