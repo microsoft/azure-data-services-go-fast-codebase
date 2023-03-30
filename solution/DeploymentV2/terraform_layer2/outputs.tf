@@ -374,10 +374,10 @@ output "cmd_executor_vm_name" {
 output "deploy_cmd_executor_vm" {
   value = var.deploy_cmd_executor_vm
 }
-output "publish_metadata_cicd_dbup " {
+output "publish_metadata_cicd_dbup" {
   value = var.publish_metadata_cicd_dbup 
 }
-output "metadata_extraction_repo_link " {
+output "metadata_extraction_repo_link" {
   value = var.metadata_extraction_repo_link 
 }
 output "metadata_extraction_publish_branch" {

@@ -1,11 +1,43 @@
+#------------------------------------------------------------------------------------------------------------
+# Script Summary
+#------------------------------------------------------------------------------------------------------------
+## This script will allow you to extract rows from specific tables within the metadata database on one environment and upsert it to a branch of another
+## This script will be executed on the environment you are extracting rows from
+## Summary of steps executed by script:
+##      - Clone the branch of the repository that you wish to move the rows to
+##      - Find the latest version Id that does not have a DateTime (extracted date time) within the MetadataExtractionVersion table
+##      - Find any rows in the valid tables that have a versionId matching the above versionId
+##      - Create a Insert/Merge sql statement for each row on the table, replacing any environment specific variables with the DBUp variable
+##      - Create a Sql file for each table within the cloned branch MetadataCICD Dbup, under the versionid folder
+##      - Modify the csproj xml to include the folder and files that have been created at time of execution
+##      - Commit and push the changes to the remote branch
+##      - Delete the temporarily cloned repo
+##      - Set all of the rows with a ExtractionVersionId to null within the metadata db
+##      - Set the DateTime of the MetadataExtractionVersion row that contained the versionId used in the script as this version has been 'completed'
+##      - Create a new row in the MetadataExtractionVersion without a date time (this is the next version) 
+##
+## To enable the execution of the MetadataCICD DbUp in the written to environment, ensure you have the terraform variable publish_metadata_cicd_dbup = true
+##
 ## This script will use the extra parameters. These will include:
 ## metadata_extraction_repo_link 
 ## metadata_extraction_publish_branch
 ## metadata_extraction_user_name
 ## metadata_extraction_email_address
 
+#------------------------------------------------------------------------------------------------------------
+# Static Parameters
+#------------------------------------------------------------------------------------------------------------
+#These variables can be modified to suit environment needs. It is advised to not change them inbetween runs.
+## versionIncrement -> For incrementing the next ExtractionVersionId from the MetadataExtractionVersion table
+##      Example: if versionIncrement is 1 and the versionId at runtime is 0, the MetadataExtractionVersion table 
+##      is given the next ExtractionVersionId of 1. If versionIncrement is -100, then the next ExtractionVersionId will be -100.
+## idIncrement -> This is for incrementing the Ids from the extracted rows in between environments. 
+##      Example: If a taskmaster is extracted with the TaskMasterId of 1 with the idIncrement variable set to 100.
+##      The SQL statement generated will compare (do the merge / insert) against a row with an TaskMasterId in the new environment of 101.
+##      idIncrement can be used to help avoid ID overlaps.
 
-
+$versionIncrement = 1
+$idIncrement = 0
 
 #------------------------------------------------------------------------------------------------------------
 # Module Imports #Mandatory
@@ -27,7 +59,7 @@ $tout = GatherOutputsFromTerraform -TerraformFolderPath $terraformFolderPath
 
 
 $repo_clone_url = "https://github.com/hugosharpe-insight/devgofast.git"
-$publish_branch = "testbranch"
+$publish_branch = "test2"
 $user_name = "testuser"
 $email_address = "testuser@test.com"
 
@@ -131,7 +163,7 @@ if ($output.count -gt 0) {
     FROM
         [dbo].[TaskMaster]
     WHERE
-        ExtractionVersionId = $($versionId) AND TaskMasterId > 0
+        ExtractionVersionId = $($versionId)
 "@
     $taskMasters = Invoke-Sqlcmd -ServerInstance "$sqlserver_name.database.windows.net,1433" -Database $metadatadb_name -AccessToken $token -query $sqlcommand
     if($taskMasters.count -gt 0)
@@ -171,7 +203,7 @@ if ($output.count -gt 0) {
                         EngineId = $($tm.EngineId), 
                         InsertIntoCurrentSchedule = $([int][bool]::Parse($tm.InsertIntoCurrentSchedule))) AS [Source] 
                 ON 
-                    [Target].TaskMasterId = [Source].TaskMasterId 
+                    [Target].TaskMasterId = ([Source].TaskMasterId + $($idIncrement))
                 WHEN MATCHED THEN
                     UPDATE SET 
                         [Target].TaskMasterName = [Source].TaskMasterName,
@@ -204,7 +236,7 @@ if ($output.count -gt 0) {
                         EngineId,
                         InsertIntoCurrentSchedule)
                     VALUES 
-                        ([Source].TaskMasterId,
+                        (([Source].TaskMasterId + $($idIncrement)),
                         [Source].TaskMasterName,
                         [Source].TaskTypeId,
                         [Source].TaskGroupId,
@@ -241,7 +273,7 @@ if ($output.count -gt 0) {
     FROM
         [dbo].[TaskGroup]
     WHERE
-        ExtractionVersionId = $($versionId) AND TaskGroupId > 0
+        ExtractionVersionId = $($versionId)
 "@
     $taskGroups = Invoke-Sqlcmd -ServerInstance "$sqlserver_name.database.windows.net,1433" -Database $metadatadb_name -AccessToken $token -query $sqlcommand
     if($taskGroups.count -gt 0)
@@ -274,7 +306,7 @@ if ($output.count -gt 0) {
                         MaximumTaskRetries = $($tg.MaximumTaskRetries),
                         ActiveYN = $([int][bool]::Parse($tg.ActiveYN))) AS [Source] 
                 ON 
-                    [Target].TaskGroupId = [Source].TaskGroupId 
+                    [Target].TaskGroupId = ([Source].TaskGroupId + $($idIncrement))
                 WHEN MATCHED THEN
                     UPDATE SET 
                         [Target].SubjectAreaId = [Source].SubjectAreaId,
@@ -295,7 +327,7 @@ if ($output.count -gt 0) {
                         MaximumTaskRetries,
                         ActiveYN)
                     VALUES 
-                        ([Source].TaskGroupId,
+                        (([Source].TaskGroupId + $($idIncrement)),
                         [Source].SubjectAreaId,
                         [Source].TaskGroupName,
                         [Source].TaskGroupPriority,
@@ -379,7 +411,7 @@ if ($output.count -gt 0) {
     FROM
         [dbo].[ScheduleMaster]
     WHERE
-        ExtractionVersionId = $($versionId) AND ScheduleMasterId > 0
+        ExtractionVersionId = $($versionId)
 "@
     $scheduleMasters = Invoke-Sqlcmd -ServerInstance "$sqlserver_name.database.windows.net,1433" -Database $metadatadb_name -AccessToken $token -query $sqlcommand
     if($scheduleMasters.count -gt 0)
@@ -408,7 +440,7 @@ if ($output.count -gt 0) {
                         ScheduleDesciption = '$($sm.ScheduleDesciption)', 
                         ActiveYN = $([int][bool]::Parse($sm.ActiveYN))) AS [Source] 
                 ON 
-                    [Target].ScheduleMasterId = [Source].ScheduleMasterId 
+                    [Target].ScheduleMasterId = ([Source].ScheduleMasterId + $($idIncrement))
                 WHEN MATCHED THEN
                     UPDATE SET 
                         [Target].ScheduleCronExpression = [Source].ScheduleCronExpression,
@@ -419,9 +451,9 @@ if ($output.count -gt 0) {
                         (ScheduleMasterId, 
                         ScheduleCronExpression,
                         ScheduleDesciption,
-                        ActiveYN)
+                        0)
                     VALUES 
-                        ([Source].ScheduleMasterId,
+                        (([Source].ScheduleMasterId + $($idIncrement)),
                         [Source].ScheduleCronExpression,
                         [Source].ScheduleDesciption,
                         [Source].ActiveYN);
@@ -447,7 +479,7 @@ if ($output.count -gt 0) {
     FROM
         [dbo].[SubjectArea]
     WHERE
-        ExtractionVersionId = $($versionId) AND SubjectAreaId > 0
+        ExtractionVersionId = $($versionId)
 "@
     $subjectAreas = Invoke-Sqlcmd -ServerInstance "$sqlserver_name.database.windows.net,1433" -Database $metadatadb_name -AccessToken $token -query $sqlcommand
     if($subjectAreas.count -gt 0)
@@ -479,7 +511,7 @@ if ($output.count -gt 0) {
                         UpdatedBy = '$($sa.UpdatedBy)',
                         ShortCode = $($sa.ShortCode)) AS [Source] 
                 ON 
-                    [Target].SubjectAreaId = [Source].SubjectAreaId 
+                    [Target].SubjectAreaId = ([Source].SubjectAreaId + $($idIncrement))
                 WHEN MATCHED THEN
                     UPDATE SET 
                         [Target].SubjectAreaName = [Source].SubjectAreaName,
@@ -498,7 +530,7 @@ if ($output.count -gt 0) {
                         UpdatedBy,
                         ShortCode)
                     VALUES 
-                        ([Source].SubjectAreaId,
+                        (([Source].SubjectAreaId + $($idIncrement)),
                         [Source].SubjectAreaName,
                         [Source].ActiveYN,
                         [Source].SubjectAreaFormId,
@@ -528,7 +560,7 @@ if ($output.count -gt 0) {
     FROM
         [dbo].[SourceAndTargetSystems]
     WHERE
-        ExtractionVersionId = $($versionId) AND SystemId > 0
+        ExtractionVersionId = $($versionId)
 "@
     $sourceAndTargetSystems = Invoke-Sqlcmd -ServerInstance "$sqlserver_name.database.windows.net,1433" -Database $metadatadb_name -AccessToken $token -query $sqlcommand
     if($sourceAndTargetSystems.count -gt 0)
@@ -565,7 +597,7 @@ if ($output.count -gt 0) {
                         ActiveYN = $([int][bool]::Parse($sts.ActiveYN)),
                         IsExternal = $([int][bool]::Parse($sts.IsExternal))) AS [Source] 
                 ON 
-                    [Target].SystemId = [Source].SystemId 
+                    [Target].SystemId = ([Source].SystemId + $($idIncrement))
                 WHEN MATCHED THEN
                     UPDATE SET 
                         [Target].SystemName = [Source].SystemName,
@@ -594,7 +626,7 @@ if ($output.count -gt 0) {
                         ActiveYN,
                         IsExternal)
                     VALUES 
-                        ([Source].SystemId,
+                        (([Source].SystemId + $($idIncrement)),
                         [Source].SystemName,
                         [Source].SystemType,
                         [Source].SystemDescription,
@@ -671,6 +703,15 @@ if ($output.count -gt 0) {
             #------------------------------------------------------------------------------------------------------------
             # Set ExtractionVersionId on Table
             #------------------------------------------------------------------------------------------------------------
+            $sqlcommand = @"
+            UPDATE 
+                [dbo].[$($tableName)]
+            SET
+                ExtractionVersionId = NULL
+            WHERE
+                ExtractionVersionId = $($versionId);
+"@
+        $sqlQuery = Invoke-Sqlcmd -ServerInstance "$sqlserver_name.database.windows.net,1433" -Database $metadatadb_name -AccessToken $token -query $sqlcommand
 
         }
 
@@ -707,16 +748,37 @@ if ($output.count -gt 0) {
             $parentNode = $csproj.project.itemgroup[3]
             $parentNode.RemoveChild($childNode)
         }
-        ## add files found to project
-        ## do sql statement to add datetime to the metadata table
-        ## Go over relevant tables and via using the files -> for each file, get the file name then use that to parameterise the table and do the find extraction id = versionId and set value = null
-        ## create new version without datetime?
+
         $path = (Get-Location).Path
         $csproj.save("$($path)/MetadataCICD.csproj")
 
+        #------------------------------------------------------------------------------------------------------------
+        # Update MetadataExtractionVersion table
+        #------------------------------------------------------------------------------------------------------------
+        $sqlcommand = @"
+        UPDATE 
+            [dbo].[MetadataExtractionVersion]
+        SET
+            ExtractedDateTime = GETDATE()
+        WHERE
+            ExtractionVersionId = $($versionId)
+"@
+        $sqlQuery = Invoke-Sqlcmd -ServerInstance "$sqlserver_name.database.windows.net,1433" -Database $metadatadb_name -AccessToken $token -query $sqlcommand
 
+        $sqlcommand = @"
+        SET IDENTITY_INSERT [dbo].[MetadataExtractionVersion] ON
+        GO
+        INSERT INTO 
+            [dbo].[MetadataExtractionVersion] 
+                (ExtractionVersionId)
+        VALUES
+            ($($versionId) + $($versionIncrement));
 
+        SET IDENTITY_INSERT [dbo].[MetadataExtractionVersion] OFF
+        GO
 
+"@
+        $sqlQuery = Invoke-Sqlcmd -ServerInstance "$sqlserver_name.database.windows.net,1433" -Database $metadatadb_name -AccessToken $token -query $sqlcommand
         #------------------------------------------------------------------------------------------------------------
         # Git push updated repo to branch / delete temporary repo
         #------------------------------------------------------------------------------------------------------------

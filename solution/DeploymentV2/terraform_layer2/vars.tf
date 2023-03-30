@@ -1074,25 +1074,25 @@ variable "terraform_plan" {
 # Metadata extraction variables
 #---------------------------------------------------------------
 
-variable "metadata_extraction_repo_link " {
-  description = "The HTTPS link of the repository to clone. E.G - https://github.com/microsoft/azure-data-services-go-fast-codebase.git"
+variable "metadata_extraction_repo_link" {
+  description = "The HTTPS clone link of the repository to clone. E.G - https://github.com/microsoft/azure-data-services-go-fast-codebase.git"
   type        = string
   default     = ""
 }
 
-variable "metadata_extraction_publish_branch " {
+variable "metadata_extraction_publish_branch" {
   description = "The branch name of the repository you wish to upsert the metadata database extracted tables to."
   type        = string
   default     = ""
 }
 
-variable "metadata_extraction_user_name " {
+variable "metadata_extraction_user_name" {
   description = "The username you wish to associate the metadata database extraction commit with."
   type        = string
   default     = "MetadataExtraction"
 }
 
-variable "metadata_extraction_email_address " {
+variable "metadata_extraction_email_address" {
   description = "The email address you wish to associate the metadata database extraction commit with."
   type        = string
   default     = ""
