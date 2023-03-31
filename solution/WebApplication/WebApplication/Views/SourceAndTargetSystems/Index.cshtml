@@ -43,6 +43,9 @@
             <th>
                 @Html.DisplayNameFor(model => model.ActiveYn)
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ExtractionVersionId)
+            </th>
             <th></th>
         </tr>
     </thead>
@@ -78,6 +81,9 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.ActiveYn)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ExtractionVersionId)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.SystemId" class="btn-sm btn-dark details">Edit</a> |

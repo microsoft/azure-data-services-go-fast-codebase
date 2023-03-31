@@ -21,7 +21,10 @@ namespace WebApplication.Models
         public int SubjectAreaId {get; set;}
         [Display(Name = "Is Active")]
         public bool ActiveYn { get; set; }
+
+        public long? ExtractionVersionId { get; set; }
+
     }
 
-    
+
 }

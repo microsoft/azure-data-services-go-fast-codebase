@@ -174,7 +174,7 @@ namespace WebApplication.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [ChecksUserAccess]
-        public async Task<IActionResult> Edit(long id, [Bind("TaskMasterId,TaskMasterName,TaskTypeId,TaskGroupId,ScheduleMasterId,SourceSystemId,TargetSystemId,DegreeOfCopyParallelism,AllowMultipleActiveInstances,TaskDatafactoryIr,TaskMasterJson,ActiveYn,DependencyChainTag,EngineId,InsertIntoCurrentSchedule")] TaskMaster taskMaster)
+        public async Task<IActionResult> Edit(long id, [Bind("TaskMasterId,TaskMasterName,TaskTypeId,TaskGroupId,ScheduleMasterId,SourceSystemId,TargetSystemId,DegreeOfCopyParallelism,AllowMultipleActiveInstances,TaskDatafactoryIr,TaskMasterJson,ActiveYn,DependencyChainTag,EngineId,InsertIntoCurrentSchedule, ExtractionVersionId")] TaskMaster taskMaster)
         {
             if (id != taskMaster.TaskMasterId)
             {
@@ -265,6 +265,7 @@ namespace WebApplication.Controllers
         public async Task<IActionResult> IndexDataTable()
         {
             var adsGoFastContext = _context.TaskMaster.Take(1);
+            //var test = adsGoFastContext.ToList();
             return View(await adsGoFastContext.ToListAsync());
         }
 
@@ -282,6 +283,7 @@ namespace WebApplication.Controllers
             cols.Add(JObject.Parse("{ 'data':'TaskDatafactoryIr', 'name':'Data Factory IR'}"));
             cols.Add(JObject.Parse("{ 'data':'ActiveYn', 'name':'ActiveYn', 'autoWidth':true, 'ads_format': 'bool' }"));
             cols.Add(JObject.Parse("{ 'data':'InsertIntoCurrentSchedule', 'name':'InsertIntoCurrentSchedule', 'autoWidth':true, 'ads_format': 'bool' }"));
+            cols.Add(JObject.Parse("{ 'data':'ExtractionVersionId', 'name':'ExtractionVersionId', 'autoWidth':true}"));
 
             HumanizeColumns(cols);
 
@@ -465,6 +467,34 @@ namespace WebApplication.Controllers
         }
 
         [ChecksUserAccess]
+        public async Task<IActionResult> ToggleExtractionIdTag()
+        {
+            List<Int64> Pkeys = JsonConvert.DeserializeObject<List<Int64>>(Request.Form["Pkeys"]);
+            var entitys = await _context.TaskMaster.Where(ti => Pkeys.Contains(ti.TaskMasterId)).ToArrayAsync();
+            var row = _context.MetadataExtractionVersion.Where(
+                m =>
+                m.ExtractedDateTime == null &&
+                m.ExtractionVersionId == _context.MetadataExtractionVersion.Max(x => x.ExtractionVersionId)).SingleOrDefault();
+            foreach (var ti in entitys)
+            {
+                if (!await CanPerformCurrentActionOnRecord(ti))
+                    return Forbid();
+                if(ti.ExtractionVersionId != null)
+                {
+                    ti.ExtractionVersionId = null;
+                }
+                else
+                {
+                    ti.ExtractionVersionId = row.ExtractionVersionId;
+                }
+            }
+            await _context.SaveChangesAsync();
+
+            //TODO: Add Error Handling
+            return new OkObjectResult(new { });
+        }
+
+        [ChecksUserAccess]
         public async Task<IActionResult> EditPlus(long? id)
         {
 
@@ -495,7 +525,7 @@ namespace WebApplication.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [ChecksUserAccess]
-        public async Task<IActionResult> EditPlus(long id, string returnUrl, [Bind("TaskMasterId,TaskMasterName,TaskTypeId,TaskGroupId,ScheduleMasterId,SourceSystemId,TargetSystemId,DegreeOfCopyParallelism,AllowMultipleActiveInstances,TaskDatafactoryIr,TaskMasterJson,ActiveYn,DependencyChainTag,EngineId,InsertIntoCurrentSchedule")] TaskMaster taskMaster)
+        public async Task<IActionResult> EditPlus(long id, string returnUrl, [Bind("TaskMasterId,TaskMasterName,TaskTypeId,TaskGroupId,ScheduleMasterId,SourceSystemId,TargetSystemId,DegreeOfCopyParallelism,AllowMultipleActiveInstances,TaskDatafactoryIr,TaskMasterJson,ActiveYn,DependencyChainTag,EngineId,InsertIntoCurrentSchedule, ExtractionVersionId")] TaskMaster taskMaster)
         {
             if (id != taskMaster.TaskMasterId)
                 return NotFound();

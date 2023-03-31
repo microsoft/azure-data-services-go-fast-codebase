@@ -21,6 +21,51 @@
 {
     <script type="text/javascript">
         var ModelName = "SubjectArea";
+
+        function ToggleExtractionIdTag(dt, Status) {
+            var selected_indexes = dt.rows({ selected: true }).indexes();
+            var selected_pkeys = [];
+            $.each(selected_indexes, function (index, i) {
+                selected_pkeys.push(dt.data()[i]["SubjectAreaId"]);
+            });
+
+            $.post('@Url.Action("ToggleExtractionIdTag")', { Pkeys: JSON.stringify(selected_pkeys, null, 2), Status: Status })
+                .done(function (data) {
+                    dt.ajax.reload(null, false);
+                    toastr.success("Successfully Updated Rows");
+                });
+        }
+
+        $(document).on('init.dt', function (e, settings) {
+            var api = new $.fn.dataTable.Api(settings);
+            var table = api.table();
+
+            //This is where custom buttons and things would go.
+            buttons = [
+
+                {
+                    extend: 'selected',
+                    className: 'btn-warning ads-btn-action',
+                    text: '<i data-toggle="tooltip" title="Toggle Extraction ID Tag" class="fas fa-copy" style="width:16px"></i>',
+                    action: function (e, dt, node, config) {
+                        ToggleExtractionIdTag(dt, "Untried");
+                    }
+                },
+
+            ];
+
+            $.each(buttons, function (index, button) {
+                table.button().add(null, button);
+            });
+
+            RestyleDataTableButtons();
+
+            $('[data-toggle="tooltip"]').tooltip()
+            $('[data-toggle="popover"]').popover();
+
+
+        });
+
         $(document).ready(function () {
             DataTablesGridPrep();
         });

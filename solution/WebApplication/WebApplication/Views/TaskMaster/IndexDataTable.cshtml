@@ -48,7 +48,19 @@
                 });
         }
 
+         function ToggleExtractionIdTag(dt, Status) {
+            var selected_indexes = dt.rows({ selected: true }).indexes();
+            var selected_pkeys = [];
+            $.each(selected_indexes, function (index, i) {
+                selected_pkeys.push(dt.data()[i]["TaskMasterId"]);
+            });
 
+            $.post('@Url.Action("ToggleExtractionIdTag")', { Pkeys: JSON.stringify(selected_pkeys, null, 2), Status: Status })
+                .done(function (data) {
+                    dt.ajax.reload(null, false);
+                    toastr.success("Successfully Updated Rows");
+                });
+        }
         $(document).on('init.dt', function (e, settings) {
             var api = new $.fn.dataTable.Api(settings);
             var table = api.table();
@@ -78,6 +90,14 @@
                     text: '<i data-toggle="tooltip" title="Activate Tasks" class="fas fa-check-circle" style="width:16px"></i>',
                     action: function (e, dt, node, config) {
                         UpdateTaskMasterActiveYN(dt, true);
+                    }
+                },
+                {
+                    extend: 'selected',
+                    className: 'btn-warning ads-btn-action',
+                    text: '<i data-toggle="tooltip" title="Toggle Extraction ID Tag" class="fas fa-copy" style="width:16px"></i>',
+                    action: function (e, dt, node, config) {
+                        ToggleExtractionIdTag(dt, "Untried");
                     }
                 },
 

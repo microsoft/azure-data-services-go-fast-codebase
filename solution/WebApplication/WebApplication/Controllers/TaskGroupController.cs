@@ -216,6 +216,7 @@ namespace WebApplication.Controllers
             cols.Add(JObject.Parse("{ 'data':'TaskGroupConcurrency', 'name':'Concurrency', 'autoWidth':true }"));
             cols.Add(JObject.Parse("{ 'data':'TaskGroupJson', 'name':'Configuration Json', 'autoWidth':true }"));
             cols.Add(JObject.Parse("{ 'data':'ActiveYn', 'name':'Is Active', 'autoWidth':true, 'ads_format':'bool'}"));
+            cols.Add(JObject.Parse("{ 'data':'ExtractionVersionId', 'name':'ExtractionVersionId', 'autoWidth':true }"));
 
             HumanizeColumns(cols);
 
@@ -242,6 +243,35 @@ namespace WebApplication.Controllers
         {
             return new OkObjectResult(JsonConvert.SerializeObject(GridCols()));
         }
+
+        [ChecksUserAccess]
+        public async Task<IActionResult> ToggleExtractionIdTag()
+        {
+            List<Int64> Pkeys = JsonConvert.DeserializeObject<List<Int64>>(Request.Form["Pkeys"]);
+            var entitys = await _context.TaskGroup.Where(ti => Pkeys.Contains(ti.TaskGroupId)).ToArrayAsync();
+            var row = _context.MetadataExtractionVersion.Where(
+                m =>
+                m.ExtractedDateTime == null &&
+                m.ExtractionVersionId == _context.MetadataExtractionVersion.Max(x => x.ExtractionVersionId)).SingleOrDefault();
+            foreach (var ti in entitys)
+            {
+                if (!await CanPerformCurrentActionOnRecord(ti))
+                    return Forbid();
+                if (ti.ExtractionVersionId != null)
+                {
+                    ti.ExtractionVersionId = null;
+                }
+                else
+                {
+                    ti.ExtractionVersionId = row.ExtractionVersionId;
+                }
+            }
+            await _context.SaveChangesAsync();
+
+            //TODO: Add Error Handling
+            return new OkObjectResult(new { });
+        }
+
 
         [ChecksUserAccess]
         public async Task<ActionResult> GetGridData()

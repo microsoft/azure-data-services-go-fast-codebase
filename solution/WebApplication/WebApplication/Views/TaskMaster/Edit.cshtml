@@ -77,6 +77,11 @@
                 </label>
             </div>
             <div class="form-group">
+                <label asp-for="ExtractionVersionId" class="control-label"></label>
+                <input asp-for="ExtractionVersionId" class="form-control" />
+                <span asp-validation-for="ExtractionVersionId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
                 <label asp-for="DependencyChainTag" class="control-label"></label>
                 <input asp-for="DependencyChainTag" class="form-control" />
                 <span asp-validation-for="DependencyChainTag" class="text-danger"></span>

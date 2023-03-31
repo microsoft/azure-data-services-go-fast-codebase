@@ -21,5 +21,7 @@ namespace WebApplication.Models
         public bool InsertIntoCurrentSchedule { get; set; }
         public string DependencyChainTag { get; set; }
         public long EngineId { get; set; }
+        [Display(Name = "Extraction Version Id")]
+        public long? ExtractionVersionId { get; set; }
     }
 }

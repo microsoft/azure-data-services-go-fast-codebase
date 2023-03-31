@@ -51,6 +51,9 @@
                 @Html.DisplayNameFor(model => model.InsertIntoCurrentSchedule)
             </th>
             <th>
+                @Html.DisplayNameFor(model => model.ExtractionVersionId)
+            </th>
+            <th>
                 @Html.DisplayNameFor(model => model.DependencyChainTag)
             </th>
             <th>
@@ -101,6 +104,9 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.InsertIntoCurrentSchedule)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ExtractionVersionId)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.DependencyChainTag)

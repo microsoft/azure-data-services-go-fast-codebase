@@ -50,6 +50,9 @@ namespace WebApplication.Models
 
         public virtual DbSet<TaskGroupStats> TaskGroupStats { get; set; }
 
+        public virtual DbSet<MetadataExtractionVersion> MetadataExtractionVersion { get; set; }
+
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
@@ -411,6 +414,8 @@ namespace WebApplication.Models
                     .IsRequired()
                     .HasMaxLength(200);
 
+                entity.Property(e => e.ExtractionVersionId).HasMaxLength(255);
+
             });
 
             modelBuilder.Entity<SourceAndTargetSystems>(entity =>
@@ -454,6 +459,8 @@ namespace WebApplication.Models
 
                 entity.Property(e => e.IsExternal).HasColumnName("IsExternal");
 
+                entity.Property(e => e.ExtractionVersionId).HasMaxLength(255);
+
             });
 
             modelBuilder.Entity<SourceAndTargetSystemsJsonSchema>(entity =>
@@ -479,6 +486,8 @@ namespace WebApplication.Models
                 entity.Property(e => e.TaskGroupName)
                     .IsRequired()
                     .HasMaxLength(200);
+                entity.Property(e => e.ExtractionVersionId).HasMaxLength(255);
+
             });
 
             modelBuilder.Entity<TaskGroupDependency>(entity =>
@@ -489,6 +498,8 @@ namespace WebApplication.Models
                     .IsRequired()
                     .HasMaxLength(200)
                     .IsUnicode(false);
+                entity.Property(e => e.ExtractionVersionId).HasMaxLength(255);
+
             });
 
             modelBuilder.Entity<TaskInstance>(entity =>
@@ -590,6 +601,9 @@ namespace WebApplication.Models
                 entity.Property(e => e.TaskMasterName)
                     .IsRequired()
                     .HasMaxLength(200);
+
+                entity.Property(e => e.ExtractionVersionId)
+                    .HasMaxLength(255);
             });
 
             modelBuilder.Entity<TaskMasterDependency>(entity =>
@@ -695,6 +709,17 @@ namespace WebApplication.Models
 
             });
 
+            modelBuilder.Entity<MetadataExtractionVersion>(entity =>
+            {
+                entity.HasKey(e => e.ExtractionVersionId);
+
+                entity.Property(e => e.ExtractionVersionId)
+                    .IsRequired()
+                    .HasMaxLength(255);
+
+                entity.Property(e => e.ExtractedDateTime).HasColumnType("datetime2(0)");
+            });
+
             modelBuilder.Entity<SubjectArea>(entity =>
             {
                 entity.Property(e => e.ActiveYn).HasColumnName("ActiveYn");
@@ -714,6 +739,8 @@ namespace WebApplication.Models
                 entity.Property(e => e.ValidFrom).HasColumnType("datetime2(0)");
 
                 entity.Property(e => e.ValidTo).HasColumnType("datetime2(0)");
+                entity.Property(e => e.ExtractionVersionId).HasMaxLength(255);
+
             });
 
             modelBuilder.Entity<SubjectAreaForm>(entity =>

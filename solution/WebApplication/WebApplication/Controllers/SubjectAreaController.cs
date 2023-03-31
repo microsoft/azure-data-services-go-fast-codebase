@@ -313,6 +313,8 @@ namespace WebApplication.Controllers
             cols.Add(JObject.Parse("{ 'data':'DefaultTargetSchema', 'name':'Default Target Schema', 'autoWidth':true }"));
             cols.Add(JObject.Parse("{ 'data':'UpdatedBy', 'name':'Updated By', 'autoWidth':true }"));
             cols.Add(JObject.Parse("{ 'data':'ActiveYn', 'name':'Is Active', 'autoWidth':true, 'ads_format':'bool'}"));
+            cols.Add(JObject.Parse("{ 'data':'ExtractionVersionId', 'name':'ExtractionVersionId', 'autoWidth':true }"));
+
             HumanizeColumns(cols);
 
             JArray pkeycols = new JArray();
@@ -452,6 +454,33 @@ namespace WebApplication.Controllers
             return View(subjectArea);
         }
 
+        [ChecksUserAccess]
+        public async Task<IActionResult> ToggleExtractionIdTag()
+        {
+            List<Int64> Pkeys = JsonConvert.DeserializeObject<List<Int64>>(Request.Form["Pkeys"]);
+            var entitys = await _context.SubjectArea.Where(ti => Pkeys.Contains(ti.SubjectAreaId)).ToArrayAsync();
+            var row = _context.MetadataExtractionVersion.Where(
+                m =>
+                m.ExtractedDateTime == null &&
+                m.ExtractionVersionId == _context.MetadataExtractionVersion.Max(x => x.ExtractionVersionId)).SingleOrDefault();
+            foreach (var ti in entitys)
+            {
+                if (!await CanPerformCurrentActionOnRecord(ti))
+                    return Forbid();
+                if (ti.ExtractionVersionId != null)
+                {
+                    ti.ExtractionVersionId = null;
+                }
+                else
+                {
+                    ti.ExtractionVersionId = row.ExtractionVersionId;
+                }
+            }
+            await _context.SaveChangesAsync();
+
+            //TODO: Add Error Handling
+            return new OkObjectResult(new { });
+        }
 
         [ChecksUserAccess]
         public async Task<IActionResult> Revise(int? id)

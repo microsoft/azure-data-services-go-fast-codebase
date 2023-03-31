@@ -32,5 +32,9 @@ namespace WebApplication.Models
         public bool ActiveYn { get; set; }
         [Display(Name = "Is External")]
         public bool IsExternal { get; set; }
+
+        [Display(Name = "Extraction Version Id")]
+        public long? ExtractionVersionId { get; set; }
+
     }
 }

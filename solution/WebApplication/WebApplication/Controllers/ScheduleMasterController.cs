@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
@@ -193,6 +194,7 @@ namespace WebApplication.Controllers
             cols.Add(JObject.Parse("{ 'data':'ScheduleDesciption', 'name':'ScheduleDesciption', 'autoWidth':true }"));
             cols.Add(JObject.Parse("{ 'data':'ScheduleCronExpression', 'name':'ScheduleCronExpression', 'autoWidth':true }"));
             cols.Add(JObject.Parse("{ 'data':'ActiveYn', 'name':'ActiveYn', 'autoWidth':true }"));
+            cols.Add(JObject.Parse("{ 'data':'ExtractionVersionId', 'name':'ExtractionVersionId', 'autoWidth':true }"));
 
             HumanizeColumns(cols);
 
@@ -217,6 +219,34 @@ namespace WebApplication.Controllers
         public ActionResult GetGridOptions()
         {
             return new OkObjectResult(JsonConvert.SerializeObject(GridCols()));
+        }
+
+        [ChecksUserAccess]
+        public async Task<IActionResult> ToggleExtractionIdTag()
+        {
+            List<Int64> Pkeys = JsonConvert.DeserializeObject<List<Int64>>(Request.Form["Pkeys"]);
+            var entitys = await _context.ScheduleMaster.Where(ti => Pkeys.Contains(ti.ScheduleMasterId)).ToArrayAsync();
+            var row = _context.MetadataExtractionVersion.Where(
+                m =>
+                m.ExtractedDateTime == null &&
+                m.ExtractionVersionId == _context.MetadataExtractionVersion.Max(x => x.ExtractionVersionId)).SingleOrDefault();
+            foreach (var ti in entitys)
+            {
+                if (!await CanPerformCurrentActionOnRecord(ti))
+                    return Forbid();
+                if (ti.ExtractionVersionId != null)
+                {
+                    ti.ExtractionVersionId = null;
+                }
+                else
+                {
+                    ti.ExtractionVersionId = row.ExtractionVersionId;
+                }
+            }
+            await _context.SaveChangesAsync();
+
+            //TODO: Add Error Handling
+            return new OkObjectResult(new { });
         }
 
         public async Task<ActionResult> GetGridData()

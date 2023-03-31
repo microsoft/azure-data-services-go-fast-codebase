@@ -9,6 +9,9 @@
 
         public virtual TaskGroup DescendantTaskGroup { get; set; }
 
+        public virtual MetadataExtractionVersion MetadataExtractionVersion { get; set; }
+
+
 
     }
 }

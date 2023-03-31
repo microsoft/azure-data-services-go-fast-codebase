@@ -224,6 +224,7 @@ namespace WebApplication.Controllers
             cols.Add(JObject.Parse("{ 'data':'AncestorTaskGroup.TaskGroupName', 'name':'Ancestor Task Group', 'autoWidth':true }"));
             cols.Add(JObject.Parse("{ 'data':'DescendantTaskGroup.TaskGroupName', 'name':'Descendant Task Group', 'autoWidth':true }"));
             cols.Add(JObject.Parse("{ 'data':'DependencyType', 'name':'Dependency Type', 'autoWidth':true }"));
+            cols.Add(JObject.Parse("{ 'data':'ExtractionVersionId', 'name':'ExtractionVersionId', 'autoWidth':true }"));
 
             HumanizeColumns(cols);
 

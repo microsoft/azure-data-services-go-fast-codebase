@@ -14,5 +14,8 @@ namespace WebApplication.Models
         public string ScheduleCronExpression { get; set; }
         [Display(Name = "Is Active")]
         public bool ActiveYn { get; set; }
+
+        public long? ExtractionVersionId { get; set; }
+
     }
 }

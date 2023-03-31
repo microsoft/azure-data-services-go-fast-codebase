@@ -11,5 +11,8 @@ namespace WebApplication.Models
         [Display(Name = "Dependency Type")]
         [Required(AllowEmptyStrings = false, ErrorMessage = "Please input valid Dependency Type")]
         public string DependencyType { get; set; }
+
+        public long? ExtractionVersionId { get; set; }
+
     }
 }

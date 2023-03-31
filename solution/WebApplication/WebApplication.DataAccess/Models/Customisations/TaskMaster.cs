@@ -17,5 +17,8 @@ namespace WebApplication.Models
         public virtual SourceAndTargetSystems TargetSystem { get; set; }
 
         public virtual ExecutionEngine ExecutionEngine { get; set; }
+
+        public virtual MetadataExtractionVersion MetadataExtractionVersion { get; set; }
+
     }
 }

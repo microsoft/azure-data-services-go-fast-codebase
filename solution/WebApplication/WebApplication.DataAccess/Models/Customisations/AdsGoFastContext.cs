@@ -30,12 +30,16 @@ namespace WebApplication.Models
                 entity.Property(e => e.ScheduleCronExpression)
                     .IsRequired()
                     .HasMaxLength(200);
+                entity.HasOne<MetadataExtractionVersion>(tm => tm.MetadataExtractionVersion).WithMany(tt => tt.ScheduleMasters).HasForeignKey(tm => tm.ExtractionVersionId);
+
 
             });
 
             modelBuilder.Entity<SourceAndTargetSystems>(entity =>
             {
                 entity.HasAnnotation("DisplayColumn", "SystemName");
+                entity.HasOne<MetadataExtractionVersion>(tm => tm.MetadataExtractionVersion).WithMany(tt => tt.SourceAndTargetSystems).HasForeignKey(tm => tm.ExtractionVersionId);
+
             });
 
             modelBuilder.Entity<IntegrationRuntime>(entity =>
@@ -60,6 +64,8 @@ namespace WebApplication.Models
                 entity.HasOne<SourceAndTargetSystems>(tm => tm.SourceSystem).WithMany(tt => tt.TaskMastersSource).HasForeignKey(tm => tm.SourceSystemId);
                 entity.HasOne<SourceAndTargetSystems>(tm => tm.TargetSystem).WithMany(tt => tt.TaskMastersTarget).HasForeignKey(tm => tm.TargetSystemId);
                 entity.HasOne<ExecutionEngine>(tm => tm.ExecutionEngine).WithMany(tt => tt.TaskMasters).HasForeignKey(tm => tm.EngineId);
+                entity.HasOne<MetadataExtractionVersion>(tm => tm.MetadataExtractionVersion).WithMany(tt => tt.TaskMasters).HasForeignKey(tm => tm.ExtractionVersionId);
+
                 entity.Property(p => p.TaskDatafactoryIr).IsRequired();
             });
 
@@ -83,6 +89,14 @@ namespace WebApplication.Models
                 entity.Property(p => p.TaskGroupName).IsRequired();
                 entity.HasMany<TaskMaster>(tm => tm.TaskMasters).WithOne(tg => tg.TaskGroup).HasForeignKey(tm => tm.TaskGroupId);
                 entity.HasOne<SubjectArea>(tg => tg.SubjectArea).WithMany(sa => sa.TaskGroups).HasForeignKey(tg => tg.SubjectAreaId);
+                entity.HasOne<MetadataExtractionVersion>(tm => tm.MetadataExtractionVersion).WithMany(tt => tt.TaskGroups).HasForeignKey(tm => tm.ExtractionVersionId);
+
+            });
+
+            modelBuilder.Entity<TaskGroupDependency>(entity =>
+            {
+                entity.HasOne<MetadataExtractionVersion>(tm => tm.MetadataExtractionVersion).WithMany(tt => tt.TaskGroupDependencies).HasForeignKey(tm => tm.ExtractionVersionId);
+
             });
 
             modelBuilder.Entity<TaskType>().Property(e => e.TaskExecutionType).HasConversion(
@@ -92,6 +106,8 @@ namespace WebApplication.Models
             modelBuilder.Entity<SubjectArea>(entity =>
             {
                 entity.HasOne<SubjectAreaForm>(tg => tg.SubjectAreaForm).WithMany(sa => sa.SubjectAreas).HasForeignKey(tg => tg.SubjectAreaFormId);
+                entity.HasOne<MetadataExtractionVersion>(tm => tm.MetadataExtractionVersion).WithMany(tt => tt.SubjectAreas).HasForeignKey(tm => tm.ExtractionVersionId);
+
             });
 
 

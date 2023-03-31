@@ -8,5 +8,8 @@ namespace WebApplication.Models
         public virtual List<TaskMaster> TaskMastersTarget { get; set; }
        
         public virtual List<IntegrationRuntimeMapping> IntegrationRuntimeMappings { get; set; }
+
+        public virtual MetadataExtractionVersion MetadataExtractionVersion { get; set; }
+
     }
 }

@@ -11,5 +11,8 @@ namespace WebApplication.Models
         }
         public virtual List<TaskMaster> TaskMasters { get; set; }
         public virtual SubjectArea SubjectArea { get; set; }
+
+        public virtual MetadataExtractionVersion MetadataExtractionVersion { get; set; }
+
     }
 }

@@ -6,5 +6,8 @@ namespace WebApplication.Models
     {
         public virtual List<TaskMaster> TaskMasters { get; set; }
         public virtual List<ScheduleInstance> ScheduleInstances { get; set; }
+
+        public virtual MetadataExtractionVersion MetadataExtractionVersion { get; set; }
+
     }
 }
