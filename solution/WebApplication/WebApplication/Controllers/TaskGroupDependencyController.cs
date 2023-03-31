@@ -250,6 +250,36 @@ namespace WebApplication.Controllers
             return new OkObjectResult(JsonConvert.SerializeObject(GridCols()));
         }
 
+
+        [ChecksUserAccess]
+        public async Task<IActionResult> ToggleExtractionIdTag()
+        {
+            List<Int64> Ancestors = JsonConvert.DeserializeObject<List<Int64>>(Request.Form["Ancestors"]);
+            List<Int64> Descendants = JsonConvert.DeserializeObject<List<Int64>>(Request.Form["Descendants"]);
+
+            var entitys = await _context.TaskGroupDependency.Where(ti => Ancestors.Contains(ti.AncestorTaskGroupId) && Descendants.Contains(ti.DescendantTaskGroupId)).ToArrayAsync();
+            var row = _context.MetadataExtractionVersion.Where(
+                m =>
+                m.ExtractedDateTime == null &&
+                m.ExtractionVersionId == _context.MetadataExtractionVersion.Max(x => x.ExtractionVersionId)).SingleOrDefault();
+            foreach (var ti in entitys)
+            {
+                if (!await CanPerformCurrentActionOnRecord(ti))
+                    return Forbid();
+                if (ti.ExtractionVersionId != null)
+                {
+                    ti.ExtractionVersionId = null;
+                }
+                else
+                {
+                    ti.ExtractionVersionId = row.ExtractionVersionId;
+                }
+            }
+            await _context.SaveChangesAsync();
+
+            //TODO: Add Error Handling
+            return new OkObjectResult(new { });
+        }
         public async Task<ActionResult> GetGridData()
         {
             try

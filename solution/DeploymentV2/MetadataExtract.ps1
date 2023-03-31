@@ -100,9 +100,10 @@ $map = @"
 }
 "@
 
-$map = $map.replace('""','"EmptyProperty"')
-$json = $map | ConvertFrom-Json -AsHashtable
-# for use of mapping -> check source and target systems
+$map = $map.replace('""','"EmptyProperty"') #required to remove empty keys
+$json = $map | ConvertFrom-Json -AsHashtable #hash table called json :)
+$json.Remove('EmptyProperty') #removing the empty property replacement done above
+# for use of mapping -> check source and target systems for example
 
 
 #was for converting custom object to hash, not needed due to -AsHashTable

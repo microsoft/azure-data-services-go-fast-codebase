@@ -23,6 +23,9 @@
             <th>
                 @Html.DisplayNameFor(model => model.DependencyType)
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ExtractionVersionId)
+            </th>
         </tr>
     </thead>
     <tbody>
@@ -42,6 +45,9 @@
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.DependencyType)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ExtractionVersionId)
                 </td>
             </tr>
 }

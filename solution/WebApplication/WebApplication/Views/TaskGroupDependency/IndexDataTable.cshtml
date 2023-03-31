@@ -20,6 +20,54 @@
     <script type="text/javascript">
         var ModelName = "TaskGroupDependency";
 
+        function ToggleExtractionIdTag(dt, Status) {
+            var selected_indexes = dt.rows({ selected: true }).indexes();
+            var selected_ancestors = [];
+            var selected_descendants = [];
+            $.each(selected_indexes, function (index, i) {
+                selected_ancestors.push(dt.data()[i]["AncestorTaskGroupId"]);
+            });
+            $.each(selected_indexes, function (index, i) {
+                selected_descendants.push(dt.data()[i]["DescendantTaskGroupId"]);
+            });
+
+            $.post('@Url.Action("ToggleExtractionIdTag")', { Ancestors: JSON.stringify(selected_ancestors, null, 2), Descendants: JSON.stringify(selected_descendants, null, 2), Status: Status })
+                .done(function (data) {
+                    dt.ajax.reload(null, false);
+                    toastr.success("Successfully Updated Rows");
+                });
+        }
+
+        $(document).on('init.dt', function (e, settings) {
+            var api = new $.fn.dataTable.Api(settings);
+            var table = api.table();
+
+            //This is where custom buttons and things would go.
+            buttons = [
+
+                {
+                    extend: 'selected',
+                    className: 'btn-warning ads-btn-action',
+                    text: '<i data-toggle="tooltip" title="Toggle Extraction ID Tag" class="fas fa-copy" style="width:16px"></i>',
+                    action: function (e, dt, node, config) {
+                        ToggleExtractionIdTag(dt, "Untried");
+                    }
+                },
+
+            ];
+
+            $.each(buttons, function (index, button) {
+                table.button().add(null, button);
+            });
+
+            RestyleDataTableButtons();
+
+            $('[data-toggle="tooltip"]').tooltip()
+            $('[data-toggle="popover"]').popover();
+
+
+        });
+
 
         $(document).ready(function () {
             DataTablesGridPrep();
