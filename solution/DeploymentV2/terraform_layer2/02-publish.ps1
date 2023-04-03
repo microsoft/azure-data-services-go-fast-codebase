@@ -56,23 +56,23 @@ $tout = GatherOutputsFromTerraform -TerraformFolderPath $PathToReturnTo
 #------------------------------------------------------------------------------------------------------------
 # Publish
 #------------------------------------------------------------------------------------------------------------
-#import-Module ./../pwshmodules/Deploy_4_PrivateLinks.psm1 -force
-#DeployPrivateLinks -tout $tout  
+import-Module ./../pwshmodules/Deploy_4_PrivateLinks.psm1 -force
+DeployPrivateLinks -tout $tout  
 
-#import-Module ./../pwshmodules/Deploy_5_WebApp.psm1 -force
-#DeployWebApp -tout $tout  -deploymentFolderPath $deploymentFolderPath -PathToReturnTo $PathToReturnTo
+import-Module ./../pwshmodules/Deploy_5_WebApp.psm1 -force
+DeployWebApp -tout $tout  -deploymentFolderPath $deploymentFolderPath -PathToReturnTo $PathToReturnTo
 
 import-Module ./../pwshmodules/Deploy_6_FuncApp.psm1 -force
 DeployFuncApp -tout $tout  -deploymentFolderPath $deploymentFolderPath -PathToReturnTo $PathToReturnTo
 
-#import-Module ./../pwshmodules/Deploy_7_MetadataDB.psm1 -force
-#DeployMetaDataDB -publish_metadata_database $true -tout $tout  -deploymentFolderPath $deploymentFolderPath -PathToReturnTo $PathToReturnTo
+import-Module ./../pwshmodules/Deploy_7_MetadataDB.psm1 -force
+DeployMetaDataDB -publish_metadata_database $true -tout $tout  -deploymentFolderPath $deploymentFolderPath -PathToReturnTo $PathToReturnTo
 
-#import-Module ./../pwshmodules/Deploy_9_DataFactory.psm1 -force
-#DeployDataFactoryAndSynapseArtefacts -tout $tout  -deploymentFolderPath $deploymentFolderPath -PathToReturnTo $PathToReturnTo
+import-Module ./../pwshmodules/Deploy_9_DataFactory.psm1 -force
+DeployDataFactoryAndSynapseArtefacts -tout $tout  -deploymentFolderPath $deploymentFolderPath -PathToReturnTo $PathToReturnTo
 
-#import-Module ./../pwshmodules/Deploy_10_SampleFiles.psm1 -force
-#DeploySampleFiles -tout $tout  -deploymentFolderPath $deploymentFolderPath -PathToReturnTo $PathToReturnTo
+import-Module ./../pwshmodules/Deploy_10_SampleFiles.psm1 -force
+DeploySampleFiles -tout $tout  -deploymentFolderPath $deploymentFolderPath -PathToReturnTo $PathToReturnTo
 
 import-Module ./../pwshmodules/Deploy_11_VirtualMachine.psm1 -force
 ConfigureVirtualMachine -tout $tout  -deploymentFolderPath $deploymentFolderPath -PathToReturnTo $PathToReturnTo

@@ -18,11 +18,14 @@
 ##
 ## To enable the execution of the MetadataCICD DbUp in the written to environment, ensure you have the terraform variable publish_metadata_cicd_dbup = true
 ##
-## This script will use the extra parameters. These will include:
-## metadata_extraction_repo_link 
-## metadata_extraction_publish_branch
-## metadata_extraction_user_name
-## metadata_extraction_email_address
+## This script will use the extra terraform parameters. These will include:
+##      metadata_extraction_repo_link 
+##      metadata_extraction_publish_branch
+##      metadata_extraction_user_name
+##      metadata_extraction_email_address
+## In addition to this, if you wish to use a git pat for authentication, the following variables must be manually injected:
+##      metadata_use_pat -> set value to true, use an injection through github our devops (or manually change this script)
+##      metadata_pat -> pat token for auth
 
 #------------------------------------------------------------------------------------------------------------
 # Static Parameters
@@ -35,6 +38,7 @@
 ##      Example: If a taskmaster is extracted with the TaskMasterId of 1 with the idIncrement variable set to 100.
 ##      The SQL statement generated will compare (do the merge / insert) against a row with an TaskMasterId in the new environment of 101.
 ##      idIncrement can be used to help avoid ID overlaps.
+
 
 $versionIncrement = 1
 $idIncrement = 0
@@ -63,6 +67,10 @@ $publish_branch = "test2"
 $user_name = "testuser"
 $email_address = "testuser@test.com"
 
+$use_pat = ([System.Environment]::GetEnvironmentVariable('metadata_use_pat')  -eq 'true')
+if ($use_pat -eq $true){
+    $git_pat = [System.Environment]::GetEnvironmentVariable('metadata_pat')
+}
 #$repo_clone_url = $tout.metadata_extraction_repo_link 
 #$publish_branch = $tout.metadata_extraction_publish_branch 
 #$user_name = $tout.metadata_extraction_user_name 
@@ -150,8 +158,17 @@ if ($output.count -gt 0) {
     #------------------------------------------------------------------------------------------------------------
     $temporaryRepoName = "tempRepo"
     $temporaryRepoDirectory = "../../$($temporaryRepoName)"
-    git clone -b "$($publish_branch)" "$($repo_clone_url)" "$($temporaryRepoDirectory)"
-    Set-Location "$($temporaryRepoDirectory)/solution/Database/AdsGoFastDbUp/MetadataCICD"
+    if ($repo_clone_url -ne "") 
+    {
+        Write-Information "Cloning $($repo_clone_url) into temporary directory. All details will be written and committed to the MetadataCICD DbUp project in the $($publish_branch) branch."
+        git clone -b "$($publish_branch)" "$($repo_clone_url)" "$($temporaryRepoDirectory)"
+        Set-Location "$($temporaryRepoDirectory)/solution/Database/AdsGoFastDbUp/MetadataCICD"
+    }
+    else 
+    {
+        Write-Information "Writing to Local MetadataCICD DbUp project as no GIT details provided."
+        Set-Location "../Database/AdsGoFastDbUp/MetadataCICD"
+    }
     New-Item -ItemType Directory -Force -Path "./Version-$($versionId)/A-Journaled"
 
     #------------------------------------------------------------------------------------------------------------
@@ -783,24 +800,39 @@ if ($output.count -gt 0) {
         #------------------------------------------------------------------------------------------------------------
         # Git push updated repo to branch / delete temporary repo
         #------------------------------------------------------------------------------------------------------------
+        if ($repo_clone_url -ne "") 
+        {
+            Write-Information "Configuring Git commit & merge"
+            if ($user_name -ne "") {
+                git config user.name "$($user_name)"
+            }
+            if ($email_address -ne "") {
+                git config user.email "$($email_address)"
+            }
 
-        if ($user_name -ne "") {
-            git config user.name "$($user_name)"
+            Set-Location "../../../../"
+            git add .
+            Write-Information ("Pushing to " + $repo_link + "against the branch " + $publish_branch)
+            git commit -m "Metadata Extraction Version-$($versionId) commit" --quiet
+            if ($use_pat) {
+                Write-Information "Using PAT for auth"
+                $B64Pat = [Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes("$($git_pat)"))
+                git -c http.extraHeader="Authorization: Basic $B64Pat" push origin $($publish_branch)
+            } else {
+                git push origin $($publish_branch)
+
+            }
+
+            Set-Location $PathToReturnTo
+            Write-Information "Deleting Temporary Repo"
+            Remove-Item $temporaryRepoDirectory -Recurse -Force
         }
-        if ($email_address -ne "") {
-            git config user.email "$($email_address)"
+        else
+        {
+            Write-Information "No Git related steps required."
+
         }
 
-        Set-Location "../../../../"
-        git add .
-        Write-Information ("Pushing to " + $repo_link + "against the branch " + $publish_branch)
-        git commit -m "Metadata Extraction Version-$($versionId) commit" --quiet
-
-        git push origin $($publish_branch)
-
-        Set-Location $PathToReturnTo
-        Write-Information "Deleting Temporary Repo"
-        Remove-Item $temporaryRepoDirectory -Recurse -Force
         Write-Information "Complete!"
 
     }

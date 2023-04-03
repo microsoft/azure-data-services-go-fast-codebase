@@ -26,11 +26,7 @@ function DeployMetadataCICDDbUp (
     #----------------------------------------------------------------------------------------------------------------
     #   Populate the Metadata Database
     #----------------------------------------------------------------------------------------------------------------
-    if ($publish_metadata_cicd_dbup -eq $false) {
-        Write-Host "Metadata CICD DB Up disabled"    
-    }
-    else {
-    
+    if ($publish_metadata_cicd_dbup -eq $true) {
         Write-Host "Metadata CICD DBUP Starting"
 
         Set-Location $deploymentFolderPath
@@ -83,5 +79,10 @@ function DeployMetadataCICDDbUp (
         else {
             Write-Debug "Path to return to is null"
         }
+ 
+    }
+    else {
+            Write-Host "Metadata CICD DB Up disabled"   
+
     }
 }
