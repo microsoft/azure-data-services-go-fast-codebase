@@ -811,6 +811,19 @@ variable "existing_vm_subnet_id" {
   type        = string
 }
 
+variable "existing_databricks_container_subnet_id" {
+  description = "An existing subnet id for reuse for databricks container"
+  default     = ""
+  type        = string
+}
+
+variable "existing_databricks_host_subnet_id" {
+  description = "An existing subnet id for reuse for databricks host"
+  default     = ""
+  type        = string
+}
+
+
 variable "existing_private_dns_zone_db_id" {
   description = "An existing private DNS zone for privatelink.database.windows.net"
   default     = ""

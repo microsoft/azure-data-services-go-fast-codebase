@@ -53,5 +53,6 @@
     "deploy_cicd_vm": false,
     "deploy_cmd_executor_vm": false,
     "databricks_admins": []
+
   }
 }

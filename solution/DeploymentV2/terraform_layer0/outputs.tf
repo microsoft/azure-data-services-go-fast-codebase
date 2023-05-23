@@ -68,11 +68,11 @@ output "vm_subnet_id" {
 }
 
 output "databricks_container_subnet_nsg_association_id" {
-  value = (var.is_vnet_isolated && var.deploy_databricks) ? azurerm_subnet_network_security_group_association.db_container[0].id : ""
+  value = local.databricks_container_subnet_id
 }
 
 output "databricks_host_subnet_nsg_association_id" {
-  value = (var.is_vnet_isolated && var.deploy_databricks) ? azurerm_subnet_network_security_group_association.db_host[0].id : ""
+  value = local.databricks_host_subnet_id
 }
 
 output "private_dns_zone_kv_id" {

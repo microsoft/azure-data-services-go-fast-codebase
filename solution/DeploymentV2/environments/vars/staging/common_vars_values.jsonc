@@ -1,6 +1,6 @@
 {
   "$schema": "./../common_vars_schema.json",
-  "owner_tag": "ins",
+  "owner_tag": "",
   "resource_location": "australiaeast",
   "environment_tag": "sbx",
   "domain": "insight.com",

@@ -68,7 +68,7 @@ resource "azurerm_function_app" "function_app" {
     ApplicationOptions__ServiceConnections__AppInsightsWorkspaceId              = azurerm_application_insights.app_insights[0].app_id
 
     AzureAdAzureServicesViaAppReg__Domain       = var.domain
-    AzureAdAzureServicesViaAppReg__TenantId     = var.tenant_id
+    AzureAdAzureServicesViaAppReg__TenantId     = var.tenant_id1
     AzureAdAzureServicesViaAppReg__Audience     = "api://${local.functionapp_name}"
     AzureAdAzureServicesViaAppReg__ClientSecret = "@Microsoft.KeyVault(VaultName=${azurerm_key_vault.app_vault.name};SecretName=AzureFunctionClientSecret)"
     AzureAdAzureServicesViaAppReg__ClientId     =  data.terraform_remote_state.layer1.outputs.aad_funcreg_id 

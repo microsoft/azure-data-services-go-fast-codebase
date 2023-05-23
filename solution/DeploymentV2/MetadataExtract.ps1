@@ -62,10 +62,10 @@ $tout = GatherOutputsFromTerraform -TerraformFolderPath $terraformFolderPath
 
 
 
-$repo_clone_url = "https://github.com/hugosharpe-insight/devgofast.git"
-$publish_branch = "test2"
-$user_name = "testuser"
-$email_address = "testuser@test.com"
+#$repo_clone_url = ""
+#$publish_branch = "test2"
+#$user_name = "testuser"
+#$email_address = "testuser@test.com"
 
 $use_pat = ([System.Environment]::GetEnvironmentVariable('metadata_use_pat')  -eq 'true')
 if ($use_pat -eq $true){
@@ -163,6 +163,7 @@ if ($output.count -gt 0) {
         Write-Information "Cloning $($repo_clone_url) into temporary directory. All details will be written and committed to the MetadataCICD DbUp project in the $($publish_branch) branch."
         git clone -b "$($publish_branch)" "$($repo_clone_url)" "$($temporaryRepoDirectory)"
         Set-Location "$($temporaryRepoDirectory)/solution/Database/AdsGoFastDbUp/MetadataCICD"
+        git config --global core.autocrlf true
     }
     else 
     {

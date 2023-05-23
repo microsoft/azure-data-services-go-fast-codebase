@@ -83,12 +83,14 @@ resource "azurerm_subnet" "app_service_subnet" {
     }
   }
 }
+
+
 locals {
   app_service_subnet_id = (var.existing_app_service_subnet_id == "" && (var.is_vnet_isolated) && var.deploy_app_service_plan ? azurerm_subnet.app_service_subnet[0].id : var.existing_app_service_subnet_id)
 }
 
 resource "azurerm_subnet" "databricks_container_subnet" {
-  count                                          = var.is_vnet_isolated ? 1 : 0
+  count                                          = (var.is_vnet_isolated && var.existing_databricks_container_subnet_id == "" ? 1 : 0)
   name                                           = local.databricks_container_subnet_name
   resource_group_name                            = var.resource_group_name
   virtual_network_name                           = azurerm_virtual_network.vnet[0].name
@@ -118,11 +120,11 @@ resource "azurerm_subnet" "databricks_container_subnet" {
 }
 
 locals {
-  databricks_container_subnet_id = var.is_vnet_isolated ? azurerm_subnet.databricks_container_subnet[0].id : ""
+  databricks_container_subnet_id = (var.existing_databricks_container_subnet_id == "" && (var.is_vnet_isolated) ? azurerm_subnet.databricks_container_subnet[0].id : var.existing_databricks_container_subnet_id)
 }
 
 resource "azurerm_subnet" "databricks_host_subnet" {
-  count                                          = var.is_vnet_isolated ? 1 : 0
+  count                                          = (var.is_vnet_isolated && var.existing_databricks_host_subnet_id == "" ? 1 : 0)
   name                                           = local.databricks_host_subnet_name
   resource_group_name                            = var.resource_group_name
   virtual_network_name                           = azurerm_virtual_network.vnet[0].name
@@ -152,5 +154,5 @@ resource "azurerm_subnet" "databricks_host_subnet" {
 }
 
 locals {
-  databricks_host_subnet_id = var.is_vnet_isolated ? azurerm_subnet.databricks_host_subnet[0].id : ""
+  databricks_host_subnet_id = (var.existing_databricks_host_subnet_id == "" && (var.is_vnet_isolated) ? azurerm_subnet.databricks_host_subnet[0].id : var.existing_databricks_host_subnet_id)
 }
