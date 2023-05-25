@@ -265,6 +265,12 @@ variable "deploy_databricks_resources" {
   type        = bool
 }
 
+variable "deploy_jumphost" {
+  description = "Feature toggle for deploying the jumphost VM"
+  default     = true
+  type        = bool
+}
+
 variable "deploy_selfhostedsql" {
   description = "Feature toggle for deploying Self Hosted Sql VM"
   default     = false
@@ -407,7 +413,7 @@ variable "sif_database_name" {
 
 variable "databricks_whitelist" {
   description = "Feature toggle for enabling whitelisting for access control on the deployed Databricks Workspace"
-  default     = true
+  default     = false
   type        = bool
 }
 

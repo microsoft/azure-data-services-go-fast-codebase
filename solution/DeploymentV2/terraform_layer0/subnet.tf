@@ -1,5 +1,5 @@
 resource "azurerm_subnet" "plink_subnet" {
-  count                                          = (var.is_vnet_isolated && var.existing_plink_subnet_id == "" ? 1 : 0)
+  count                                          = (var.is_vnet_isolated && var.existing_plink_subnet_id == "") ? 1 : 0
   name                                           = local.plink_subnet_name
   resource_group_name                            = var.resource_group_name
   virtual_network_name                           = local.vnet_name
@@ -11,11 +11,11 @@ resource "azurerm_subnet" "plink_subnet" {
 }
 
 locals {
-  plink_subnet_id = (var.existing_plink_subnet_id == "" && (var.is_vnet_isolated) ? azurerm_subnet.plink_subnet[0].id : var.existing_plink_subnet_id)
+  plink_subnet_id = (var.existing_plink_subnet_id == "" && (var.is_vnet_isolated)) ? azurerm_subnet.plink_subnet[0].id : var.existing_plink_subnet_id
 }
 
 resource "azurerm_subnet" "bastion_subnet" {
-  count                                          = (var.is_vnet_isolated && var.deploy_bastion && var.existing_bastion_subnet_id == "" ? 1 : 0)
+  count                                          = (var.is_vnet_isolated && var.deploy_bastion && var.existing_bastion_subnet_id == "") ? 1 : 0
   name                                           = local.bastion_subnet_name
   resource_group_name                            = var.resource_group_name
   virtual_network_name                           = local.vnet_name
@@ -27,7 +27,7 @@ resource "azurerm_subnet" "bastion_subnet" {
 }
 
 resource "azurerm_subnet" "vpn_subnet" {
-  count                                          = (var.is_vnet_isolated && var.deploy_vpn && var.existing_vpn_subnet_id == "" ? 1 : 0)
+  count                                          = (var.is_vnet_isolated && var.deploy_vpn && var.existing_vpn_subnet_id == "") ? 1 : 0
   name                                           = local.vpn_subnet_name
   resource_group_name                            = var.resource_group_name
   virtual_network_name                           = local.vnet_name
@@ -40,11 +40,11 @@ resource "azurerm_subnet" "vpn_subnet" {
 
 
 locals {
-  bastion_subnet_id = (var.existing_bastion_subnet_id == "" && (var.is_vnet_isolated) && var.deploy_bastion ? azurerm_subnet.bastion_subnet[0].id : var.existing_bastion_subnet_id)
+  bastion_subnet_id = (var.existing_bastion_subnet_id == "" && (var.is_vnet_isolated) && var.deploy_bastion) ? azurerm_subnet.bastion_subnet[0].id : var.existing_bastion_subnet_id
 }
 
 resource "azurerm_subnet" "vm_subnet" {
-  count                                          = (var.is_vnet_isolated || (var.deploy_selfhostedsql || var.deploy_h2o-ai) && var.existing_vm_subnet_id == "" ? 1 : 0)
+  count                                          = (var.is_vnet_isolated && (var.deploy_jumphost || var.deploy_selfhostedsql || var.deploy_h2o-ai) && var.existing_vm_subnet_id == "") ? 1 : 0
   name                                           = local.vm_subnet_name
   resource_group_name                            = var.resource_group_name
   virtual_network_name                           = local.vnet_name
@@ -56,12 +56,12 @@ resource "azurerm_subnet" "vm_subnet" {
 }
 
 locals {
-  vm_subnet_id = (var.existing_vm_subnet_id == "" && ((var.is_vnet_isolated) || var.deploy_selfhostedsql || var.deploy_h2o-ai) ? azurerm_subnet.vm_subnet[0].id : var.existing_vm_subnet_id)
+  vm_subnet_id = (var.existing_vm_subnet_id == "" && (var.is_vnet_isolated && (var.deploy_jumphost || var.deploy_selfhostedsql || var.deploy_h2o-ai))) ? azurerm_subnet.vm_subnet[0].id : var.existing_vm_subnet_id
 }
 
 
 resource "azurerm_subnet" "app_service_subnet" {
-  count                                          = (var.is_vnet_isolated && var.deploy_app_service_plan && var.existing_app_service_subnet_id == "" ? 1 : 0)
+  count                                          = (var.is_vnet_isolated && var.deploy_app_service_plan && var.existing_app_service_subnet_id == "") ? 1 : 0
   name                                           = local.app_service_subnet_name
   resource_group_name                            = var.resource_group_name
   virtual_network_name                           = local.vnet_name
@@ -86,11 +86,11 @@ resource "azurerm_subnet" "app_service_subnet" {
 
 
 locals {
-  app_service_subnet_id = (var.existing_app_service_subnet_id == "" && (var.is_vnet_isolated) && var.deploy_app_service_plan ? azurerm_subnet.app_service_subnet[0].id : var.existing_app_service_subnet_id)
+  app_service_subnet_id = (var.existing_app_service_subnet_id == "" && (var.is_vnet_isolated) && var.deploy_app_service_plan) ? azurerm_subnet.app_service_subnet[0].id : var.existing_app_service_subnet_id
 }
 
 resource "azurerm_subnet" "databricks_container_subnet" {
-  count                                          = (var.is_vnet_isolated && var.existing_databricks_container_subnet_id == "" ? 1 : 0)
+  count                                          = (var.is_vnet_isolated && var.deploy_databricks && var.existing_databricks_container_subnet_id == "") ? 1 : 0
   name                                           = local.databricks_container_subnet_name
   resource_group_name                            = var.resource_group_name
   virtual_network_name                           = azurerm_virtual_network.vnet[0].name
@@ -120,11 +120,11 @@ resource "azurerm_subnet" "databricks_container_subnet" {
 }
 
 locals {
-  databricks_container_subnet_id = (var.existing_databricks_container_subnet_id == "" && (var.is_vnet_isolated) ? azurerm_subnet.databricks_container_subnet[0].id : var.existing_databricks_container_subnet_id)
+  databricks_container_subnet_id = (var.existing_databricks_container_subnet_id == "" && var.deploy_databricks && (var.is_vnet_isolated)) ? azurerm_subnet.databricks_container_subnet[0].id : var.existing_databricks_container_subnet_id
 }
 
 resource "azurerm_subnet" "databricks_host_subnet" {
-  count                                          = (var.is_vnet_isolated && var.existing_databricks_host_subnet_id == "" ? 1 : 0)
+  count                                          = (var.is_vnet_isolated && var.deploy_databricks && var.existing_databricks_host_subnet_id == "") ? 1 : 0
   name                                           = local.databricks_host_subnet_name
   resource_group_name                            = var.resource_group_name
   virtual_network_name                           = azurerm_virtual_network.vnet[0].name
@@ -154,5 +154,5 @@ resource "azurerm_subnet" "databricks_host_subnet" {
 }
 
 locals {
-  databricks_host_subnet_id = (var.existing_databricks_host_subnet_id == "" && (var.is_vnet_isolated) ? azurerm_subnet.databricks_host_subnet[0].id : var.existing_databricks_host_subnet_id)
+  databricks_host_subnet_id = (var.existing_databricks_host_subnet_id == "" && var.deploy_databricks && (var.is_vnet_isolated)) ? azurerm_subnet.databricks_host_subnet[0].id : var.existing_databricks_host_subnet_id
 }

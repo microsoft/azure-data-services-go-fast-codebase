@@ -54,7 +54,7 @@ provider "databricks" {
   alias = "created_workspace"
   host = var.deploy_databricks ? azurerm_databricks_workspace.workspace[0].workspace_url : ""
   azure_workspace_resource_id = var.deploy_databricks ? azurerm_databricks_workspace.workspace[0].id : ""
-  auth_type  = "azure-cli"
+  //auth_type  = "azure-cli"
   //azure_use_msi = true
 }
 
