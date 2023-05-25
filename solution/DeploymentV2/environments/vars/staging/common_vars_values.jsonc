@@ -2,31 +2,33 @@
   "$schema": "./../common_vars_schema.json",
   "owner_tag": "",
   "resource_location": "australiaeast",
-  "environment_tag": "sbx",
-  "domain": "insight.com",
-  "subscription_id": "8d0248a2-d875-4407-99a6-0981fe09bff2",
-  "prefix": "ins",
-  "resource_group_name": "rg-sandbox-01-msosf-01",
-  "state_storage_account_name": "osfsandboxstate",
-  "ip_address": "159.196.32.59",
-  "ip_address2": "159.196.32.59",
-  "tenant_id": "a2ebc691-c318-4ec2-998a-a87c528378e0",
-  "deployment_principal_layers1and3": "6c74c0f9-04d0-443c-b071-31559cbd5dd8",
-  "resource_owners": [],
+  "environment_tag": "stg",
+  "domain": "#####",
+  "subscription_id": "#####",
+  "prefix": "ads",
+  "resource_group_name": "#####",
+  "state_storage_account_name": "#####",
+  "ip_address": "#####",
+  "ip_address2": "#####",
+  "tenant_id": "#####",
+  "deployment_principal_layers1and3": "",
+  "resource_owners": [
+    "#####"
+  ],
   "synapse_administrators": [],
   "azure_sql_aad_administrators": {
-    "sql_aad_admin": "6c74c0f9-04d0-443c-b071-31559cbd5dd8"
+    "sql_aad_admin": "#####"
   },
   "azure_purview_data_curators": [
-    "6c74c0f9-04d0-443c-b071-31559cbd5dd8"
+    "#####"
   ],
   "synapse_publishers": [],
   "synapse_contributors": [],
-  "WEB_APP_ADMIN_USER": "6c74c0f9-04d0-443c-b071-31559cbd5dd8",
+  "WEB_APP_ADMIN_USER": "#####",
   "WEB_APP_ADMIN_SECURITY_GROUP": "#####",
-  "ARM_SYNAPSE_WORKSPACE_NAME": "inssbxsynwadssovi",
-  "ARM_KEYVAULT_NAME": "ins-sbx-kv-ads-sovi",
-  "ARM_DATALAKE_NAME": "inssbxdlsadssoviadsl",
+  "ARM_SYNAPSE_WORKSPACE_NAME": "#####",
+  "ARM_KEYVAULT_NAME": "#####",
+  "ARM_DATALAKE_NAME": "#####",
   "ARM_PAL_PARTNER_ID": "0",
   "GIT_REPOSITORY_NAME": "#####",
   "GIT_SYNAPSE_REPOSITORY_BRANCH_NAME": "#####",
@@ -44,9 +46,16 @@
     "deployment_layer3_complete": true,
     "layer0_state": "remote",
     "delay_private_access": true,
-    "deploy_databricks": false,
+    "synapse_git_toggle": false,
+    "adf_git_toggle": false,
+    "deploy_sentinel": false,
+    "synapse_git_toggle_integration": false,
+    "synapse_git_repository_owner": "#####",
+    "synapse_git_repository_name": "#####",
+    "synapse_git_repository_root_folder": "/Synapse",
+    "synapse_git_use_pat": false,
+    "deploy_selfhostedsql": false,
     "deploy_vpn": false,
-    "deploy_bastion": false,
-    "deploy_rbac_roles": true
+    "deploy_bastion": false
   }
 }

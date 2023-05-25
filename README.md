@@ -12,7 +12,7 @@ The Azure Data Services Go Fast Codebase is a combination of Microsoft component
 
 This project is composed of Microsoft components and Open-Source Software (OSS) and is provided to customers and partners at no charge. 
 
-At its core this project is intended to be an accelerator. As such, it is designed to accelerate the “time to value” in using the Microsoft components. As an accelerator, is it not for sale, nor is it a supported product.  
+🚩 At its core this project is intended to be an accelerator. As such, it is designed to accelerate the “time to value” in using the Microsoft components. As an accelerator, is it not for sale, nor is it a supported product.  
 
 ---
 

@@ -3,32 +3,32 @@
   "owner_tag": "microsoft",
   "resource_location": "australiaeast",
   "environment_tag": "uat",
-  "domain": "insight.com",
-  "subscription_id": "860780fa-2435-4860-9673-fa7e21ea5b65",
+  "domain": "#####",
+  "subscription_id": "#####",
   "prefix": "ads",
-  "resource_group_name": "osfdev0",
-  "state_storage_account_name": "osfdev0state",
-  "ip_address": "159.196.32.59",
-  "ip_address2": "159.196.32.59",
-  "tenant_id": "ab5d2ace-e3cf-403d-b525-fccd0b585803",
+  "resource_group_name": "#####",
+  "state_storage_account_name": "#####",
+  "ip_address": "#####",
+  "ip_address2": "#####",
+  "tenant_id": "#####",
   "deployment_principal_layers1and3": "",
   "resource_owners": [
-    "0973f190-d0ba-40a0-a384-24797db7e628"
+    "#####"
   ],
   "synapse_administrators": [],
   "azure_sql_aad_administrators": {
-    "sql_aad_admin": "0973f190-d0ba-40a0-a384-24797db7e628"
+    "sql_aad_admin": "#####"
   },
   "azure_purview_data_curators": [
-    "0973f190-d0ba-40a0-a384-24797db7e628"
+    "#####"
   ],
   "synapse_publishers": [],
   "synapse_contributors": [],
-  "WEB_APP_ADMIN_USER": "0973f190-d0ba-40a0-a384-24797db7e628",
+  "WEB_APP_ADMIN_USER": "#####",
   "WEB_APP_ADMIN_SECURITY_GROUP": "#####",
-  "ARM_SYNAPSE_WORKSPACE_NAME": "adsuatsynwadsl60w",
-  "ARM_KEYVAULT_NAME": "ads-uat-kv-ads-l60w",
-  "ARM_DATALAKE_NAME": "adsuatdlsadsl60wadsl",
+  "ARM_SYNAPSE_WORKSPACE_NAME": "#####",
+  "ARM_KEYVAULT_NAME": "#####",
+  "ARM_DATALAKE_NAME": "#####",
   "ARM_PAL_PARTNER_ID": "0",
   "GIT_REPOSITORY_NAME": "#####",
   "GIT_SYNAPSE_REPOSITORY_BRANCH_NAME": "#####",
@@ -46,13 +46,16 @@
     "deployment_layer3_complete": true,
     "layer0_state": "remote",
     "delay_private_access": true,
-    "deploy_databricks": false,
-    "deploy_databricks_resources": false,
+    "synapse_git_toggle": false,
+    "adf_git_toggle": false,
+    "deploy_sentinel": false,
+    "synapse_git_toggle_integration": false,
+    "synapse_git_repository_owner": "#####",
+    "synapse_git_repository_name": "#####",
+    "synapse_git_repository_root_folder": "/Synapse",
+    "synapse_git_use_pat": false,
+    "deploy_selfhostedsql": false,
     "deploy_vpn": false,
-    "deploy_bastion": false,
-    "deploy_cicd_vm": false,
-    "deploy_cmd_executor_vm": false,
-    "databricks_admins": []
-
+    "deploy_bastion": false
   }
 }

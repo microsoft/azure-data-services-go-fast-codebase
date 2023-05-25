@@ -2,37 +2,37 @@
   "$schema": "./../common_vars_schema.json",
   "owner_tag": "microsoft",
   "resource_location": "australiaeast",
-  "environment_tag": "stg",
-  "domain": "arkahna.io",
-  "subscription_id": "687fe1ae-a520-4f86-b921-a80664c40f9b",
+  "environment_tag": "prd",
+  "domain": "#####",
+  "subscription_id": "#####",
   "prefix": "ads",
-  "resource_group_name": "gft7",
-  "state_storage_account_name": "gft7state",
-  "ip_address": "144.138.148.220",
-  "ip_address2": "144.138.148.220",
-  "tenant_id": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+  "resource_group_name": "#####",
+  "state_storage_account_name": "#####",
+  "ip_address": "#####",
+  "ip_address2": "#####",
+  "tenant_id": "#####",
   "deployment_principal_layers1and3": "",
   "resource_owners": [
-    "ccbdbba4-669c-48d6-86b8-75c9ab2ee578"
+    "#####"
   ],
   "synapse_administrators": [],
   "azure_sql_aad_administrators": {
-    "sql_aad_admin": "6f467924-4d92-40e3-b348-b3154d5cd437",
-    "AdsGoFastDeployerjkcgkaibkungm": "4c732d19-4076-4a76-87f3-6fbfd77f007d",
-    "jorampon@microsoft.com": "ccbdbba4-669c-48d6-86b8-75c9ab2ee578"
+    "sql_aad_admin": "#####"
   },
-  "azure_purview_data_curators": [],
+  "azure_purview_data_curators": [
+    "#####"
+  ],
   "synapse_publishers": [],
   "synapse_contributors": [],
-  "WEB_APP_ADMIN_USER": "ccbdbba4-669c-48d6-86b8-75c9ab2ee578",
+  "WEB_APP_ADMIN_USER": "#####",
   "WEB_APP_ADMIN_SECURITY_GROUP": "#####",
-  "ARM_SYNAPSE_WORKSPACE_NAME": "adsstgsynwadslbzz",
-  "ARM_KEYVAULT_NAME": "ads-stg-kv-ads-lbzz",
-  "ARM_DATALAKE_NAME": "adsstgdlsadslbzzadsl",
+  "ARM_SYNAPSE_WORKSPACE_NAME": "#####",
+  "ARM_KEYVAULT_NAME": "#####",
+  "ARM_DATALAKE_NAME": "#####",
   "ARM_PAL_PARTNER_ID": "0",
-  "GIT_REPOSITORY_NAME": "testLockbox",
-  "GIT_SYNAPSE_REPOSITORY_BRANCH_NAME": "featuretest",
-  "GIT_USER_NAME": "h-sha",
+  "GIT_REPOSITORY_NAME": "#####",
+  "GIT_SYNAPSE_REPOSITORY_BRANCH_NAME": "#####",
+  "GIT_USER_NAME": "#####",
   "GIT_EMAIL_ADDRESS": "#####",
   "GIT_ADF_REPOSITORY_NAME": "#####",
   "GIT_ADF_REPOSITORY_BRANCH_NAME": "#####",
@@ -42,7 +42,7 @@
   "deploy_state_storage_account": false,
   "deploy_cicd_vm": false,
   "FeatureTemplateOverrides": {
-    "is_onprem_datafactory_ir_registered": true,
+    "is_onprem_datafactory_ir_registered": false,
     "deployment_layer3_complete": true,
     "layer0_state": "remote",
     "delay_private_access": true,
@@ -50,10 +50,12 @@
     "adf_git_toggle": false,
     "deploy_sentinel": false,
     "synapse_git_toggle_integration": false,
-    "synapse_git_repository_owner": "h-sha",
-    "synapse_git_repository_name": "testLockbox",
+    "synapse_git_repository_owner": "#####",
+    "synapse_git_repository_name": "#####",
     "synapse_git_repository_root_folder": "/Synapse",
     "synapse_git_use_pat": false,
-    "deploy_selfhostedsql": true
+    "deploy_selfhostedsql": false,
+    "deploy_vpn": false,
+    "deploy_bastion": false
   }
 }

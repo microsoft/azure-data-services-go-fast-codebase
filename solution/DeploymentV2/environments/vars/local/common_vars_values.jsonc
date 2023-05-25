@@ -2,31 +2,33 @@
   "$schema": "./../common_vars_schema.json",
   "owner_tag": "microsoft",
   "resource_location": "australiaeast",
-  "environment_tag": "stg",
-  "domain": "MngEnvMCAP065201.onmicrosoft.com",
-  "subscription_id": "92db59a3-a03b-4309-bf03-1883bd2a5422",
+  "environment_tag": "lcl",
+  "domain": "#####",
+  "subscription_id": "#####",
   "prefix": "ads",
-  "resource_group_name": "vpnt",
-  "state_storage_account_name": "vpntstate",
-  "ip_address": "144.138.148.220",
-  "ip_address2": "144.138.148.220",
-  "tenant_id": "447034da-3a67-4b22-893d-a749d42c3b63",
+  "resource_group_name": "#####",
+  "state_storage_account_name": "#####",
+  "ip_address": "#####",
+  "ip_address2": "#####",
+  "tenant_id": "#####",
   "deployment_principal_layers1and3": "",
   "resource_owners": [
-    "6d5af0b2-1241-4e55-bf0d-bc4f7f147778"
+    "#####"
   ],
   "synapse_administrators": [],
   "azure_sql_aad_administrators": {
-    "sql_aad_admin": "6d5af0b2-1241-4e55-bf0d-bc4f7f147778"
+    "sql_aad_admin": "#####"
   },
-  "azure_purview_data_curators": [],
+  "azure_purview_data_curators": [
+    "#####"
+  ],
   "synapse_publishers": [],
   "synapse_contributors": [],
-  "WEB_APP_ADMIN_USER": "6d5af0b2-1241-4e55-bf0d-bc4f7f147778",
+  "WEB_APP_ADMIN_USER": "#####",
   "WEB_APP_ADMIN_SECURITY_GROUP": "#####",
-  "ARM_SYNAPSE_WORKSPACE_NAME": "adsstgsynwadsg4ys",
-  "ARM_KEYVAULT_NAME": "ads-stg-kv-ads-g4ys",
-  "ARM_DATALAKE_NAME": "adsstgdlsadsg4ysadsl",
+  "ARM_SYNAPSE_WORKSPACE_NAME": "#####",
+  "ARM_KEYVAULT_NAME": "#####",
+  "ARM_DATALAKE_NAME": "#####",
   "ARM_PAL_PARTNER_ID": "0",
   "GIT_REPOSITORY_NAME": "#####",
   "GIT_SYNAPSE_REPOSITORY_BRANCH_NAME": "#####",
@@ -52,6 +54,8 @@
     "synapse_git_repository_name": "#####",
     "synapse_git_repository_root_folder": "/Synapse",
     "synapse_git_use_pat": false,
-    "deploy_selfhostedsql": true
+    "deploy_selfhostedsql": false,
+    "deploy_vpn": false,
+    "deploy_bastion": false
   }
 }
