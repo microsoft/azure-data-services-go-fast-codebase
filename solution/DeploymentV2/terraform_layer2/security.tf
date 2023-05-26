@@ -94,9 +94,12 @@ resource "azurerm_private_endpoint" "storage_private_endpoint_with_dns" {
     subresource_names              = ["blob"]
   }
 
-  private_dns_zone_group {
-    name                 = "privatednszonegroupstorage"
-    private_dns_zone_ids = [local.private_dns_zone_blob_id]
+  dynamic "private_dns_zone_group" {
+    for_each = (var.private_endpoint_register_private_dns_zone_groups ? [true] : [])
+    content {
+      name                 = "privatednszonegroupstorage"
+      private_dns_zone_ids = [local.private_dns_zone_blob_id]
+    }
   }
 
   depends_on = [

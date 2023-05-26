@@ -387,9 +387,12 @@ resource "azurerm_private_endpoint" "synapse_web" {
     subresource_names              = ["Web"]
   }
 
-  private_dns_zone_group {
-    name                 = "privatednszonegroupweb"
-    private_dns_zone_ids = [local.private_dns_zone_synapse_gateway_id]
+  dynamic "private_dns_zone_group" {
+    for_each = (var.private_endpoint_register_private_dns_zone_groups ? [true] : [])
+    content {
+      name                 = "privatednszonegroupweb"
+      private_dns_zone_ids = [local.private_dns_zone_synapse_gateway_id]
+    }
   }
 
   tags = local.tags
@@ -414,9 +417,12 @@ resource "azurerm_private_endpoint" "synapse_dev" {
     subresource_names              = ["Dev"]
   }
 
-  private_dns_zone_group {
-    name                 = "privatednszonegroupdev"
-    private_dns_zone_ids = [local.private_dns_zone_synapse_studio_id]
+  dynamic "private_dns_zone_group" {
+    for_each = (var.private_endpoint_register_private_dns_zone_groups ? [true] : [])
+    content {
+      name                 = "privatednszonegroupdev"
+      private_dns_zone_ids = [local.private_dns_zone_synapse_studio_id]
+    }
   }
 
   tags = local.tags
@@ -444,9 +450,12 @@ resource "azurerm_private_endpoint" "synapse_sql" {
     subresource_names              = ["Sql"]
   }
 
-  private_dns_zone_group {
-    name                 = "privatednszonegroupsql"
-    private_dns_zone_ids = [local.private_dns_zone_synapse_sql_id]
+  dynamic "private_dns_zone_group" {
+    for_each = (var.private_endpoint_register_private_dns_zone_groups ? [true] : [])
+    content {
+      name                 = "privatednszonegroupsql"
+      private_dns_zone_ids = [local.private_dns_zone_synapse_sql_id]
+    }
   }
 
   tags = local.tags
@@ -474,9 +483,12 @@ resource "azurerm_private_endpoint" "synapse_sqlondemand" {
     subresource_names              = ["SqlOnDemand"]
   }
 
-  private_dns_zone_group {
-    name                 = "privatednszonegroupsqld"
-    private_dns_zone_ids = [local.private_dns_zone_synapse_sql_id]
+  dynamic "private_dns_zone_group" {
+    for_each = (var.private_endpoint_register_private_dns_zone_groups ? [true] : [])
+    content {
+      name                 = "privatednszonegroupsqld"
+      private_dns_zone_ids = [local.private_dns_zone_synapse_sql_id]
+    }
   }
 
   tags = local.tags

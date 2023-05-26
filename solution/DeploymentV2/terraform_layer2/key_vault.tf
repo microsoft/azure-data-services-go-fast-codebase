@@ -163,9 +163,12 @@ resource "azurerm_private_endpoint" "app_vault_private_endpoint_with_dns" {
     subresource_names              = ["vault"]
   }
 
-  private_dns_zone_group {
-    name                 = "privatednszonegroup"
-    private_dns_zone_ids = [local.private_dns_zone_kv_id]
+  dynamic "private_dns_zone_group" {
+    for_each = (var.private_endpoint_register_private_dns_zone_groups ? [true] : [])
+    content {
+      name                 = "privatednszonegroup"
+      private_dns_zone_ids = [local.private_dns_zone_kv_id]
+    }
   }
 
   depends_on = [
@@ -179,6 +182,7 @@ resource "azurerm_private_endpoint" "app_vault_private_endpoint_with_dns" {
     ]
   }
 }
+
 
 // Diagnostic logs--------------------------------------------------------------------------
 resource "azurerm_monitor_diagnostic_setting" "app_vault_diagnostic_logs" {

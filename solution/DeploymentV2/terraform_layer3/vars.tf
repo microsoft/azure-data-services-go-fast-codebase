@@ -141,6 +141,17 @@ variable "deploy_purview_sp" {
   type        = bool
 }
 
+variable "private_endpoint_register_private_dns_zone_groups" {
+  description = "Whether to register private endpoints against the relevant private dns zone group."
+  default     = true
+  type        = bool
+}
+
+variable "purview_ingestion_endpoint_type" {
+  description = "Whether to use the arm template or terraform to deploy the purview ingestion endpoints. Must be either 'arm' or 'terraform' value."
+  default     = "arm"
+  type        = string
+}
 
 
 variable "is_vnet_isolated" {

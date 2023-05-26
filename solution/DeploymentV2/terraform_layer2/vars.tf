@@ -143,6 +143,12 @@ variable "delay_private_access" {
   default     = true
 }
 
+variable "private_endpoint_register_private_dns_zone_groups" {
+  description = "Whether to register private dns zone groups for the deployed private endpoints."
+  type        = bool
+  default     = true
+}
+
 
 #---------------------------------------------------------------
 # Feature Toggles
@@ -188,6 +194,13 @@ variable "deploy_sql_server" {
   default     = true
   type        = bool
 }
+
+variable "azure_sql_server_public_access" {
+  description = "Feature toggle allowing the default azure sql server public access. Note: this will override other logic."
+  default     = true
+  type        = bool
+}
+
 
 variable "deploy_metadata_database" {
   description = "Feature toggle for deploying Metadata Database"
@@ -930,6 +943,11 @@ variable "existing_synapse_private_link_hub_id" {
   description = "An existing private link hub for synapse studio."
   default     = ""
   type        = string
+}
+variable "private_endpoint_register_private_dns_zone_groups" {
+  description = "Whether to register private endpoints against the relevant private dns zone group."
+  default     = true
+  type        = bool
 }
 
 variable "custom_vm_plan_name" {

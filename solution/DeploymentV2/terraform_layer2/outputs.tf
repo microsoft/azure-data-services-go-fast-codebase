@@ -80,6 +80,13 @@ output "purview_sp_name" {
 output "azurerm_purview_account_purview_id" {
   value =   var.deploy_purview ? azurerm_purview_account.purview[0].id : ""
 }
+output "purview_managed_storage_account_id" {
+  value =   var.deploy_purview ? azurerm_purview_account.purview[0].managed_resources.0.storage_account_id : ""
+}
+
+output "purview_managed_event_hub_namespace_id" {
+  value =   var.deploy_purview ? azurerm_purview_account.purview[0].managed_resources.0.event_hub_namespace_id : ""
+}
 output "is_vnet_isolated" {
   value = var.is_vnet_isolated
 }

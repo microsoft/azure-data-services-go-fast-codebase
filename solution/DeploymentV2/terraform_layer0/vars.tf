@@ -345,6 +345,11 @@ variable "deploy_custom_terraform" {
   default     = false
   type        = bool
 }
+variable "deploy_private_dns_zones" {
+  description = "Feature toggle for deploying the private DNS zones."
+  default     = true
+  type        = bool
+}
 #---------------------------------------------------------------
 # Post IAC - Feature Toggles 
 #---------------------------------------------------------------
@@ -888,6 +893,18 @@ variable "existing_private_dns_zone_synapse_sql_id" {
   description = "An existing private DNS zone for privatelink.sql.azuresynapse.net"
   default     = ""
   type        = string
+}
+
+variable "existing_private_dns_zone_databricks_id" {
+  description = "An existing private DNS zone for privatelink.azuredatabricks.net"
+  default     = ""
+  type        = string
+}
+
+variable "private_endpoint_register_private_dns_zone_groups" {
+  description = "Whether to register private endpoints against the relevant private dns zone group."
+  default     = true
+  type        = bool
 }
 
 variable "existing_synapse_private_link_hub_id" {

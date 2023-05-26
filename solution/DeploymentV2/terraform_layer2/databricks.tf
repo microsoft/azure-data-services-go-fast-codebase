@@ -31,9 +31,12 @@ resource "azurerm_private_endpoint" "databricks_workspace_pe" {
   resource_group_name = var.resource_group_name
   subnet_id           = local.plink_subnet_id
   
-  private_dns_zone_group {
-    name = "privatednszonegroupworkspace"
-    private_dns_zone_ids = [local.private_dns_zone_databricks_workspace_id]
+  dynamic "private_dns_zone_group" {
+    for_each = (var.private_endpoint_register_private_dns_zone_groups ? [true] : [])
+    content {
+      name = "privatednszonegroupworkspace"
+      private_dns_zone_ids = [local.private_dns_zone_databricks_workspace_id]
+    }
   }
 
   private_service_connection {
@@ -51,9 +54,12 @@ resource "azurerm_private_endpoint" "databricks_auth_pe" {
   resource_group_name = var.resource_group_name
   subnet_id           = local.plink_subnet_id
   
-  private_dns_zone_group {
-    name = "privatednszonegroupworkspace"
-    private_dns_zone_ids = [local.private_dns_zone_databricks_workspace_id]
+  dynamic "private_dns_zone_group" {
+    for_each = (var.private_endpoint_register_private_dns_zone_groups ? [true] : [])
+    content {
+      name = "privatednszonegroupworkspace"
+      private_dns_zone_ids = [local.private_dns_zone_databricks_workspace_id]
+    }
   }
 
   private_service_connection {

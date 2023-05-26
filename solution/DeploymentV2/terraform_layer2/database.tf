@@ -21,7 +21,7 @@ resource "azurerm_mssql_server" "sqlserver" {
   version                       = "12.0"
   administrator_login           = var.sql_admin_username
   administrator_login_password  = random_password.database.result
-  public_network_access_enabled = var.is_vnet_isolated == false || var.delay_private_access
+  public_network_access_enabled = var.azure_sql_server_public_access && (var.is_vnet_isolated == false || var.delay_private_access)
   minimum_tls_version           = "1.2"
 
   azuread_administrator {
@@ -93,9 +93,12 @@ resource "azurerm_private_endpoint" "db_private_endpoint_with_dns" {
     subresource_names              = ["sqlServer"]
   }
 
-  private_dns_zone_group {
-    name                 = "privatednszonegroup"
-    private_dns_zone_ids = [local.private_dns_zone_db_id]
+  dynamic "private_dns_zone_group" {
+    for_each = (var.private_endpoint_register_private_dns_zone_groups ? [true] : [])
+    content {
+      name                 = "privatednszonegroup"
+      private_dns_zone_ids = [local.private_dns_zone_db_id]
+    }
   }
 
   depends_on = [
@@ -109,6 +112,7 @@ resource "azurerm_private_endpoint" "db_private_endpoint_with_dns" {
     ]
   }
 }
+
 
 /* resource "null_resource" "metadatadb_admins" {
   for_each = (var.azure_sql_aad_administrators)  

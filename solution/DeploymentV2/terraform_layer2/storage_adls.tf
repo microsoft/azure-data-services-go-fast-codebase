@@ -95,9 +95,12 @@ resource "azurerm_private_endpoint" "adls_storage_private_endpoint_with_dns" {
     subresource_names              = ["blob"]
   }
 
-  private_dns_zone_group {
-    name                 = "privatednszonegroupstorageblob"
-    private_dns_zone_ids = [local.private_dns_zone_blob_id]
+  dynamic "private_dns_zone_group" {
+    for_each = (var.private_endpoint_register_private_dns_zone_groups ? [true] : [])
+    content {
+      name                 = "privatednszonegroupstorageblob"
+      private_dns_zone_ids = [local.private_dns_zone_blob_id]
+    }
   }
 
   depends_on = [
@@ -126,9 +129,12 @@ resource "azurerm_private_endpoint" "adls_dfs_storage_private_endpoint_with_dns"
     subresource_names              = ["dfs"]
   }
 
-  private_dns_zone_group {
-    name                 = "privatednszonegroupstoragedfs"
-    private_dns_zone_ids = [local.private_dns_zone_dfs_id]
+  dynamic "private_dns_zone_group" {
+    for_each = (var.private_endpoint_register_private_dns_zone_groups ? [true] : [])
+    content {
+      name                 = "privatednszonegroupstoragedfs"
+      private_dns_zone_ids = [local.private_dns_zone_dfs_id]
+    }
   }
 
   depends_on = [
