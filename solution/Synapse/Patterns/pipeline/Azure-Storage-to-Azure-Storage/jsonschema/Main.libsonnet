@@ -21,6 +21,16 @@ function(SourceType = "Parquet", SourceFormat = "Delta",TargetType = "AzureSqlTa
                 "infoText": "(required) Set this to enabled if your incoming data is from a CDC formatted database. This will modify how the default notebook interacts with the source data. Note: CDC specific columns will be removed from the sink."
             }
         },
+        "ExecuteNotebook": {
+            "type": "string",
+            "options": {
+                "inputAttributes": {
+                    "placeholder": "DeltaProcessingNotebook"
+                },
+                "infoText": "(required) WARNING: Only change this if you wish to use a custom notebook for the Delta store procedure."
+            },
+            "default":"DeltaProcessingNotebook"
+        },
         "SparkTableCreate": {
             "type": "string",
             "default": "Disabled",
@@ -100,7 +110,7 @@ function(SourceType = "Parquet", SourceFormat = "Delta",TargetType = "AzureSqlTa
                 "inputAttributes": {
                     "placeholder": ""
                 },
-                "infoText": "(optional) This will allow you to override the primary key selected and used for the delta table notebook. Note: Leave this blank if you do not wish to use this functionality."
+                "infoText": "(optional) This will allow you to override the primary key selected and used for the delta table notebook. Note: Leave this blank if you do not wish to use this functionality. If you wish to provide multiple primary keys, seperate them by a ',' - whitespace will be removed."
             }
         },      
         "Source": partials[SourceFormat](),
