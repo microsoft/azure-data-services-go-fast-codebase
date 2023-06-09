@@ -160,6 +160,11 @@ variable "is_vnet_isolated" {
   type        = bool
 }
 
+variable "delay_private_access" {
+  description = "Whether to create resoruces with public access enabled and then disable it at the end."
+  type        = bool
+  default     = true
+}
 
 
 #---------------------------------------------------------------

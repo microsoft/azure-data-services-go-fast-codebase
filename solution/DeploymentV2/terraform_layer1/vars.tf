@@ -228,3 +228,13 @@ variable "terraform_plan" {
   }
 }
 
+variable "delay_private_access" {
+  description = "Whether to create resoruces with public access enabled and then disable it at the end."
+  type        = bool
+  default     = true
+}
+variable "is_vnet_isolated" {
+  description = "Whether to deploy the resources as vnet attached / private linked"
+  default     = true
+  type        = bool
+}

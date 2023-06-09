@@ -87,3 +87,10 @@ output "naming_unique_seed" {
 output "naming_unique_suffix" {
   value = substr(module.naming.unique-seed, 0, 4)
 }
+
+output "delay_private_access" {
+  value = var.delay_private_access
+}
+output "is_vnet_isolated" {
+  value = var.is_vnet_isolated
+}

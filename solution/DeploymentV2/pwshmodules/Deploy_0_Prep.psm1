@@ -115,7 +115,7 @@ function PrepareDeployment (
     Set-Location $deploymentFolderPath
 
     [System.Environment]::SetEnvironmentVariable('TFenvironmentName', $environmentName)
-    if (($env:TF_VAR_ip_address -ne "") -and ($env:TF_VAR_ip_address -ne $env:TF_VAR_ip_address2))
+    if (($env:TF_VAR_ip_address -ne "") -and ($env:TF_VAR_ip_address -ne $env:TF_VAR_ip_address2) -and (($env:TF_VAR_delay_private_access) -or $env:(TF_VAR_is_vnet_isolated -eq False)))
     {
         try {
             #state
@@ -149,7 +149,7 @@ function PrepareDeployment (
         }
     }
 
-    if ($env:TF_VAR_ip_address2 -ne "")
+    if ($env:TF_VAR_ip_address2 -ne "" -and (($env:TF_VAR_delay_private_access) -or $env:(TF_VAR_is_vnet_isolated -eq False)))
     {
         try {
              #state

@@ -53,3 +53,9 @@ output "webapp_name" {
 output "functionapp_name" {
   value = data.terraform_remote_state.layer2.outputs.functionapp_name
 }
+output "delay_private_access" {
+  value = var.delay_private_access
+}
+output "is_vnet_isolated" {
+  value = var.is_vnet_isolated
+}

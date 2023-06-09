@@ -140,7 +140,7 @@ resource "azurerm_synapse_firewall_rule" "cicd_user" {
 # Synapse Workspace Firewall Rules (Allow Public Access)
 # --------------------------------------------------------------------------------------------------------------------
 resource "azurerm_synapse_firewall_rule" "public_access" {
-  count                = var.deploy_adls && var.deploy_synapse && var.allow_public_access_to_synapse_studio ? 1 : 0
+  count                = var.deploy_adls && var.deploy_synapse && var.allow_public_access_to_synapse_studio && (var.is_vnet_isolated == false || var.delay_private_access)) ? 1 : 0
   name                 = "AllowAll"
   synapse_workspace_id = azurerm_synapse_workspace.synapse[0].id
   start_ip_address     = "0.0.0.0"

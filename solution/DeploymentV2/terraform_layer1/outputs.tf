@@ -71,3 +71,11 @@ output "azuread_application_purview_ir_object_id" {
 output "purview_sp_object_id" {
   value = var.deploy_purview && var.is_vnet_isolated && var.deploy_purview_sp ? azuread_service_principal.purview_ir[0].object_id : "0"
 }
+
+output "delay_private_access" {
+  value = var.delay_private_access
+}
+output "is_vnet_isolated" {
+  value = var.is_vnet_isolated
+}
+
