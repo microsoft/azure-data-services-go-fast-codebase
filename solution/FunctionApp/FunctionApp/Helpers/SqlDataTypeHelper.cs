@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json.Linq;
@@ -23,7 +23,6 @@ namespace FunctionApp.Helpers
                 case "binary": return "Byte[]";
                 case "bit": return "Boolean";
                 case "char": return "String";
-                case "CHAR": return "String";
                 case "date": return "DateTime";
                 case "datetime": return "DateTime";
                 case "datetime2": return "DateTime";
@@ -51,15 +50,29 @@ namespace FunctionApp.Helpers
                 case "varbinary": return "Byte[]";
                 case "varchar": return "String";
                 case "xml": return "Xml";
-                case "VARCHAR2": return "String";
-                case "NVARCHAR2": return "String";
-                case "FLOAT": return "Double";
-                case "LONG": return "Double";
-                case "DATE": return "DateTime";
                 case "BINARY_FLOAT": return "DECIMAL";
                 case "BINARY_DOUBLE": return "DECIMAL";
-                case "RAW": return "String";
+                case "BFILE": return "Byte[]";
+                case "BLOB": return "Byte[]";
+                case "CHAR": return "String";
+                case "CLOB": return "String";
+                case "DATE": return "DateTime";
+                case "FLOAT": return "Decimal";
+                case "INTEGER": return "Decimal";
+                case "INTERVAL YEAR TO MONTH": return "Int32";
+                case "INTERVAL DAY TO SECOND": return "TimeSpan";
+                case "LONG": return "String";
                 case "LONG RAW": return "String";
+                case "NCHAR": return "String";
+                case "NCLOB": return "String";
+                case "NVARCHAR2": return "String";
+                case "RAW": return "String";
+                case "ROWID": return "String";
+                case "TIMESTAMP": return "DateTime";
+                case "TIMESTAMP WITH LOCAL TIME ZONE": return "DateTime";
+                case "TIMESTAMP WITH TIME ZONE": return "DateTime";
+                case "UNSIGNED INTEGER": return "Int64";
+                case "VARCHAR2": return "String";
                 case "NUMBER":
                     switch (NumericPrecision) 
                     {
@@ -68,7 +81,7 @@ namespace FunctionApp.Helpers
                         default: 
                             return "Int64";
                     }                
-                case "TIMESTAMP": return "Byte[]";
+                //case "TIMESTAMP": return "Byte[]";
 
                 default:
                     throw new Exception(DataType.ToString() +
@@ -126,7 +139,6 @@ namespace FunctionApp.Helpers
                 case "binary": return "Binary";
                 case "bit": return "Boolean";
                 case "char": return "UTF8";
-                case "CHAR": return "UTF8";
                 case "nchar": return "UTF8";
                 case "ntext": return "UTF8";
                 case "nvarchar": return "UTF8";
@@ -153,15 +165,29 @@ namespace FunctionApp.Helpers
                 case "uniqueidentifier": return "Binary";
                 case "varbinary": return "Binary";
                 case "xml": return "Binary";
-                case "VARCHAR2": return "UTF8";
-                case "NVARCHAR2": return "UTF8";
-                case "FLOAT": return "DECIMAL";
-                case "LONG": return "DECIMAL";
-                case "DATE": return "Int96";
                 case "BINARY_FLOAT": return "DECIMAL";
                 case "BINARY_DOUBLE": return "DECIMAL";
-                case "RAW": return "UTF8";
+                case "BFILE": return "Binary";
+                case "BLOB": return "Binary";
+                case "CHAR": return "UTF8";
+                case "CLOB": return "UTF8";
+                case "DATE": return "Int96";
+                case "FLOAT": return "DECIMAL";
+                case "INTEGER": return "DECIMAL";
+                case "INTERVAL YEAR TO MONTH": return "INT32";
+                case "INTERVAL DAY TO SECOND": return "Int96";
+                case "LONG": return "UTF8";
                 case "LONG RAW": return "UTF8";
+                case "NCHAR": return "UTF8";
+                case "NCLOB": return "UTF8";
+                case "NVARCHAR2": return "UTF8";
+                case "RAW": return "UTF8";
+                case "ROWID": return "UTF8";
+                case "TIMESTAMP": return "Int96";
+                case "TIMESTAMP WITH LOCAL TIME ZONE": return "Int96";
+                case "TIMESTAMP WITH TIME ZONE": return "Int96";
+                case "UNSIGNED INTEGER": return "Int64";
+                case "VARCHAR2": return "UTF8";
                 case "NUMBER":
                     switch (NumericPrecision) 
                     {
@@ -169,8 +195,7 @@ namespace FunctionApp.Helpers
                         case "3": return "Boolean";
                         default: 
                             return "Int64";
-                    }
-                case "TIMESTAMP": return "Int96";
+                    }  
                 default:
                     throw new Exception(DataType.ToString() +
                                         " conversion not implemented. Please add conversion logic to TransformSQLTypesToParquet");
