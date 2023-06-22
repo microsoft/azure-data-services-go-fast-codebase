@@ -23,6 +23,7 @@ namespace FunctionApp.Helpers
                 case "binary": return "Byte[]";
                 case "bit": return "Boolean";
                 case "char": return "String";
+                case "CHAR": return "String";
                 case "date": return "DateTime";
                 case "datetime": return "DateTime";
                 case "datetime2": return "DateTime";
@@ -125,6 +126,7 @@ namespace FunctionApp.Helpers
                 case "binary": return "Binary";
                 case "bit": return "Boolean";
                 case "char": return "UTF8";
+                case "CHAR": return "UTF8";
                 case "nchar": return "UTF8";
                 case "ntext": return "UTF8";
                 case "nvarchar": return "UTF8";
