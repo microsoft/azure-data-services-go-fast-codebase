@@ -140,7 +140,7 @@ namespace FunctionApp.Functions
                 {
                     CronExpression cronExpression = CronExpression.Parse(row.ScheduleCronExpression.ToString(), CronFormat.IncludeSeconds);
                     
-                    nextUtc = cronExpression.GetNextOccurrence(row.MaxScheduledDateTimeOffset);
+                    nextUtc = cronExpression.GetNextOccurrence(row.MaxScheduledDateTimeOffset, TimeZoneInfo.Utc);
                     
                 }
                 
