@@ -32,6 +32,6 @@ LEFT OUTER JOIN
     AND Tab.constraint_name = Col.constraint_name
     AND Tab.owner = Col.owner) tc
 ON c.OWNER = tc.OWNER AND c.TABLE_NAME = tc.TABLE_NAME AND c.COLUMN_NAME = tc.COLUMN_NAME
-WHERE c.TABLE_NAME = UPPER('{tableName}') AND c.OWNER = UPPER('{tableSchema}') AND c.COLUMN_ID IS NOT NULL
+WHERE c.TABLE_NAME = UPPER('{tableName}') AND c.OWNER = UPPER('{tableSchema}') AND c.COLUMN_ID IS NOT NULL) td
 GROUP BY COLUMN_ID, COLUMN_NAME, DATA_TYPE
 ORDER BY COLUMN_ID;
