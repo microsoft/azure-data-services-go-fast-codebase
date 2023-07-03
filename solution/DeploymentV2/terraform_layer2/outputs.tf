@@ -400,6 +400,3 @@ output "metadata_extraction_email_address" {
 output "delay_private_access" {
   value = var.delay_private_access
 }
-output "is_vnet_isolated" {
-  value = var.is_vnet_isolated
-}

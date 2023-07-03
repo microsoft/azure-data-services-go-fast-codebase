@@ -65,6 +65,7 @@ resource "azurerm_private_endpoint" "purview_portal_private_endpoint_with_dns" {
       tags
     ]
   }
+}
 
 # Azure private endpoints
 module "purview_ingestion_private_endpoints" {

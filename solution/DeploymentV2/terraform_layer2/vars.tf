@@ -944,11 +944,6 @@ variable "existing_synapse_private_link_hub_id" {
   default     = ""
   type        = string
 }
-variable "private_endpoint_register_private_dns_zone_groups" {
-  description = "Whether to register private endpoints against the relevant private dns zone group."
-  default     = true
-  type        = bool
-}
 
 variable "custom_vm_plan_name" {
   description = "An Azure vm plan name to be referenced for a custom vm image."

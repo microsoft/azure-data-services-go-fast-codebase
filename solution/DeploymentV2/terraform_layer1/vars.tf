@@ -233,8 +233,3 @@ variable "delay_private_access" {
   type        = bool
   default     = true
 }
-variable "is_vnet_isolated" {
-  description = "Whether to deploy the resources as vnet attached / private linked"
-  default     = true
-  type        = bool
-}

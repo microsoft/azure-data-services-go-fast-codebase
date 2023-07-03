@@ -7,7 +7,7 @@
       config = {
         container_name       = "tstate"
         key                  = "terraform_layer2.tfstate"
-        resource_group_name  = "gfr2"
-        storage_account_name = "gfr2state"
+        resource_group_name  = "rg-ia-empty"
+        storage_account_name = "osfstatestorage"
       }
     }

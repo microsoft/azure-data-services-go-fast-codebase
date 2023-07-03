@@ -23,13 +23,10 @@ function(SourceType = "Parquet", SourceFormat = "Delta",TargetType = "AzureSqlTa
         },
         "ExecuteNotebook": {
             "type": "string",
+            "default": "DeltaProcessingNotebook",
             "options": {
-                "inputAttributes": {
-                    "placeholder": "DeltaProcessingNotebook"
-                },
                 "infoText": "(required) WARNING: Only change this if you wish to use a custom notebook for the Delta store procedure."
-            },
-            "default":"DeltaProcessingNotebook"
+            }
         },
         "SparkTableCreate": {
             "type": "string",
@@ -110,7 +107,7 @@ function(SourceType = "Parquet", SourceFormat = "Delta",TargetType = "AzureSqlTa
                 "inputAttributes": {
                     "placeholder": ""
                 },
-                "infoText": "(optional) This will allow you to override the primary key selected and used for the delta table notebook. Note: Leave this blank if you do not wish to use this functionality. If you wish to provide multiple primary keys, seperate them by a ',' - whitespace will be removed."
+                "infoText": "(optional) This will allow you to override the primary key selected and used for the delta table notebook. Note: Leave this blank if you do not wish to use this functionality. If you wish to provide multiple primary keys, seperate them by commas - whitespace will be removed."
             }
         },      
         "Source": partials[SourceFormat](),
@@ -123,6 +120,7 @@ function(SourceType = "Parquet", SourceFormat = "Delta",TargetType = "AzureSqlTa
         "Target",
         "Purview",
         "UseNotebookActivity",
-        "ModifiedDate"
+        "ModifiedDate",
+        "ExecuteNotebook"
     ]
 }

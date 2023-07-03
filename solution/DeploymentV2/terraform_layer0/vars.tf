@@ -297,6 +297,12 @@ variable "deploy_selfhostedsql" {
   type        = bool
 }
 
+variable "deploy_jumphost" {
+  description = "Feature toggle for deploying the jumphost VM"
+  default     = true
+  type        = bool
+}
+
 variable "deploy_h2o-ai" {
   description = "Feature toggle for deploying H2O-AI VM"
   default     = false

@@ -1,34 +1,32 @@
 {
   "$schema": "./../common_vars_schema.json",
-  "owner_tag": "",
+  "owner_tag": "test",
   "resource_location": "australiaeast",
   "environment_tag": "stg",
-  "domain": "#####",
-  "subscription_id": "#####",
+  "domain": "insight.com",
+  "subscription_id": "860780fa-2435-4860-9673-fa7e21ea5b65",
   "prefix": "ads",
-  "resource_group_name": "#####",
-  "state_storage_account_name": "#####",
-  "ip_address": "#####",
-  "ip_address2": "#####",
-  "tenant_id": "#####",
-  "deployment_principal_layers1and3": "",
-  "resource_owners": [
-    "#####"
-  ],
+  "resource_group_name": "rg-ia-empty",
+  "state_storage_account_name": "osfstatestorage",
+  "ip_address": "103.85.36.158",
+  "ip_address2": "103.85.36.158",
+  "tenant_id": "ab5d2ace-e3cf-403d-b525-fccd0b585803",
+  "deployment_principal_layers1and3": "0973f190-d0ba-40a0-a384-24797db7e628",
+  "resource_owners": [],
   "synapse_administrators": [],
   "azure_sql_aad_administrators": {
-    "sql_aad_admin": "#####"
+    "sql_aad_admin": "0973f190-d0ba-40a0-a384-24797db7e628"
   },
   "azure_purview_data_curators": [
-    "#####"
+    "0973f190-d0ba-40a0-a384-24797db7e628"
   ],
   "synapse_publishers": [],
   "synapse_contributors": [],
-  "WEB_APP_ADMIN_USER": "#####",
+  "WEB_APP_ADMIN_USER": "0973f190-d0ba-40a0-a384-24797db7e628",
   "WEB_APP_ADMIN_SECURITY_GROUP": "#####",
-  "ARM_SYNAPSE_WORKSPACE_NAME": "#####",
-  "ARM_KEYVAULT_NAME": "#####",
-  "ARM_DATALAKE_NAME": "#####",
+  "ARM_SYNAPSE_WORKSPACE_NAME": "adsstgsynwadswkuy",
+  "ARM_KEYVAULT_NAME": "ads-stg-kv-ads-wkuyy",
+  "ARM_DATALAKE_NAME": "adsstgdlsadswkuyadsl",
   "ARM_PAL_PARTNER_ID": "0",
   "GIT_REPOSITORY_NAME": "#####",
   "GIT_SYNAPSE_REPOSITORY_BRANCH_NAME": "#####",
@@ -49,13 +47,10 @@
     "synapse_git_toggle": false,
     "adf_git_toggle": false,
     "deploy_sentinel": false,
-    "synapse_git_toggle_integration": false,
-    "synapse_git_repository_owner": "#####",
-    "synapse_git_repository_name": "#####",
-    "synapse_git_repository_root_folder": "/Synapse",
-    "synapse_git_use_pat": false,
     "deploy_selfhostedsql": false,
     "deploy_vpn": false,
-    "deploy_bastion": false
+    "deploy_bastion": false,
+    "deploy_databricks": false,
+    "key_vault_name": "ads-stg-kv-ads-wkuyy"
   }
 }
