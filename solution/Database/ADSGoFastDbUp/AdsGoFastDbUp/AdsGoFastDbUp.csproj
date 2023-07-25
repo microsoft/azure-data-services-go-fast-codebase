@@ -35,6 +35,7 @@
     <None Remove="1-0-4\A-Journaled\001-AddPowerBIDataflowRefresh.sql" />               
     <None Remove="1-0-4\A-Journaled\002-AddDatabricksNotebookExecution.sql" />               
     <None Remove="1-0-4\A-Journaled\003-AddVMCommandExecution.sql" />               
+    <None Remove="1-0-4\A-Journaled\004-AddEmailNotifications.sql" />               
 
 
 
@@ -67,6 +68,7 @@
     <EmbeddedResource Include="1-0-4\A-Journaled\001-AddPowerBIDataflowRefresh.sql" />
     <EmbeddedResource Include="1-0-4\A-Journaled\002-AddDatabricksNotebookExecution.sql" />
     <EmbeddedResource Include="1-0-4\A-Journaled\003-AddVMCommandExecution.sql" />
+    <EmbeddedResource Include="1-0-4\A-Journaled\003-AddEmailNotifications.sql" />
 
 
   </ItemGroup>

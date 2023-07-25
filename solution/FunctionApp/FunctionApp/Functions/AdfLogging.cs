@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using FunctionApp.DataAccess;
 using FunctionApp.Models;
@@ -13,6 +14,9 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Azure.Communication.Email;
+using System.Linq;
+using Azure;
 
 namespace FunctionApp.Functions
 {
@@ -60,6 +64,8 @@ namespace FunctionApp.Functions
             dynamic data = JsonConvert.DeserializeObject(requestBody);
 
             dynamic taskInstanceId = data["TaskInstanceId"];
+            dynamic taskMasterId = data["TaskMasterId"];
+            dynamic taskMasterName = data["TaskMasterName"];
             dynamic numberOfRetries = data["NumberOfRetries"];
             dynamic postObjectExecutionUid = data["ExecutionUid"];
             dynamic adfRunUid = data["RunId"];
@@ -73,6 +79,10 @@ namespace FunctionApp.Functions
             comment = System.Web.HttpUtility.UrlDecode(comment);
             dynamic endDateTimeOffSet = data["EndDateTimeOffSet"];
             dynamic rowsInserted = data["RowsInserted"];
+            dynamic NotificationList = data["NotificationList"];
+            dynamic NotificationOn = data["NotificationOn"];
+            string notificationOn = "";
+            string notificationList = "";
 
             if (taskInstanceId != null) { LogHelper.DefaultActivityLogItem.TaskInstanceId = (long?)taskInstanceId; }
             if (logSource != null) { LogHelper.DefaultActivityLogItem.LogSource = (string)logSource; }
@@ -81,6 +91,8 @@ namespace FunctionApp.Functions
             if (status!= null) { LogHelper.DefaultActivityLogItem.Status = (string)status; }
             if (endDateTimeOffSet != null) { LogHelper.DefaultActivityLogItem.EndDateTimeOffset = (DateTimeOffset)endDateTimeOffSet; }
             if (postObjectExecutionUid != null) { LogHelper.DefaultActivityLogItem.ExecutionUid = (Guid?)postObjectExecutionUid; }
+            if (NotificationOn is null) { notificationOn = "Disabled"; } else { notificationOn = NotificationOn.ToString(); }
+            if (NotificationList != null) { notificationList = NotificationList.ToString(); }
 
             LogHelper.LogInformation(comment);
 
@@ -105,6 +117,93 @@ namespace FunctionApp.Functions
                     }
                 }
                 await _taskMetaDataDatabase.LogTaskInstanceCompletion((Int64)taskInstanceId, (Guid)postObjectExecutionUid, taskStatus, (Guid)adfRunUid, (String)comment);
+                try
+                {
+                    if (notificationList != null & notificationOn != "Disabled")
+                    {
+                        var boolEmail = false;
+                        var subject = "";
+                        var htmlContent = "";
+                        switch (notificationOn)
+                        {
+                            case "Completion":
+                                boolEmail = true;
+                                subject = $"Task Completion Notification: {taskMasterName}";
+                                htmlContent = $"<html><body><h1>Task Completed</h1>";
+                                break;
+                            case "Success":
+                                if (status == "Complete")
+                                {
+                                    boolEmail = true;
+                                    subject = $"Task Success Notification: {taskMasterName}";
+                                    htmlContent = $"<html><body><h1>Task Successful</h1>";
+                                }
+                                break;
+                            case "Failure":
+                                if (status == "Failed")
+                                {
+                                    boolEmail = true;
+                                    subject = $"Task Failure Notification: {taskMasterName}";
+                                    htmlContent = $"<html><body><h1>Task Failure</h1>";
+                                }
+                                break;
+                            case "FailureNoRetry":
+                                if (status == "Failed" && numberOfRetries >= frameworkNumberOfRetries)
+                                {
+                                    boolEmail = true;
+                                    subject = $"Task Failure (No Retry) Notification: {taskMasterName}";
+                                    htmlContent = $"<html><body><h1>Task Failure (No Retry)</h1>";
+
+                                }
+                                break;
+                        }
+                        if (boolEmail)
+                        {
+                            // Separate emails
+                            //notificationList = Regex.Replace(notificationList, @"\s+", "");
+                            LogHelper.LogInformation($"Email notification list = {notificationList}");
+                            notificationList = notificationList.Replace(" ", String.Empty);
+                            var emailAddresses = notificationList.Split(',').ToList();
+                            emailAddresses = emailAddresses.Distinct().ToList();
+                            EmailClient emailClient = new EmailClient(_options.Value.AzureCommunicationsService.ConnectionString);
+                            var sender = _options.Value.AzureCommunicationsService.EmailFromAddress;
+                            htmlContent = htmlContent + $"<br/><b>Task Master Name:</b> {taskMasterName}<br/><b>Task Master Id:</b> {taskMasterId}<br/><b>Task Instance Id:</b> {taskInstanceId}<br/><b>Task Start (UTC):</b> {startDateTimeOffSet}<br/><b>Task End (UTC):</b> {endDateTimeOffSet}<br/><b>Run Uid:</b> {adfRunUid}<br/><b>Status:</b> {status}<br/><b>Retries:</b> {numberOfRetries}";
+                            htmlContent = htmlContent + "<p>This mail was sent automatically as part of the ADS Go Fast Framework.</p></body></html>";
+                            foreach (var email in emailAddresses)
+                            {
+                                var recipient = email;
+                                try
+                                {
+                                    Console.WriteLine("Sending email...");
+                                    EmailSendOperation emailSendOperation = await emailClient.SendAsync(
+                                        Azure.WaitUntil.Completed,
+                                        sender,
+                                        recipient,
+                                        subject,
+                                        htmlContent).ConfigureAwait(false);
+                                    EmailSendResult statusMonitor = emailSendOperation.Value;
+
+                                    LogHelper.LogInformation($"Email Sent. Status = {emailSendOperation.Value.Status}");
+
+                                    /// Get the OperationId so that it can be used for tracking the message for troubleshooting
+                                    string operationId = emailSendOperation.Id;
+                                    LogHelper.LogInformation($"Email operation id = {operationId}");
+                                }
+                                catch (RequestFailedException ex)
+                                {
+                                    /// OperationID is contained in the exception message and can be used for troubleshooting purposes
+                                    LogHelper.LogInformation($"Email send operation failed with error code: {ex.ErrorCode}, message: {ex.Message}");
+                                }
+                            }
+
+
+                        }
+                    }
+                } 
+                catch (Exception e) 
+                {
+                    LogHelper.LogErrors(e);
+                }
             }
 
             return new JObject

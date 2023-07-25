@@ -32,7 +32,8 @@
   <ItemGroup>
     <PackageReference Include="Azure.Analytics.Synapse.Artifacts" Version="1.0.0-preview.15" />
     <PackageReference Include="Azure.Analytics.Synapse.Spark" Version="1.0.0-preview.8" />
-    <PackageReference Include="Azure.Core" Version="1.25.0" />
+    <PackageReference Include="Azure.Communication.Email" Version="1.0.0" />
+    <PackageReference Include="Azure.Core" Version="1.30.0" />
     <PackageReference Include="Azure.Identity" Version="1.6.0" />
     <PackageReference Include="Azure.Storage.Blobs" Version="12.13.0" />
     <PackageReference Include="Azure.Security.KeyVault.Secrets" Version="4.3.0" />

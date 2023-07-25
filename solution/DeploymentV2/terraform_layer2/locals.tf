@@ -71,6 +71,10 @@ locals {
   private_dns_zone_synapse_gateway_id = data.terraform_remote_state.layer0.outputs.private_dns_zone_synapse_gateway_id
   private_dns_zone_databricks_workspace_id = data.terraform_remote_state.layer0.outputs.private_dns_zone_databricks_workspace_id
 
+  azure_communication_service_name = (var.azure_communication_service_name != "" ? var.azure_communication_service_name : "${var.prefix}-${var.environment_tag}-acs-${var.app_name}-${element(split("-", module.naming.data_factory.name_unique), length(split("-", module.naming.data_factory.name_unique)) - 1)}")
+  azure_email_communication_service_name = (var.azure_email_communication_service_name != "" ? var.azure_email_communication_service_name : "${var.prefix}-${var.environment_tag}-aecs-${var.app_name}-${element(split("-", module.naming.data_factory.name_unique), length(split("-", module.naming.data_factory.name_unique)) - 1)}")
+
+
   tags = {
     Environment = var.environment_tag
     Owner       = var.owner_tag

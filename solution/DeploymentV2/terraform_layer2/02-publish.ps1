@@ -64,13 +64,13 @@ import-Module ./../pwshmodules/Deploy_5_WebApp.psm1 -force
 #DeployWebApp -tout $tout  -deploymentFolderPath $deploymentFolderPath -PathToReturnTo $PathToReturnTo
 
 import-Module ./../pwshmodules/Deploy_6_FuncApp.psm1 -force
-#DeployFuncApp -tout $tout  -deploymentFolderPath $deploymentFolderPath -PathToReturnTo $PathToReturnTo
+DeployFuncApp -tout $tout  -deploymentFolderPath $deploymentFolderPath -PathToReturnTo $PathToReturnTo
 
 import-Module ./../pwshmodules/Deploy_7_MetadataDB.psm1 -force
 #DeployMetaDataDB -publish_metadata_database $true -tout $tout  -deploymentFolderPath $deploymentFolderPath -PathToReturnTo $PathToReturnTo
 
 import-Module ./../pwshmodules/Deploy_9_DataFactory.psm1 -force
-DeployDataFactoryAndSynapseArtefacts -tout $tout  -deploymentFolderPath $deploymentFolderPath -PathToReturnTo $PathToReturnTo
+#DeployDataFactoryAndSynapseArtefacts -tout $tout  -deploymentFolderPath $deploymentFolderPath -PathToReturnTo $PathToReturnTo
 
 import-Module ./../pwshmodules/Deploy_10_SampleFiles.psm1 -force
 #DeploySampleFiles -tout $tout  -deploymentFolderPath $deploymentFolderPath -PathToReturnTo $PathToReturnTo

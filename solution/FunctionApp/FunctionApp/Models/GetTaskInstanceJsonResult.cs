@@ -20,6 +20,8 @@ namespace FunctionApp.Models
         [JsonProperty(Required = Required.Always)]
         public Int64 TaskMasterId { get; set; }
         [JsonProperty(Required = Required.Always)]
+        public string TaskMasterName { get; set; }
+        [JsonProperty(Required = Required.Always)]
         public string TaskStatus { get; set; }
 
         [JsonProperty(Required = Required.Always)]

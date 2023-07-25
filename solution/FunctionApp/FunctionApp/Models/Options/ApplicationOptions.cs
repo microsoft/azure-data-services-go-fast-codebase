@@ -9,5 +9,6 @@
         public LocalPaths LocalPaths { get; set; }
         public TestingOptions TestingOptions { get; set; }
         public string SendGridApiKey { get; set; }
+        public AzureCommunicationsService AzureCommunicationsService { get; set; }
     }
 }

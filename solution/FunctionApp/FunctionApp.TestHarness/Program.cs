@@ -5,6 +5,7 @@ using System.IO;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Linq;
 using Dapper;
 using FunctionApp.Authentication;
 using FunctionApp.DataAccess;
@@ -23,6 +24,8 @@ using System.Net.Http;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.ApplicationInsights;
 using System.Security.Cryptography;
+using Azure;
+using Azure.Communication.Email;
 
 namespace FunctionApp.TestHarness
 {
@@ -175,6 +178,9 @@ namespace FunctionApp.TestHarness
 
             //var body = JObject.Parse("{\"SourceHttpPath\": \"https://datalakeraw/arkstgdlsadsv6ciadsl.dfs.core.windows.net/samples/SalesLT.CustomerCDCPart2.parquet\", \"TargetHttpPath\": \"https://datalakelanding/arkstgdlsadsv6ciadsl.dfs.core.windows.net/CustomerCDCDeltaTest\", \"SourceColumns\": [{\"name\": \"__$start_lsn\", \"type\": \"binary\"}, {\"name\": \"__$seqval\", \"type\": \"binary\"}, {\"name\": \"__$operation\", \"type\": \"int\"}, {\"name\": \"__$update_mask\", \"type\": \"binary\"}, {\"name\": \"CustomerID\", \"type\": \"int\"}, {\"name\": \"NameStyle\", \"type\": \"boolean\"}, {\"name\": \"Title\", \"type\": \"string\"}, {\"name\": \"FirstName\", \"type\": \"string\"}, {\"name\": \"MiddleName\", \"type\": \"string\"}, {\"name\": \"LastName\", \"type\": \"string\"}, {\"name\": \"Suffix\", \"type\": \"string\"}, {\"name\": \"CompanyName\", \"type\": \"string\"}, {\"name\": \"SalesPerson\", \"type\": \"string\"}, {\"name\": \"EmailAddress\", \"type\": \"string\"}, {\"name\": \"Phone\", \"type\": \"string\"}, {\"name\": \"PasswordHash\", \"type\": \"string\"}, {\"name\": \"PasswordSalt\", \"type\": \"string\"}, {\"name\": \"rowguid\", \"type\": \"string\"}, {\"name\": \"ModifiedDate\", \"type\": \"timestamp\"}], \"TargetColumns\": [{\"name\": \"CustomerID\", \"type\": \"bigint\"}, {\"name\": \"NameStyle\", \"type\": \"boolean\"}, {\"name\": \"Title\", \"type\": \"string\"}, {\"name\": \"FirstName\", \"type\": \"string\"}, {\"name\": \"MiddleName\", \"type\": \"string\"}, {\"name\": \"LastName\", \"type\": \"string\"}, {\"name\": \"Suffix\", \"type\": \"string\"}, {\"name\": \"CompanyName\", \"type\": \"string\"}, {\"name\": \"SalesPerson\", \"type\": \"string\"}, {\"name\": \"EmailAddress\", \"type\": \"string\"}, {\"name\": \"Phone\", \"type\": \"string\"}, {\"name\": \"PasswordHash\", \"type\": \"string\"}, {\"name\": \"PasswordSalt\", \"type\": \"string\"}, {\"name\": \"rowguid\", \"type\": \"string\"}, {\"name\": \"ModifiedDate\", \"type\": \"timestamp\"}], \"TaskObject\": {\"TaskInstanceId\": 9, \"TaskMasterId\": 6, \"TaskStatus\": \"InProgress\", \"TaskType\": \"Azure Storage to Azure Storage\", \"Enabled\": 1, \"ExecutionUid\": \"13659322-9e3d-4083-9f44-87e695d06ed8\", \"NumberOfRetries\": 1, \"DegreeOfCopyParallelism\": 1, \"KeyVaultBaseUrl\": \"https://ark-stg-kv-ads-v6ci.vault.azure.net/\", \"ScheduleMasterId\": \"-4\", \"TaskGroupConcurrency\": \"10\", \"TaskGroupPriority\": 0, \"TaskExecutionType\": \"ADF\", \"ExecutionEngine\": {\"EngineId\": -2, \"EngineName\": \"arkstgsynwadsv6ci\", \"SystemType\": \"Synapse\", \"ResourceGroup\": \"dlzdev06\", \"SubscriptionId\": \"63cbc080-0220-46aa-a9c4-a50b36f1ff43\", \"ADFPipeline\": \"GPL_SparkNotebookExecution_Azure\", \"TaskDatafactoryIR\": \"Azure\", \"JsonProperties\": {\"endpoint\": \"https://arkstgsynwadsv6ci.dev.azuresynapse.net\", \"DeltaProcessingNotebook\": \"DeltaProcessingNotebook\", \"PurviewAccountNameName\": \"dlzdev06purv\"}}, \"Source\": {\"System\": {\"SystemId\": -4, \"SystemServer\": \"https://arkstgdlsadsv6ciadsl.dfs.core.windows.net\", \"AuthenticationType\": \"MSI\", \"Type\": \"ADLS\", \"Username\": null, \"Container\": \"datalakeraw\"}, \"Instance\": {\"SourceRelativePath\": \"samples/\", \"TargetRelativePath\": \"\"}, \"DataFileName\": \"SalesLT.CustomerCDCPart2.parquet\", \"MaxConcurrentConnections\": 100, \"RelativePath\": \"samples/\", \"SchemaFileName\": \"SalesLT.CustomerCDCPart2.json\", \"Type\": \"Parquet\", \"WriteSchemaToPurview\": \"Enabled\"}, \"Target\": {\"System\": {\"SystemId\": -8, \"SystemServer\": \"https://arkstgdlsadsv6ciadsl.dfs.core.windows.net\", \"AuthenticationType\": \"MSI\", \"Type\": \"ADLS\", \"Username\": null, \"Container\": \"datalakelanding\"}, \"Instance\": {\"SourceRelativePath\": \"samples/\", \"TargetRelativePath\": \"\"}, \"DataFileName\": \"CustomerCDCDeltaTest\", \"MaxConcurrentConnections\": 100, \"RelativePath\": \"\", \"SchemaFileName\": \"\", \"Type\": \"Delta\", \"WriteSchemaToPurview\": \"Enabled\"}, \"TMOptionals\": {\"CDCSource\": \"Enabled\", \"Purview\": \"Enabled\", \"QualifiedIDAssociation\": \"ExecutionId\", \"SparkTableCreate\": \"Enabled\", \"SparkTableDBName\": \"cdctestdb\", \"SparkTableName\": \"cdctesttable2\"}}}");
             //var result = ( _purviewService.PurviewMetaDataCheck(body, _funcAppLogger).Result);
+
+            
+
             _funcAppLogger.LogInformation("End");
         }
 
@@ -481,7 +487,7 @@ namespace FunctionApp.TestHarness
             JObject json = JObject.Parse("{ 'TaskInstanceId':20,'TaskMasterId':-2,'TaskStatus':'InProgress','TaskType':'Azure Storage to SQL Database','Enabled':1,'ExecutionUid':'b829721c-f297-49eb-8436-c33e27005971','NumberOfRetries':0,'DegreeOfCopyParallelism':1,'KeyVaultBaseUrl':'https://mst-stg-kv-ads-pnu0.vault.azure.net/','ScheduleMasterId':'4','TaskGroupConcurrency':'10','TaskGroupPriority':0,'TaskExecutionType':'ADF','DataFactory':{ 'Id':1,'Name':'mst-stg-adf-ads-pnu0','ResourceGroup':'adsgftera2','SubscriptionId':'035a1364-f00d-48e2-b582-4fe125905ee3','ADFPipeline':'GPL_AzureBlobFS_Parquet_AzureSqlTable_NA_Azure','TaskDatafactoryIR':'Azure'},'Source':{ 'System':{ 'SystemId':4,'SystemServer':'https://arkstgdlsadsbcaradsl.dfs.core.windows.net','AuthenticationType':'MSI','Type':'ADLS','Username':null,'Container':'datalakeraw'},'Instance':{ 'SourceRelativePath':'samples/'},'DataFileName':'SalesLT.Customer.chunk_1.parquet','SchemaFileName':'SalesLT.Customer.json','DeleteAfterCompletion':'false','MaxConcurrentConnections':0,'Recursively':'false','RelativePath':'samples/','Type':'Parquet'},'Target':{ 'System':{ 'SystemId':4,'SystemServer':'https://arkstgdlsadsbcaradsl.dfs.core.windows.net','AuthenticationType':'MSI','Type':'ADLS','Username':null,'Container':'datalakelanding'},'Instance':{ 'SourceRelativePath':'samples/'},'DataFileName':'SalesLT-Customer-Delta','DeleteAfterCompletion':'false','MaxConcurrentConnections':0,'Recursively':'false','RelativePath':'samples/','Type':'Delta'} }");
             Dictionary<string, object> testDict = new Dictionary<string, object> ();
             testDict.Add("TaskObject", json);
-            _azureSynapseService.RunSynapsePipeline(new Uri("https://arkstgsynwadsbcar.dev.azuresynapse.net"), "Pipeline 1", testDict, _funcAppLogger);
+            _azureSynapseService.RunSynapsePipeline(new Uri("https://adsstgsynwadswkuy.dev.azuresynapse.net"), "Pipeline 1", testDict, _funcAppLogger);
         }
 
         public async Task DebugRunFrameworkTasks()

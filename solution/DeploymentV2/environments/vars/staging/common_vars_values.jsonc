@@ -51,6 +51,8 @@
     "deploy_vpn": false,
     "deploy_bastion": false,
     "deploy_databricks": false,
-    "key_vault_name": "ads-stg-kv-ads-wkuyy"
+    "key_vault_name": "ads-stg-kv-ads-wkuyy",
+    "deploy_communication_service": true,
+    "deploy_email_communication_service": true
   }
 }

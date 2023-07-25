@@ -61,6 +61,7 @@ namespace FunctionApp.Models.GetTaskInstanceJSON
             {
                 ["TaskInstanceId"] = TaskInstanceId,
                 ["TaskMasterId"] = TaskMasterId,
+                ["TaskMasterName"] = TaskMasterName,
                 ["TaskStatus"] = TaskStatus,
                 ["TaskType"] = TaskType,
                 ["Enabled"] = 1,

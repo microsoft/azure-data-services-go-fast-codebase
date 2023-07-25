@@ -76,6 +76,10 @@ resource "azurerm_function_app" "function_app" {
     #Setting to null as we are using MSI
     AzureAdAzureServicesDirect__ClientId = null
     AzureAdAzureServicesDirect__ClientId = null
+    ##azure communication services related
+    ApplicationOptions__AzureCommunicationsService__EmailFromAddress = "DoNotReply@xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx.azurecomm.net" #currently placeholder as needs to be filled in manually
+    ApplicationOptions__AzureCommunicationsService__ConnectionString = var.deploy_communication_service ? azurerm_communication_service.communication_service[0].primary_connection_string : ""
+
   }
   identity {
     type = "SystemAssigned"

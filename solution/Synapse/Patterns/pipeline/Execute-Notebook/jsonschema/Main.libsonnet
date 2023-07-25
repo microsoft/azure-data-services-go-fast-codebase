@@ -61,6 +61,29 @@ function(SourceType = "", SourceFormat = "Notebook-Optional",TargetType = "", Ta
             "options": {
                 "infoText": "(required) This flag is used to control the method used to call the Synapse Notebook that carries out the processing. When Enabled the default notebook activity type within Synapse pipelines will be used. Note that this will force a new spark session for each job execution. By leaving this flag disabled an Azure Function is used to call the notebook and Spark Sessions will be reused if available."
             }
+        },
+        "NotificationList": {
+            "type": "string",
+            "options": {
+                "inputAttributes": {
+                    "placeholder": ""
+                },
+                "infoText": "(optional) Use this field to specify email addresses you wish to report the relevant completion condition to. This conditon is defined by EmailNotficationOn. Notes: Separate multiple email addresses with commas / This relies on Azure Communication Services being configured."
+            }
+        },
+        "NotificationOn": {
+            "type": "string",
+            "default": "Disabled",
+            "enum": [
+                "Disabled",
+                "Completion",
+                "Failure",
+                "FailureNoRetry",
+                "Success"
+            ],
+            "options": {
+                "infoText": "(optional) This flag is used to define on what condition you wish to notify the addresses from the NotificationList when this task completes. Note: Completion will notify whenever the task has been execution of the task has been finished regardless on the outcome."
+            }
         }
     },
     "required": [
